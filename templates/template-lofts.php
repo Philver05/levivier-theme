@@ -26,56 +26,24 @@ $amenites = [
 <div class="page-lofts">
 
     <!-- ======================================================
-         HÉROS DE MARQUE
+         EN-TÊTE COMPACT — pas de bannière, on va droit au but
     ====================================================== -->
-    <section class="lofts-hero lofts-hero-marque">
-        <?php if (has_post_thumbnail()): ?>
-            <?php the_post_thumbnail('full', ['class' => 'lofts-hero-img', 'alt' => get_the_title()]); ?>
-        <?php endif; ?>
-
-        <div class="lofts-hero-overlay"></div>
-
-        <div class="lofts-hero-marque-texte">
-            <p class="lofts-eyebrow lofts-eyebrow-clair"><?php echo esc_html($surtitre); ?></p>
-            <h1 class="lofts-hero-h1"><?php the_title(); ?></h1>
-            <?php if ($tagline): ?><p class="lofts-hero-tagline"><?php echo esc_html($tagline); ?></p><?php endif; ?>
-            <div class="lofts-hero-actions">
-                <a href="#nos-lofts" class="lofts-cta">Réserver votre séjour</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- ======================================================
-         COMMODITÉS
-    ====================================================== -->
-    <section class="lofts-amenites">
+    <section class="lofts-entete">
         <div class="conteneur">
-            <ul class="lofts-amenites-grille">
-                <?php foreach ($amenites as $a): ?>
-                    <li>
-                        <span class="lofts-amenite-icone" aria-hidden="true"><?php echo $a[0]; ?></span>
-                        <span><?php echo esc_html($a[1]); ?></span>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+            <p class="lofts-eyebrow lofts-eyebrow-centre"><?php echo esc_html($surtitre); ?></p>
+            <h1 class="lofts-entete-titre"><?php the_title(); ?></h1>
+            <?php if ($tagline): ?><p class="lofts-entete-tagline"><?php echo esc_html($tagline); ?></p><?php endif; ?>
+            <p class="lofts-entete-lead"><?php echo esc_html($intro); ?></p>
+            <p class="lofts-entete-meta">
+                <span>📍 14, av. D'Amours, Matane</span>
+                <span>✔️ CITQ&nbsp;323422</span>
+                <a href="tel:+14185625230">📞 418&nbsp;562-5230</a>
+            </p>
         </div>
     </section>
 
     <!-- ======================================================
-         L'EXPÉRIENCE
-    ====================================================== -->
-    <section class="lofts-intro-section">
-        <div class="conteneur">
-            <p class="lofts-eyebrow lofts-eyebrow-centre">L'expérience</p>
-            <div class="lofts-rule lofts-rule-centre"></div>
-            <div class="lofts-intro-texte">
-                <?php if (get_the_content()): the_content(); else: echo wpautop(esc_html($intro)); endif; ?>
-            </div>
-        </div>
-    </section>
-
-    <!-- ======================================================
-         LES LOFTS
+         LES LOFTS — l'action, tout de suite
     ====================================================== -->
     <section class="lofts-liste-section" id="nos-lofts">
         <div class="conteneur">
@@ -91,18 +59,31 @@ $amenites = [
             ?>
 
             <?php if ($lofts->have_posts()): ?>
-                <h2 class="lofts-section-titre">Choisissez votre loft</h2>
-                <p class="lofts-section-sous-titre">Deux ambiances, le même souci du détail. Trouvez celle qui vous ressemble.</p>
                 <div class="lofts-grille">
                     <?php while ($lofts->have_posts()): $lofts->the_post();
                         get_template_part('parts/loft', 'card');
                     endwhile; wp_reset_postdata(); ?>
                 </div>
             <?php else: ?>
-                <h2 class="lofts-section-titre">Choisissez votre loft</h2>
-                <p class="lofts-vide">Nos deux lofts (Rivière Douce et Rivière Vive) seront présentés ici très bientôt. Contactez-nous au <a href="tel:+14185625230">418 562-5230</a> pour réserver dès maintenant.</p>
+                <p class="lofts-vide">Nos deux lofts (Rivière Douce et Rivière Vive) seront présentés ici très bientôt. Réservez dès maintenant au <a href="tel:+14185625230">418 562-5230</a>.</p>
             <?php endif; ?>
 
+        </div>
+    </section>
+
+    <!-- ======================================================
+         COMMODITÉS — ce qui est inclus
+    ====================================================== -->
+    <section class="lofts-amenites">
+        <div class="conteneur">
+            <ul class="lofts-amenites-grille">
+                <?php foreach ($amenites as $a): ?>
+                    <li>
+                        <span class="lofts-amenite-icone" aria-hidden="true"><?php echo $a[0]; ?></span>
+                        <span><?php echo esc_html($a[1]); ?></span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
         </div>
     </section>
 

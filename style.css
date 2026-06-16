@@ -3073,6 +3073,58 @@ a.producteur-nom:hover {
   font-family: var(--police-corps);
 }
 
+/* En-tête compact (page liste — orientée réservation, sans bannière) */
+.lofts-entete {
+  text-align: center;
+  padding: 3.25rem 0 2.5rem;
+  background: var(--lofts-creme);
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding-left: max(1.5rem, calc(50vw - 600px));
+  padding-right: max(1.5rem, calc(50vw - 600px));
+}
+
+.lofts-entete-titre {
+  font-family: var(--police-accent);
+  font-size: clamp(3rem, 7vw, 5rem);
+  font-weight: 400;
+  color: var(--sarcelle);
+  line-height: 1.05;
+  margin: 0.4rem 0 0.6rem;
+}
+
+.lofts-entete-tagline {
+  font-size: 1.15rem;
+  color: var(--lofts-terra);
+  font-weight: 600;
+  margin: 0 0 1rem;
+}
+
+.lofts-entete-lead {
+  max-width: 640px;
+  margin: 0 auto 1.5rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--lofts-txt);
+}
+
+.lofts-entete-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.75rem;
+  font-family: var(--police-titre);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sarcelle);
+  margin: 0;
+}
+
+.lofts-entete-meta a {
+  color: var(--lofts-terra);
+  text-decoration: none;
+}
+
 /* Hero plein écran */
 .lofts-hero {
   position: relative;
