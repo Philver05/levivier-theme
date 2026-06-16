@@ -5182,6 +5182,27 @@ a.producteur-nom:hover {
 }
 .loft-d-am-icone .lv-icone { width: 22px; height: 22px; }
 
+.loft-d-am-cache { display: none; }
+.loft-d-amenites.is-open .loft-d-am-cache { display: flex; }
+
+.loft-d-am-plus {
+  margin-top: 1.5rem;
+  background: none;
+  border: 1.5px solid var(--lofts-txt);
+  color: var(--lofts-txt);
+  font-family: var(--police-titre);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.8em 1.5em;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.loft-d-am-plus:hover {
+  background: var(--lofts-txt);
+  color: var(--blanc);
+}
+
 /* Carte de réservation (collante) */
 .loft-d-resa-col { position: sticky; top: 2rem; }
 .loft-d-resa-carte {

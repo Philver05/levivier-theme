@@ -175,14 +175,17 @@ if (!function_exists('lv_loft_icone')) {
                 </div>
                 <?php endif; ?>
 
-                <?php if ($amenites): ?>
+                <?php if ($amenites): $am_visibles = 6; ?>
                 <div class="loft-d-amenites-bloc">
                     <h2 class="loft-d-h2">Pour votre confort</h2>
-                    <ul class="loft-d-amenites">
-                        <?php foreach ($amenites as $a): ?>
-                            <li><span class="loft-d-am-icone" aria-hidden="true"><?php echo lv_loft_icone($a); ?></span><?php echo esc_html($a); ?></li>
+                    <ul class="loft-d-amenites" id="loftAmenites">
+                        <?php foreach ($amenites as $i => $a): ?>
+                            <li<?php echo $i >= $am_visibles ? ' class="loft-d-am-cache"' : ''; ?>><span class="loft-d-am-icone" aria-hidden="true"><?php echo lv_loft_icone($a); ?></span><?php echo esc_html($a); ?></li>
                         <?php endforeach; ?>
                     </ul>
+                    <?php if (count($amenites) > $am_visibles): ?>
+                        <button type="button" class="loft-d-am-plus" id="loftAmenitesPlus" data-total="<?php echo count($amenites); ?>">Afficher les <?php echo count($amenites); ?> commodités</button>
+                    <?php endif; ?>
                 </div>
                 <?php endif; ?>
             </div>
@@ -266,6 +269,17 @@ if (!function_exists('lv_loft_icone')) {
         btn.addEventListener('click', function () {
             desc.classList.add('is-open');
             btn.style.display = 'none';
+        });
+    }
+
+    var amPlus = document.getElementById('loftAmenitesPlus');
+    var amList = document.getElementById('loftAmenites');
+    if (amPlus && amList) {
+        amPlus.addEventListener('click', function () {
+            var ouvert = amList.classList.toggle('is-open');
+            amPlus.textContent = ouvert
+                ? 'Afficher moins'
+                : 'Afficher les ' + amPlus.dataset.total + ' commodités';
         });
     }
 })();
