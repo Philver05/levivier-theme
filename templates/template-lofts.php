@@ -8,7 +8,6 @@ if (have_posts()) the_post();
 
 $surtitre = get_field('lofts_surtitre') ?: 'Location touristique · Centre-ville de Matane';
 $intro    = get_field('lofts_intro')    ?: "Deux lofts modernes avec cuisinette, pensés pour qu'il ne vous manque rien. Vous arrivez, vous déposez vos valises, et Matane est déjà à vos pieds.";
-$tagline  = get_field('lofts_tagline')  ?: "Le confort d'un chez-soi, l'énergie de la ville";
 
 /* Commodités (affiche) */
 $amenites = [
@@ -32,7 +31,6 @@ $amenites = [
         <div class="conteneur">
             <p class="lofts-eyebrow lofts-eyebrow-centre"><?php echo esc_html($surtitre); ?></p>
             <h1 class="lofts-entete-titre"><?php the_title(); ?></h1>
-            <?php if ($tagline): ?><p class="lofts-entete-tagline"><?php echo esc_html($tagline); ?></p><?php endif; ?>
             <p class="lofts-entete-lead"><?php echo esc_html($intro); ?></p>
             <p class="lofts-entete-meta">
                 <span>📍 14, av. D'Amours, Matane</span>
