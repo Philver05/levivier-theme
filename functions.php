@@ -333,27 +333,55 @@ add_action('acf/init', function () {
         'key'    => 'group_loft',
         'title'  => 'Détails du loft',
         'fields' => [
-            ['key' => 'field_loft_badge', 'name' => 'loft_badge', 'label' => 'Badge (ex: Disponible / Loué)', 'type' => 'text'],
-            ['key' => 'field_loft_prix_label', 'name' => 'loft_prix_label', 'label' => 'Étiquette prix (ex: À partir de)', 'type' => 'text'],
-            ['key' => 'field_loft_prix', 'name' => 'loft_prix', 'label' => 'Prix (ex: 1 150 $)', 'type' => 'text'],
-            ['key' => 'field_loft_prix_sub', 'name' => 'loft_prix_sub', 'label' => 'Sous-texte prix (ex: Tout inclus · Wi-Fi)', 'type' => 'text'],
-            ['key' => 'field_loft_features', 'name' => 'loft_features', 'label' => 'Caractéristiques (une par ligne)', 'type' => 'textarea', 'rows' => 8, 'instructions' => 'Ex: 1 chambre, Cuisine équipée, Wi-Fi… La première est mise en évidence.'],
-            /* Galerie */
+
+            /* ---- DESCRIPTION ---- */
+            ['key' => 'field_loft_msg_desc', 'label' => '', 'type' => 'message', 'message' => '<strong>📝 Description :</strong> écrivez la description complète du loft dans l\'éditeur principal ci-dessus (le grand cadre de texte). Elle s\'affiche avec un bouton « Afficher plus ».'],
+
+            /* ---- CAPACITÉ ---- */
+            ['key' => 'field_loft_msg_capacite', 'label' => '🛏️ Capacité', 'type' => 'message', 'message' => 'La ligne affichée sous le titre, ex : « 2 voyageurs · 1 chambre · 1 lit · 1 salle de bain ».'],
+            ['key' => 'field_loft_type', 'name' => 'loft_type', 'label' => 'Type de logement', 'type' => 'text', 'default_value' => 'Logement de location en entier'],
+            ['key' => 'field_loft_voyageurs', 'name' => 'loft_voyageurs', 'label' => 'Nombre de voyageurs', 'type' => 'number', 'default_value' => 2],
+            ['key' => 'field_loft_chambres', 'name' => 'loft_chambres', 'label' => 'Nombre de chambres', 'type' => 'number', 'default_value' => 1],
+            ['key' => 'field_loft_lits', 'name' => 'loft_lits', 'label' => 'Nombre de lits', 'type' => 'number', 'default_value' => 1],
+            ['key' => 'field_loft_sdb', 'name' => 'loft_sdb', 'label' => 'Nombre de salles de bain', 'type' => 'number', 'default_value' => 1],
+
+            /* ---- PRIX ---- */
+            ['key' => 'field_loft_msg_prix', 'label' => '💲 Prix', 'type' => 'message', 'message' => ''],
+            ['key' => 'field_loft_prix', 'name' => 'loft_prix', 'label' => 'Prix par nuit (ex: 145 $)', 'type' => 'text'],
+            ['key' => 'field_loft_prix_sub', 'name' => 'loft_prix_sub', 'label' => 'Sous-texte prix', 'type' => 'text', 'default_value' => 'Tout inclus'],
+            ['key' => 'field_loft_prix_label', 'name' => 'loft_prix_label', 'label' => 'Étiquette prix (cartes liste, ex: À partir de)', 'type' => 'text', 'default_value' => 'À partir de'],
+            ['key' => 'field_loft_badge', 'name' => 'loft_badge', 'label' => 'Badge (ex: Disponible / Nouveauté)', 'type' => 'text'],
+
+            /* ---- POINTS FORTS ---- */
+            ['key' => 'field_loft_msg_highlights', 'label' => '⭐ Points forts', 'type' => 'message', 'message' => 'Les 3 atouts mis en avant (style Airbnb). <strong>Une ligne par point fort</strong>, au format : <code>emoji | Titre | Description</code>'],
+            ['key' => 'field_loft_highlights', 'name' => 'loft_highlights', 'label' => 'Points forts', 'type' => 'textarea', 'rows' => 4, 'default_value' => "🚪 | Arrivée autonome | Entrez à votre rythme grâce à la serrure intelligente.\n🅿️ | Stationnement gratuit | Un des rares logements de la région avec stationnement gratuit.\n☕ | Café maison | Commencez la journée du bon pied avec la cafetière filtre."],
+
+            /* ---- POUR VOTRE CONFORT ---- */
+            ['key' => 'field_loft_msg_features', 'label' => '🧺 Pour votre confort', 'type' => 'message', 'message' => 'La liste des commodités, affichée en grille avec des icônes automatiques. <strong>Une commodité par ligne.</strong>'],
+            ['key' => 'field_loft_features', 'name' => 'loft_features', 'label' => 'Commodités (une par ligne)', 'type' => 'textarea', 'rows' => 8, 'default_value' => "Cuisinette équipée\nWi-Fi gratuit\nTéléviseur intelligent 65\"\nSalle de bain privée\nStationnement gratuit\nLiterie de qualité\nCafetière filtre\nArrivée autonome"],
+
+            /* ---- GALERIE ---- */
+            ['key' => 'field_loft_msg_galerie', 'label' => '📸 Galerie photos', 'type' => 'message', 'message' => 'L\'image mise en avant (encadré « Image mise en avant », colonne de droite) sert de grande photo principale. Ajoutez jusqu\'à 6 photos supplémentaires ci-dessous.'],
             ['key' => 'field_loft_img1', 'name' => 'loft_img1', 'label' => 'Galerie — Photo 1', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium'],
             ['key' => 'field_loft_img2', 'name' => 'loft_img2', 'label' => 'Galerie — Photo 2', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium'],
             ['key' => 'field_loft_img3', 'name' => 'loft_img3', 'label' => 'Galerie — Photo 3', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium'],
             ['key' => 'field_loft_img4', 'name' => 'loft_img4', 'label' => 'Galerie — Photo 4', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium'],
             ['key' => 'field_loft_img5', 'name' => 'loft_img5', 'label' => 'Galerie — Photo 5', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium'],
             ['key' => 'field_loft_img6', 'name' => 'loft_img6', 'label' => 'Galerie — Photo 6', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium'],
-            /* Réservation */
-            ['key' => 'field_loft_booking_url', 'name' => 'loft_booking_url', 'label' => 'Lien de réservation', 'type' => 'url', 'instructions' => 'URL pour réserver/louer ce loft (formulaire, Airbnb, etc.). Si vide, le bouton appelle par téléphone.'],
-            ['key' => 'field_loft_cta_label', 'name' => 'loft_cta_label', 'label' => 'Texte du bouton de réservation', 'type' => 'text'],
-            /* Localisation + contact */
-            ['key' => 'field_loft_adresse', 'name' => 'loft_adresse', 'label' => 'Adresse', 'type' => 'text'],
-            ['key' => 'field_loft_ville', 'name' => 'loft_ville', 'label' => 'Ville / secteur', 'type' => 'text'],
-            ['key' => 'field_loft_telephone', 'name' => 'loft_telephone', 'label' => 'Téléphone', 'type' => 'text'],
+
+            /* ---- RÉSERVATION ---- */
+            ['key' => 'field_loft_msg_resa', 'label' => '🔗 Réservation', 'type' => 'message', 'message' => 'Collez les liens de réservation. Reservit s\'affiche en bouton principal, Airbnb en second. Si les deux sont vides, le bouton appelle par téléphone.'],
+            ['key' => 'field_loft_reservit_url', 'name' => 'loft_reservit_url', 'label' => 'Lien Reservit', 'type' => 'url', 'instructions' => 'URL de réservation directe Reservit.'],
+            ['key' => 'field_loft_airbnb_url', 'name' => 'loft_airbnb_url', 'label' => 'Lien Airbnb', 'type' => 'url', 'instructions' => 'Ex: https://fr.airbnb.ca/rooms/1678583818314456534'],
+            ['key' => 'field_loft_cta_label', 'name' => 'loft_cta_label', 'label' => 'Texte du bouton sur les cartes (liste)', 'type' => 'text', 'default_value' => 'Réserver'],
+            ['key' => 'field_loft_telephone', 'name' => 'loft_telephone', 'label' => 'Téléphone', 'type' => 'text', 'default_value' => '418 562-5230'],
+
+            /* ---- LOCALISATION ---- */
+            ['key' => 'field_loft_msg_loc', 'label' => '📍 Localisation', 'type' => 'message', 'message' => 'La carte Google Maps se génère automatiquement depuis l\'adresse. Pour un placement exact, collez une intégration personnalisée ci-dessous.'],
+            ['key' => 'field_loft_adresse', 'name' => 'loft_adresse', 'label' => 'Adresse', 'type' => 'text', 'default_value' => '14, avenue D\'Amours'],
+            ['key' => 'field_loft_ville', 'name' => 'loft_ville', 'label' => 'Ville / secteur', 'type' => 'text', 'default_value' => 'Matane, Québec · Centre-ville'],
+            ['key' => 'field_loft_map_embed', 'name' => 'loft_map_embed', 'label' => 'Carte Google Maps (intégration — optionnel)', 'type' => 'url', 'instructions' => 'Optionnel. Google Maps → Partager → Intégrer une carte → copiez seulement le lien entre guillemets après src=. Laissez vide pour générer la carte depuis l\'adresse.'],
             ['key' => 'field_loft_facebook', 'name' => 'loft_facebook', 'label' => 'Lien Facebook', 'type' => 'url'],
-            ['key' => 'field_loft_carte', 'name' => 'loft_carte', 'label' => 'Image de la carte (capture Google Maps)', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium'],
         ],
         'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => 'loft']]],
         'menu_order' => 0,
