@@ -8,18 +8,6 @@ if (have_posts()) the_post();
 
 $surtitre = get_field('lofts_surtitre') ?: 'Location touristique · Centre-ville de Matane';
 $intro    = get_field('lofts_intro')    ?: "Deux lofts modernes avec cuisinette, pensés pour qu'il ne vous manque rien. Vous arrivez, vous déposez vos valises, et Matane est déjà à vos pieds.";
-
-/* Commodités (affiche) */
-$amenites = [
-    ['🛏️', '1 chambre, lit queen'],
-    ['🍳', 'Cuisinette équipée'],
-    ['🚿', 'Salle de bain privée'],
-    ['📶', 'Wi-Fi gratuit'],
-    ['🅿️', 'Stationnement gratuit'],
-    ['📺', 'Téléviseur intelligent 65"'],
-    ['✨', 'Tout inclus'],
-    ['📍', 'Centre-ville de Matane'],
-];
 ?>
 
 <div class="page-lofts">
@@ -66,22 +54,6 @@ $amenites = [
                 <p class="lofts-vide">Nos deux lofts (Rivière Douce et Rivière Vive) seront présentés ici très bientôt. Réservez dès maintenant au <a href="tel:+14185625230">418 562-5230</a>.</p>
             <?php endif; ?>
 
-        </div>
-    </section>
-
-    <!-- ======================================================
-         COMMODITÉS — ce qui est inclus
-    ====================================================== -->
-    <section class="lofts-amenites">
-        <div class="conteneur">
-            <ul class="lofts-amenites-grille">
-                <?php foreach ($amenites as $a): ?>
-                    <li>
-                        <span class="lofts-amenite-icone" aria-hidden="true"><?php echo $a[0]; ?></span>
-                        <span><?php echo esc_html($a[1]); ?></span>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
         </div>
     </section>
 
