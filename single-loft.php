@@ -43,6 +43,16 @@ $map_q     = trim($adresse) . ', Matane, Québec';
 $map_embed = get_field('loft_map_embed') ?: 'https://maps.google.com/maps?q=' . rawurlencode($map_q) . '&z=16&hl=fr&output=embed';
 $map_lien  = 'https://www.google.com/maps/dir/?api=1&destination=' . rawurlencode($map_q);
 
+/* URL de la page liste des lofts (repérée par son template, repli sur /lofts/) */
+$lofts_page = get_posts([
+    'post_type'   => 'page',
+    'meta_key'    => '_wp_page_template',
+    'meta_value'  => 'templates/template-lofts.php',
+    'numberposts' => 1,
+    'fields'      => 'ids',
+]);
+$lofts_url = $lofts_page ? get_permalink($lofts_page[0]) : home_url('/lofts/');
+
 $type      = get_field('loft_type')      ?: 'Logement de location en entier';
 $voyageurs = get_field('loft_voyageurs') ?: '2';
 $chambres  = get_field('loft_chambres')  ?: '1';
@@ -141,7 +151,7 @@ if (!function_exists('lv_loft_icone')) {
 <div class="page-lofts loft-detail">
     <div class="conteneur loft-d-conteneur">
 
-        <a href="<?php echo esc_url(get_permalink(get_page_by_path('location-loft'))); ?>" class="loft-d-retour">← Tous les lofts</a>
+        <a href="<?php echo esc_url($lofts_url); ?>" class="loft-d-retour"><span aria-hidden="true">←</span> Tous les lofts</a>
 
         <div class="loft-d-titre-row">
             <h1 class="loft-d-titre"><?php the_title(); ?></h1>
