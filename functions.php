@@ -137,6 +137,46 @@ add_action('customize_register', function ($wp_customize) {
     }
 });
 
+/* Catégories de la galerie des lofts (slug => nom affiché) */
+function lv_loft_categories()
+{
+    return [
+        'salon'   => 'Salon',
+        'cuisine' => 'Cuisine',
+        'chambre' => 'Chambre',
+        'bain'    => 'Salle de bain',
+        'ext'     => 'Extérieur & vue',
+        'autre'   => 'Autres',
+    ];
+}
+
+/* Champs ACF de la galerie : 4 photos par catégorie */
+function lv_loft_galerie_fields()
+{
+    $fields = [[
+        'key'     => 'field_loft_msg_galerie',
+        'label'   => '📸 Galerie par pièce',
+        'type'    => 'message',
+        'message' => 'L\'<strong>image mise en avant</strong> (colonne de droite) sert de grande photo de couverture. Ajoutez ensuite les photos par pièce : dans la visite « Afficher toutes les photos », une catégorie n\'apparaît que si elle contient au moins une photo.',
+    ]];
+
+    foreach (lv_loft_categories() as $slug => $nom) {
+        $fields[] = ['key' => "field_loft_cat_{$slug}_msg", 'label' => $nom, 'type' => 'message', 'message' => ''];
+        for ($n = 1; $n <= 4; $n++) {
+            $fields[] = [
+                'key'           => "field_loft_cat_{$slug}_{$n}",
+                'name'          => "loft_cat_{$slug}_{$n}",
+                'label'         => "{$nom} — Photo {$n}",
+                'type'          => 'image',
+                'return_format' => 'array',
+                'preview_size'  => 'medium',
+            ];
+        }
+    }
+
+    return $fields;
+}
+
 /* ======================================================
    CHAMPS ACF — enregistrement programmatique
 ====================================================== */
@@ -368,14 +408,8 @@ add_action('acf/init', function () {
             ['key' => 'field_loft_msg_features', 'label' => '🧺 Pour votre confort', 'type' => 'message', 'message' => 'La liste des commodités, affichée en grille avec des icônes automatiques. <strong>Une commodité par ligne.</strong>'],
             ['key' => 'field_loft_features', 'name' => 'loft_features', 'label' => 'Commodités (une par ligne)', 'type' => 'textarea', 'rows' => 8, 'default_value' => "Cuisinette équipée\nWi-Fi gratuit\nTéléviseur intelligent 65\"\nSalle de bain privée\nStationnement gratuit\nLiterie de qualité\nCafetière filtre\nArrivée autonome"],
 
-            /* ---- GALERIE ---- */
-            ['key' => 'field_loft_msg_galerie', 'label' => '📸 Galerie photos', 'type' => 'message', 'message' => 'L\'image mise en avant (encadré « Image mise en avant », colonne de droite) sert de grande photo principale. Ajoutez jusqu\'à 6 photos supplémentaires ci-dessous.'],
-            ['key' => 'field_loft_img1', 'name' => 'loft_img1', 'label' => 'Galerie — Photo 1', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium'],
-            ['key' => 'field_loft_img2', 'name' => 'loft_img2', 'label' => 'Galerie — Photo 2', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium'],
-            ['key' => 'field_loft_img3', 'name' => 'loft_img3', 'label' => 'Galerie — Photo 3', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium'],
-            ['key' => 'field_loft_img4', 'name' => 'loft_img4', 'label' => 'Galerie — Photo 4', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium'],
-            ['key' => 'field_loft_img5', 'name' => 'loft_img5', 'label' => 'Galerie — Photo 5', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium'],
-            ['key' => 'field_loft_img6', 'name' => 'loft_img6', 'label' => 'Galerie — Photo 6', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium'],
+            /* ---- GALERIE PAR PIÈCE (générée) ---- */
+            ...lv_loft_galerie_fields(),
 
             /* ---- RÉSERVATION ---- */
             ['key' => 'field_loft_msg_resa', 'label' => '🔗 Réservation', 'type' => 'message', 'message' => 'Collez les liens de réservation. Reservit s\'affiche en bouton principal, Airbnb en second. Si les deux sont vides, le bouton appelle par téléphone.'],

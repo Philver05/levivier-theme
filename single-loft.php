@@ -11,10 +11,26 @@ $prix       = get_field('loft_prix');
 $prix_sub   = get_field('loft_prix_sub')   ?: 'Tout inclus';
 $features   = get_field('loft_features')   ?: "Cuisinette équipée\nWi-Fi gratuit\nTéléviseur intelligent 65\"\nSalle de bain privée\nStationnement gratuit\nLiterie de qualité\nCafetière filtre\nArrivée autonome";
 
-$galerie = array_filter([
-    get_field('loft_img1'), get_field('loft_img2'), get_field('loft_img3'),
-    get_field('loft_img4'), get_field('loft_img5'), get_field('loft_img6'),
-]);
+/* Galerie par catégorie — une catégorie n'apparaît que si elle a des photos */
+$categories_def = [
+    'Salon'           => 'salon',
+    'Cuisine'         => 'cuisine',
+    'Chambre'         => 'chambre',
+    'Salle de bain'   => 'bain',
+    'Extérieur & vue' => 'ext',
+    'Autres'          => 'autre',
+];
+$galerie_cats = [];
+foreach ($categories_def as $nom => $slug) {
+    $imgs = [];
+    for ($n = 1; $n <= 4; $n++) {
+        $img = get_field("loft_cat_{$slug}_{$n}");
+        if ($img) {
+            $imgs[] = ['full' => $img['url'], 'thumb' => $img['sizes']['large'] ?? $img['url'], 'alt' => $img['alt'] ?: get_the_title()];
+        }
+    }
+    if ($imgs) $galerie_cats[$nom] = $imgs;
+}
 
 $airbnb_url   = get_field('loft_airbnb_url')   ?: get_field('loft_booking_url');
 $reservit_url = get_field('loft_reservit_url');
@@ -56,13 +72,13 @@ foreach (array_filter(array_map('trim', explode("\n", str_replace("\r", '', $hig
     }
 }
 
-/* Photos : image mise en avant + galerie */
+/* Photos à plat pour la mosaïque du haut : couverture + toutes les photos catégorisées */
 $photos = [];
 if (has_post_thumbnail()) {
     $photos[] = ['full' => get_the_post_thumbnail_url(null, 'full'), 'thumb' => get_the_post_thumbnail_url(null, 'large'), 'alt' => get_the_title()];
 }
-foreach ($galerie as $img) {
-    $photos[] = ['full' => $img['url'], 'thumb' => $img['sizes']['large'] ?? $img['url'], 'alt' => $img['alt'] ?: get_the_title()];
+foreach ($galerie_cats as $imgs) {
+    foreach ($imgs as $p) $photos[] = $p;
 }
 
 /* Icône SVG (style ligne, couleur via currentColor) choisie selon un libellé */
@@ -229,9 +245,31 @@ if (!function_exists('lv_loft_icone')) {
     <div class="loft-d-overlay" id="loftOverlay" hidden>
         <button type="button" class="loft-d-overlay-close" id="loftOverlayClose" aria-label="Fermer la galerie">✕</button>
         <div class="loft-d-overlay-inner">
-            <?php foreach ($photos as $p): ?>
-                <img src="<?php echo esc_url($p['full']); ?>" alt="<?php echo esc_attr($p['alt']); ?>" loading="lazy">
-            <?php endforeach; ?>
+            <h2 class="loft-d-overlay-titre">Visite en photos</h2>
+
+            <?php if ($galerie_cats): ?>
+                <nav class="loft-d-overlay-nav">
+                    <?php $ci = 0; foreach ($galerie_cats as $nom => $imgs): ?>
+                        <a href="#loft-cat-<?php echo $ci; ?>"><?php echo esc_html($nom); ?> <span><?php echo count($imgs); ?></span></a>
+                    <?php $ci++; endforeach; ?>
+                </nav>
+                <?php $ci = 0; foreach ($galerie_cats as $nom => $imgs): ?>
+                    <section class="loft-d-overlay-cat" id="loft-cat-<?php echo $ci; ?>">
+                        <h3><?php echo esc_html($nom); ?></h3>
+                        <div class="loft-d-overlay-grille">
+                            <?php foreach ($imgs as $p): ?>
+                                <img src="<?php echo esc_url($p['full']); ?>" alt="<?php echo esc_attr($p['alt']); ?>" loading="lazy">
+                            <?php endforeach; ?>
+                        </div>
+                    </section>
+                <?php $ci++; endforeach; ?>
+            <?php else: ?>
+                <div class="loft-d-overlay-grille">
+                    <?php foreach ($photos as $p): ?>
+                        <img src="<?php echo esc_url($p['full']); ?>" alt="<?php echo esc_attr($p['alt']); ?>" loading="lazy">
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
     <?php endif; ?>
