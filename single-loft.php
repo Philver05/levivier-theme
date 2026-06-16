@@ -21,7 +21,11 @@ $cta_label = get_field('loft_cta_label') ?: 'Réserver sur Airbnb';
 $adresse   = get_field('loft_adresse')   ?: '14, avenue D\'Amours';
 $ville     = get_field('loft_ville')     ?: 'Matane, Québec · Centre-ville';
 $telephone = get_field('loft_telephone') ?: '418 562-5230';
-$carte     = get_field('loft_carte');
+
+/* Carte : embed personnalisé (Maps → Partager → Intégrer) sinon généré depuis l'adresse */
+$map_q     = trim($adresse) . ', Matane, Québec';
+$map_embed = get_field('loft_map_embed') ?: 'https://maps.google.com/maps?q=' . rawurlencode($map_q) . '&z=16&hl=fr&output=embed';
+$map_lien  = 'https://www.google.com/maps/dir/?api=1&destination=' . rawurlencode($map_q);
 
 $type      = get_field('loft_type')      ?: 'Logement de location en entier';
 $voyageurs = get_field('loft_voyageurs') ?: '2';
@@ -166,11 +170,10 @@ if (!function_exists('lv_amenite_icone')) {
         <section class="loft-d-loc">
             <h2 class="loft-d-h2">Pour vous situer</h2>
             <p class="loft-d-loc-adresse"><?php echo esc_html($adresse); ?> · <?php echo esc_html($ville); ?></p>
-            <?php if ($carte): ?>
-                <div class="loft-d-loc-carte">
-                    <img src="<?php echo esc_url($carte['sizes']['large'] ?? $carte['url']); ?>" alt="Carte — <?php echo esc_attr($adresse); ?>" loading="lazy">
-                </div>
-            <?php endif; ?>
+            <div class="loft-d-loc-carte">
+                <iframe src="<?php echo esc_url($map_embed); ?>" title="Carte — <?php echo esc_attr($adresse); ?>" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+            </div>
+            <a href="<?php echo esc_url($map_lien); ?>" target="_blank" rel="noopener" class="loft-d-loc-lien">Obtenir l'itinéraire ↗</a>
         </section>
 
     </div>
