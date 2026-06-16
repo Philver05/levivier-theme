@@ -5091,7 +5091,7 @@ a.producteur-nom:hover {
 .loft-d-hl-icone {
   display: inline-flex;
   flex-shrink: 0;
-  color: var(--sarcelle);
+  color: var(--lofts-terra);
 }
 .loft-d-hl-icone .lv-icone {
   width: 30px;
@@ -5178,7 +5178,7 @@ a.producteur-nom:hover {
   justify-content: center;
   flex-shrink: 0;
   width: 1.7rem;
-  color: var(--sarcelle);
+  color: var(--lofts-terra);
 }
 .loft-d-am-icone .lv-icone { width: 22px; height: 22px; }
 
