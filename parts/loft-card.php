@@ -3,7 +3,8 @@ $badge      = get_field('loft_badge');
 $prix       = get_field('loft_prix');
 $prix_label = get_field('loft_prix_label') ?: 'À partir de';
 $features   = get_field('loft_features');
-$booking    = get_field('loft_booking_url');
+$reservit   = get_field('loft_reservit_url');
+$airbnb     = get_field('loft_airbnb_url') ?: get_field('loft_booking_url');
 $telephone  = get_field('loft_telephone') ?: '418 562-5230';
 $cta_label  = get_field('loft_cta_label') ?: 'Réserver';
 
@@ -11,7 +12,8 @@ $cta_label  = get_field('loft_cta_label') ?: 'Réserver';
 $tags = array_filter(array_map('trim', explode("\n", str_replace("\r", '', (string) $features))));
 $tags = array_slice($tags, 0, 4);
 
-/* Lien réservation : URL si fournie, sinon téléphone */
+/* Lien réservation : Reservit, sinon Airbnb, sinon téléphone */
+$booking   = $reservit ?: $airbnb;
 $lien_resa = $booking ?: 'tel:' . preg_replace('/\D/', '', $telephone);
 ?>
 

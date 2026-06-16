@@ -5198,6 +5198,16 @@ a.producteur-nom:hover {
   color: var(--blanc);
   transform: translateY(-1px);
 }
+.loft-d-resa-btn + .loft-d-resa-btn { margin-top: 0.6rem; }
+.loft-d-resa-btn--secondaire {
+  background: transparent;
+  color: var(--sarcelle);
+  border: 1.5px solid var(--sarcelle);
+}
+.loft-d-resa-btn--secondaire:hover {
+  background: var(--sarcelle);
+  color: var(--blanc);
+}
 .loft-d-resa-note {
   text-align: center;
   font-size: 0.84rem;

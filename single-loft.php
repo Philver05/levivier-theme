@@ -16,8 +16,8 @@ $galerie = array_filter([
     get_field('loft_img4'), get_field('loft_img5'), get_field('loft_img6'),
 ]);
 
-$booking   = get_field('loft_booking_url');
-$cta_label = get_field('loft_cta_label') ?: 'Réserver sur Airbnb';
+$airbnb_url   = get_field('loft_airbnb_url')   ?: get_field('loft_booking_url');
+$reservit_url = get_field('loft_reservit_url');
 $adresse   = get_field('loft_adresse')   ?: '14, avenue D\'Amours';
 $ville     = get_field('loft_ville')     ?: 'Matane, Québec · Centre-ville';
 $telephone = get_field('loft_telephone') ?: '418 562-5230';
@@ -34,8 +34,13 @@ $lits      = get_field('loft_lits')      ?: '1';
 $sdb       = get_field('loft_sdb')       ?: '1';
 $highlights = get_field('loft_highlights') ?: "🚪 | Arrivée autonome | Entrez à votre rythme grâce à la serrure intelligente.\n🅿️ | Stationnement gratuit | Un des rares logements de la région avec stationnement gratuit.\n☕ | Café maison | Commencez la journée du bon pied avec la cafetière filtre.";
 
-$lien_resa  = $booking ?: 'tel:' . preg_replace('/\D/', '', $telephone);
-$resa_attrs = $booking ? ' target="_blank" rel="noopener"' : '';
+/* Options de réservation : Reservit en principal, Airbnb en second, téléphone en repli */
+$resa_options = [];
+if ($reservit_url) $resa_options[] = ['url' => $reservit_url, 'label' => 'Réserver sur Reservit', 'ext' => true];
+if ($airbnb_url)   $resa_options[] = ['url' => $airbnb_url,   'label' => 'Réserver sur Airbnb',   'ext' => true];
+if (!$resa_options) $resa_options[] = ['url' => 'tel:' . preg_replace('/\D/', '', $telephone), 'label' => 'Réserver par téléphone', 'ext' => false];
+$resa_principal = $resa_options[0];
+$resa_en_ligne  = ($reservit_url || $airbnb_url);
 
 /* Liste des commodités */
 $amenites = array_filter(array_map('trim', explode("\n", str_replace("\r", '', $features))));
@@ -87,8 +92,8 @@ if (!function_exists('lv_amenite_icone')) {
 
         <div class="loft-d-titre-row">
             <h1 class="loft-d-titre"><?php the_title(); ?></h1>
-            <?php if ($booking): ?>
-                <a href="<?php echo esc_url($booking); ?>" target="_blank" rel="noopener" class="loft-d-voir-airbnb">Voir sur Airbnb ↗</a>
+            <?php if ($airbnb_url): ?>
+                <a href="<?php echo esc_url($airbnb_url); ?>" target="_blank" rel="noopener" class="loft-d-voir-airbnb">Voir sur Airbnb ↗</a>
             <?php endif; ?>
         </div>
 
@@ -155,9 +160,11 @@ if (!function_exists('lv_amenite_icone')) {
                     <?php if ($prix_sub): ?><p class="loft-d-resa-sub"><?php echo esc_html($prix_sub); ?></p><?php endif; ?>
                     <?php endif; ?>
 
-                    <a href="<?php echo esc_url($lien_resa); ?>"<?php echo $resa_attrs; ?> class="loft-d-resa-btn"><?php echo esc_html($cta_label); ?></a>
+                    <?php foreach ($resa_options as $i => $opt): ?>
+                        <a href="<?php echo esc_url($opt['url']); ?>"<?php echo $opt['ext'] ? ' target="_blank" rel="noopener"' : ''; ?> class="loft-d-resa-btn<?php echo $i === 0 ? '' : ' loft-d-resa-btn--secondaire'; ?>"><?php echo esc_html($opt['label']); ?></a>
+                    <?php endforeach; ?>
 
-                    <p class="loft-d-resa-note"><?php echo $booking ? 'Disponibilités et paiement sécurisé sur Airbnb' : 'Réservez par téléphone, on s\'occupe du reste'; ?></p>
+                    <p class="loft-d-resa-note"><?php echo $resa_en_ligne ? 'Disponibilités et paiement sécurisés en ligne' : 'Réservez par téléphone, on s\'occupe du reste'; ?></p>
 
                     <?php if ($telephone): ?>
                     <a href="tel:<?php echo esc_attr(preg_replace('/\D/', '', $telephone)); ?>" class="loft-d-resa-tel">Ou réservez au <?php echo esc_html($telephone); ?></a>
@@ -191,7 +198,7 @@ if (!function_exists('lv_amenite_icone')) {
 
     <div class="loft-d-barre-mobile">
         <?php if ($prix): ?><span class="loft-d-barre-prix"><?php echo esc_html($prix); ?> <small>/ nuit</small></span><?php endif; ?>
-        <a href="<?php echo esc_url($lien_resa); ?>"<?php echo $resa_attrs; ?> class="loft-d-resa-btn"><?php echo esc_html($cta_label); ?></a>
+        <a href="<?php echo esc_url($resa_principal['url']); ?>"<?php echo $resa_principal['ext'] ? ' target="_blank" rel="noopener"' : ''; ?> class="loft-d-resa-btn"><?php echo esc_html($resa_principal['label']); ?></a>
     </div>
 
 </div>
