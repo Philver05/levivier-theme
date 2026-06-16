@@ -25,11 +25,11 @@
 --bordure:          #d1d5db
 --blanc:            #ffffff
 
---police-accent: professor, sans-serif   ← accents décoratifs uniquement
+--police-accent: professor, sans-serif   ← accents décoratifs + gros titres Lofts
 --police-titre:  "Montserrat"
 --police-corps:  "Montserrat"
 ```
-Playfair Display = sous-marque Lofts uniquement (`template-lofts.php`, `single-loft.php`).
+Sous-marque Lofts: gros titres en Professor (script), reste en Montserrat. Playfair Display n'est plus utilisé.
 
 ## Structure des fichiers
 ```
@@ -85,4 +85,4 @@ style.css        — CSS global + variables (source de vérité)
 - Les polices Professor (woff2 + otf) sont dans `assets/fonts/`.
 
 ## Sous-marque Lofts de la Rivière
-Identité visuelle distincte: couleur sarcelle, Playfair Display. Fichiers: `template-lofts.php`, `single-loft.php`, `parts/loft-card.php`. Ne pas mélanger la charte sarcelle avec la charte principale.
+Identité visuelle distincte: couleur sarcelle + Professor pour les gros titres (script, comme les affiches), Montserrat pour le reste. Fichiers: `template-lofts.php`, `single-loft.php`, `parts/loft-card.php`. Ne pas mélanger la charte sarcelle avec la charte principale.

@@ -7,8 +7,8 @@ get_header();
 if (have_posts()) the_post();
 
 $surtitre = get_field('lofts_surtitre') ?: 'Location touristique · Centre-ville de Matane';
-$intro    = get_field('lofts_intro')    ?: "Nos lofts avec cuisinette, juste au-dessus du Vivier, vous plongent au cœur des saveurs et du terroir de la région. Une adresse authentique pour un séjour mémorable à Matane.";
-$tagline  = get_field('lofts_tagline')  ?: "Séjournez au cœur des saveurs de Matane";
+$intro    = get_field('lofts_intro')    ?: "Deux lofts modernes avec cuisinette, pensés pour qu'il ne vous manque rien. Vous arrivez, vous déposez vos valises, et Matane est déjà à vos pieds.";
+$tagline  = get_field('lofts_tagline')  ?: "Le confort d'un chez-soi, l'énergie de la ville";
 
 /* Commodités (affiche) */
 $amenites = [
@@ -92,7 +92,7 @@ $amenites = [
 
             <?php if ($lofts->have_posts()): ?>
                 <h2 class="lofts-section-titre">Choisissez votre loft</h2>
-                <p class="lofts-section-sous-titre">Deux nids douillets au-dessus du Vivier, prêts à vous accueillir.</p>
+                <p class="lofts-section-sous-titre">Deux ambiances, le même souci du détail. Trouvez celle qui vous ressemble.</p>
                 <div class="lofts-grille">
                     <?php while ($lofts->have_posts()): $lofts->the_post();
                         get_template_part('parts/loft', 'card');
@@ -114,24 +114,24 @@ $amenites = [
             <h2 class="lofts-section-titre lofts-section-titre-clair">Pourquoi vous allez adorer</h2>
             <div class="lofts-reassurance-grille">
                 <div class="lofts-atout">
-                    <span class="lofts-atout-icone" aria-hidden="true">🌿</span>
-                    <h3>Juste au-dessus du Vivier</h3>
-                    <p>Réveillez-vous au-dessus d'une épicerie-boutique qui met les saveurs de la région à l'honneur. Le terroir, à portée de main.</p>
-                </div>
-                <div class="lofts-atout">
                     <span class="lofts-atout-icone" aria-hidden="true">🏙️</span>
-                    <h3>Au cœur du centre-ville</h3>
-                    <p>Restaurants, commerces et bord de mer à quelques pas. Laissez la voiture au stationnement gratuit et explorez à pied.</p>
+                    <h3>Tout à distance de marche</h3>
+                    <p>Restos, cafés, commerces et bord de mer à quelques minutes. Stationnez gratuitement une fois, puis oubliez la voiture.</p>
                 </div>
                 <div class="lofts-atout">
                     <span class="lofts-atout-icone" aria-hidden="true">🧳</span>
-                    <h3>Tout inclus, sans souci</h3>
-                    <p>Cuisinette équipée, Wi-Fi, téléviseur 65", literie et salle de bain privée. Vous n'avez qu'à poser vos valises.</p>
+                    <h3>Rien à apporter</h3>
+                    <p>Cuisinette complète, Wi-Fi rapide, téléviseur 65 pouces et literie soignée. Vous n'avez qu'à vous installer.</p>
+                </div>
+                <div class="lofts-atout">
+                    <span class="lofts-atout-icone" aria-hidden="true">🛒</span>
+                    <h3>Une épicerie sous vos pieds</h3>
+                    <p>Le Vivier vous attend au rez-de-chaussée : produits frais, cafés et prêt-à-manger des artisans d'ici. Le déjeuner commence dans l'escalier.</p>
                 </div>
                 <div class="lofts-atout">
                     <span class="lofts-atout-icone" aria-hidden="true">✔️</span>
-                    <h3>Hébergement certifié</h3>
-                    <p>Location touristique enregistrée (CITQ&nbsp;323422). Réservation simple, séjour en toute confiance.</p>
+                    <h3>Réservez l'esprit tranquille</h3>
+                    <p>Hébergement enregistré (CITQ&nbsp;323422). Échanges directs, conditions claires, aucune surprise à l'arrivée.</p>
                 </div>
             </div>
         </div>
@@ -143,8 +143,8 @@ $amenites = [
     <section class="lofts-cta-finale">
         <div class="conteneur">
             <div class="lofts-cta-interieur">
-                <h2>Réservez votre séjour à Matane</h2>
-                <p>Deux lofts, une adresse unique au cœur des saveurs d'ici. Les disponibilités partent vite&nbsp;: réservez le vôtre.</p>
+                <h2>Vos dates partent vite</h2>
+                <p>Deux lofts seulement, un calendrier qui se remplit. Réservez les vôtres pendant qu'ils sont libres.</p>
                 <a href="#nos-lofts" class="lofts-cta">Voir les lofts et réserver</a>
                 <p class="lofts-contact-ligne">
                     14, avenue D'Amours, Matane (QC) &nbsp;·&nbsp;

@@ -10,7 +10,7 @@ if (have_posts()) the_post();
    ACF + valeurs par défaut — modifiable dans l'admin (page Commander)
 ---------------------------------------------------------- */
 $surtitre = get_field('cmd_surtitre') ?: 'Bon de commande en ligne · Récupérez en magasin';
-$intro    = get_field('cmd_intro')    ?: "Remplissez votre bon de commande en ligne, on prépare tout pour vous, et vous passez récupérer et payer en magasin. Simple, sans déplacement inutile.";
+$intro    = get_field('cmd_intro')    ?: "Commandez en ligne, on prépare votre commande, vous la récupérez et la payez en magasin.";
 
 /* Carte Thés */
 $the_titre = get_field('cmd_the_titre') ?: 'Thés & Infusions';
