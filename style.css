@@ -5089,9 +5089,13 @@ a.producteur-nom:hover {
   gap: 1.1rem;
 }
 .loft-d-hl-icone {
-  font-size: 1.6rem;
-  line-height: 1.2;
+  display: inline-flex;
   flex-shrink: 0;
+  color: var(--sarcelle);
+}
+.loft-d-hl-icone .lv-icone {
+  width: 30px;
+  height: 30px;
 }
 .loft-d-hl-texte { display: flex; flex-direction: column; gap: 0.15rem; }
 .loft-d-hl-texte strong {
@@ -5168,7 +5172,15 @@ a.producteur-nom:hover {
   font-size: 1rem;
   color: var(--lofts-txt);
 }
-.loft-d-am-icone { font-size: 1.25rem; width: 1.6rem; text-align: center; }
+.loft-d-am-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.7rem;
+  color: var(--sarcelle);
+}
+.loft-d-am-icone .lv-icone { width: 22px; height: 22px; }
 
 /* Carte de réservation (collante) */
 .loft-d-resa-col { position: sticky; top: 2rem; }

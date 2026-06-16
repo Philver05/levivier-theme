@@ -361,8 +361,8 @@ add_action('acf/init', function () {
             ['key' => 'field_loft_badge', 'name' => 'loft_badge', 'label' => 'Badge (ex: Disponible / Nouveauté)', 'type' => 'text'],
 
             /* ---- POINTS FORTS ---- */
-            ['key' => 'field_loft_msg_highlights', 'label' => '⭐ Points forts', 'type' => 'message', 'message' => 'Les 3 atouts mis en avant (style Airbnb). <strong>Une ligne par point fort</strong>, au format : <code>emoji | Titre | Description</code>'],
-            ['key' => 'field_loft_highlights', 'name' => 'loft_highlights', 'label' => 'Points forts', 'type' => 'textarea', 'rows' => 4, 'default_value' => "🚪 | Arrivée autonome | Entrez à votre rythme grâce à la serrure intelligente.\n🅿️ | Stationnement gratuit | Un des rares logements de la région avec stationnement gratuit.\n☕ | Café maison | Commencez la journée du bon pied avec la cafetière filtre."],
+            ['key' => 'field_loft_msg_highlights', 'label' => '⭐ Points forts', 'type' => 'message', 'message' => 'Les 3 atouts mis en avant (style Airbnb). <strong>Une ligne par point fort</strong>, au format : <code>Titre | Description</code>. L\'icône est choisie automatiquement selon le titre (stationnement, café, arrivée autonome, etc.).'],
+            ['key' => 'field_loft_highlights', 'name' => 'loft_highlights', 'label' => 'Points forts', 'type' => 'textarea', 'rows' => 4, 'default_value' => "Arrivée autonome | Entrez à votre rythme grâce à la serrure intelligente.\nStationnement gratuit | Un des rares logements de la région avec stationnement gratuit.\nCafé maison | Commencez la journée du bon pied avec la cafetière filtre."],
 
             /* ---- POUR VOTRE CONFORT ---- */
             ['key' => 'field_loft_msg_features', 'label' => '🧺 Pour votre confort', 'type' => 'message', 'message' => 'La liste des commodités, affichée en grille avec des icônes automatiques. <strong>Une commodité par ligne.</strong>'],

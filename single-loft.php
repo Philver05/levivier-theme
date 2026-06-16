@@ -32,7 +32,7 @@ $voyageurs = get_field('loft_voyageurs') ?: '2';
 $chambres  = get_field('loft_chambres')  ?: '1';
 $lits      = get_field('loft_lits')      ?: '1';
 $sdb       = get_field('loft_sdb')       ?: '1';
-$highlights = get_field('loft_highlights') ?: "🚪 | Arrivée autonome | Entrez à votre rythme grâce à la serrure intelligente.\n🅿️ | Stationnement gratuit | Un des rares logements de la région avec stationnement gratuit.\n☕ | Café maison | Commencez la journée du bon pied avec la cafetière filtre.";
+$highlights = get_field('loft_highlights') ?: "Arrivée autonome | Entrez à votre rythme grâce à la serrure intelligente.\nStationnement gratuit | Un des rares logements de la région avec stationnement gratuit.\nCafé maison | Commencez la journée du bon pied avec la cafetière filtre.";
 
 /* Options de réservation : Reservit en principal, Airbnb en second, téléphone en repli */
 $resa_options = [];
@@ -45,11 +45,15 @@ $resa_en_ligne  = ($reservit_url || $airbnb_url);
 /* Liste des commodités */
 $amenites = array_filter(array_map('trim', explode("\n", str_replace("\r", '', $features))));
 
-/* Highlights : "emoji | titre | description" par ligne */
+/* Highlights : "Titre | Description" par ligne (ancien format "emoji | titre | desc" encore accepté) */
 $highlights_list = [];
 foreach (array_filter(array_map('trim', explode("\n", str_replace("\r", '', $highlights)))) as $ligne) {
     $parts = array_map('trim', explode('|', $ligne));
-    if (count($parts) >= 3) $highlights_list[] = $parts;
+    if (count($parts) >= 3) {
+        $highlights_list[] = ['titre' => $parts[1], 'desc' => $parts[2]];
+    } elseif (count($parts) === 2) {
+        $highlights_list[] = ['titre' => $parts[0], 'desc' => $parts[1]];
+    }
 }
 
 /* Photos : image mise en avant + galerie */
@@ -61,26 +65,47 @@ foreach ($galerie as $img) {
     $photos[] = ['full' => $img['url'], 'thumb' => $img['sizes']['large'] ?? $img['url'], 'alt' => $img['alt'] ?: get_the_title()];
 }
 
-/* Icône selon le mot-clé de la commodité */
-if (!function_exists('lv_amenite_icone')) {
-    function lv_amenite_icone($label) {
-        $l = mb_strtolower($label);
-        $map = [
-            'wi-fi' => '📶', 'wifi' => '📶', 'internet' => '📶',
-            'cuisin' => '🍳', 'télé' => '📺', 'tele' => '📺', ' tv' => '📺',
-            'stationnement' => '🅿️', 'parking' => '🅿️',
-            'bain' => '🚿', 'douche' => '🚿',
-            'lit' => '🛏️', 'chambre' => '🛏️', 'literie' => '🛏️',
-            'café' => '☕', 'cafe' => '☕', 'cafetière' => '☕',
-            'laveuse' => '🧺', 'sécheuse' => '🧺', 'buanderie' => '🧺', 'lavage' => '🧺',
-            'arrivée' => '🚪', 'serrure' => '🚪', 'autonome' => '🚪',
-            'eau' => '🌊', 'rivière' => '🌊', 'fleuve' => '🌊',
-            'climatis' => '❄️', 'chauffage' => '🔥', 'corporel' => '🧴', 'produits' => '🧴',
+/* Icône SVG (style ligne, couleur via currentColor) choisie selon un libellé */
+if (!function_exists('lv_loft_icone')) {
+    function lv_loft_icone($label) {
+        $l = ' ' . mb_strtolower($label) . ' ';
+        $mots = [
+            'wifi'      => ['wi-fi', 'wifi', 'internet'],
+            'cuisine'   => ['cuisin'],
+            'tele'      => ['télé', 'tele', ' tv '],
+            'parking'   => ['stationnement', 'parking'],
+            'douche'    => ['bain', 'douche'],
+            'lit'       => ['lit', 'chambre', 'literie', 'couchage'],
+            'cafe'      => ['café', 'cafe', 'cafetière'],
+            'buanderie' => ['laveuse', 'sécheuse', 'buanderie', 'lavage', 'laverie'],
+            'cle'       => ['arrivée', 'serrure', 'autonome', 'clé', 'entrée'],
+            'eau'       => ['eau', 'rivière', 'fleuve', 'mer', 'vue'],
+            'air'       => ['climatis', 'chauffage', 'ventil'],
+            'produits'  => ['corporel', 'produit', 'savon', 'toilette'],
         ];
-        foreach ($map as $mot => $emoji) {
-            if (strpos($l, $mot) !== false) return $emoji;
+        $key = 'check';
+        foreach ($mots as $k => $liste) {
+            foreach ($liste as $m) {
+                if (strpos($l, $m) !== false) { $key = $k; break 2; }
+            }
         }
-        return '✓';
+        $paths = [
+            'wifi'      => '<path d="M4 11a12 12 0 0 1 16 0"/><path d="M7.5 14.5a7 7 0 0 1 9 0"/><path d="M10.5 18a3 3 0 0 1 3 0"/>',
+            'cuisine'   => '<path d="M8 3v18"/><path d="M6 3v5a2 2 0 0 0 4 0V3"/><path d="M16 3v18"/><path d="M16 3c-2 0-3 2-3 4s1 3 3 3"/>',
+            'tele'      => '<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8"/><path d="M12 16v4"/>',
+            'parking'   => '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 16V8h3a2.5 2.5 0 0 1 0 5H9"/>',
+            'douche'    => '<path d="M12 3s6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 6-10 6-10Z"/>',
+            'lit'       => '<path d="M2 17h20"/><path d="M4 17v-4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M4 21v-4"/><path d="M20 21v-4"/><path d="M7 11V9a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v2"/>',
+            'cafe'      => '<path d="M5 8h11v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V8Z"/><path d="M16 9h2a2 2 0 0 1 0 4h-2"/><path d="M8 3v2"/><path d="M11 3v2"/>',
+            'buanderie' => '<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4"/><path d="M7 6h.01"/><path d="M10 6h.01"/>',
+            'cle'       => '<circle cx="8" cy="8" r="4"/><path d="M11 11l9 9"/><path d="M20 17l-2 2"/><path d="M17 14l-2 2"/>',
+            'eau'       => '<path d="M2 9q3-3 6 0t6 0 6 0"/><path d="M2 14q3-3 6 0t6 0 6 0"/><path d="M2 19q3-3 6 0t6 0 6 0"/>',
+            'air'       => '<path d="M4 8h11a3 3 0 1 0-3-3"/><path d="M2 12h15a3 3 0 1 1-3 3"/><path d="M4 16h8a2.5 2.5 0 1 1-2.5 2.5"/>',
+            'produits'  => '<path d="M10 3h4v3l1 2v11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V8l1-2Z"/><path d="M9 12h6"/>',
+            'check'     => '<path d="M4 12l5 5L20 6"/>',
+        ];
+        $inner = $paths[$key] ?? $paths['check'];
+        return '<svg class="lv-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $inner . '</svg>';
     }
 }
 ?>
@@ -121,10 +146,10 @@ if (!function_exists('lv_amenite_icone')) {
                 <ul class="loft-d-highlights">
                     <?php foreach ($highlights_list as $h): ?>
                     <li>
-                        <span class="loft-d-hl-icone" aria-hidden="true"><?php echo esc_html($h[0]); ?></span>
+                        <span class="loft-d-hl-icone" aria-hidden="true"><?php echo lv_loft_icone($h['titre']); ?></span>
                         <span class="loft-d-hl-texte">
-                            <strong><?php echo esc_html($h[1]); ?></strong>
-                            <span class="loft-d-hl-desc"><?php echo esc_html($h[2]); ?></span>
+                            <strong><?php echo esc_html($h['titre']); ?></strong>
+                            <span class="loft-d-hl-desc"><?php echo esc_html($h['desc']); ?></span>
                         </span>
                     </li>
                     <?php endforeach; ?>
@@ -143,7 +168,7 @@ if (!function_exists('lv_amenite_icone')) {
                     <h2 class="loft-d-h2">Pour votre confort</h2>
                     <ul class="loft-d-amenites">
                         <?php foreach ($amenites as $a): ?>
-                            <li><span class="loft-d-am-icone" aria-hidden="true"><?php echo lv_amenite_icone($a); ?></span><?php echo esc_html($a); ?></li>
+                            <li><span class="loft-d-am-icone" aria-hidden="true"><?php echo lv_loft_icone($a); ?></span><?php echo esc_html($a); ?></li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
