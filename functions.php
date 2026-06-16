@@ -3,6 +3,15 @@
 require_once 'includes/post-types.php';
 require_once 'includes/seed-data.php';
 
+/* Avertit dans l'admin si ACF n'est pas actif (sinon aucun champ éditable n'apparaît) */
+add_action('admin_notices', function () {
+    if (!function_exists('get_field')) {
+        echo '<div class="notice notice-error"><p><strong>Le Vivier :</strong> l\'extension <strong>Advanced Custom Fields (ACF)</strong> n\'est pas activée. '
+            . 'Les contenus éditables (lofts, page Commander, promotions, producteurs, etc.) n\'apparaissent pas dans l\'éditeur tant qu\'elle n\'est pas installée et activée. '
+            . '<a href="' . esc_url(admin_url('plugin-install.php?s=advanced+custom+fields&tab=search&type=term')) . '">Installer ACF</a>.</p></div>';
+    }
+});
+
 /* Chargement des styles et scripts */
 function lv_enqueue_scripts_styles()
 {
