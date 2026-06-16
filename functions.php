@@ -68,6 +68,14 @@ add_filter('wp_nav_menu_items', function ($items, $args) {
     return $items;
 }, 10, 2);
 
+/* Univers visuel « Lofts » : classe sur le body pour recolorer header/footer/menu */
+add_filter('body_class', function ($classes) {
+    if (is_singular('loft') || is_page_template('templates/template-lofts.php')) {
+        $classes[] = 'univers-lofts';
+    }
+    return $classes;
+});
+
 /* ======================================================
    PERSONNALISATEUR — Contenu des pages d'archive
    (Apparence → Personnaliser → Page Producteurs / Page Produits)

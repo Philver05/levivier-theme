@@ -5365,3 +5365,63 @@ a.producteur-nom:hover {
   }
   .loft-d-barre-prix small { font-weight: 500; color: var(--texte-moyen); }
 }
+
+/* ======================================================
+   UNIVERS LOFTS — recoloration header / menu / footer
+   (appliqué via la classe body.univers-lofts)
+====================================================== */
+
+/* En-tête : fond crème sarcelle, ombre teintée */
+.univers-lofts .site-header {
+  background-color: #faf0ee;
+  border-bottom: 1px solid rgba(29, 80, 85, 0.15);
+  box-shadow: 0 2px 10px rgba(29, 80, 85, 0.1);
+}
+
+/* Menu : boutons sarcelle au lieu de vert sauge */
+.univers-lofts .menu-principal ul li a {
+  background-color: #1d5055;
+  color: #faf0ee;
+}
+.univers-lofts .menu-principal ul li a:hover {
+  background-color: #174448;
+  color: #ffffff;
+}
+.univers-lofts .menu-principal ul li.current-menu-item a,
+.univers-lofts .menu-principal ul li.current-page-ancestor a {
+  background-color: #c4715a;
+  color: #ffffff;
+}
+
+/* Hamburger mobile en sarcelle */
+.univers-lofts .hamburger-barre {
+  background-color: #1d5055;
+}
+
+/* Bandeau promo (si affiché) accordé à l'univers */
+.univers-lofts .bandeau-promo {
+  background-color: #174448;
+}
+
+/* Pied de page sarcelle au lieu de vert sauge */
+.univers-lofts .site-footer {
+  background-color: #1d5055;
+}
+
+/* Menu mobile déroulant sarcelle */
+@media (max-width: 768px) {
+  .univers-lofts .menu-principal {
+    background-color: #1d5055;
+  }
+  .univers-lofts .menu-principal ul li a {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+  }
+  .univers-lofts .menu-principal ul li a:hover {
+    background-color: rgba(255, 255, 255, 0.22);
+  }
+  .univers-lofts .menu-principal ul li.current-menu-item a,
+  .univers-lofts .menu-principal ul li.current-page-ancestor a {
+    background-color: #c4715a;
+  }
+}
