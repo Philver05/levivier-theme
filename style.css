@@ -4917,3 +4917,397 @@ a.producteur-nom:hover {
     align-items: flex-start;
   }
 }
+
+/* ======================================================
+   PAGE DÉTAIL D'UN LOFT — mise en page style Airbnb
+====================================================== */
+.loft-d-conteneur {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+.loft-d-retour {
+  display: inline-block;
+  font-family: var(--police-titre);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--sarcelle);
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+}
+.loft-d-retour:hover { color: var(--lofts-terra); }
+
+.loft-d-titre-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.loft-d-titre {
+  font-family: var(--police-accent);
+  font-size: clamp(2.6rem, 5vw, 4rem);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--sarcelle);
+  margin: 0;
+}
+
+.loft-d-voir-airbnb {
+  font-family: var(--police-titre);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--sarcelle);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+.loft-d-voir-airbnb:hover { color: var(--lofts-terra); }
+
+/* Galerie mosaïque */
+.loft-d-galerie {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 8px;
+  height: 480px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+}
+
+.loft-d-photo {
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  background-color: var(--sarcelle);
+  background-size: cover;
+  background-position: center;
+  transition: filter 0.25s, transform 0.6s;
+}
+.loft-d-photo:hover { filter: brightness(0.9); }
+
+.loft-d-photo-big {
+  grid-column: 1 / 3;
+  grid-row: 1 / 3;
+}
+
+.loft-d-voir-photos {
+  position: absolute;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  background: var(--blanc);
+  color: var(--lofts-txt);
+  border: 1px solid var(--lofts-txt);
+  border-radius: 10px;
+  padding: 0.6em 1.1em;
+  font-family: var(--police-titre);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s;
+}
+.loft-d-voir-photos:hover { transform: scale(1.04); }
+
+.loft-d-galerie-vide {
+  height: 360px;
+  border-radius: 20px;
+  background: var(--sarcelle);
+  color: var(--lofts-creme);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Corps : 2 colonnes */
+.loft-d-corps {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 3.5rem;
+  align-items: start;
+}
+
+.loft-d-soustitre {
+  font-family: var(--police-titre);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--lofts-txt);
+  margin: 0 0 0.35rem;
+}
+
+.loft-d-meta {
+  font-size: 0.98rem;
+  color: var(--texte-moyen);
+  margin: 0 0 1.75rem;
+}
+
+/* Points forts */
+.loft-d-highlights {
+  list-style: none;
+  margin: 0 0 2rem;
+  padding: 1.75rem 0;
+  border-top: 1px solid var(--bordure);
+  border-bottom: 1px solid var(--bordure);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.loft-d-highlights li {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.1rem;
+}
+.loft-d-hl-icone {
+  font-size: 1.6rem;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+.loft-d-hl-texte { display: flex; flex-direction: column; gap: 0.15rem; }
+.loft-d-hl-texte strong {
+  font-family: var(--police-titre);
+  font-size: 1rem;
+  color: var(--lofts-txt);
+}
+.loft-d-hl-desc {
+  font-size: 0.9rem;
+  color: var(--texte-moyen);
+  line-height: 1.5;
+}
+
+/* Description */
+.loft-d-desc-bloc {
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--bordure);
+  margin-bottom: 2rem;
+}
+.loft-d-desc {
+  position: relative;
+  max-height: 10rem;
+  overflow: hidden;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--lofts-txt);
+}
+.loft-d-desc.is-open { max-height: none; }
+.loft-d-desc:not(.is-open)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3.5rem;
+  background: linear-gradient(transparent, var(--creme));
+}
+.loft-d-desc p { margin: 0 0 1rem; }
+.loft-d-desc-plus {
+  margin-top: 0.75rem;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--police-titre);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--sarcelle);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.loft-d-desc-plus:hover { color: var(--lofts-terra); }
+
+/* Commodités */
+.loft-d-h2 {
+  font-family: var(--police-titre);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--lofts-txt);
+  margin: 0 0 1.5rem;
+}
+.loft-d-amenites {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.1rem 2rem;
+}
+.loft-d-amenites li {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: 1rem;
+  color: var(--lofts-txt);
+}
+.loft-d-am-icone { font-size: 1.25rem; width: 1.6rem; text-align: center; }
+
+/* Carte de réservation (collante) */
+.loft-d-resa-col { position: sticky; top: 2rem; }
+.loft-d-resa-carte {
+  background: var(--blanc);
+  border: 1px solid var(--bordure);
+  border-radius: 18px;
+  padding: 1.75rem;
+  box-shadow: 0 6px 26px rgba(29, 80, 85, 0.12);
+}
+.loft-d-resa-prix {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-bottom: 0.15rem;
+}
+.loft-d-resa-montant {
+  font-family: var(--police-titre);
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--lofts-txt);
+}
+.loft-d-resa-nuit { font-size: 0.95rem; color: var(--texte-moyen); }
+.loft-d-resa-sub {
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lofts-terra);
+  font-weight: 600;
+  margin: 0 0 1.25rem;
+}
+.loft-d-resa-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: var(--lofts-terra);
+  color: var(--blanc);
+  font-family: var(--police-titre);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.95em 1em;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: background-color 0.2s, transform 0.15s;
+}
+.loft-d-resa-btn:hover {
+  background: #a85843;
+  color: var(--blanc);
+  transform: translateY(-1px);
+}
+.loft-d-resa-note {
+  text-align: center;
+  font-size: 0.84rem;
+  color: var(--texte-moyen);
+  margin: 0.9rem 0 0;
+}
+.loft-d-resa-tel {
+  display: block;
+  text-align: center;
+  margin-top: 0.85rem;
+  font-family: var(--police-titre);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--sarcelle);
+  text-decoration: none;
+}
+.loft-d-resa-tel:hover { color: var(--lofts-terra); }
+
+/* Localisation */
+.loft-d-loc {
+  margin-top: 3.5rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--bordure);
+}
+.loft-d-loc-adresse {
+  font-size: 1rem;
+  color: var(--texte-moyen);
+  margin: 0 0 1.5rem;
+}
+.loft-d-loc-carte {
+  border-radius: 18px;
+  overflow: hidden;
+}
+.loft-d-loc-carte img { width: 100%; display: block; }
+
+/* Overlay galerie plein écran */
+.loft-d-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(20, 30, 31, 0.96);
+  overflow-y: auto;
+  padding: 4.5rem 1rem 3rem;
+}
+.loft-d-overlay[hidden] { display: none; }
+.loft-d-overlay-inner {
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.loft-d-overlay-inner img {
+  width: 100%;
+  border-radius: 12px;
+  display: block;
+}
+.loft-d-overlay-close {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--blanc);
+  color: var(--lofts-txt);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+/* Barre de réservation mobile (cachée sur desktop) */
+.loft-d-barre-mobile { display: none; }
+
+@media (max-width: 900px) {
+  .loft-d-corps { grid-template-columns: 1fr; gap: 2.5rem; }
+  .loft-d-resa-col { display: none; }
+
+  .loft-d-galerie {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    height: auto;
+  }
+  .loft-d-galerie .loft-d-photo { height: 240px; }
+  .loft-d-photo-big { grid-column: auto; grid-row: auto; height: 300px !important; }
+  .loft-d-galerie .loft-d-photo:nth-child(n + 4) { display: none; }
+
+  .loft-d-amenites { grid-template-columns: 1fr; }
+
+  .loft-d-barre-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 500;
+    background: var(--blanc);
+    border-top: 1px solid var(--bordure);
+    padding: 0.85rem 1.25rem;
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.1);
+  }
+  .loft-d-barre-mobile .loft-d-resa-btn { width: auto; padding: 0.8em 1.6em; }
+  .loft-d-barre-prix {
+    font-family: var(--police-titre);
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--lofts-txt);
+  }
+  .loft-d-barre-prix small { font-weight: 500; color: var(--texte-moyen); }
+}
