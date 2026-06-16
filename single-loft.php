@@ -38,10 +38,25 @@ $adresse   = get_field('loft_adresse')   ?: '14, avenue D\'Amours';
 $ville     = get_field('loft_ville')     ?: 'Matane, Québec · Centre-ville';
 $telephone = get_field('loft_telephone') ?: '418 562-5230';
 
-/* Carte : embed personnalisé (Maps → Partager → Intégrer) sinon généré depuis l'adresse */
-$map_q     = trim($adresse) . ', Matane, Québec';
-$map_embed = get_field('loft_map_embed') ?: 'https://maps.google.com/maps?q=' . rawurlencode($map_q) . '&z=16&hl=fr&output=embed';
-$map_lien  = 'https://www.google.com/maps/dir/?api=1&destination=' . rawurlencode($map_q);
+/* Carte : code <iframe> complet collé depuis Google Maps, sinon généré depuis l'adresse */
+$map_q       = trim($adresse) . ', Matane, Québec';
+$map_lien    = 'https://www.google.com/maps/dir/?api=1&destination=' . rawurlencode($map_q);
+$map_saisie  = trim((string) get_field('loft_map_embed'));
+
+if ($map_saisie !== '' && stripos($map_saisie, '<iframe') !== false) {
+    /* L'utilisateur a collé le code <iframe> complet : on l'affiche tel quel (nettoyé) */
+    $map_html = wp_kses($map_saisie, [
+        'iframe' => [
+            'src' => true, 'width' => true, 'height' => true, 'style' => true,
+            'frameborder' => true, 'allowfullscreen' => true, 'loading' => true,
+            'referrerpolicy' => true, 'title' => true, 'aria-label' => true,
+        ],
+    ]);
+} else {
+    /* Sinon : une URL d'intégration, ou génération auto depuis l'adresse */
+    $map_src  = $map_saisie ?: 'https://maps.google.com/maps?q=' . rawurlencode($map_q) . '&z=16&hl=fr&output=embed';
+    $map_html = '<iframe src="' . esc_url($map_src) . '" title="Carte — ' . esc_attr($adresse) . '" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>';
+}
 
 /* URL de la page liste des lofts (repérée par son template, repli sur /lofts/) */
 $lofts_page = get_posts([
@@ -244,7 +259,7 @@ if (!function_exists('lv_loft_icone')) {
             <h2 class="loft-d-h2">Pour vous situer</h2>
             <p class="loft-d-loc-adresse"><?php echo esc_html($adresse); ?> · <?php echo esc_html($ville); ?></p>
             <div class="loft-d-loc-carte">
-                <iframe src="<?php echo esc_url($map_embed); ?>" title="Carte — <?php echo esc_attr($adresse); ?>" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                <?php echo $map_html; ?>
             </div>
             <a href="<?php echo esc_url($map_lien); ?>" target="_blank" rel="noopener" class="loft-d-loc-lien">Obtenir l'itinéraire ↗</a>
         </section>

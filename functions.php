@@ -431,7 +431,7 @@ add_action('acf/init', function () {
             ['key' => 'field_loft_msg_loc', 'label' => '📍 Localisation', 'type' => 'message', 'message' => 'La carte Google Maps se génère automatiquement depuis l\'adresse. Pour un placement exact, collez une intégration personnalisée ci-dessous.'],
             ['key' => 'field_loft_adresse', 'name' => 'loft_adresse', 'label' => 'Adresse', 'type' => 'text', 'default_value' => '14, avenue D\'Amours'],
             ['key' => 'field_loft_ville', 'name' => 'loft_ville', 'label' => 'Ville / secteur', 'type' => 'text', 'default_value' => 'Matane, Québec · Centre-ville'],
-            ['key' => 'field_loft_map_embed', 'name' => 'loft_map_embed', 'label' => 'Carte Google Maps (intégration — optionnel)', 'type' => 'url', 'instructions' => 'Optionnel. Google Maps → Partager → Intégrer une carte → copiez seulement le lien entre guillemets après src=. Laissez vide pour générer la carte depuis l\'adresse.'],
+            ['key' => 'field_loft_map_embed', 'name' => 'loft_map_embed', 'label' => 'Carte Google Maps (code d\'intégration — optionnel)', 'type' => 'textarea', 'rows' => 4, 'instructions' => 'Optionnel. Sur Google Maps : Partager → Intégrer une carte → « COPIER LE HTML », puis collez ici tout le code (il commence par &lt;iframe et finit par &lt;/iframe&gt;). Laissez vide pour générer automatiquement la carte depuis l\'adresse.'],
             ['key' => 'field_loft_facebook', 'name' => 'loft_facebook', 'label' => 'Lien Facebook', 'type' => 'url'],
         ],
         'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => 'loft']]],
