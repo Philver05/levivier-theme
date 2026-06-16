@@ -3748,17 +3748,17 @@ a.producteur-nom:hover {
 }
 
 .loft-carte-corps {
-  padding: 1.5rem 1.6rem 1.75rem;
+  padding: 1.4rem 1.5rem 1.6rem;
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .loft-carte-titre {
   font-family: var(--police-titre);
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.35rem;
+  font-weight: 700;
   margin: 0;
   line-height: 1.2;
 }
@@ -3772,10 +3772,37 @@ a.producteur-nom:hover {
   color: var(--lofts-terra);
 }
 
+.loft-carte-meta {
+  font-size: 0.82rem;
+  color: var(--texte-moyen);
+  margin: 0;
+}
+
+.loft-carte-desc {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--texte-moyen);
+  margin: 0.15rem 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.loft-carte-bas {
+  margin-top: auto;
+  padding-top: 1.1rem;
+}
+
 .loft-carte-prix {
   display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
+  align-items: baseline;
+  gap: 0.35rem;
+  margin-bottom: 0.9rem;
+}
+.loft-carte-prix-nuit {
+  font-size: 0.92rem;
+  color: var(--texte-moyen);
 }
 
 .loft-carte-prix-label {
@@ -3789,14 +3816,10 @@ a.producteur-nom:hover {
 
 .loft-carte-prix-montant {
   font-family: var(--police-titre);
-  font-size: 1.9rem;
-  color: var(--sarcelle);
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--lofts-txt);
   line-height: 1;
-}
-
-.loft-carte-prix-montant span {
-  font-size: 1rem;
-  opacity: 0.7;
 }
 
 .loft-carte-tags {
@@ -3819,9 +3842,7 @@ a.producteur-nom:hover {
 
 .loft-carte-actions {
   display: flex;
-  gap: 0.75rem;
-  margin-top: auto;
-  padding-top: 0.5rem;
+  gap: 0.6rem;
 }
 
 .loft-btn-primaire,
@@ -3831,10 +3852,10 @@ a.producteur-nom:hover {
   font-family: var(--police-titre);
   font-size: 0.76rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 0.85em 1em;
-  border-radius: 5px;
+  padding: 0.9em 1em;
+  border-radius: 10px;
   text-decoration: none;
   transition:
     background-color 0.2s,
