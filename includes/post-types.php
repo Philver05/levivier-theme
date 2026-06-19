@@ -232,12 +232,15 @@ function lv_register_article_boutique()
         'labels'        => $labels,
         'description'   => 'Articles non-alimentaires de la boutique Le Vivier',
         'public'        => true,
-        'has_archive'   => true,
+        // Pas d'archive : la Page "Boutique" (template-boutique.php) sert de listing.
+        'has_archive'   => false,
         'show_in_rest'  => false,
         'menu_position' => 6,
         'menu_icon'     => 'dashicons-tag',
         'supports'      => ['title', 'editor', 'thumbnail', 'excerpt'],
-        'rewrite'       => ['slug' => 'boutique'],
+        // Slug 'article-boutique' (et NON 'boutique') : sinon le CPT capture l'URL
+        // /boutique/ et empeche la Page "Boutique" de s'afficher (collision de slug).
+        'rewrite'       => ['slug' => 'article-boutique'],
     ]);
 }
 

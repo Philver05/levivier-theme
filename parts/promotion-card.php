@@ -21,39 +21,41 @@ if ($date_fin) {
         $fin_lisible = $dt->format('j') . ' ' . $mois[(int) $dt->format('n')];
     }
 }
+
+$illu = get_stylesheet_directory_uri() . '/assets/images/illustrations/';
 ?>
 
-<article class="carte-promo">
-    <div class="carte-image">
-        <?php if ($image): ?>
+<article class="promo-carte reveal">
+    <?php if ($rabais): ?>
+        <span class="promo-rabais"><?php echo esc_html($rabais); ?></span>
+    <?php endif; ?>
+
+    <?php if ($image): ?>
+        <div class="promo-img promo-img--photo">
             <img src="<?php echo esc_url($image['sizes']['medium'] ?? $image['url']); ?>"
                  alt="<?php echo esc_attr($image['alt'] ?: get_the_title()); ?>">
-        <?php elseif (has_post_thumbnail()):
-            the_post_thumbnail('medium', ['alt' => get_the_title()]);
-        else: ?>
-            <div class="carte-image-placeholder">
-                <span><?php echo esc_html(mb_substr(get_the_title(), 0, 1)); ?></span>
-            </div>
-        <?php endif; ?>
+        </div>
+    <?php elseif (has_post_thumbnail()): ?>
+        <div class="promo-img promo-img--photo">
+            <?php the_post_thumbnail('medium', ['alt' => get_the_title()]); ?>
+        </div>
+    <?php else: ?>
+        <div class="promo-img"><img src="<?php echo esc_url($illu); ?>petits%20fruits%2001.svg" alt=""></div>
+    <?php endif; ?>
 
-        <?php if ($rabais): ?>
-            <span class="promo-rabais-badge"><?php echo esc_html($rabais); ?></span>
-        <?php endif; ?>
-    </div>
-
-    <div class="carte-contenu">
+    <div class="promo-corps">
         <h3><?php the_title(); ?></h3>
 
         <?php if (get_the_content()): ?>
-            <p class="promo-description"><?php echo esc_html(wp_trim_words(get_the_content(), 18)); ?></p>
+            <p class="promo-desc"><?php echo esc_html(wp_trim_words(get_the_content(), 18)); ?></p>
         <?php endif; ?>
 
-        <div class="promo-prix-zone">
-            <?php if ($prix_pro): ?>
-                <span class="promo-prix-promo"><?php echo esc_html($prix_pro); ?></span>
-            <?php endif; ?>
+        <div class="promo-prix">
             <?php if ($prix_reg): ?>
-                <span class="promo-prix-regulier"><?php echo esc_html($prix_reg); ?></span>
+                <span class="ancien"><?php echo esc_html($prix_reg); ?></span>
+            <?php endif; ?>
+            <?php if ($prix_pro): ?>
+                <span class="neuf"><?php echo esc_html($prix_pro); ?></span>
             <?php endif; ?>
         </div>
 

@@ -9,20 +9,18 @@ $pr_titre    = get_theme_mod('lv_produits_titre', 'Tous nos produits');
 $pr_intro    = get_theme_mod('lv_produits_intro', lv_produits_intro_defaut());
 ?>
 
-<section class="section-archive-producteurs">
+<section class="page-entete">
+    <span class="arche-mini am-terra"></span>
+    <span class="arche-mini am-ocre"></span>
     <div class="conteneur">
+        <?php if ($pr_surtitre): ?><p class="eyebrow"><?php echo esc_html($pr_surtitre); ?></p><?php endif; ?>
+        <?php if ($pr_titre): ?><h1><?php echo esc_html($pr_titre); ?></h1><?php endif; ?>
+        <?php if ($pr_intro): ?><p><?php echo esc_html($pr_intro); ?></p><?php endif; ?>
+    </div>
+</section>
 
-        <header class="archive-producteurs-entete">
-            <?php if ($pr_surtitre): ?>
-                <p class="banniere-surtitre"><?php echo esc_html($pr_surtitre); ?></p>
-            <?php endif; ?>
-            <?php if ($pr_titre): ?>
-                <h1 class="archive-producteurs-titre"><?php echo esc_html($pr_titre); ?></h1>
-            <?php endif; ?>
-            <?php if ($pr_intro): ?>
-                <div class="archive-producteurs-intro"><?php echo wpautop(esc_html($pr_intro)); ?></div>
-            <?php endif; ?>
-        </header>
+<section class="section produits" style="padding-top:clamp(2rem,1rem+3vw,3.5rem)">
+    <div class="conteneur">
 
         <?php
         $categories = get_terms([
@@ -32,11 +30,11 @@ $pr_intro    = get_theme_mod('lv_produits_intro', lv_produits_intro_defaut());
             'order'      => 'ASC',
         ]);
         ?>
-        <nav class="filtre-categories" aria-label="Filtrer par catégorie">
-            <a href="#" class="filtre-lien actif" data-cat="tout">Tout voir</a>
+        <nav class="filtres" aria-label="Filtrer par catégorie">
+            <a href="#" class="filtre filtre-lien actif" data-cat="tout">Tout voir</a>
             <?php if ($categories && !is_wp_error($categories)):
                 foreach ($categories as $cat): ?>
-                    <a href="#" class="filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
+                    <a href="#" class="filtre filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
                         <?php echo esc_html($cat->name); ?>
                     </a>
             <?php endforeach; endif; ?>
@@ -51,13 +49,13 @@ $pr_intro    = get_theme_mod('lv_produits_intro', lv_produits_intro_defaut());
             'order'          => 'ASC',
         ]);
         ?>
-        <div class="grille-cartes-4" id="grille-produits">
+        <div class="grille-cartes" id="grille-produits">
             <?php if ($produits->have_posts()):
                 while ($produits->have_posts()): $produits->the_post();
                     get_template_part('parts/produit', 'card');
                 endwhile; wp_reset_postdata();
             else: ?>
-                <p class="epicerie-vide">Les produits arrivent bientôt — revenez nous voir&nbsp;!</p>
+                <p class="grille-vide">Les produits arrivent bientôt — revenez nous voir&nbsp;!</p>
             <?php endif; ?>
         </div>
 

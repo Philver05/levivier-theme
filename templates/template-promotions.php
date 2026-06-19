@@ -10,36 +10,42 @@ $intro = get_field('promo_page_intro') ?: "Chaque semaine, profitez de rabais ex
 ?>
 
 <!-- ======================================================
-     HÉROS
+     EN-TÊTE
 ====================================================== -->
-<section class="section-hero-direct section-hero-direct--rose">
+<section class="page-entete">
+    <span class="arche-mini am-terra"></span>
+    <span class="arche-mini am-ocre"></span>
     <div class="conteneur">
-        <p class="banniere-surtitre">Offres de la semaine</p>
-        <h1 class="hero-direct-titre"><?php the_title(); ?></h1>
-        <div class="hero-direct-accroche"><?php echo wpautop(esc_html($intro)); ?></div>
+        <p class="eyebrow">Offres de la semaine</p>
+        <h1><?php the_title(); ?></h1>
+        <p><?php echo wp_kses_post($intro); ?></p>
     </div>
 </section>
 
 <!-- ======================================================
      PROMOS ACTIVES
 ====================================================== -->
-<section class="section-promotions">
+<section class="section produits">
     <div class="conteneur">
 
-        <h2 class="titre-section-centre">En promotion cette semaine</h2>
-        <p class="sous-titre-section">Des rabais qui changent au fil des arrivages</p>
+        <div class="section-titre">
+            <h2>En promotion cette semaine</h2>
+            <p>Des rabais qui changent au fil des arrivages</p>
+        </div>
 
         <?php $promos = lv_get_promotions_actives(); ?>
 
         <?php if ($promos->have_posts()): ?>
-            <div class="grille-cartes-4 grille-promos">
+            <div class="promo-grille">
                 <?php while ($promos->have_posts()): $promos->the_post();
                     get_template_part('parts/promotion', 'card');
                 endwhile; wp_reset_postdata(); ?>
             </div>
         <?php else: ?>
-            <div class="promos-vide">
-                <span class="promos-vide-icone">🌱</span>
+            <div class="etat-vide">
+                <span class="etat-vide-icone" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M5 21c0-7 5-13 14-14-1 9-7 14-14 14Z"/><path d="M5 21c2-5 6-8 10-9"/></svg>
+                </span>
                 <h3>Aucune promotion en cours pour le moment</h3>
                 <p>Nos prochaines offres arrivent bientôt. Revenez nous voir ou suivez-nous sur Facebook pour ne rien manquer&nbsp;!</p>
             </div>

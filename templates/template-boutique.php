@@ -6,60 +6,45 @@ get_header();
 ?>
 
 <!-- ======================================================
-     HÉROS
+     EN-TÊTE
 ====================================================== -->
-<section class="section-hero-direct section-hero-direct--sauge">
+<section class="page-entete">
+    <span class="arche-mini am-terra"></span>
+    <span class="arche-mini am-ocre"></span>
     <div class="conteneur">
         <?php if (have_posts()): the_post(); ?>
-        <p class="banniere-surtitre">Boutique · Le Vivier</p>
-        <h1 class="hero-direct-titre"><?php the_title(); ?></h1>
-        <div class="hero-direct-accroche">
+            <p class="eyebrow">Boutique · Le Vivier</p>
+            <h1><?php the_title(); ?></h1>
             <?php if (get_the_content()): the_content(); else: ?>
                 <p>Des objets beaux et utiles pour un quotidien plus durable : zéro déchet, naturels, et fièrement fabriqués au Québec.</p>
             <?php endif; ?>
-        </div>
         <?php endif; ?>
     </div>
 </section>
 
 <!-- ======================================================
-     VALEURS — 3 icônes (fond sauge-pale)
+     VALEURS — 3 atouts au trait
 ====================================================== -->
-<section class="section-boutique-valeurs">
+<section class="section section-compacte engagements">
     <div class="conteneur">
-        <div class="boutique-valeurs-grille">
-            <div class="boutique-valeur-item">
-                <span class="boutique-valeur-icone">♻️</span>
+        <div class="engagements-grille cols-3">
+            <div class="engagement reveal">
+                <span class="ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 13-6l2 2M20 12a8 8 0 0 1-13 6l-2-2"/><path d="M19 4v4h-4M5 20v-4h4"/></svg>
+                </span>
                 <h3>Zéro déchet</h3>
                 <p>Des alternatives durables pour réduire l'empreinte au quotidien.</p>
             </div>
-            <div class="boutique-valeur-item">
-                <span class="boutique-valeur-icone">🌿</span>
-                <h3>Naturel & Éco</h3>
+            <div class="engagement reveal reveal-delai-1">
+                <span class="ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M5 21c0-7 5-13 14-14-1 9-7 14-14 14Z"/><path d="M5 21c2-5 6-8 10-9"/></svg>
+                </span>
+                <h3>Naturel &amp; Éco</h3>
                 <p>Cosmétiques, produits ménagers et corporels respectueux de l'environnement.</p>
             </div>
-            <div class="boutique-valeur-item">
-                <span class="boutique-valeur-icone">
-                    <svg class="drapeau-qc" viewBox="0 0 90 60" width="44" height="29" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Drapeau du Québec">
-                        <defs>
-                            <g id="lv-qc-lis">
-                                <path d="M7 .5C5 4 5.6 7 7 8.5 8.4 7 9 4 7 .5Z"/>
-                                <path d="M6.6 9C3 8 1 10.5 2.6 12.7 3.6 14 6 13.2 6.7 11.3Z"/>
-                                <path d="M7.4 9C11 8 13 10.5 11.4 12.7 10.4 14 8 13.2 7.3 11.3Z"/>
-                                <path d="M2.8 11.2C5 10.2 9 10.2 11.2 11.2L11.2 13C9 12 5 12 2.8 13Z"/>
-                                <path d="M5.7 12.6L8.3 12.6C8.3 15 9.1 17 10.2 18L3.8 18C4.9 17 5.7 15 5.7 12.6Z"/>
-                            </g>
-                        </defs>
-                        <rect width="90" height="60" rx="5" fill="#003DA5"/>
-                        <rect x="39" width="12" height="60" fill="#fff"/>
-                        <rect y="24" width="90" height="12" fill="#fff"/>
-                        <g fill="#fff">
-                            <use href="#lv-qc-lis" x="12" y="2.5"/>
-                            <use href="#lv-qc-lis" x="66" y="2.5"/>
-                            <use href="#lv-qc-lis" x="12" y="38.5"/>
-                            <use href="#lv-qc-lis" x="66" y="38.5"/>
-                        </g>
-                    </svg>
+            <div class="engagement reveal reveal-delai-2">
+                <span class="ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M12 21s7-6.6 7-12a7 7 0 1 0-14 0c0 5.4 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>
                 </span>
                 <h3>Fait au Québec</h3>
                 <p>Des artisans locaux et des produits fabriqués ici, pour consommer autrement.</p>
@@ -71,10 +56,12 @@ get_header();
 <!-- ======================================================
      ARTICLES BOUTIQUE
 ====================================================== -->
-<section class="section-articles-boutique" id="articles">
+<section class="section produits" id="articles">
     <div class="conteneur">
 
-        <h2 class="titre-section">Nos articles</h2>
+        <div class="section-titre">
+            <h2>Nos articles</h2>
+        </div>
 
         <!-- Filtres par catégorie boutique -->
         <?php
@@ -85,11 +72,11 @@ get_header();
             'order'      => 'ASC',
         ]);
         ?>
-        <nav class="filtre-categories" aria-label="Filtrer par catégorie">
-            <a href="#" class="filtre-lien actif" data-cat="tout">Tout voir</a>
+        <nav class="filtres" aria-label="Filtrer par catégorie">
+            <a href="#" class="filtre filtre-lien actif" data-cat="tout">Tout voir</a>
             <?php if ($categories_boutique && !is_wp_error($categories_boutique)):
                 foreach ($categories_boutique as $cat): ?>
-                    <a href="#" class="filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
+                    <a href="#" class="filtre filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
                         <?php echo esc_html($cat->name); ?>
                     </a>
             <?php endforeach; endif; ?>
@@ -105,14 +92,14 @@ get_header();
             'order'          => 'ASC',
         ]);
         ?>
-        <div class="grille-cartes-4" id="grille-boutique">
+        <div class="grille-cartes" id="grille-boutique">
             <?php if ($articles->have_posts()):
                 while ($articles->have_posts()): $articles->the_post();
                     get_template_part('parts/boutique', 'card');
                 endwhile;
                 wp_reset_postdata();
             else: ?>
-                <p class="epicerie-vide">Les articles arrivent bientôt — revenez nous voir !</p>
+                <p class="grille-vide">Les articles arrivent bientôt — revenez nous voir !</p>
             <?php endif; ?>
         </div>
 

@@ -32,70 +32,64 @@ if (!function_exists('lv_lignes')) {
 ?>
 
 <!-- ======================================================
-     HÉROS COMPACT — action immédiate
+     EN-TÊTE
 ====================================================== -->
-<section class="section-commander-hero">
+<section class="page-entete">
+    <span class="arche-mini am-terra"></span>
+    <span class="arche-mini am-ocre"></span>
     <div class="conteneur">
-        <p class="banniere-surtitre"><?php echo esc_html($surtitre); ?></p>
-        <h1 class="commander-hero-titre"><?php the_title(); ?></h1>
-        <p class="commander-hero-accroche"><?php echo esc_html($intro); ?></p>
-    
+        <p class="eyebrow"><?php echo esc_html($surtitre); ?></p>
+        <h1><?php the_title(); ?></h1>
+        <p><?php echo esc_html($intro); ?></p>
     </div>
 </section>
 
 <!-- ======================================================
-     COMMENT ÇA FONCTIONNE — 4 étapes (en haut, sans hésitation)
+     COMMENT ÇA FONCTIONNE — 4 étapes
 ====================================================== -->
-<section class="section-commander-etapes">
+<section class="section section-compacte engagements">
     <div class="conteneur">
-
-        <h2 class="titre-section-centre">Quatre étapes, quelques minutes, zéro déplacement inutile</h2>
-
-        <div class="grille-etapes grille-etapes-4">
-
-            <div class="carte-etape">
-                <span class="etape-numero">1</span>
-                <h3>Choisissez votre bon de commande </h3>
-                <p>Sélectionner le bon de commande correspondant à vos besoins.</p>
-            </div>
-
-            <div class="carte-etape">
-                <span class="etape-numero">2</span>
-                <h3>Sélectionnez vos produits</h3>
-                <p> Indiquez les quantités et profitez de rabais selon les quantités choisies.</p>
-            </div>
-
-            <div class="carte-etape">
-                <span class="etape-numero">3</span>
-                <h3>Envoyez votre bon de commande</h3>
-                <p>Gagnez du temps : on s'occupe de rassembler et de préparer soigneusement votre commande.</p>
-            </div>
-
-            <div class="carte-etape">
-                <span class="etape-numero">4</span>
-                <h3>Récupérez en magasin</h3>
-                <p>Récupérez en magasin : Recevez un message lorsque votre commande est prête, puis passez en magasin pour la payer et la récupérer.</p>
-            </div>
-
+        <div class="section-titre">
+            <h2>Quatre étapes, quelques minutes, zéro déplacement inutile</h2>
         </div>
 
-        <!-- <div class="section-lien-centre">
-            <a href="#bons-de-commande" class="bouton-primaire">Remplir mon bon de commande</a>
-        </div> -->
-
+        <ol class="etapes">
+            <li class="etape reveal">
+                <span class="etape-num">1</span>
+                <h3>Choisissez votre bon de commande</h3>
+                <p>Sélectionnez le bon de commande correspondant à vos besoins.</p>
+            </li>
+            <li class="etape reveal reveal-delai-1">
+                <span class="etape-num">2</span>
+                <h3>Sélectionnez vos produits</h3>
+                <p>Indiquez les quantités et profitez de rabais selon les quantités choisies.</p>
+            </li>
+            <li class="etape reveal reveal-delai-2">
+                <span class="etape-num">3</span>
+                <h3>Envoyez votre bon de commande</h3>
+                <p>Gagnez du temps : on s'occupe de rassembler et de préparer soigneusement votre commande.</p>
+            </li>
+            <li class="etape reveal reveal-delai-3">
+                <span class="etape-num">4</span>
+                <h3>Récupérez en magasin</h3>
+                <p>Recevez un message lorsque votre commande est prête, puis passez en magasin pour la payer et la récupérer.</p>
+            </li>
+        </ol>
     </div>
 </section>
 
 <!-- ======================================================
-     LES BONS DE COMMANDE — l'action
+     LES BONS DE COMMANDE
 ====================================================== -->
-<section class="section-commander-produits" id="bons-de-commande">
+<section class="section produits" id="bons-de-commande">
     <div class="conteneur">
 
-        <h2 class="titre-section-centre">Choisissez votre bon de commande</h2>
-        <p class="sous-titre-section">Choisissez le bon qu'il vous faut et remplissez-le en ligne</p>
+        <div class="section-titre">
+            <h2>Choisissez votre bon de commande</h2>
+            <p>Choisissez le bon qu'il vous faut et remplissez-le en ligne</p>
+        </div>
 
-        <div class="commander-cartes-grille">
+        <div class="cmd-grille">
             <?php
             $bons = new WP_Query([
                 'post_type'      => 'bon_commande',
@@ -112,27 +106,31 @@ if (!function_exists('lv_lignes')) {
             else: ?>
 
                 <!-- Repli : les bons définis dans les champs de la page -->
-                <div class="commander-carte">
-                    <div class="commander-carte-icone commander-carte-icone--terracotta">🍵</div>
-                    <div class="commander-carte-corps">
+                <div class="cmd-carte reveal">
+                    <div class="cmd-carte-haut">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h13v4a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8Z"/><path d="M17 9h2a2 2 0 0 1 0 4h-2"/><path d="M8 3c-.5 1 .5 2 0 3M12 3c-.5 1 .5 2 0 3"/></svg>
+                    </div>
+                    <div class="cmd-carte-corps">
                         <h3><?php echo esc_html($the_titre); ?></h3>
                         <p><?php echo esc_html($the_texte); ?></p>
-                        <ul class="commander-produits-liste">
+                        <ul class="cmd-liste">
                             <?php foreach (lv_lignes($the_liste) as $item): ?><li><?php echo esc_html($item); ?></li><?php endforeach; ?>
                         </ul>
-                        <a href="<?php echo esc_url($the_url); ?>" target="_blank" rel="noopener" class="bouton-primaire commander-carte-cta">Commander des thés →</a>
+                        <a href="<?php echo esc_url($the_url); ?>" target="_blank" rel="noopener" class="btn btn-primaire">Commander des thés</a>
                     </div>
                 </div>
 
-                <div class="commander-carte">
-                    <div class="commander-carte-icone commander-carte-icone--sauge">🌾</div>
-                    <div class="commander-carte-corps">
+                <div class="cmd-carte reveal reveal-delai-1">
+                    <div class="cmd-carte-haut">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V9"/><path d="M12 9c0-2.2 1.6-3.5 3.5-3.5C15.5 7.7 14 9 12 9Zm0 0c0-2.2-1.6-3.5-3.5-3.5C8.5 7.7 10 9 12 9Zm0 4c0-2.2 1.6-3.5 3.5-3.5C15.5 11.7 14 13 12 13Zm0 0c0-2.2-1.6-3.5-3.5-3.5C8.5 11.7 10 13 12 13Z"/></svg>
+                    </div>
+                    <div class="cmd-carte-corps">
                         <h3><?php echo esc_html($vrac_titre); ?></h3>
                         <p><?php echo esc_html($vrac_texte); ?></p>
-                        <ul class="commander-produits-liste">
+                        <ul class="cmd-liste">
                             <?php foreach (lv_lignes($vrac_liste) as $item): ?><li><?php echo esc_html($item); ?></li><?php endforeach; ?>
                         </ul>
-                        <a href="<?php echo esc_url($vrac_url); ?>" target="_blank" rel="noopener" class="bouton-primaire commander-carte-cta">Commander en vrac →</a>
+                        <a href="<?php echo esc_url($vrac_url); ?>" target="_blank" rel="noopener" class="btn btn-primaire">Commander en vrac</a>
                     </div>
                 </div>
 
@@ -144,14 +142,14 @@ if (!function_exists('lv_lignes')) {
 <!-- ======================================================
      RELANCE FINALE
 ====================================================== -->
-<section class="section-commander-relance">
+<section class="section">
     <div class="conteneur">
-        <div class="commander-relance-interieur">
+        <div class="cta-panel reveal">
             <h2>Prêt à gagner du temps&nbsp;?</h2>
             <p>Remplissez votre bon de commande dès maintenant — on s'occupe du reste. Une question&nbsp;? Appelez-nous au <a href="tel:+14185625230">(418)&nbsp;562-5230</a>.</p>
-            <div class="commander-hero-actions">
-                <a href="<?php echo esc_url($the_url); ?>" target="_blank" rel="noopener" class="bouton-primaire">Commander des thés</a>
-                <a href="<?php echo esc_url($vrac_url); ?>" target="_blank" rel="noopener" class="bouton-secondaire">Commander en vrac</a>
+            <div class="cta-panel-actions">
+                <a href="<?php echo esc_url($the_url); ?>" target="_blank" rel="noopener" class="btn btn-clair">Commander des thés</a>
+                <a href="<?php echo esc_url($vrac_url); ?>" target="_blank" rel="noopener" class="btn btn-contour">Commander en vrac</a>
             </div>
         </div>
     </div>

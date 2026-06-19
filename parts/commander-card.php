@@ -16,26 +16,26 @@ if (!function_exists('lv_lignes')) {
 }
 ?>
 
-<div class="commander-carte<?php echo $url ? '' : ' commander-carte--bientot'; ?>">
-    <div class="commander-carte-image<?php echo $image ? '' : ' commander-carte-image-vide'; ?>">
+<div class="cmd-carte reveal<?php echo $url ? '' : ' cmd-carte--bientot'; ?>">
+    <div class="cmd-carte-haut">
         <?php if ($image): ?>
             <img src="<?php echo esc_url($image['sizes']['medium_large'] ?? $image['url']); ?>"
                  alt="<?php echo esc_attr($image['alt'] ?: get_the_title()); ?>">
         <?php else: ?>
-            <span aria-hidden="true">🛒</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h16l-1.5 9a2 2 0 0 1-2 1.6H8.5a2 2 0 0 1-2-1.6L4 4H2"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg>
         <?php endif; ?>
         <?php if (!$url): ?>
-            <span class="commander-carte-badge-bientot">Bientôt</span>
+            <span class="cmd-badge-bientot">Bientôt</span>
         <?php endif; ?>
     </div>
-    <div class="commander-carte-corps">
+    <div class="cmd-carte-corps">
         <h3><?php the_title(); ?></h3>
         <?php if ($description): ?>
             <p><?php echo esc_html($description); ?></p>
         <?php endif; ?>
 
         <?php $items = lv_lignes($liste); if ($items): ?>
-        <ul class="commander-produits-liste">
+        <ul class="cmd-liste">
             <?php foreach ($items as $item): ?>
                 <li><?php echo esc_html($item); ?></li>
             <?php endforeach; ?>
@@ -43,9 +43,9 @@ if (!function_exists('lv_lignes')) {
         <?php endif; ?>
 
         <?php if ($url): ?>
-            <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener" class="bouton-primaire commander-carte-cta"><?php echo esc_html($cta); ?> →</a>
+            <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener" class="btn btn-primaire"><?php echo esc_html($cta); ?></a>
         <?php else: ?>
-            <span class="commander-carte-cta commander-carte-cta--bientot">Bientôt disponible</span>
+            <span class="btn btn-fantome cmd-cta-bientot">Bientôt disponible</span>
         <?php endif; ?>
     </div>
 </div>

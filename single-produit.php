@@ -16,69 +16,57 @@ $prix  = get_field('produit_prix');
 $badge = get_field('produit_badge');
 
 /* Catégorie */
-$terms_cat     = get_the_terms(get_the_ID(), 'categorie_produit');
+$terms_cat      = get_the_terms(get_the_ID(), 'categorie_produit');
 $categorie_nom  = ($terms_cat && !is_wp_error($terms_cat)) ? $terms_cat[0]->name : '';
 $categorie_slug = ($terms_cat && !is_wp_error($terms_cat)) ? $terms_cat[0]->slug : '';
 
-/* Classe badge */
-$classes_badge = 'carte-badge';
-if ($badge === 'Bio')    $classes_badge .= ' bio';
-if ($badge === 'Frais')  $classes_badge .= ' frais';
-if ($badge === 'Maison') $classes_badge .= ' maison';
+$url_epicerie = get_permalink(get_page_by_path('epicerie'));
+$illu = get_stylesheet_directory_uri() . '/assets/images/illustrations/';
 ?>
 
-<!-- ======================================================
-     HÉROS PRODUIT
-====================================================== -->
-<section class="section-hero section-hero-produit">
-    <div class="hero-interieur">
+<section class="section section-detail">
+    <div class="conteneur">
 
-        <!-- Image -->
-        <div class="hero-image-cadre">
-            <div class="hero-image produit-single-image">
+        <p class="fil"><a href="<?php echo esc_url($url_epicerie); ?>#produits">← Retour aux produits</a></p>
+
+        <div class="single-grille" style="margin-top:1.4rem">
+
+            <div class="single-media<?php echo has_post_thumbnail() ? ' single-media--photo' : ''; ?> reveal">
                 <?php if (has_post_thumbnail()):
                     the_post_thumbnail('large', ['alt' => get_the_title()]);
                 else: ?>
-                    <div class="produit-placeholder-img"></div>
+                    <img src="<?php echo esc_url($illu); ?>fleur%2005.svg" alt="">
                 <?php endif; ?>
+            </div>
+
+            <div class="single-info reveal">
+                <?php if ($categorie_nom): ?>
+                    <span class="cat"><?php echo esc_html($categorie_nom); ?></span>
+                <?php endif; ?>
+
+                <h1><?php the_title(); ?></h1>
 
                 <?php if ($badge): ?>
-                    <span class="<?php echo esc_attr($classes_badge); ?> badge-single"><?php echo esc_html($badge); ?></span>
+                    <span class="single-badge"><?php echo esc_html($badge); ?></span>
                 <?php endif; ?>
-            </div>
-        </div>
 
-        <!-- Infos -->
-        <div class="hero-texte">
-            <a href="<?php echo esc_url(get_permalink(get_page_by_path('epicerie'))); ?>#produits"
-               class="retour-lien">← Retour aux produits</a>
-
-            <?php if ($categorie_nom): ?>
-                <p class="banniere-surtitre"><?php echo esc_html($categorie_nom); ?></p>
-            <?php endif; ?>
-
-            <h1><?php the_title(); ?></h1>
-
-            <?php if ($prix): ?>
-                <p class="produit-single-prix"><?php echo esc_html($prix); ?></p>
-            <?php endif; ?>
-
-            <?php if (get_the_content()): ?>
-            <div class="produit-single-desc corps-article">
-                <?php the_content(); ?>
-            </div>
-            <?php endif; ?>
-
-            <div class="hero-actions">
-                <a href="<?php echo esc_url(get_permalink(get_page_by_path('epicerie'))); ?>#produits"
-                   class="bouton-secondaire">← Tous les produits</a>
-                <?php if ($categorie_slug): ?>
-                <a href="<?php echo esc_url(get_permalink(get_page_by_path('epicerie'))); ?>?cat=<?php echo esc_attr($categorie_slug); ?>#produits"
-                   class="bouton-primaire">Voir <?php echo esc_html($categorie_nom); ?></a>
+                <?php if ($prix): ?>
+                    <p class="single-prix"><?php echo esc_html($prix); ?></p>
                 <?php endif; ?>
-            </div>
-        </div>
 
+                <?php if (get_the_content()): ?>
+                    <div class="desc"><?php the_content(); ?></div>
+                <?php endif; ?>
+
+                <div class="hero-actions" style="margin-top:1.6rem">
+                    <a href="<?php echo esc_url($url_epicerie); ?>#produits" class="btn btn-fantome">← Tous les produits</a>
+                    <?php if ($categorie_slug): ?>
+                    <a href="<?php echo esc_url($url_epicerie); ?>?cat=<?php echo esc_attr($categorie_slug); ?>#produits" class="btn btn-primaire">Voir <?php echo esc_html($categorie_nom); ?></a>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+        </div>
     </div>
 </section>
 

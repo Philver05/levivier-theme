@@ -1,48 +1,52 @@
-        </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="footer-interieur">
-            <div class="footer-marque">
-                <a class="footer-nom" href="<?php echo esc_url(home_url('/')); ?>">
-                    <?php bloginfo('name'); ?>
-                </a>
-                <p>Épicerie fine locale à Matane.<br>Produits locaux, frais et durables.</p>
+    <footer class="pied">
+        <div class="conteneur pied-grille">
+            <div class="pied-marque">
+                <div class="logo"><?php bloginfo('name'); ?></div>
+                <p>Produits locaux, frais et durables, à Matane.</p>
                 <p>14 Avenue D'Amours<br>Matane, QC G4W 2X4</p>
                 <p>
                     <a href="tel:+14185625230">(418) 562-5230</a><br>
                     <a href="mailto:epicerie@levivier.net">epicerie@levivier.net</a>
                 </p>
             </div>
-            <div class="footer-col">
+            <div>
                 <h4>Navigation</h4>
-                <?php
-                wp_nav_menu([
-                    'menu'            => 'principal',
-                    'container'       => false,
-                    'depth'           => 1,
-                    'lv_footer'       => true,
-                ]);
-                ?>
+                <ul class="pied-nav">
+                    <?php
+                    // Navigation complete auto : toutes les pages publiees...
+                    wp_list_pages([
+                        'title_li'    => '',
+                        'sort_column' => 'menu_order, post_title',
+                    ]);
+                    // ...plus les archives qui ne sont pas des Pages.
+                    $arch_producteur = get_post_type_archive_link('producteur');
+                    if ($arch_producteur) {
+                        echo '<li class="page_item"><a href="' . esc_url($arch_producteur) . '">Producteurs</a></li>';
+                    }
+                    $arch_produit = get_post_type_archive_link('produit');
+                    if ($arch_produit) {
+                        echo '<li class="page_item"><a href="' . esc_url($arch_produit) . '">Produits</a></li>';
+                    }
+                    ?>
+                </ul>
             </div>
-            <div class="footer-col">
+            <div>
                 <h4>Horaires</h4>
                 <ul>
-                    <li>Lun&ndash;Ven : 8 h 30 &ndash; 18 h</li>
-                    <li>Samedi : 9 h &ndash; 17 h</li>
-                    <li>Dimanche : 10 h &ndash; 17 h</li>
+                    <li>Lun - Ven : 8 h 30 - 18 h</li>
+                    <li>Samedi : 9 h - 17 h</li>
+                    <li>Dimanche : 10 h - 17 h</li>
                 </ul>
-                <br>
-                <h4>Suivez-nous</h4>
+                <h4 style="margin-top:1.4rem">Suivez-nous</h4>
                 <ul>
                     <li><a href="https://facebook.com/epicerielevivier/" target="_blank" rel="noopener">Facebook</a></li>
                 </ul>
             </div>
         </div>
-        <div class="footer-bas">
-            <p class="footer-copyright">
-                &copy; <?php echo wp_date('Y'); ?> Le Vivier &mdash; Épicerie fine locale, Matane, Québec
-            </p>
+        <div class="pied-bas">
+            &copy; <?php echo wp_date('Y'); ?> Le Vivier · Matane, Québec
         </div>
     </footer>
 

@@ -1,4949 +1,775 @@
 /*
 Theme Name: Le Vivier
 Author: Philippe Verlain
-Version: 1.0.0
-Description: Thème personnalisé pour l'épicerie fine locale Le Vivier, Matane, Québec
+Version: 1.1.0
+Description: Theme personnalise pour l'epicerie fine locale Le Vivier, Matane, Quebec. Refonte 2026 (design system bouquet + univers Lofts sarcelle).
 */
 
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap");
 
 @font-face {
-  font-family: professor;
-  src:
-    url("assets/fonts/Professor.woff2") format("woff2"),
-    url("assets/fonts/Professor.otf") format("opentype");
+  font-family: "Professor";
+  src: url("assets/fonts/Professor.woff2") format("woff2"),
+       url("assets/fonts/Professor.otf") format("opentype");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
 }
 
-/* ======================================================
-   VARIABLES
-====================================================== */
-
+/* ------------------------------------------------------------------ TOKENS */
 :root {
-  --sauge: #4d6040;
-  --sauge-moyen: #5c6e4f;
-  --sauge-pale: #dde8d9;
-  --terracotta: #b85c50;
-  --terracotta-texte: #a04738;
-  --terracotta-pale: #f5ddd5;
-  --creme: #f9f5f0;
-  --texte: #1f2937;
-  --texte-moyen: #4b5563;
-  --bordure: #d1d5db;
-  --blanc: #ffffff;
+  /* Crème / neutres */
+  --creme:        #f9f5f0;
+  --creme-2:      #f2ebe0;
+  --sable:        #efe7db;
+  --blanc:        #ffffff;
 
-  --police-accent: professor, sans-serif;
-  --police-titre: "Montserrat", sans-serif;
-  --police-corps: "Montserrat", sans-serif;
+  /* Sauge */
+  --sauge:        #4d6040;
+  --sauge-fonce:  #38492d;
+  --pied-fond:    #212a1b;
+  --sauge-moyen:  #5c6e4f;
+  --sauge-pale:   #dde8d9;
+  --olive:        #7c8c5e;
+
+  /* Terracotta */
+  --terra:        #b85c50;
+  --terra-fonce:  #a04738;
+  --terra-pale:   #f5ddd5;
+
+  /* Ocre (récupéré du magasin) */
+  --ocre:         #d99a36;
+  --ocre-pale:    #f3dcab;
+
+  /* Encre / texte */
+  --encre:        #2a2622;
+  --texte:        #36412c;
+  --texte-corps:  #585c50;
+  --texte-doux:   #8a8d80;
+  --bordure:      #e4ddd0;
+
+  /* Typo */
+  --f-script: "Professor", cursive;
+  --f-titre:  "Montserrat", sans-serif;
+  --f-corps:  "Montserrat", sans-serif;
+
+  /* Échelle fluide (clamp = responsive sans casse) */
+  --t-eyebrow: clamp(.72rem, .68rem + .2vw, .8rem);
+  --t-h1: clamp(2.6rem, 1.9rem + 3.4vw, 4.6rem);
+  --t-h2: clamp(1.8rem, 1.4rem + 1.8vw, 2.8rem);
+  --t-h3: clamp(1.15rem, 1.05rem + .5vw, 1.4rem);
+  --t-corps: clamp(.95rem, .92rem + .2vw, 1.05rem);
+
+  /* Rythme / formes */
+  --max:        1200px;
+  --gouttiere:  clamp(1.2rem, .6rem + 3vw, 3rem);
+  --rayon:      18px;
+  --rayon-l:    26px;
+  --ombre:      0 18px 40px -24px rgba(56, 73, 45, .35);
+  --ombre-douce:0 10px 30px -22px rgba(56, 73, 45, .4);
+  --transi:     .35s cubic-bezier(.22, .61, .36, 1);
 }
 
-/* ======================================================
-   RESET
-====================================================== */
+/* ------------------------------------------------------------------- RESET */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* ======================================================
-   TYPOGRAPHIE
-====================================================== */
-
-html {
-  font-size: 16px;
-  scroll-behavior: smooth;
-}
-
-:focus-visible {
-  outline: 3px solid var(--sauge-moyen);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
+html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {
-  font-family: var(--police-corps);
-  font-size: 1rem;
-  color: var(--texte);
-  background-color: var(--creme);
+  font-family: var(--f-corps);
+  font-size: var(--t-corps);
   line-height: 1.7;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  color: var(--texte-corps);
+  background: var(--creme);
+  overflow-x: hidden;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--police-titre);
-  line-height: 1.25;
-  color: var(--sauge);
-}
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
 
-h1 {
-  font-size: 2.5rem;
-}
-h2 {
-  font-size: 2rem;
-}
-h3 {
-  font-size: 1.4rem;
-}
+:focus-visible { outline: 3px solid var(--sauge-moyen); outline-offset: 3px; border-radius: 4px; }
 
-p {
-  margin-bottom: 1em;
-}
+h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 1.12; font-weight: 700; }
 
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
+/* Accent script (rôle de Professor) */
+.script { font-family: var(--f-script); font-weight: 400; line-height: 1; }
 
-a {
-  color: var(--sauge-moyen);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-a:hover {
-  color: var(--terracotta);
-}
-
-/* ======================================================
-   STRUCTURE GÉNÉRALE
-====================================================== */
-
-.conteneur {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-}
-
-main {
-  flex: 1;
-}
-
-/* ======================================================
-   HEADER + NAVIGATION
-====================================================== */
-
-.site-header {
-  background-color: var(--blanc);
-  border-bottom: 1px solid var(--bordure);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 8px rgba(77, 96, 64, 0.08);
-  display: flex;
-  align-items: center;
-  min-height: 100px;
-  padding-left: max(1.5rem, calc((100% - 1200px) / 2));
-  padding-right: max(1.5rem, calc((100% - 1200px) / 2));
-}
-
-.header-barre {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  width: 100%;
-  gap: 1.5rem;
-  padding: 0;
-}
-
-.logo-zone {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.logo-zone .custom-logo-link {
-  display: flex;
-  align-items: center;
-}
-
-.logo-zone img {
-  max-height: 96px;
-  width: auto;
-  display: block;
-}
-
-.logo-zone .nom-site {
-  font-family: var(--police-accent);
-  font-size: 2.2rem;
-  font-weight: 400;
-  color: var(--sauge);
-  text-decoration: none;
-  line-height: 1;
-}
-
-.logo-zone .nom-site:hover {
-  color: var(--terracotta);
-}
-
-/* Navigation : boutons verts arrondis */
-
-.menu-principal {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  background-color: transparent;
-}
-
-.menu-principal > div {
-  display: flex;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-  max-width: none;
-}
-
-.menu-principal ul {
-  list-style: none;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin: 0;
-  padding: 0;
-}
-
-.menu-principal ul li {
-  display: flex;
-  align-items: center;
-}
-
-.menu-principal ul li a {
-  display: inline-flex;
-  align-items: center;
-  color: var(--blanc);
-  background-color: var(--sauge);
-  font-family: var(--police-titre);
-  font-size: 0.78rem;
-  font-weight: 700;
+.eyebrow {
+  font-size: var(--t-eyebrow);
+  letter-spacing: .24em;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 0.5em 1.1em;
-  border-radius: 5px;
-  text-decoration: none;
-  white-space: nowrap;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
-}
-
-.menu-principal ul li a:hover {
-  background-color: var(--sauge-moyen);
-  color: var(--blanc);
-}
-
-.menu-principal ul li.current-menu-item a,
-.menu-principal ul li.current-page-ancestor a {
-  background-color: var(--terracotta);
-  color: var(--blanc);
-}
-
-/* ======================================================
-   HAMBURGER (MOBILE)
-====================================================== */
-
-.hamburger {
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-self: center;
-  gap: 5px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 4px;
-  margin-left: 0.75rem;
-  transition: background-color 0.2s;
-  flex-shrink: 0;
-}
-
-.hamburger:hover {
-  background-color: var(--sauge-pale);
-}
-
-.hamburger-barre {
-  width: 24px;
-  height: 2px;
-  background-color: var(--sauge);
-  border-radius: 2px;
-  transition:
-    transform 0.25s ease,
-    opacity 0.25s ease;
-}
-
-.hamburger[aria-expanded="true"] .hamburger-barre:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
-}
-.hamburger[aria-expanded="true"] .hamburger-barre:nth-child(2) {
-  opacity: 0;
-}
-.hamburger[aria-expanded="true"] .hamburger-barre:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
-}
-
-/* ======================================================
-   BANDEAU PROMO
-====================================================== */
-
-.bandeau-promo {
-  background-color: var(--sauge-pale);
-  text-align: center;
-  padding: 0.5rem 1.5rem;
-  border-bottom: 1px solid rgba(77, 96, 64, 0.12);
-}
-
-.bandeau-promo p {
-  font-family: var(--police-titre);
-  font-size: 0.8rem;
   font-weight: 600;
-  color: var(--sauge);
-  margin: 0;
-  letter-spacing: 0.04em;
-}
-
-/* ======================================================
-   HÉROS (ACCUEIL + À PROPOS)
-====================================================== */
-
-.section-hero {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 5rem max(1.5rem, calc(50vw - 600px));
-  background-color: var(--terracotta-pale);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Décoration florale héros */
-.section-hero::before {
-  content: "";
-  position: absolute;
-  right: 2%;
-  bottom: -30px;
-  width: 300px;
-  height: 300px;
-  background: url("assets/images/illustrations/fleur 01.svg") no-repeat center /
-    contain;
-  opacity: 0.14;
-  pointer-events: none;
-}
-
-.section-hero::after {
-  content: "";
-  position: absolute;
-  left: 1%;
-  top: -20px;
-  width: 200px;
-  height: 200px;
-  background: url("assets/images/illustrations/branche 01.svg") no-repeat
-    center / contain;
-  opacity: 0.1;
-  pointer-events: none;
-}
-
-/* ======================================================
-   BANNIÈRE PLEINE HAUTEUR — ACCUEIL (front-design)
-====================================================== */
-.banniere-accueil {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  min-height: 100vh;
-  min-height: 100svh;
-  background-color: var(--sauge);
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-/* ACCUEIL : nav masquée à l'arrivée (héros immersif), révélée au scroll */
-body.home .site-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  transform: translateY(-100%);
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.45s ease;
-}
-
-body.home.nav-visible .site-header {
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: auto;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body.home .site-header {
-    transition: opacity 0.3s ease;
-  }
-}
-
-/* Couche image animée (léger zoom « Ken Burns ») */
-.banniere-accueil::before {
-  content: "";
-  position: absolute;
-  inset: -2%;
-  z-index: 0;
-  background-image: var(--banniere-img, none);
-  background-size: cover;
-  background-position: center;
-  transform-origin: 50% 50%;
-  animation: banniere-zoom 24s ease-in-out infinite alternate;
-}
-
-/* Fondu bas vers le crème — long et très progressif (doux pour l'œil) */
-.banniere-accueil::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 120px;
-  z-index: 2;
-  background: linear-gradient(
-    180deg,
-    rgba(249, 245, 240, 0) 0%,
-    rgba(249, 245, 240, 0.12) 45%,
-    rgba(249, 245, 240, 0.5) 78%,
-    var(--creme) 100%
-  );
-  pointer-events: none;
-}
-
-/* Voile quasi uniforme : lisibilité sans assombrir le bas (évite le contraste avec le fondu) */
-.banniere-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    180deg,
-    rgba(34, 42, 26, 0.34) 0%,
-    rgba(34, 42, 26, 0.3) 55%,
-    rgba(34, 42, 26, 0.34) 100%
-  );
-}
-
-.banniere-contenu {
-  position: relative;
-  z-index: 3;
-  max-width: 880px;
-  padding: 3rem 1.5rem;
-  color: var(--blanc);
-}
-
-.banniere-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.9rem;
-  font-family: var(--police-titre);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.92);
-  margin-bottom: 1.25rem;
-  animation: banniere-rise 0.9s ease both 0.1s;
-}
-
-.banniere-eyebrow::before,
-.banniere-eyebrow::after {
-  content: "";
-  width: 34px;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.55);
-}
-
-.banniere-titre {
-  font-family: var(--police-accent);
-  font-size: clamp(2.4rem, 5vw, 4rem);
-  font-weight: 400;
-  line-height: 1.12;
-  color: var(--blanc);
-  margin-bottom: 2rem;
-  text-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
-  text-wrap: balance;
-  animation: banniere-rise 1s ease both 0.28s;
-}
-
-.banniere-actions {
-  justify-content: center;
-  animation: banniere-rise 0.9s ease both 0.52s;
-}
-
-/* Indice de défilement (souris animée) */
-.banniere-scroll {
-  position: absolute;
-  left: 50%;
-  bottom: 2.5rem;
-  transform: translateX(-50%);
-  z-index: 4;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6rem;
-  text-decoration: none;
-  color: rgba(255, 255, 255, 0.92);
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
-  animation: banniere-rise-scroll 0.9s ease both 0.8s;
-}
-
-.banniere-scroll:hover {
-  color: var(--blanc);
-}
-
-.banniere-scroll-texte {
-  font-family: var(--police-titre);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-
-.banniere-scroll-souris {
-  width: 24px;
-  height: 38px;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  border-radius: 14px;
-  position: relative;
-  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.25);
-}
-
-.banniere-scroll-souris::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 7px;
-  width: 4px;
-  height: 8px;
-  border-radius: 2px;
-  background: var(--blanc);
-  transform: translateX(-50%);
-  animation: banniere-scroll-dot 1.8s ease-in-out infinite;
-}
-
-@keyframes banniere-zoom {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.09);
-  }
-}
-
-@keyframes banniere-rise {
-  from {
-    opacity: 0;
-    transform: translateY(26px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Variante qui conserve le centrage horizontal de l'indice de défilement */
-@keyframes banniere-rise-scroll {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 26px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-}
-
-@keyframes banniere-scroll-dot {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 0);
-  }
-  35% {
-    opacity: 1;
-  }
-  65% {
-    opacity: 1;
-    transform: translate(-50%, 13px);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, 13px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .banniere-accueil::before,
-  .banniere-eyebrow,
-  .banniere-titre,
-  .banniere-actions,
-  .banniere-scroll,
-  .banniere-scroll-souris::after {
-    animation: none;
-  }
-}
-
-.section-accueil-intro {
-  background-color: var(--creme);
-}
-
-.intro-split {
-  position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: center;
-}
-
-.intro-texte h1,
-.intro-texte h2 {
-  font-family: var(--police-accent);
-  font-weight: 400;
-  color: var(--sauge);
-  font-size: clamp(2.4rem, 4.5vw, 3.6rem);
-  line-height: 1.1;
-  margin-bottom: 1.25rem;
-}
-
-.intro-texte p {
-  font-size: 1.08rem;
-  line-height: 1.85;
-  color: var(--texte-moyen);
-  margin-bottom: 1em;
-}
-
-.intro-trust {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem 2rem;
-  margin: 2rem 0 0;
-  padding: 0;
-}
-
-.intro-trust li {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: var(--police-titre);
-  font-weight: 600;
-  font-size: 0.88rem;
-  color: var(--sauge);
-}
-
-.intro-trust span {
-  font-size: 1.25rem;
-  line-height: 1;
-}
-
-.intro-image-cadre {
-  position: relative;
-}
-
-.intro-image-cadre img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(77, 96, 64, 0.22);
-  display: block;
-}
-
-.intro-badge {
-  position: absolute;
-  bottom: 1.5rem;
-  left: -1rem;
-  background: var(--terracotta);
-  color: var(--blanc);
-  font-family: var(--police-titre);
-  font-weight: 700;
-  font-size: 0.78rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 0.7em 1.3em;
-  border-radius: 50px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
-}
-
-@media (max-width: 860px) {
-  .intro-split {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-  }
-  .intro-image-cadre {
-    order: -1;
-  }
-  .intro-badge {
-    left: 1rem;
-  }
-}
-
-.hero-interieur {
-  position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3.5rem;
-  align-items: center;
-}
-
-/* Contenu WP dans le héros */
-.hero-contenu {
-  margin-bottom: 2rem;
-}
-
-.hero-contenu h1 {
-  font-family: var(--police-accent);
-  font-size: clamp(2.4rem, 5vw, 3.8rem);
-  font-weight: 400;
-  color: var(--sauge);
-  line-height: 1.2;
-  margin-bottom: 0.75rem;
-}
-
-.hero-contenu h2 {
-  font-family: var(--police-accent);
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
-  font-weight: 400;
-  color: var(--sauge);
-  line-height: 1.3;
-  margin-bottom: 0.5rem;
-}
-
-.hero-contenu p {
-  font-size: 1.05rem;
-  color: var(--texte-moyen);
-  line-height: 1.7;
-  max-width: 480px;
-  margin-bottom: 0;
-}
-
-/* Compatibilité — si h1 toujours utilisé directement */
-.hero-texte h1 {
-  font-family: var(--police-accent);
-  font-size: clamp(2.4rem, 5vw, 3.8rem);
-  font-weight: 400;
-  color: var(--sauge);
-  line-height: 1.2;
-  margin-bottom: 1rem;
-}
-
-.hero-texte .hero-sous-titre {
-  font-size: 1.1rem;
-  color: var(--texte-moyen);
-  margin-bottom: 2rem;
-  max-width: 480px;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.hero-image-cadre {
-  position: relative;
-}
-
-.hero-image {
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: 10px;
-  box-shadow: 0 16px 48px rgba(77, 96, 64, 0.22);
-}
-
-.hero-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s ease;
-}
-
-.hero-image:hover img {
-  transform: scale(1.03);
-}
-
-/* ======================================================
-   BANNIÈRE DE PAGE (PAGES INTERNES)
-====================================================== */
-
-.banniere-page {
-  background-color: var(--terracotta-pale);
-  padding: 3rem 1.5rem;
-  border-bottom: 1px solid var(--bordure);
-  position: relative;
-  overflow: hidden;
-}
-
-.banniere-page::after {
-  content: "";
-  position: absolute;
-  right: 5%;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 180px;
-  height: 180px;
-  background: url("assets/images/illustrations/fleur 02.svg") no-repeat center /
-    contain;
-  opacity: 0.15;
-  pointer-events: none;
-}
-
-.banniere-page-interieur {
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
-}
-
-.banniere-page h1 {
-  font-family: var(--police-accent);
-  font-size: 2.8rem;
-  color: var(--sauge);
-  margin-bottom: 0.4rem;
-}
-
-.banniere-page p {
-  font-size: 1.05rem;
-  color: var(--texte-moyen);
-  margin: 0;
-}
-
-/* ======================================================
-   TITRES DE SECTION
-====================================================== */
-
-.titre-section {
-  font-family: var(--police-titre);
-  font-size: 1.7rem;
-  font-weight: 800;
-  color: var(--sauge);
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 3px solid var(--sauge-pale);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.titre-section-centre {
-  font-family: var(--police-titre);
-  font-size: 1.7rem;
-  font-weight: 800;
-  color: var(--sauge);
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.sous-titre-section {
-  text-align: center;
-  font-size: 1rem;
-  color: var(--texte-moyen);
-  font-style: italic;
-  margin-bottom: 2.5rem;
-}
-
-/* ======================================================
-   BLOCS DE SECTION
-====================================================== */
-
-.section-bloc {
-  padding: 4rem 0;
-  position: relative;
-}
-
-.section-bloc-alt {
-  padding: 4rem 0;
-  background-color: var(--blanc);
-  position: relative;
-}
-
-.section-bloc-sombre {
-  padding: 4rem 0;
-  background-color: var(--sauge);
-  color: var(--blanc);
-  position: relative;
-  overflow: hidden;
-}
-
-.section-bloc-sombre::before {
-  content: "";
-  position: absolute;
-  right: 3%;
-  bottom: -30px;
-  width: 260px;
-  height: 260px;
-  background: url("assets/images/illustrations/petits fruits 01.svg") no-repeat
-    center / contain;
-  opacity: 0.08;
-  pointer-events: none;
-}
-
-.section-bloc-rose {
-  padding: 4rem 0;
-  background-color: var(--terracotta-pale);
-  position: relative;
-  overflow: hidden;
-}
-
-.section-bloc-rose::after {
-  content: "";
-  position: absolute;
-  left: 2%;
-  bottom: -20px;
-  width: 200px;
-  height: 200px;
-  background: url("assets/images/illustrations/quenouille01.svg") no-repeat
-    center / contain;
-  opacity: 0.12;
-  pointer-events: none;
-}
-
-/* ======================================================
-   SECTION MISSION (ACCUEIL + À PROPOS)
-====================================================== */
-
-.section-mission {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: center;
-}
-
-.mission-texte h2 {
-  font-family: var(--police-accent);
-  font-size: 2.2rem;
-  color: var(--sauge);
-  margin-bottom: 1rem;
-}
-
-.mission-texte p {
-  font-size: 1.05rem;
-  line-height: 1.8;
-  color: var(--texte-moyen);
-}
-
-.mission-image {
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(77, 96, 64, 0.15);
-  position: relative;
-}
-
-.mission-image::before {
-  content: "";
-  position: absolute;
-  bottom: -15px;
-  left: -15px;
-  width: 100px;
-  height: 100px;
-  background: url("assets/images/taches/tache_3a.png") no-repeat center /
-    contain;
-  opacity: 0.4;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.mission-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* ======================================================
-   GRILLES DE CARTES
-====================================================== */
-
-.grille-cartes {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.75rem;
-}
-
-.grille-cartes-4 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-}
-
-/* ======================================================
-   CARTE PRODUCTEUR
-====================================================== */
-
-.carte-producteur {
-  background-color: var(--blanc);
-  border: 1px solid rgba(77, 96, 64, 0.1);
-  border-radius: 14px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 18px rgba(77, 96, 64, 0.06);
-  transition:
-    box-shadow 0.3s ease,
-    transform 0.3s ease;
-}
-
-.carte-producteur:hover {
-  box-shadow: 0 14px 36px rgba(77, 96, 64, 0.16);
-  transform: translateY(-5px);
-}
-
-.carte-producteur .carte-image {
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  background-color: var(--sauge-pale);
-}
-
-.carte-producteur .carte-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.35s ease;
-}
-
-.carte-producteur:hover .carte-image img {
-  transform: scale(1.05);
-}
-
-.carte-producteur .carte-contenu {
-  padding: 1rem 1.25rem;
-  flex: 1;
-}
-
-.carte-producteur .carte-etiquette {
-  font-family: var(--police-titre);
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--blanc);
-  background-color: var(--sauge-moyen);
-  padding: 0.32em 0.85em;
-  border-radius: 50px;
-  display: inline-block;
-  margin-bottom: 0.6rem;
-}
-
-.carte-producteur .carte-contenu {
-  padding: 1.25rem 1.4rem 1.5rem;
-}
-
-.carte-producteur h3 {
-  font-size: 1.05rem;
-  color: var(--sauge);
-  margin-bottom: 0.3rem;
-}
-
-.carte-producteur h3 a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.carte-producteur h3 a:hover {
-  color: var(--terracotta-texte);
-}
-
-/* ======================================================
-   ARCHIVE PRODUCTEURS
-====================================================== */
-
-.section-archive-producteurs {
-  padding: 4rem 0 5rem;
-}
-
-.archive-producteurs-entete {
-  text-align: center;
-  max-width: 720px;
-  margin: 0 auto 3.5rem;
-}
-
-.archive-producteurs-titre {
-  font-family: var(--police-accent);
-  font-size: clamp(2.4rem, 5vw, 3.6rem);
-  font-weight: 400;
-  color: var(--sauge);
-  line-height: 1.1;
-  margin: 0.5rem 0 1.25rem;
-}
-
-.archive-producteurs-intro {
-  font-size: 1.05rem;
-  line-height: 1.85;
-  color: var(--texte-moyen);
-}
-
-.archive-producteurs-intro p {
-  margin: 0 0 1em;
-}
-
-.archive-producteurs-intro p:last-child {
-  margin-bottom: 0;
-}
-
-.producteurs-groupe {
-  margin-bottom: 3.5rem;
-}
-
-.producteurs-groupe:last-child {
-  margin-bottom: 0;
-}
-
-.producteurs-groupe-titre {
-  font-family: var(--police-titre);
-  font-size: 1.05rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--sauge);
-  padding-bottom: 0.75rem;
-  margin-bottom: 1.75rem;
-  border-bottom: 2px solid var(--sauge-pale);
-}
-
-.carte-producteur .carte-region {
-  font-size: 0.85rem;
-  color: var(--texte-moyen);
-  margin: 0;
-}
-
-/* ======================================================
-   CARTE PRODUIT
-====================================================== */
-
-.carte-produit {
-  background-color: var(--blanc);
-  border: 1px solid rgba(77, 96, 64, 0.1);
-  border-radius: 14px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 18px rgba(77, 96, 64, 0.06);
-  transition:
-    box-shadow 0.3s ease,
-    transform 0.3s ease;
-}
-
-.carte-produit:hover {
-  box-shadow: 0 14px 36px rgba(77, 96, 64, 0.16);
-  transform: translateY(-5px);
-}
-
-.carte-produit .carte-image {
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  background-color: var(--sauge-pale);
-  position: relative;
-}
-
-/* État vide élégant quand le produit n'a pas de photo */
-.carte-produit .carte-image-vide {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.8rem;
-  background: linear-gradient(135deg, var(--sauge-pale) 0%, #cbddc3 100%);
-  opacity: 0.85;
-}
-
-.carte-produit .carte-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.35s ease;
-}
-
-.carte-produit:hover .carte-image img {
-  transform: scale(1.05);
-}
-
-.carte-produit .carte-badge {
-  position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
-  font-family: var(--police-titre);
-  font-size: 0.68rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--blanc);
-  background-color: var(--terracotta);
-  padding: 0.2em 0.65em;
-  border-radius: 2px;
-}
-
-.carte-produit .carte-badge.bio {
-  background-color: var(--sauge-moyen);
-}
-
-.carte-produit .carte-badge.frais {
-  background-color: #5a8a4a;
-}
-
-.carte-produit .carte-contenu {
-  padding: 1rem 1.1rem;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  gap: 0.35rem;
-}
-
-.carte-produit .carte-categorie {
-  font-family: var(--police-titre);
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--texte-moyen);
-}
-
-.carte-produit h3 {
-  font-size: 0.95rem;
-  color: var(--texte);
-  margin: 0;
-}
-
-.carte-produit h3 a {
-  color: var(--texte);
-  text-decoration: none;
-}
-
-.carte-produit h3 a:hover {
-  color: var(--sauge-moyen);
-}
-
-.carte-produit .carte-prix {
-  font-family: var(--police-titre);
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--terracotta-texte);
-  margin-top: auto;
-  padding-top: 0.5rem;
-}
-
-/* ======================================================
-   FILTRES CATÉGORIES
-====================================================== */
-
-.filtre-categories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 2px solid var(--sauge-pale);
-}
-
-.filtre-lien {
-  font-family: var(--police-titre);
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--texte-moyen);
-  border: 1px solid var(--bordure);
-  padding: 0.45em 1.1em;
-  border-radius: 2px;
-  text-decoration: none;
-  transition:
-    background-color 0.2s,
-    color 0.2s,
-    border-color 0.2s;
-}
-
-.filtre-lien:hover,
-.filtre-lien.actif {
-  background-color: var(--sauge);
-  color: var(--blanc);
-  border-color: var(--sauge);
-}
-
-/* ======================================================
-   TÉMOIGNAGES
-====================================================== */
-
-.grille-temoignages {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.75rem;
-}
-
-.carte-temoignage {
-  background-color: var(--blanc);
-  border: 1px solid var(--bordure);
-  border-radius: 4px;
-  padding: 1.75rem;
-  position: relative;
-}
-
-.carte-temoignage::before {
-  content: "\201C";
-  font-family: Georgia, serif;
-  font-size: 4rem;
-  color: var(--sauge-pale);
-  line-height: 1;
-  position: absolute;
-  top: 0.75rem;
-  left: 1.25rem;
-}
-
-.temoignage-texte {
-  font-size: 0.95rem;
-  line-height: 1.75;
-  color: var(--texte-moyen);
-  font-style: italic;
-  margin-bottom: 1.25rem;
-  padding-top: 1.5rem;
-}
-
-.temoignage-auteur {
-  font-family: var(--police-titre);
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--terracotta);
-  margin: 0;
-}
-
-/* ======================================================
-   NEWSLETTER
-====================================================== */
-
-.newsletter-interieur {
-  max-width: 560px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.newsletter-interieur h2 {
-  font-family: var(--police-accent);
-  font-size: 2rem;
-  color: var(--blanc);
-  margin-bottom: 0.5rem;
-}
-
-.newsletter-interieur p {
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 0.95rem;
-  margin-bottom: 1.5rem;
-}
-
-.newsletter-formulaire {
-  display: flex;
-  gap: 0;
-  max-width: 480px;
-  margin: 0 auto;
-}
-
-.newsletter-formulaire input[type="email"] {
-  flex: 1;
-  padding: 0.75em 1rem;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-right: none;
-  background-color: rgba(255, 255, 255, 0.12);
-  color: var(--blanc);
-  font-family: var(--police-corps);
-  font-size: 0.9rem;
-  outline: none;
-  border-radius: 2px 0 0 2px;
-  transition: border-color 0.2s;
-}
-
-.newsletter-formulaire input[type="email"]::placeholder {
-  color: rgba(255, 255, 255, 0.55);
-}
-
-.newsletter-formulaire input[type="email"]:focus {
-  border-color: var(--blanc);
-}
-
-.newsletter-formulaire button {
-  padding: 0.75em 1.5rem;
-  background-color: var(--terracotta);
-  color: var(--blanc);
-  border: none;
-  font-family: var(--police-titre);
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  cursor: pointer;
-  border-radius: 0 2px 2px 0;
-  transition: background-color 0.2s;
-}
-
-.newsletter-formulaire button:hover {
-  background-color: #9e4d43;
-}
-
-/* ======================================================
-   PROCESSUS COMMANDE (3 ÉTAPES)
-====================================================== */
-
-.grille-etapes {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-}
-
-.grille-etapes-4 {
-  grid-template-columns: repeat(4, 1fr);
-}
-
-.carte-etape {
-  background-color: var(--blanc);
-  border: 1px solid rgba(77, 96, 64, 0.1);
-  border-radius: 14px;
-  box-shadow: 0 4px 18px rgba(77, 96, 64, 0.06);
-  padding: 2rem 1.5rem;
-  text-align: center;
-}
-
-.etape-numero {
-  font-family: var(--police-accent);
-  font-size: 3.5rem;
-  color: var(--sauge-pale);
-  line-height: 1;
-  margin-bottom: 1rem;
-  display: block;
-}
-
-.carte-etape h3 {
-  font-size: 1.1rem;
-  color: var(--sauge);
-  margin-bottom: 0.75rem;
-}
-
-.carte-etape p {
-  font-size: 0.9rem;
-  color: var(--texte-moyen);
-  margin: 0;
-}
-
-/* ======================================================
-   FORMULAIRES
-====================================================== */
-
-.formulaire-bloc {
-  background-color: var(--blanc);
-  border: 1px solid var(--bordure);
-  border-radius: 4px;
-  padding: 2.5rem;
-}
-
-.formulaire-groupe {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin-bottom: 1.25rem;
-}
-
-.formulaire-groupe label {
-  font-family: var(--police-titre);
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--sauge);
-}
-
-.formulaire-groupe input,
-.formulaire-groupe select,
-.formulaire-groupe textarea {
-  padding: 0.7em 0.9em;
-  border: 1px solid var(--bordure);
-  background-color: var(--creme);
-  color: var(--texte);
-  font-family: var(--police-corps);
-  font-size: 0.95rem;
-  border-radius: 2px;
-  outline: none;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
-  width: 100%;
-}
-
-.formulaire-groupe input:focus,
-.formulaire-groupe select:focus,
-.formulaire-groupe textarea:focus {
-  border-color: var(--sauge-moyen);
-  box-shadow: 0 0 0 3px rgba(77, 96, 64, 0.1);
-}
-
-.formulaire-groupe textarea {
-  resize: vertical;
-  min-height: 120px;
-}
-
-.formulaire-grille-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
-}
-
-/* ======================================================
-   CONTACT (NOUS JOINDRE)
-====================================================== */
-
-.contact-interieur {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: start;
-}
-
-.contact-info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  margin-bottom: 1.5rem;
-}
-
-.contact-info-item .info-label {
-  font-family: var(--police-titre);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--terracotta);
-}
-
-.contact-info-item .info-valeur {
-  font-size: 1rem;
-  color: var(--texte);
-}
-
-.contact-info-item a {
-  color: var(--sauge-moyen);
-}
-.contact-info-item a:hover {
-  color: var(--terracotta);
-}
-
-.carte-google {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border: 3px solid var(--sauge-pale);
-  border-radius: 4px;
-  overflow: hidden;
-  display: block;
-}
-
-.carte-google iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-}
-
-/* ======================================================
-   À PROPOS — image dans le héros
-====================================================== */
-
-.apropos-image-cadre {
-  position: relative;
-}
-
-.apropos-image {
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
-  border-radius: 10px;
-  box-shadow: 0 16px 48px rgba(77, 96, 64, 0.22);
-}
-
-.apropos-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s ease;
-}
-
-.apropos-image:hover img {
-  transform: scale(1.03);
-}
-
-/* Info items contact */
-.contact-info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  margin-bottom: 2rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--bordure);
-}
-
-.contact-info-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-.contact-info-item .info-valeur {
-  font-size: 1.05rem;
-  line-height: 1.6;
-  color: var(--texte);
-}
-
-/* Formulaires — améliorations globales */
-.formulaire-bloc {
-  padding: 3rem;
-}
-
-.formulaire-groupe {
-  margin-bottom: 1.75rem;
-}
-
-.formulaire-groupe label {
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  margin-bottom: 0.6rem;
-}
-
-.formulaire-groupe input,
-.formulaire-groupe select,
-.formulaire-groupe textarea {
-  padding: 0.85em 1.1em;
-  font-size: 1rem;
-  border-radius: 4px;
-}
-
-.formulaire-groupe textarea {
-  min-height: 150px;
-}
-
-/* Surtitre (label terracotta au-dessus du titre) */
-.banniere-surtitre {
-  font-family: var(--police-titre);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--terracotta-texte);
-  margin-bottom: 0.5rem;
-  display: block;
-}
-
-/* ======================================================
-   PAGE ÉPICERIE — INTRO HÉROS
-====================================================== */
-
-.epicerie-intro p {
-  font-size: 1.05rem;
-  color: var(--texte-moyen);
-  line-height: 1.85;
-  max-width: 520px;
-  margin-bottom: 1em;
-}
-
-/* ======================================================
-   PAGE ÉPICERIE — DÉPARTEMENTS (fond sauge-pale breakout)
-====================================================== */
-
-.section-departements {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 5.5rem max(1.5rem, calc(50vw - 600px));
-  background-color: var(--sauge-pale);
-  position: relative;
-  overflow: hidden;
-}
-
-.section-departements::after {
-  content: "";
-  position: absolute;
-  right: 2%;
-  bottom: -20px;
-  width: 240px;
-  height: 240px;
-  background: url("assets/images/illustrations/petits fruits 01.svg") no-repeat
-    center / contain;
-  opacity: 0.1;
-  pointer-events: none;
-}
-
-.grille-departements {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  margin-top: 2.5rem;
-}
-
-.carte-departement {
-  background-color: var(--blanc);
-  border-radius: 14px;
-  padding: 2.75rem 2rem 2.25rem;
-  text-align: center;
-  box-shadow: 0 4px 24px rgba(77, 96, 64, 0.07);
-  border-top: 4px solid var(--sauge);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease,
-    border-color 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.carte-departement::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--sauge) 0%, var(--terracotta) 100%);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.35s ease;
-}
-
-.carte-departement:hover::after {
-  transform: scaleX(1);
-}
-
-.carte-departement:hover {
-  transform: translateY(-7px);
-  box-shadow: 0 20px 48px rgba(77, 96, 64, 0.15);
-  border-color: var(--terracotta);
-}
-
-.dept-icone {
-  font-size: 2.4rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 72px;
-  height: 72px;
-  background-color: var(--sauge-pale);
-  border-radius: 50%;
-  margin: 0 auto 1.5rem;
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.carte-departement:hover .dept-icone {
-  transform: scale(1.15) rotate(-6deg);
-}
-
-.carte-departement h3 {
-  font-family: var(--police-titre);
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--sauge);
-  margin-bottom: 0.75rem;
-  letter-spacing: -0.01em;
-}
-
-.carte-departement p {
-  font-size: 0.9rem;
-  color: var(--texte-moyen);
-  line-height: 1.75;
-  margin: 0;
-}
-
-/* ======================================================
-   PAGE ÉPICERIE — PRODUITS
-====================================================== */
-
-.section-produits-epicerie {
-  padding: 5.5rem 0;
-}
-
-.epicerie-vide {
-  grid-column: 1 / -1;
-  text-align: center;
-  color: var(--texte-moyen);
-  font-style: italic;
-  padding: 4rem 0;
-}
-
-/* Filtres — style pill animé */
-.filtre-categories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 3rem;
-}
-
-.filtre-lien {
-  font-family: var(--police-titre);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--texte-moyen);
-  background-color: var(--blanc);
-  border: 1.5px solid var(--bordure);
-  padding: 0.5em 1.25em;
-  border-radius: 50px;
-  text-decoration: none;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.15s ease;
-}
-
-.filtre-lien:hover {
-  background-color: var(--sauge-pale);
-  color: var(--sauge);
-  border-color: var(--sauge-moyen);
-  transform: translateY(-1px);
-}
-
-.filtre-lien.actif {
-  background-color: var(--sauge);
-  color: var(--blanc);
-  border-color: var(--sauge);
-  box-shadow: 0 4px 12px rgba(77, 96, 64, 0.25);
-}
-
-/* Cartes produit — style premium */
-.carte-produit {
-  background-color: var(--blanc);
-  border: none;
-  border-radius: 14px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 2px 12px rgba(31, 41, 55, 0.07);
-  transition:
-    opacity 0.32s ease,
-    transform 0.32s ease,
-    box-shadow 0.3s ease;
-}
-
-.carte-produit:hover {
-  box-shadow: 0 12px 40px rgba(31, 41, 55, 0.14);
-  transform: translateY(-5px);
-}
-
-.carte-produit .carte-image {
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  background-color: var(--terracotta-pale);
-  position: relative;
-}
-
-.carte-produit .carte-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.carte-produit:hover .carte-image img {
-  transform: scale(1.08);
-}
-
-.carte-produit .carte-badge {
-  position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
-  font-family: var(--police-titre);
-  font-size: 0.65rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--blanc);
-  background-color: var(--terracotta);
-  padding: 0.3em 0.85em;
-  border-radius: 50px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.carte-produit .carte-badge.bio {
-  background-color: var(--sauge-moyen);
-}
-.carte-produit .carte-badge.frais {
-  background-color: #5a8a4a;
-}
-.carte-produit .carte-badge.maison {
-  background-color: var(--terracotta);
-}
-
-.carte-produit .carte-contenu {
-  padding: 1.1rem 1.25rem 1.35rem;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  gap: 0.25rem;
-}
-
-.carte-produit .carte-categorie {
-  font-family: var(--police-titre);
-  font-size: 0.67rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--sauge-moyen);
-}
-
-.carte-produit h3 {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--texte);
-  margin: 0;
-  line-height: 1.35;
-}
-
-.carte-produit h3 a {
-  color: var(--texte);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.carte-produit h3 a:hover {
-  color: var(--sauge-moyen);
-}
-
-.carte-produit .carte-prix {
-  font-family: var(--police-titre);
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--terracotta);
-  margin-top: auto;
-  padding-top: 0.6rem;
-}
-
-/* ======================================================
-   PAGE ÉPICERIE — PRODUCTEURS (fond terracotta-pale breakout)
-====================================================== */
-
-.section-producteurs-epicerie {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 5.5rem max(1.5rem, calc(50vw - 600px));
-  background-color: var(--terracotta-pale);
-  position: relative;
-  overflow: hidden;
-}
-
-.section-producteurs-epicerie::before {
-  content: "";
-  position: absolute;
-  left: 1%;
-  top: -20px;
-  width: 260px;
-  height: 260px;
-  background: url("assets/images/illustrations/fleur 02.svg") no-repeat center /
-    contain;
-  opacity: 0.1;
-  pointer-events: none;
-}
-
-.section-producteurs-epicerie::after {
-  content: "";
-  position: absolute;
-  right: 2%;
-  bottom: -30px;
-  width: 200px;
-  height: 200px;
-  background: url("assets/images/illustrations/branche 01.svg") no-repeat
-    center / contain;
-  opacity: 0.08;
-  pointer-events: none;
-}
-
-.producteurs-epicerie-entete {
-  max-width: 700px;
-  margin-bottom: 3.5rem;
-}
-
-.producteurs-epicerie-entete h2 {
-  margin-bottom: 0.75rem;
-}
-
-.producteurs-epicerie-entete p {
-  font-size: 1.02rem;
-  color: var(--texte-moyen);
-  line-height: 1.8;
-  margin: 0;
-}
-
-.producteurs-categories-grille {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-}
-
-.producteur-groupe {
-  background-color: var(--blanc);
-  border-radius: 14px;
-  padding: 1.75rem 1.5rem 2rem;
-  box-shadow: 0 4px 20px rgba(77, 96, 64, 0.08);
-  border-left: 4px solid var(--terracotta);
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
-}
-
-.producteur-groupe:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 36px rgba(77, 96, 64, 0.14);
-}
-
-.producteur-groupe-titre {
-  font-family: var(--police-titre);
-  font-size: 0.7rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--terracotta);
-  margin-bottom: 1.1rem;
-  padding-bottom: 0.85rem;
-  border-bottom: 1.5px solid var(--terracotta-pale);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.producteur-liste {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.producteur-liste li {
-  padding: 0.65rem 0.5rem;
-  border-radius: 6px;
-  border-bottom: 1px solid rgba(209, 213, 219, 0.6);
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-  transition:
-    background-color 0.2s ease,
-    padding-left 0.2s ease;
-}
-
-.producteur-liste li:last-child {
-  border-bottom: none;
-  padding-bottom: 0.25rem;
-}
-
-.producteur-liste li:hover {
-  background-color: var(--creme);
-  padding-left: 0.85rem;
-}
-
-/* Placeholder initiale quand pas d'image */
-.carte-image-placeholder {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, var(--sauge-pale) 0%, var(--sauge) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.carte-image-placeholder span {
-  font-family: var(--police-accent);
-  font-size: 3.5rem;
-  color: var(--blanc);
-  opacity: 0.85;
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-/* Logo ACF dans single-producteur */
-.producteur-logo-cadre {
-  background-color: var(--blanc);
-  padding: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.producteur-logo-cadre img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.producteur-nom {
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: var(--texte);
-  line-height: 1.3;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a.producteur-nom:hover {
-  color: var(--terracotta);
-  text-decoration: underline;
-}
-
-.producteur-region {
-  font-size: 0.75rem;
-  color: var(--texte-moyen);
-  font-style: italic;
-}
-
-/* ======================================================
-   SINGLE PRODUIT & PRODUCTEUR — COMMUNS
-====================================================== */
-
-.retour-lien {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-family: var(--police-titre);
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--sauge-moyen);
-  text-decoration: none;
-  margin-bottom: 1.25rem;
-  transition:
-    color 0.2s,
-    gap 0.2s;
-}
-
-.retour-lien:hover {
-  color: var(--terracotta);
-  gap: 0.55rem;
-}
-
-/* ======================================================
-   SINGLE PRODUCTEUR
-====================================================== */
-
-.section-hero-producteur .banniere-surtitre {
-  margin-top: 0.25rem;
-}
-
-.producteur-single-slogan {
-  font-family: var(--police-accent);
-  font-size: 1.3rem;
-  color: var(--sauge-moyen);
-  margin-top: 0.5rem;
-  margin-bottom: 0.25rem;
-  font-style: normal;
-}
-
-.producteur-single-region {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.92rem;
-  color: var(--texte-moyen);
-  margin-bottom: 0;
-}
-
-.producteur-single-region svg {
-  flex-shrink: 0;
-  color: var(--terracotta);
-}
-
-/* Section corps */
-.section-producteur-corps {
-  padding: 5rem 0;
-}
-
-.producteur-single-grille {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 4rem;
-  align-items: start;
-}
-
-.producteur-single-h2 {
-  font-family: var(--police-titre);
-  font-size: 1.1rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--sauge);
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 2px solid var(--sauge-pale);
-}
-
-/* Coordonnées */
-.coordonnees-liste {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 2rem;
-}
-
-.coordonnee-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.85rem;
-  padding: 0.85rem 0;
-  border-bottom: 1px solid var(--bordure);
-}
-
-.coordonnee-item:last-child {
-  border-bottom: none;
-}
-
-.coordonnee-icone {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  background-color: var(--sauge-pale);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--sauge);
-  margin-top: 0.1rem;
-}
-
-.coordonnee-texte,
-.coordonnee-lien {
-  font-size: 0.95rem;
-  color: var(--texte);
-  line-height: 1.5;
-  word-break: break-word;
-}
-
-.coordonnee-lien {
-  color: var(--sauge-moyen);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.coordonnee-lien:hover {
-  color: var(--terracotta);
-}
-
-/* Réseaux sociaux */
-.producteur-reseaux {
-  margin-top: 0.5rem;
-}
-
-.reseaux-titre {
-  font-family: var(--police-titre);
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--texte-moyen);
-  margin-bottom: 0.75rem;
-}
-
-.reseaux-liens {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-}
-
-.reseau-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-family: var(--police-titre);
-  font-size: 0.78rem;
-  font-weight: 700;
-  padding: 0.55em 1.1em;
-  border-radius: 50px;
-  text-decoration: none;
-  transition:
-    background-color 0.2s,
-    color 0.2s,
-    transform 0.15s;
-}
-
-.reseau-btn:hover {
-  transform: translateY(-2px);
-}
-
-.reseau-facebook {
-  background-color: #e8eef8;
-  color: #1877f2;
-}
-.reseau-facebook:hover {
-  background-color: #1877f2;
-  color: var(--blanc);
-}
-
-.reseau-instagram {
-  background-color: #fce4ec;
-  color: #e1306c;
-}
-.reseau-instagram:hover {
-  background-color: #e1306c;
-  color: var(--blanc);
-}
-
-/* Section retour */
-.section-retour-epicerie {
-  padding: 0 0 5rem;
-}
-
-/* ======================================================
-   SINGLE PRODUIT
-====================================================== */
-
-.produit-single-image {
-  aspect-ratio: 4 / 3;
-  position: relative;
-}
-
-.produit-placeholder-img {
-  width: 100%;
-  height: 100%;
-  background-color: var(--terracotta-pale);
-}
-
-.badge-single {
-  font-size: 0.78rem;
-  padding: 0.35em 1em;
-  border-radius: 50px;
-  top: 1rem;
-  left: 1rem;
-}
-
-.produit-single-prix {
-  font-family: var(--police-titre);
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--terracotta);
-  margin: 0.5rem 0 1.25rem;
-  line-height: 1;
-}
-
-.produit-single-desc {
-  margin-bottom: 2rem;
-  max-width: 520px;
-}
-
-/* ======================================================
-   RESPONSIVE — SINGLE PAGES
-====================================================== */
-
-@media (max-width: 992px) {
-  .producteur-single-grille {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-  }
-}
-
-/* ======================================================
-   PAGE BOUTIQUE
-====================================================== */
-
-.section-hero-vert {
-  background-color: var(--sauge-pale);
-}
-
-.section-hero-vert::before {
-  background-image: url("assets/images/illustrations/branche 01.svg");
-}
-
-/* Valeurs — 3 icônes */
-.section-boutique-valeurs {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 4rem max(1.5rem, calc(50vw - 600px));
-  background-color: var(--blanc);
-  border-top: 1px solid var(--bordure);
-  border-bottom: 1px solid var(--bordure);
-}
-
-.boutique-valeurs-grille {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
-}
-
-.boutique-valeur-item {
-  text-align: center;
-  padding: 1rem;
-}
-
-.boutique-valeur-icone {
-  font-size: 2.6rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 68px;
-  height: 68px;
-  background-color: var(--sauge-pale);
-  border-radius: 50%;
-  margin: 0 auto 1.1rem;
-}
-
-.drapeau-qc {
-  display: block;
-  border-radius: 5px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
-}
-
-.boutique-valeur-item h3 {
-  font-family: var(--police-titre);
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--sauge);
-  margin-bottom: 0.4rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.boutique-valeur-item p {
-  font-size: 0.88rem;
-  color: var(--texte-moyen);
-  line-height: 1.65;
-  margin: 0;
-}
-
-/* Grille articles boutique */
-.section-articles-boutique {
-  padding: 5.5rem 0;
-}
-
-/* Marque sur les cartes boutique */
-.carte-marque {
-  font-size: 0.78rem;
-  color: var(--texte-moyen);
-  font-style: italic;
-  margin: 0;
-}
-
-/* Responsive boutique */
-@media (max-width: 768px) {
-  .boutique-valeurs-grille {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-}
-
-/* ======================================================
-   PAGE COMMANDER
-====================================================== */
-
-/* Section produits commandables */
-
-/* ======================================================
-   PAGE COMMANDER — hero compact + relance (conversion)
-====================================================== */
-.section-commander-hero,
-.section-hero-direct {
-  padding: 1.25rem 0 1.75rem;
-  text-align: center;
-  background-color: var(--creme);
-}
-
-/* Variantes de fond (même format compact, couleur selon la page) */
-.section-hero-direct--sauge { background-color: var(--sauge-pale); }
-.section-hero-direct--rose  { background-color: var(--terracotta-pale); }
-.section-hero-direct--beige { background-color: #f3e2c8; }
-
-.commander-hero-titre,
-.hero-direct-titre {
-  font-family: var(--police-accent);
-  font-size: clamp(2.6rem, 5vw, 4rem);
-  font-weight: 400;
-  color: var(--sauge);
-  line-height: 1.05;
-  margin: 0.25rem 0 0.75rem;
-}
-
-.commander-hero-accroche,
-.hero-direct-accroche {
-  max-width: 1100px;
-  margin: 0 auto;
-  font-size: 0.98rem;
-  line-height: 1.6;
-  color: var(--texte-moyen);
-}
-
-.hero-direct-accroche p { margin: 0 0 0.6em; }
-.hero-direct-accroche p:last-child { margin-bottom: 0; }
-.hero-direct-accroche p:empty { display: none; }
-
-/* À propos en hero direct : titre centré, corps de texte lisible à gauche */
-.section-apropos-direct .apropos-texte {
-  max-width: 760px;
-  margin: 0 auto;
-}
-
-.section-apropos-direct .corps-article p {
-  text-align: left;
-}
-
-.commander-hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.85rem;
-  justify-content: center;
-}
-
-.commander-avantages {
-  list-style: none;
-  margin: 2rem 0 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem 2rem;
-}
-
-.commander-avantages li {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: var(--police-titre);
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--sauge);
-}
-
-.commander-avantages li::before {
-  content: "✓";
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--sauge-pale);
-  color: var(--sauge);
-  font-size: 0.8rem;
-}
-
-/* Étapes : fond doux + lien centré */
-.section-commander-etapes {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 1.5rem max(1.5rem, calc(50vw - 600px));
-  background-color: var(--sauge-pale);
-}
-
-.section-commander-etapes .section-lien-centre {
-  margin-top: 3rem;
-}
-
-.commander-carte-cta {
-  margin-top: auto;
-  text-align: center;
-}
-
-/* Relance finale */
-.section-commander-relance {
-  padding: 4.5rem 0 5rem;
-  text-align: center;
-}
-
-.commander-relance-interieur {
-  max-width: 640px;
-  margin: 0 auto;
-}
-
-.commander-relance-interieur h2 {
-  font-family: var(--police-accent);
-  font-size: 2.2rem;
-  font-weight: 400;
-  color: var(--sauge);
-  margin-bottom: 0.75rem;
-}
-
-.commander-relance-interieur p {
-  font-size: 1.05rem;
-  color: var(--texte-moyen);
-  line-height: 1.75;
-  margin-bottom: 1.75rem;
-}
-
-.commander-relance-interieur a[href^="tel:"] {
-  color: var(--terracotta-texte);
-  font-weight: 700;
-  white-space: nowrap;
-}
-
+  color: var(--terra-fonce);
+}
+
+/* ----------------------------------------------------------------- LAYOUT */
+.conteneur { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: var(--gouttiere); }
+.section { padding-block: clamp(3.5rem, 2rem + 6vw, 7rem); }
+.section-titre { text-align: center; max-width: 640px; margin: 0 auto clamp(2rem, 1rem + 3vw, 3.5rem); }
+.section-titre h2 { font-size: var(--t-h2); margin-bottom: .6rem; }
+.section-titre p { color: var(--texte-doux); }
+
+/* ---------------------------------------------------------------- BOUTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--f-titre); font-weight: 600; font-size: .92rem;
+  padding: .95rem 1.7rem; border-radius: 50px;
+  transition: transform var(--transi), box-shadow var(--transi), background var(--transi), color var(--transi);
+  will-change: transform;
+}
+.btn:hover { transform: translateY(-3px); }
+.btn-primaire { background: var(--sauge); color: var(--blanc); box-shadow: var(--ombre-douce); }
+.btn-primaire:hover { background: var(--sauge-fonce); box-shadow: var(--ombre); }
+.btn-ligne { background: transparent; color: var(--terra-fonce); border: 1.5px solid #d8a99f; }
+.btn-ligne:hover { background: var(--terra); color: var(--blanc); border-color: var(--terra); }
+.btn-accent { background: var(--terra); color: var(--blanc); }
+.btn-accent:hover { background: var(--terra-fonce); }
+.btn-fantome { color: var(--sauge); border: 1.5px solid var(--bordure); }
+.btn-fantome:hover { border-color: var(--sauge); background: var(--sauge-pale); }
+
+/* ----------------------------------------------------------------- HEADER */
+.entete {
+  position: fixed; inset: 0 0 auto 0; z-index: 50;
+  transition: background var(--transi), box-shadow var(--transi), padding var(--transi);
+  padding-block: 1.1rem;
+}
+.entete.colle { background: rgba(249, 245, 240, .92); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--bordure); padding-block: .6rem; }
+.entete-barre { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.logo { font-family: var(--f-script); font-size: 2rem; color: var(--sauge); line-height: 1; }
+.nav-principale { display: flex; align-items: center; gap: 2rem; }
+.nav-principale > a { font-size: .92rem; font-weight: 500; color: var(--texte); position: relative; padding-block: .3rem; }
+.nav-principale > a::after {
+  content: ""; position: absolute; left: 0; bottom: 0; width: 0; height: 2px;
+  background: var(--terra); transition: width var(--transi);
+}
+.nav-principale > a:hover::after { width: 100%; }
+.nav-principale .btn { padding: .6rem 1.3rem; }
+.nav-principale > a.btn-primaire { color: var(--blanc); }
+
+/* Hamburger */
+.burger { display: none; width: 44px; height: 44px; flex-direction: column; justify-content: center; gap: 6px; }
+.burger span { display: block; height: 2px; width: 26px; background: var(--sauge); border-radius: 2px; transition: var(--transi); }
+.burger.actif span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.burger.actif span:nth-child(2) { opacity: 0; }
+.burger.actif span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* ------------------------------------------------------------------- HERO */
+.hero { position: relative; overflow: hidden; background: var(--creme); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding-top: clamp(6rem, 11vh, 8.5rem); padding-bottom: clamp(2.5rem, 6vh, 4rem); }
+/* La barre d'admin WP (32px) decale la page : sans ca, le bas du hero (indicateur de scroll anime) passe sous le pli */
+.admin-bar .hero { min-height: calc(100vh - 32px); }
+.hero-grille { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 2rem; min-height: 0; width: 100%; }
+.hero-texte { position: relative; z-index: 3; max-width: 30rem; }
+.hero h1 { font-size: var(--t-h1); margin: 1.1rem 0 1.3rem; color: var(--sauge-fonce); }
+.hero h1 .script { color: var(--terra); font-size: 1.32em; display: inline-block; }
+.hero-texte p { font-size: 1.08rem; max-width: 38ch; margin-bottom: 2rem; }
+.hero-actions { display: flex; flex-wrap: nowrap; gap: .9rem; }
+
+/* Arches de couleur (façon mural) */
+.arche { position: absolute; border-radius: 50%; z-index: 1; pointer-events: none; }
+.arche-terra { width: 46vw; max-width: 620px; aspect-ratio: 1; background: var(--terra); left: -16vw; bottom: -22vw; opacity: .9; }
+.arche-olive { width: 30vw; max-width: 420px; aspect-ratio: 1; background: var(--olive); right: -12vw; bottom: -16vw; opacity: .9; }
+.cercle-ocre { position: absolute; width: clamp(250px, 30vw, 400px); aspect-ratio: 1; background: var(--ocre); border-radius: 50%; left: 50%; top: 42%; transform: translate(-50%, -50%); z-index: 1; }
+
+/* Bouquet du hero - plusieurs illustrations réelles, balancées à des rythmes différents */
+.hero-fleur { position: relative; z-index: 2; justify-self: center; aspect-ratio: 1 / 1.28; height: clamp(380px, 68vh, 640px); width: auto; animation: eclore-fleur 1.5s cubic-bezier(.22,.61,.36,1) both; }
+.hero-fleur svg { width: 100%; height: auto; overflow: visible; }
+.bq { position: absolute; transform-origin: bottom center; }
+.bq-rose  { width: 78%; left: 13%; top: 8%; z-index: 3; animation: sway-rose 7s ease-in-out infinite; }
+.bq-sprig { width: 44%; left: -3%; top: -10%; z-index: 2; animation: sway-a 8.5s ease-in-out infinite; }
+@keyframes eclore-fleur { from { opacity: 0; transform: translateY(26px) scale(.93); } to { opacity: 1; transform: none; } }
+@keyframes sway-rose { 0%,100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+@keyframes sway-a { 0%,100% { transform: rotate(-17deg); } 50% { transform: rotate(-11deg); } }
+@keyframes sway-b { 0%,100% { transform: rotate(9deg); } 50% { transform: rotate(14deg); } }
+@keyframes sway-c { 0%,100% { transform: rotate(-9deg); } 50% { transform: rotate(-4deg); } }
+.trait { fill: none; stroke: var(--encre); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.trait-fin { stroke-width: 1; }
+
+/* Animation de tracé (draw-on) */
+.draw { stroke-dasharray: var(--len, 1200); stroke-dashoffset: var(--len, 1200); }
+.fleur-animee .draw { animation: tracer 2.4s ease forwards; }
+@keyframes tracer { to { stroke-dashoffset: 0; } }
+
+/* Balancement (SVG) + parallaxe curseur (calque dédié) + survol (corolle) */
+.fleur-parallax { position: absolute; inset: 0; z-index: 2; transition: transform .3s ease-out; will-change: transform; }
+.fleur-sway { transform-origin: 55% 42%; animation: balancer 7s ease-in-out infinite; }
+@keyframes balancer { 0%,100% { transform: rotate(-2.2deg); } 50% { transform: rotate(2.2deg); } }
+.fleur-corolle { transform-box: fill-box; transform-origin: center; transition: transform .6s var(--transi); }
+.hero-fleur:hover .fleur-corolle { transform: scale(1.06) rotate(-3deg); }
+.petale { transform-box: fill-box; transform-origin: bottom center; transition: transform .5s var(--transi); }
+.hero-fleur:hover .petale { transform: scale(1.08); }
+
+.hero-scroll { position: absolute; left: 50%; bottom: 1.2rem; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: .5rem; color: var(--texte-doux); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; }
+.hero-scroll .souris { width: 22px; height: 34px; border: 2px solid var(--texte-doux); border-radius: 12px; position: relative; }
+.hero-scroll .souris::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; background: var(--texte-doux); border-radius: 2px; transform: translateX(-50%); animation: molette 1.5s ease infinite; }
+@keyframes molette { 0% { opacity: 0; transform: translate(-50%, 0); } 40% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, 10px); } }
+
+/* -------------------------------------------------------------- INTRO SPLIT */
+.intro { background: var(--creme); }
+.intro-grille { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 1rem + 4vw, 5rem); align-items: center; }
+.intro-texte h2 { font-size: var(--t-h2); margin: .8rem 0 1.2rem; }
+.intro-texte .script-accent { font-family: var(--f-script); color: var(--terra); font-size: 1.6rem; }
+.intro-liste { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.6rem; }
+.intro-liste li { display: inline-flex; align-items: center; gap: .5rem; background: var(--sauge-pale); color: var(--sauge-fonce); font-size: .85rem; font-weight: 600; padding: .5rem 1rem; border-radius: 50px; }
+.intro-liste svg { width: 18px; height: 18px; }
+.intro-media { position: relative; }
+.intro-media .cadre { border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre); aspect-ratio: 4 / 5; background: var(--sauge-pale); }
+.intro-media .cadre img { width: 100%; height: 100%; object-fit: cover; }
+.intro-media .tache-deco { position: absolute; width: 58%; right: -8%; bottom: -10%; z-index: -1; opacity: .9; }
+.intro-badge { position: absolute; top: 1.2rem; left: -1rem; background: var(--ocre); color: var(--encre); font-weight: 700; font-size: .8rem; padding: .7rem 1.1rem; border-radius: 50px; box-shadow: var(--ombre-douce); transform: rotate(-4deg); }
+
+/* ----------------------------------------------------------- ENGAGEMENTS */
+.engagements { background: var(--blanc); }
+.engagements-grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(1.2rem, .5rem + 2vw, 2.5rem); }
+.engagement { text-align: center; padding: 0 .5rem; }
+.engagement .ico { width: 56px; height: 56px; margin: 0 auto 1rem; display: grid; place-items: center; border-radius: 50%; background: var(--sauge-pale); }
+.engagement .ico svg { width: 30px; height: 30px; fill: none; stroke: var(--sauge); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.engagement h3 { font-size: 1.1rem; color: var(--sauge); margin-bottom: .4rem; }
+.engagement p { font-size: .9rem; color: var(--texte-corps); }
+
+/* --------------------------------------------------------------- PRODUITS */
+.produits { background: var(--creme); position: relative; }
+.grille-cartes { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 1.8rem); }
+.carte {
+  background: var(--blanc); border-radius: var(--rayon); overflow: hidden;
+  box-shadow: var(--ombre-douce); transition: transform var(--transi), box-shadow var(--transi);
+  display: flex; flex-direction: column;
+}
+.carte:hover { transform: translateY(-6px); box-shadow: var(--ombre); }
+.carte-img { aspect-ratio: 1; overflow: hidden; background: var(--sauge-pale); position: relative; }
+.carte-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--transi); }
+.carte:hover .carte-img img { transform: scale(1.06); }
+.carte-vide { display: grid; place-items: center; height: 100%; }
+.carte-vide svg { width: 54px; height: 54px; opacity: .5; }
+.carte-cat { position: absolute; top: .8rem; left: .8rem; background: rgba(249,245,240,.92); color: var(--sauge-fonce); font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: .3rem .7rem; border-radius: 50px; }
+.carte-corps { padding: 1.1rem 1.2rem 1.3rem; flex: 1; display: flex; flex-direction: column; }
+.carte-corps h3 { font-size: 1.02rem; color: var(--texte); margin-bottom: .3rem; }
+.carte-prix { margin-top: auto; font-weight: 700; color: var(--terra-fonce); }
+.section-cta { text-align: center; margin-top: clamp(2rem, 1rem + 2vw, 3rem); }
+
+/* ----------------------------------------------------------- PRODUCTEURS */
+.producteurs { background: var(--sable); }
+.producteurs-entete { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; margin-bottom: clamp(1.5rem, 1rem + 2vw, 2.5rem); flex-wrap: wrap; }
+.producteurs-entete h2 { font-size: var(--t-h2); }
+.producteurs-entete .script-accent { font-family: var(--f-script); color: var(--olive); font-size: 1.5rem; display: block; margin-bottom: -.3rem; }
+.producteurs-entete p { color: var(--texte-doux); margin-top: .3rem; }
+.grille-prod { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 1.8rem); }
+.carte-prod { background: var(--blanc); border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre-douce); transition: transform var(--transi), box-shadow var(--transi); }
+.carte-prod:hover { transform: translateY(-6px); box-shadow: var(--ombre); }
+.carte-prod .photo { aspect-ratio: 16/10; overflow: hidden; background: var(--sauge-pale); }
+.carte-prod .photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--transi); }
+.carte-prod:hover .photo img { transform: scale(1.05); }
+.carte-prod .corps { padding: 1.2rem 1.3rem 1.4rem; }
+.carte-prod h3 { color: var(--sauge); font-size: 1.15rem; margin-bottom: .3rem; }
+.carte-prod .lieu { font-size: .82rem; color: var(--terra-fonce); font-weight: 600; letter-spacing: .04em; }
+
+/* --------------------------------------------------------------- LOFTS */
+.lofts-band { background: var(--creme); }
+.lofts-panneau { position: relative; overflow: hidden; background: #1d5055; color: #eef3f0; border-radius: var(--rayon-l); padding: clamp(2.2rem, 1.4rem + 3vw, 4rem); display: grid; grid-template-columns: 1.15fr .85fr; gap: 2rem; align-items: center; box-shadow: var(--ombre); }
+.lofts-panneau h2 { color: #fff; font-size: var(--t-h2); }
+.lofts-panneau .script { color: #e7c9a0; font-size: 1.35em; }
+.lofts-panneau p { color: #b9cfca; margin: 1rem 0 1.8rem; max-width: 42ch; }
+.lofts-panneau .btn-clair { background: #fff; color: #1d5055; }
+.lofts-panneau .btn-clair:hover { background: #e7c9a0; transform: translateY(-3px); }
+.lofts-illus { display: flex; justify-content: center; }
+.lofts-illus img { width: min(62%, 210px); }
+
+/* ------------------------------------------------------------- NEWSLETTER */
+.newsletter { background: var(--sable); }
+.newsletter-carte { position: relative; overflow: hidden; max-width: 720px; margin: 0 auto; background: var(--blanc); border-radius: var(--rayon-l); padding: clamp(2.2rem, 1.4rem + 3vw, 3.6rem); text-align: center; box-shadow: var(--ombre); }
+.newsletter-carte h2 { color: var(--sauge); font-size: var(--t-h2); margin-bottom: .6rem; }
+.newsletter-carte > p { color: var(--texte-corps); max-width: 46ch; margin: 0 auto 1.8rem; }
+.newsletter-carte .eyebrow { display: block; margin-bottom: .7rem; }
+.newsletter-deco { position: absolute; width: 240px; opacity: .09; right: -28px; bottom: -36px; pointer-events: none; }
+.newsletter-form { display: flex; gap: .6rem; max-width: 460px; margin: 0 auto; flex-wrap: wrap; justify-content: center; position: relative; }
+.newsletter-form input { flex: 1; min-width: 220px; padding: .9rem 1.2rem; border-radius: 50px; border: 1.5px solid var(--bordure); font-family: inherit; font-size: .95rem; background: var(--creme); color: var(--texte); }
+.newsletter-form input::placeholder { color: var(--texte-doux); }
+.newsletter-form button { background: var(--terra); color: var(--blanc); padding: .9rem 1.8rem; border-radius: 50px; font-weight: 600; transition: background var(--transi), transform var(--transi); }
+.newsletter-form button:hover { background: var(--terra-fonce); transform: translateY(-2px); }
+
+/* ----------------------------------------------------------------- FOOTER */
+.pied { position: relative; overflow: hidden; background: var(--pied-fond); color: #b6c0a4; padding-block: clamp(3.5rem, 2.5rem + 3vw, 5rem) 0; }
+.pied .conteneur { position: relative; z-index: 1; }
+.pied::after { content: ""; position: absolute; z-index: 0; right: -2%; bottom: -24%; width: clamp(220px, 24vw, 360px); aspect-ratio: .72; background: url("assets/images/illustrations/fleur 01.svg") no-repeat center / contain; filter: brightness(0) invert(1); opacity: .07; pointer-events: none; }
+.pied::before { content: ""; position: absolute; z-index: 0; left: -3%; top: -18%; width: clamp(160px, 16vw, 240px); aspect-ratio: .7; background: url("assets/images/illustrations/fleur 06.svg") no-repeat center / contain; filter: brightness(0) invert(1); opacity: .05; pointer-events: none; }
+.pied-grille { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 2.5rem; }
+.pied .logo { color: #f4efe4; margin-bottom: 1.1rem; font-size: 2.3rem; }
+.pied h4 { color: #e6dcc7; font-size: .76rem; font-weight: 600; letter-spacing: .18em; margin-bottom: 1.1rem; text-transform: uppercase; }
+.pied a { transition: color var(--transi); }
+.pied a:hover { color: var(--ocre); }
+.pied li { margin-bottom: .55rem; font-size: .92rem; }
+/* Navigation complete du footer sur deux colonnes */
+.pied-nav { columns: 2; column-gap: 2rem; }
+.pied-nav li { break-inside: avoid; }
+.pied-marque p { font-size: .92rem; margin-bottom: .85rem; max-width: 34ch; color: #a4ad92; }
+.pied-bas { margin-top: clamp(2.5rem, 1.5rem + 3vw, 3.5rem); border-top: 1px solid rgba(255,255,255,.09); padding-block: 1.5rem; text-align: center; font-size: .8rem; color: #889378; letter-spacing: .02em; }
+
+/* --------------------------------------------------------------- REVEAL */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s cubic-bezier(.22,.61,.36,1); }
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-delai-1 { transition-delay: .08s; }
+.reveal-delai-2 { transition-delay: .16s; }
+.reveal-delai-3 { transition-delay: .24s; }
+
+/* --------------------------------------------------------------- RESPONSIVE */
 @media (max-width: 960px) {
-  .grille-etapes-4 {
-    grid-template-columns: repeat(2, 1fr);
+  .hero-grille { grid-template-columns: 1fr; text-align: center; min-height: auto; }
+  .hero-texte { max-width: none; margin-inline: auto; }
+  .hero-texte p { margin-inline: auto; }
+  .hero-actions { justify-content: center; }
+  .hero { min-height: auto; }
+  .hero-fleur { grid-row: 1; margin-bottom: 1rem; height: auto; width: clamp(260px, 74vw, 360px); }
+  .cercle-ocre { left: 50%; top: 42%; width: clamp(200px, 52vw, 320px); transform: translate(-50%, -50%); }
+  .intro-grille { grid-template-columns: 1fr; }
+  .intro-media { max-width: 440px; margin-inline: auto; order: -1; }
+  .engagements-grille { grid-template-columns: repeat(2, 1fr); gap: 2rem 1rem; }
+  .grille-cartes { grid-template-columns: repeat(2, 1fr); }
+  .grille-prod { grid-template-columns: 1fr 1fr; }
+  .lofts-panneau { grid-template-columns: 1fr; text-align: center; }
+  .lofts-illus { order: -1; }
+  .pied-grille { grid-template-columns: 1fr 1fr; }
+  .pied-marque { grid-column: 1 / -1; }
+}
+
+@media (max-width: 720px) {
+  .nav-principale {
+    position: fixed; inset: 0 0 0 auto; width: min(82vw, 340px);
+    flex-direction: column; align-items: flex-start; justify-content: center;
+    gap: 1.6rem; background: var(--creme); padding: 2rem 2.2rem;
+    box-shadow: -20px 0 50px -30px rgba(0,0,0,.5);
+    transform: translateX(100%); transition: transform var(--transi); z-index: 60;
   }
-}
-
-@media (max-width: 560px) {
-  .grille-etapes-4 {
-    grid-template-columns: 1fr;
-  }
-}
-
-.section-commander-produits {
-  padding: 5.5rem 0;
-}
-
-.commander-cartes-grille {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  margin-top: 3rem;
-}
-
-.commander-carte {
-  background-color: var(--blanc);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 24px rgba(31, 41, 55, 0.08);
-  display: flex;
-  flex-direction: column;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.commander-carte:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 16px 48px rgba(31, 41, 55, 0.13);
-}
-
-.commander-carte-icone {
-  font-size: 3.5rem;
-  padding: 2.5rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.commander-carte-icone--terracotta { background-color: var(--terracotta-pale); }
-.commander-carte-icone--sauge      { background-color: var(--sauge-pale); }
-.commander-carte-icone--creme      { background-color: var(--creme); }
-
-.commander-carte-image {
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  background-color: var(--terracotta-pale);
-  position: relative;
-}
-
-.commander-carte-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.commander-carte:hover .commander-carte-image img {
-  transform: scale(1.05);
-}
-
-.commander-carte-image-vide {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  background: linear-gradient(135deg, var(--sauge-pale) 0%, var(--terracotta-pale) 100%);
-}
-
-/* Bon « Bientôt disponible » (pas encore de lien JotForm) */
-.commander-carte-badge-bientot {
-  position: absolute;
-  top: 0.85rem;
-  left: 0.85rem;
-  background: var(--terracotta);
-  color: var(--blanc);
-  font-family: var(--police-titre);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 0.4em 1em;
-  border-radius: 50px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-}
-
-.commander-carte-cta--bientot {
-  display: inline-block;
-  text-align: center;
-  margin-top: auto;
-  font-family: var(--police-titre);
-  font-weight: 700;
-  font-size: 0.85rem;
-  letter-spacing: 0.04em;
-  color: var(--sauge);
-  background: var(--sauge-pale);
-  padding: 0.85em 1.5em;
-  border-radius: 6px;
-  cursor: default;
-}
-
-.commander-carte--bientot .commander-carte-image img { filter: saturate(0.85); }
-
-.commander-carte-corps {
-  padding: 2rem 2.25rem 2.5rem;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  gap: 1rem;
-}
-
-.commander-carte-corps h3 {
-  font-family: var(--police-titre);
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: var(--sauge);
-  margin: 0;
-}
-
-.commander-carte-corps p {
-  font-size: 0.95rem;
-  color: var(--texte-moyen);
-  line-height: 1.75;
-  margin: 0;
-}
-
-.commander-produits-liste {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.commander-produits-liste li {
-  font-size: 0.9rem;
-  color: var(--texte);
-  padding-left: 1.25rem;
-  position: relative;
-}
-
-.commander-produits-liste li::before {
-  content: "✓";
-  position: absolute;
-  left: 0;
-  color: var(--sauge-moyen);
-  font-weight: 700;
-  font-size: 0.85rem;
-}
-
-.commander-carte-corps .bouton-accent,
-.commander-carte-corps .bouton-primaire {
-  align-self: flex-start;
-  margin-top: auto;
-}
-
-/* Section étapes */
-.section-commander-etapes {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 1.5rem max(1.5rem, calc(50vw - 600px));
-  background-color: var(--sauge-pale);
-}
-
-.carte-etape {
-  background-color: var(--blanc);
-  border-radius: 14px;
-  padding: 2.25rem 1.75rem;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(77, 96, 64, 0.07);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.etape-numero {
-  font-family: var(--police-accent);
-  font-size: 3.8rem;
-  color: var(--sauge-pale);
-  line-height: 1;
-  margin-bottom: 1rem;
-  display: block;
-}
-
-.section-commander-etapes .carte-etape .etape-numero {
-  color: var(--sauge-pale);
-  filter: brightness(0.85);
-}
-
-.carte-etape h3 {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--sauge);
-  margin-bottom: 0.75rem;
-}
-
-.carte-etape p {
-  font-size: 0.88rem;
-  color: var(--texte-moyen);
-  line-height: 1.7;
-  margin: 0;
-}
-
-.etape-lien {
-  display: inline-block;
-  margin-top: 1rem;
-  font-family: var(--police-titre);
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--sauge-moyen);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.etape-lien:hover {
-  color: var(--terracotta);
-}
-
-/* Section info pratique */
-.section-commander-info {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 5rem max(1.5rem, calc(50vw - 600px));
-  background-color: var(--sauge);
-}
-
-.commander-info-grille {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 3rem;
-}
-
-.commander-info-bloc {
-  color: rgba(255, 255, 255, 0.9);
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.commander-info-icone {
-  font-size: 2rem;
-  display: block;
-  margin-bottom: 0.25rem;
-}
-
-.commander-info-bloc h3 {
-  font-family: var(--police-titre);
-  font-size: 0.8rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--blanc);
-  margin: 0;
-}
-
-.commander-info-bloc p {
-  font-size: 0.9rem;
-  line-height: 1.65;
-  color: rgba(255, 255, 255, 0.82);
-  margin: 0;
-}
-
-.horaires-liste {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.horaires-liste li {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.88rem;
-  color: rgba(255, 255, 255, 0.85);
-  padding-bottom: 0.4rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.horaires-liste li:last-child {
-  border-bottom: none;
-}
-
-.commander-tel,
-.commander-email {
-  display: block;
-  color: var(--blanc);
-  font-family: var(--police-titre);
-  font-size: 0.9rem;
-  font-weight: 700;
-  text-decoration: none;
-  transition: opacity 0.2s;
-}
-
-.commander-tel:hover,
-.commander-email:hover {
-  opacity: 0.75;
-  color: var(--blanc);
-}
-
-/* Responsive commander */
-@media (max-width: 768px) {
-  .commander-cartes-grille {
-    grid-template-columns: 1fr;
-  }
-  .commander-info-grille {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-}
-
-/* ======================================================
-   PAGE PROMOTIONS
-====================================================== */
-
-.section-promotions {
-  padding: 5.5rem 0;
-}
-
-.grille-promos {
-  margin-top: 3rem;
-}
-
-/* Carte promo */
-.carte-promo {
-  background-color: var(--blanc);
-  border: none;
-  border-radius: 14px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 2px 12px rgba(31, 41, 55, 0.07);
-  transition:
-    box-shadow 0.3s ease,
-    transform 0.3s ease;
-}
-
-.carte-promo:hover {
-  box-shadow: 0 12px 40px rgba(31, 41, 55, 0.14);
-  transform: translateY(-5px);
-}
-
-.carte-promo .carte-image {
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  background-color: var(--terracotta-pale);
-  position: relative;
-}
-
-.carte-promo .carte-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.carte-promo:hover .carte-image img {
-  transform: scale(1.07);
-}
-
-.promo-rabais-badge {
-  position: absolute;
-  top: 0.85rem;
-  right: 0.85rem;
-  font-family: var(--police-titre);
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: var(--blanc);
-  background-color: var(--terracotta);
-  padding: 0.4em 0.85em;
-  border-radius: 50px;
-  box-shadow: 0 4px 12px rgba(184, 92, 80, 0.4);
-  letter-spacing: -0.01em;
-}
-
-.carte-promo .carte-contenu {
-  padding: 1.25rem 1.35rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  gap: 0.5rem;
-}
-
-.carte-promo h3 {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--sauge);
-  margin: 0;
-  line-height: 1.3;
-}
-
-.promo-description {
-  font-size: 0.85rem;
-  color: var(--texte-moyen);
-  line-height: 1.6;
-  margin: 0;
-}
-
-.promo-prix-zone {
-  display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  margin-top: auto;
-  padding-top: 0.5rem;
-}
-
-.promo-prix-promo {
-  font-family: var(--police-titre);
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--terracotta);
-  line-height: 1;
-}
-
-.promo-prix-regulier {
-  font-size: 0.95rem;
-  color: var(--texte-moyen);
-  text-decoration: line-through;
-  text-decoration-color: var(--terracotta);
-}
-
-.promo-validite {
-  font-size: 0.75rem;
-  color: var(--texte-moyen);
-  font-style: italic;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.promo-validite::before {
-  content: "🕐";
-  font-style: normal;
-}
-
-/* État vide */
-.promos-vide {
-  text-align: center;
-  max-width: 520px;
-  margin: 3rem auto 0;
-  padding: 3rem 2rem;
-  background-color: var(--blanc);
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(77, 96, 64, 0.07);
-}
-
-.promos-vide-icone {
-  font-size: 3rem;
-  display: block;
-  margin-bottom: 1rem;
-}
-
-.promos-vide h3 {
-  font-size: 1.25rem;
-  color: var(--sauge);
-  margin-bottom: 0.75rem;
-}
-
-.promos-vide p {
-  font-size: 0.95rem;
-  color: var(--texte-moyen);
-  line-height: 1.7;
-  margin: 0;
-}
-
-/* ======================================================
-   PAGE LES LOFTS DE LA RIVIÈRE — palette sarcelle scopée
-====================================================== */
-
-.page-lofts {
-  --sarcelle: #1d5055;
-  --sarcelle2: #174448;
-  --lofts-creme: #faf0ee;
-  --lofts-terra: #c4715a;
-  --lofts-txt: #1a2e30;
-  font-family: var(--police-corps);
-}
-
-/* En-tête compact (page liste — orientée réservation, sans bannière) */
-.lofts-entete {
-  text-align: center;
-  padding: 3.25rem 0 2.5rem;
-  background: var(--lofts-creme);
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding-left: max(1.5rem, calc(50vw - 600px));
-  padding-right: max(1.5rem, calc(50vw - 600px));
-}
-
-.lofts-entete-titre {
-  font-family: var(--police-accent);
-  font-size: clamp(3rem, 7vw, 5rem);
-  font-weight: 400;
-  color: var(--sarcelle);
-  line-height: 1.05;
-  margin: 0.4rem 0 0.6rem;
-}
-
-.lofts-entete-tagline {
-  font-size: 1.15rem;
-  color: var(--lofts-terra);
-  font-weight: 600;
-  margin: 0 0 1rem;
-}
-
-.lofts-entete-lead {
-  max-width: 640px;
-  margin: 0 auto 1.5rem;
-  font-size: 1rem;
-  line-height: 1.7;
-  color: var(--lofts-txt);
-}
-
-.lofts-entete-meta {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem 1.75rem;
-  font-family: var(--police-titre);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--sarcelle);
-  margin: 0;
-}
-
-.lofts-entete-meta a {
-  color: var(--lofts-terra);
-  text-decoration: none;
-}
-
-/* Hero plein écran */
-.lofts-hero {
-  position: relative;
-  height: min(80vh, 640px);
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  overflow: hidden;
-  background-color: var(--sarcelle);
-}
-
-.lofts-hero-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 55%;
-  display: block;
-}
-
-.lofts-hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    160deg,
-    rgba(29, 80, 85, 0) 30%,
-    rgba(29, 80, 85, 0.15) 55%,
-    rgba(29, 80, 85, 0.6) 80%,
-    rgba(29, 80, 85, 0.85) 100%
-  );
-}
-
-.lofts-badge {
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  z-index: 2;
-  background: var(--lofts-terra);
-  color: var(--lofts-creme);
-  padding: 0.6em 1.3em;
-  font-family: var(--police-titre);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-}
-
-.lofts-hero-prix {
-  position: absolute;
-  bottom: 2.75rem;
-  left: max(2rem, calc(50vw - 600px));
-  z-index: 2;
-  color: var(--lofts-creme);
-}
-
-.lofts-prix-label {
-  font-family: var(--police-titre);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: rgba(250, 240, 238, 0.7);
-  margin-bottom: 0.6rem;
-}
-
-.lofts-prix-montant {
-  font-family: var(--police-titre);
-  font-size: 3.6rem;
-  font-weight: 400;
-  line-height: 1;
-}
-
-.lofts-prix-montant span {
-  font-size: 1.5rem;
-  opacity: 0.75;
-}
-
-.lofts-prix-sub {
-  font-size: 0.82rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(250, 240, 238, 0.65);
-  margin-top: 0.6rem;
-}
-
-/* Intro + caractéristiques */
-.lofts-intro-section {
-  padding: 4.5rem 0 3.5rem;
-  text-align: center;
-}
-
-.lofts-eyebrow {
-  font-family: var(--police-titre);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--lofts-terra);
-  margin-bottom: 1rem;
-}
-
-.lofts-titre {
-  font-family: var(--police-accent);
-  font-size: clamp(2.8rem, 6vw, 4.2rem);
-  font-weight: 400;
-  color: var(--sarcelle);
-  line-height: 1.1;
-}
-
-.lofts-rule {
-  width: 48px;
-  height: 3px;
-  background: var(--lofts-terra);
-  margin: 1.75rem auto;
-}
-
-.lofts-intro-texte {
-  max-width: 640px;
-  margin: 0 auto 2rem;
-  font-size: 1.08rem;
-  line-height: 1.85;
-  color: var(--lofts-txt);
-}
-
-.lofts-features {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  justify-content: center;
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-.lofts-tag {
-  padding: 0.55em 1.1em;
-  font-family: var(--police-titre);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--sarcelle);
-  border: 1.5px solid rgba(29, 80, 85, 0.28);
-  border-radius: 50px;
-}
-
-.lofts-tag.filled {
-  background: var(--sarcelle);
-  color: var(--lofts-creme);
-  border-color: var(--sarcelle);
-}
-
-/* Galerie */
-.lofts-galerie-section {
-  padding: 3.5rem 0 5rem;
-}
-
-.lofts-section-titre {
-  font-family: var(--police-accent);
-  font-size: 2.6rem;
-  font-weight: 400;
-  color: var(--sarcelle);
-  text-align: center;
-  margin-bottom: 2.5rem;
-}
-
-.lofts-galerie {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-
-.lofts-galerie-item {
-  display: block;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: 10px;
-  background-color: var(--sarcelle);
-}
-
-.lofts-galerie-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.lofts-galerie-item:hover img {
-  transform: scale(1.06);
-}
-
-/* Localisation */
-.lofts-localisation {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 4.5rem max(1.5rem, calc(50vw - 600px));
-  background: var(--sarcelle2);
-}
-
-.lofts-loc-grille {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: center;
-}
-
-.lofts-loc-label {
-  font-family: var(--police-titre);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: rgba(250, 240, 238, 0.5);
-  margin-bottom: 0.85rem;
-}
-
-.lofts-loc-adresse {
-  font-family: var(--police-titre);
-  font-size: 1.8rem;
-  color: var(--lofts-creme);
-  line-height: 1.3;
-  margin-bottom: 0.3rem;
-}
-
-.lofts-loc-ville {
-  font-size: 0.85rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(250, 240, 238, 0.55);
-  margin-bottom: 1.75rem;
-}
-
-.lofts-loc-contact {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.lofts-phone {
-  font-family: var(--police-titre);
-  font-size: 1.5rem;
-  color: var(--lofts-creme);
-  text-decoration: none;
-}
-
-.lofts-phone:hover {
-  color: var(--lofts-terra);
-}
-
-.lofts-fb-lien {
-  font-family: var(--police-titre);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(250, 240, 238, 0.7);
-  text-decoration: none;
-}
-
-.lofts-fb-lien:hover {
-  color: var(--lofts-creme);
-}
-
-.lofts-cta {
-  display: inline-block;
-  font-family: var(--police-titre);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--lofts-creme);
-  background: var(--lofts-terra);
-  padding: 0.9em 2em;
-  border-radius: 4px;
-  text-decoration: none;
-  transition:
-    background-color 0.2s,
-    transform 0.15s;
-}
-
-.lofts-cta:hover {
-  background: #a85c47;
-  color: var(--lofts-creme);
-  transform: translateY(-2px);
-}
-
-.lofts-loc-carte {
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
-}
-
-.lofts-loc-carte img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Hero de marque (page liste) */
-/* Hero de marque Lofts en version compacte (directe) */
-.lofts-hero-marque {
-  height: auto;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3.75rem 1.5rem;
-}
-
-.lofts-hero-marque .lofts-hero-marque-texte {
-  position: static;
-  bottom: auto;
-}
-
-.lofts-hero-marque-texte {
-  position: absolute;
-  z-index: 2;
-  left: 0;
-  right: 0;
-  bottom: 3rem;
-  text-align: center;
-  color: var(--lofts-creme);
-  padding: 0 1.5rem;
-}
-
-.lofts-eyebrow-clair {
-  color: rgba(250, 240, 238, 0.85);
-}
-
-.lofts-hero-h1 {
-  font-family: var(--police-accent);
-  font-size: clamp(3rem, 7vw, 5rem);
-  font-weight: 400;
-  color: var(--lofts-creme);
-  line-height: 1.05;
-  margin: 0.5rem 0;
-}
-
-.lofts-hero-tagline {
-  font-family: var(--police-titre);
-  font-style: italic;
-  font-size: 1.25rem;
-  color: rgba(250, 240, 238, 0.85);
-  margin: 0;
-}
-
-.lofts-rule-centre {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Lien retour sur single */
-.lofts-retour {
-  position: absolute;
-  top: 2rem;
-  left: max(1.5rem, calc(50vw - 600px));
-  z-index: 2;
-  font-family: var(--police-titre);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--lofts-creme);
-  background: rgba(29, 80, 85, 0.55);
-  padding: 0.55em 1.1em;
-  border-radius: 50px;
-  text-decoration: none;
-  transition: background-color 0.2s;
-}
-
-.lofts-retour:hover {
-  background: rgba(29, 80, 85, 0.85);
-  color: var(--lofts-creme);
-}
-
-/* Liste des lofts */
-.lofts-liste-section {
-  padding: 1rem 0 5.5rem;
-}
-
-.lofts-grille {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  margin-top: 2.5rem;
-}
-
-.lofts-vide {
-  text-align: center;
-  color: var(--lofts-txt);
-  font-style: italic;
-  padding: 3rem 0;
-}
-
-.lofts-vide a {
-  color: var(--lofts-terra);
-}
-
-/* Hero CTA */
-.lofts-hero-actions {
-  margin-top: 2rem;
-}
-
-/* Bandeau commodités */
-.lofts-amenites {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 1.75rem max(1.5rem, calc(50vw - 600px));
-  background: var(--sarcelle2);
-}
-
-.lofts-amenites-grille {
-  list-style: none;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem 1.5rem;
-}
-
-.lofts-amenites-grille li {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  color: var(--lofts-creme);
-  font-family: var(--police-titre);
-  font-size: 0.86rem;
-  font-weight: 600;
-}
-
-.lofts-amenite-icone {
-  font-size: 1.3rem;
-  line-height: 1;
-}
-
-/* Eyebrow + sous-titre de section */
-.lofts-eyebrow-centre {
-  text-align: center;
-  color: var(--lofts-terra);
-}
-
-.lofts-section-sous-titre {
-  text-align: center;
-  color: var(--lofts-txt);
-  font-size: 1.05rem;
-  margin: 0.5rem 0 0;
-}
-
-/* Réassurance (fond sarcelle) */
-.lofts-reassurance {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 5rem max(1.5rem, calc(50vw - 600px));
-  background: var(--sarcelle);
-}
-
-.lofts-section-titre-clair {
-  color: var(--lofts-creme);
-  text-align: center;
-}
-
-.lofts-reassurance-grille {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
-  margin-top: 3rem;
-}
-
-.lofts-atout {
-  text-align: center;
-  color: var(--lofts-creme);
-}
-
-.lofts-atout-icone {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
-}
-
-.lofts-atout h3 {
-  font-family: var(--police-titre);
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--lofts-creme);
-  margin-bottom: 0.6rem;
-}
-
-.lofts-atout p {
-  font-size: 0.9rem;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0;
-}
-
-/* CTA finale */
-.lofts-cta-finale {
-  padding: 5rem 0;
-  text-align: center;
-}
-
-.lofts-cta-interieur {
-  max-width: 640px;
-  margin: 0 auto;
-}
-
-.lofts-cta-interieur h2 {
-  font-family: var(--police-accent);
-  font-size: 2.8rem;
-  font-weight: 400;
-  color: var(--sarcelle);
-  margin-bottom: 0.75rem;
-}
-
-.lofts-cta-interieur > p {
-  font-size: 1.05rem;
-  color: var(--lofts-txt);
-  line-height: 1.7;
-  margin-bottom: 1.75rem;
-}
-
-.lofts-contact-ligne {
-  margin-top: 1.5rem;
-  font-family: var(--police-titre);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--sarcelle);
-}
-
-.lofts-contact-ligne a {
-  color: var(--lofts-terra);
-  text-decoration: none;
-}
-
-@media (max-width: 860px) {
-  .lofts-amenites-grille {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .lofts-reassurance-grille {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .nav-principale.ouvert { transform: none; }
+  .nav-principale > a { font-size: 1.15rem; }
+  .burger { display: flex; z-index: 70; }
+  .grille-prod { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 520px) {
-  .lofts-amenites-grille {
-    grid-template-columns: 1fr;
-  }
-  .lofts-reassurance-grille {
-    grid-template-columns: 1fr;
-  }
+  .engagements-grille { grid-template-columns: 1fr; gap: 1.6rem; }
+  .grille-cartes { grid-template-columns: 1fr 1fr; gap: .8rem; }
+  .pied-grille { grid-template-columns: 1fr; }
+  .hero-actions { flex-wrap: wrap; }
+  .hero-actions .btn { width: 100%; justify-content: center; }
 }
 
-.loft-carte {
-  background: var(--blanc);
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 4px 24px rgba(29, 80, 85, 0.1);
-  display: flex;
-  flex-direction: column;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.loft-carte:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 48px rgba(29, 80, 85, 0.18);
-}
-
-.loft-carte-image {
-  position: relative;
-  display: block;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  background: var(--sarcelle);
-}
-
-.loft-carte-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.loft-carte:hover .loft-carte-image img {
-  transform: scale(1.06);
-}
-
-.loft-carte-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  background: linear-gradient(
-    135deg,
-    var(--sarcelle) 0%,
-    var(--sarcelle2) 100%
-  );
-}
-
-.loft-carte-badge {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: var(--lofts-terra);
-  color: var(--lofts-creme);
-  font-family: var(--police-titre);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 0.4em 1em;
-  border-radius: 50px;
-}
-
-.loft-carte-corps {
-  padding: 1.4rem 1.5rem 1.6rem;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  gap: 0.5rem;
-}
-
-.loft-carte-titre {
-  font-family: var(--police-titre);
-  font-size: 1.35rem;
-  font-weight: 700;
-  margin: 0;
-  line-height: 1.2;
-}
-
-.loft-carte-titre a {
-  color: var(--sarcelle);
-  text-decoration: none;
-}
-
-.loft-carte-titre a:hover {
-  color: var(--lofts-terra);
-}
-
-.loft-carte-meta {
-  font-size: 0.82rem;
-  color: var(--texte-moyen);
-  margin: 0;
-}
-
-.loft-carte-desc {
-  font-size: 0.92rem;
-  line-height: 1.55;
-  color: var(--texte-moyen);
-  margin: 0.15rem 0 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.loft-carte-bas {
-  margin-top: auto;
-  padding-top: 1.1rem;
-}
-
-.loft-carte-prix {
-  display: flex;
-  align-items: baseline;
-  gap: 0.35rem;
-  margin-bottom: 0.9rem;
-}
-.loft-carte-prix-nuit {
-  font-size: 0.92rem;
-  color: var(--texte-moyen);
-}
-
-.loft-carte-prix-label {
-  font-family: var(--police-titre);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--lofts-terra);
-}
-
-.loft-carte-prix-montant {
-  font-family: var(--police-titre);
-  font-size: 1.45rem;
-  font-weight: 800;
-  color: var(--lofts-txt);
-  line-height: 1;
-}
-
-.loft-carte-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-.loft-tag {
-  font-family: var(--police-titre);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--sarcelle);
-  background: rgba(29, 80, 85, 0.08);
-  padding: 0.35em 0.85em;
-  border-radius: 50px;
-}
-
-.loft-carte-actions {
-  display: flex;
-  gap: 0.6rem;
-}
-
-.loft-btn-primaire,
-.loft-btn-secondaire {
-  flex: 1;
-  text-align: center;
-  font-family: var(--police-titre);
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.9em 1em;
-  border-radius: 10px;
-  text-decoration: none;
-  transition:
-    background-color 0.2s,
-    color 0.2s,
-    transform 0.15s;
-}
-
-.loft-btn-primaire {
-  background: var(--lofts-terra);
-  color: var(--lofts-creme);
-}
-
-.loft-btn-primaire:hover {
-  background: #a85c47;
-  color: var(--lofts-creme);
-  transform: translateY(-2px);
-}
-
-.loft-btn-secondaire {
-  background: transparent;
-  color: var(--sarcelle);
-  border: 1.5px solid rgba(29, 80, 85, 0.3);
-}
-
-.loft-btn-secondaire:hover {
-  background: var(--sarcelle);
-  color: var(--lofts-creme);
-  border-color: var(--sarcelle);
-}
-
-/* Zone résa sur single */
-.lofts-resa-zone {
-  margin-top: 2.5rem;
-}
-
-/* Responsive lofts */
-@media (max-width: 992px) {
-  .lofts-galerie {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .lofts-loc-grille {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .lofts-galerie {
-    grid-template-columns: 1fr;
-  }
-  .lofts-grille {
-    grid-template-columns: 1fr;
-  }
-  .lofts-prix-montant {
-    font-size: 2.6rem;
-  }
-  .lofts-loc-contact {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-  .loft-carte-actions {
-    flex-direction: column;
-  }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  .reveal { opacity: 1; transform: none; }
 }
 
 /* ======================================================
-   PAGE ÉPICERIE AFRICAINE — VITRINE
+   PAGES INTERNES
 ====================================================== */
+body.interne .entete { background: rgba(249, 245, 240, .95); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--bordure); }
+.nav-principale > a.actif { color: var(--terra-fonce); }
+.nav-principale > a.actif::after { width: 100%; }
 
-.section-hero-africaine {
-  background-color: #f3e2c8;
+/* En-tête de page */
+.page-entete { position: relative; overflow: hidden; background: var(--creme); padding-top: clamp(5.5rem, 4rem + 4vw, 7.5rem); padding-bottom: clamp(2.5rem, 1.5rem + 3vw, 4rem); text-align: center; }
+.page-entete .conteneur { position: relative; z-index: 1; }
+.page-entete .eyebrow { display: block; margin-bottom: .8rem; }
+.page-entete h1 { font-size: var(--t-h1); color: var(--sauge-fonce); margin-bottom: .9rem; }
+.page-entete h1 .script { color: var(--terra); font-size: 1.25em; }
+.page-entete > .conteneur > p { max-width: 56ch; margin: 0 auto; color: var(--texte-corps); }
+.arche-mini { position: absolute; border-radius: 50%; opacity: .8; z-index: 0; pointer-events: none; }
+.am-terra { width: clamp(160px, 22vw, 280px); aspect-ratio: 1; background: var(--terra-pale); left: -6%; top: 30%; }
+.am-ocre { width: clamp(150px, 20vw, 240px); aspect-ratio: 1; background: var(--ocre-pale); right: -5%; bottom: -30%; }
+
+/* Fil d'Ariane */
+.fil { font-size: .82rem; color: var(--texte-doux); }
+.fil a:hover { color: var(--terra); }
+
+/* Filtres */
+.filtres { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center; margin-bottom: clamp(1.6rem, 1rem + 2vw, 2.6rem); }
+.filtre { font-size: .85rem; font-weight: 600; color: var(--texte-corps); background: var(--blanc); border: 1.5px solid var(--bordure); padding: .5rem 1.1rem; border-radius: 50px; cursor: pointer; transition: all var(--transi); }
+.filtre:hover { border-color: var(--sauge); color: var(--sauge); }
+.filtre.actif { background: var(--sauge); color: #fff; border-color: var(--sauge); }
+
+/* À propos */
+.apropos-split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 1rem + 4vw, 5rem); align-items: center; }
+.apropos-split h2 { font-size: var(--t-h2); margin-bottom: 1rem; }
+.apropos-split .script-accent { font-family: var(--f-script); color: var(--terra); font-size: 1.7rem; }
+.apropos-media { position: relative; }
+.apropos-media .cadre { border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre); aspect-ratio: 4 / 5; }
+.apropos-media .cadre img { width: 100%; height: 100%; object-fit: cover; }
+.valeurs-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 2rem); }
+.valeur { background: var(--blanc); border-radius: var(--rayon); padding: 1.8rem; box-shadow: var(--ombre-douce); }
+.valeur .ico { width: 52px; height: 52px; border-radius: 50%; background: var(--sauge-pale); display: grid; place-items: center; margin-bottom: 1rem; }
+.valeur .ico svg { width: 26px; height: 26px; fill: none; stroke: var(--sauge); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.valeur h3 { color: var(--sauge); margin-bottom: .4rem; font-size: 1.15rem; }
+.valeur p { font-size: .92rem; }
+.citation { text-align: center; max-width: 780px; margin: 0 auto; }
+.citation p { font-family: var(--f-script); font-size: clamp(1.7rem, 1.2rem + 2.4vw, 2.8rem); color: var(--terra); line-height: 1.3; }
+.citation .auteur { font-family: var(--f-titre); font-size: .9rem; color: var(--texte-doux); letter-spacing: .05em; margin-top: 1.2rem; }
+
+/* Contact */
+.contact-grille { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 1rem + 3vw, 4rem); }
+.contact-info li { display: flex; gap: .9rem; margin-bottom: 1.3rem; align-items: flex-start; }
+.contact-info .ico { width: 44px; height: 44px; border-radius: 12px; background: var(--sauge-pale); display: grid; place-items: center; flex: none; }
+.contact-info .ico svg { width: 20px; height: 20px; fill: none; stroke: var(--sauge); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.contact-info h4 { color: var(--texte); font-size: .95rem; margin-bottom: .15rem; }
+.contact-info p { font-size: .92rem; margin: 0; }
+.contact-form { background: var(--blanc); border-radius: var(--rayon-l); padding: clamp(1.6rem, 1rem + 2vw, 2.4rem); box-shadow: var(--ombre); }
+.champ { margin-bottom: 1rem; }
+.champ label { display: block; font-size: .85rem; font-weight: 600; color: var(--texte); margin-bottom: .35rem; }
+.champ input, .champ textarea { width: 100%; padding: .8rem 1rem; border: 1.5px solid var(--bordure); border-radius: 12px; font-family: inherit; font-size: .95rem; background: var(--creme); color: var(--texte); }
+.champ textarea { min-height: 120px; resize: vertical; }
+.carte-map { border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre-douce); aspect-ratio: 16/10; background: var(--sauge-pale); display: grid; place-items: center; color: var(--texte-doux); font-size: .9rem; margin-top: 1.5rem; }
+
+/* Fiche produit */
+.single-grille { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 1rem + 4vw, 4rem); align-items: start; }
+.single-media { border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre); background: var(--sauge-pale); aspect-ratio: 1; display: grid; place-items: center; }
+.single-media img { width: 68%; opacity: .85; }
+.single-info .cat { color: var(--terra-fonce); font-weight: 600; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; }
+.single-info h1 { font-size: clamp(1.8rem, 1.4rem + 1.6vw, 2.6rem); margin: .5rem 0; color: var(--texte); }
+.single-prix { font-size: 1.6rem; font-weight: 700; color: var(--terra-fonce); margin: .6rem 0 1.2rem; }
+.single-info .desc { margin-bottom: 1.4rem; }
+.single-meta { border-top: 1px solid var(--bordure); margin-top: 1.6rem; padding-top: 1.2rem; display: grid; gap: .5rem; font-size: .9rem; }
+.single-meta div span { color: var(--texte-doux); display: inline-block; min-width: 130px; }
+
+/* Fiche producteur */
+.prod-hero { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(2rem, 1rem + 3vw, 4rem); align-items: center; }
+.prod-hero .photo { border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre); aspect-ratio: 4 / 5; }
+.prod-hero .photo img { width: 100%; height: 100%; object-fit: cover; }
+.prod-hero .lieu { color: var(--terra-fonce); font-weight: 600; letter-spacing: .04em; font-size: .85rem; }
+.prod-hero h1 { font-size: var(--t-h2); color: var(--sauge); margin: .4rem 0 1rem; }
+
+/* Promotions */
+.promo-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 1.8rem); }
+.promo-carte { background: var(--blanc); border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre-douce); position: relative; transition: transform var(--transi), box-shadow var(--transi); }
+.promo-carte:hover { transform: translateY(-6px); box-shadow: var(--ombre); }
+.promo-rabais { position: absolute; top: 1rem; right: 1rem; background: var(--terra); color: #fff; font-weight: 700; font-size: .85rem; padding: .4rem .85rem; border-radius: 50px; z-index: 2; }
+.promo-img { aspect-ratio: 4/3; background: var(--sauge-pale); display: grid; place-items: center; }
+.promo-img img { width: 46%; opacity: .85; }
+.promo-corps { padding: 1.2rem 1.3rem 1.4rem; }
+.promo-corps h3 { color: var(--texte); margin-bottom: .5rem; font-size: 1.05rem; }
+.promo-prix { display: flex; align-items: baseline; gap: .6rem; }
+.promo-prix .ancien { text-decoration: line-through; color: var(--texte-doux); font-size: .9rem; }
+.promo-prix .neuf { color: var(--terra-fonce); font-weight: 700; font-size: 1.25rem; }
+
+/* Lofts (charte sarcelle) */
+body.univers-lofts .page-entete { background: #1d5055; }
+body.univers-lofts .page-entete h1 { color: #fff; }
+body.univers-lofts .page-entete h1 .script { color: #e7c9a0; }
+body.univers-lofts .page-entete > .conteneur > p { color: #cdddd9; }
+body.univers-lofts .page-entete .eyebrow { color: #e7c9a0; }
+body.univers-lofts .am-terra { background: rgba(231,201,160,.18); }
+body.univers-lofts .am-ocre { background: rgba(255,255,255,.08); }
+.loft-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 1.8rem); }
+.loft-carte { background: var(--blanc); border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre-douce); transition: transform var(--transi), box-shadow var(--transi); }
+.loft-carte:hover { transform: translateY(-6px); box-shadow: var(--ombre); }
+.loft-carte .photo { aspect-ratio: 4/3; overflow: hidden; background: #cfe0dc; }
+.loft-carte .photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--transi); }
+.loft-carte:hover .photo img { transform: scale(1.05); }
+.loft-carte .corps { padding: 1.2rem 1.3rem 1.4rem; }
+.loft-carte h3 { color: #1d5055; font-size: 1.2rem; margin-bottom: .3rem; }
+.loft-carte .meta { font-size: .85rem; color: var(--texte-doux); margin-bottom: .7rem; }
+.loft-carte .prix { font-weight: 700; color: #1d5055; }
+.loft-carte .prix span { font-weight: 400; color: var(--texte-doux); font-size: .85rem; }
+.btn-sarcelle { background: #1d5055; color: #fff; }
+.btn-sarcelle:hover { background: #16403f; }
+
+/* Loft : fiche (galerie + résa) */
+.loft-galerie { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; border-radius: var(--rayon-l); overflow: hidden; aspect-ratio: 2.4/1; }
+.loft-galerie img { width: 100%; height: 100%; object-fit: cover; }
+.loft-galerie img:first-child { grid-row: 1 / 3; }
+.loft-single { display: grid; grid-template-columns: 1.5fr 1fr; gap: clamp(2rem, 1rem + 3vw, 3.5rem); align-items: start; margin-top: clamp(2rem,1rem+3vw,3rem); }
+.loft-resa { background: var(--blanc); border: 1px solid var(--bordure); border-radius: var(--rayon-l); padding: 1.6rem; box-shadow: var(--ombre); position: sticky; top: 100px; }
+.loft-resa .prix { font-size: 1.5rem; font-weight: 700; color: #1d5055; margin-bottom: 1rem; }
+.loft-resa .prix span { font-size: .9rem; font-weight: 400; color: var(--texte-doux); }
+.loft-equip { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem 1.4rem; margin-top: 1rem; }
+.loft-equip li { display: flex; gap: .6rem; align-items: center; font-size: .92rem; }
+.loft-equip svg { width: 20px; height: 20px; fill: none; stroke: #1d5055; stroke-width: 1.6; flex: none; }
+
+/* ======================================================
+   PAGE LOFTS (listing /lofts/) — charte sarcelle, premium
+====================================================== */
+/* En-tete compact, centre */
+.lofts-entete { background: var(--creme); text-align: center; padding-top: clamp(5.5rem, 4rem + 4vw, 7rem); padding-bottom: clamp(1.2rem, .8rem + 1.5vw, 2rem); }
+.lofts-eyebrow { color: #b07d3c; font-size: .78rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; margin-bottom: .8rem; }
+.lofts-entete-titre { font-family: var(--f-script); color: #1d5055; font-size: clamp(2.6rem, 1.8rem + 4vw, 4.8rem); line-height: 1.02; margin-bottom: 1.1rem; }
+.lofts-entete-lead { max-width: 56ch; margin: 0 auto 1.1rem; color: var(--texte-doux); font-size: 1.08rem; }
+.lofts-entete-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem 1.8rem; font-size: .9rem; color: #41615f; }
+.lofts-entete-meta span, .lofts-entete-meta a { display: inline-flex; align-items: center; gap: .45rem; }
+.lofts-entete-meta a { color: #1d5055; font-weight: 600; }
+.lofts-entete-meta a:hover { color: #16403f; }
+.lofts-entete-meta svg { width: 17px; height: 17px; fill: none; stroke: #6a8a86; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* Grille des lofts */
+.lofts-liste-section { padding-block: clamp(.4rem, .2rem + 1vw, 1.1rem) clamp(3rem, 2rem + 4vw, 5rem); }
+.lofts-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 440px)); gap: clamp(1.4rem, 1rem + 1.5vw, 2.2rem); justify-content: center; }
+.lofts-vide { text-align: center; color: var(--texte-doux); max-width: 52ch; margin-inline: auto; }
+.lofts-grille > .reveal:nth-child(2) { transition-delay: .09s; }
+.lofts-grille > .reveal:nth-child(3) { transition-delay: .18s; }
+.lofts-grille > .reveal:nth-child(4) { transition-delay: .27s; }
+
+/* Carte loft (reutilise .loft-carte : fond blanc, rayon, ombre, hover) */
+.loft-carte { display: flex; flex-direction: column; }
+.loft-carte-image { display: block; position: relative; aspect-ratio: 4/3; overflow: hidden; background: linear-gradient(135deg, #dce9e6, #c4dad5); }
+.loft-carte-image img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--transi); }
+.loft-carte:hover .loft-carte-image img { transform: scale(1.06); }
+.loft-carte-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.loft-carte-placeholder svg { width: 60px; height: 60px; fill: none; stroke: #1d5055; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; opacity: .5; }
+.loft-carte-badge { position: absolute; top: .9rem; left: .9rem; background: #1d5055; color: #e7c9a0; font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; padding: .35rem .7rem; border-radius: 999px; }
+.loft-carte-corps { display: flex; flex-direction: column; flex: 1; padding: 1.3rem 1.4rem 1.5rem; }
+.loft-carte-titre { margin-bottom: .35rem; font-size: 1.3rem; }
+.loft-carte-titre a { color: #1d5055; }
+.loft-carte-titre a:hover { color: #16403f; }
+.loft-carte-meta { font-size: .85rem; color: var(--texte-doux); margin-bottom: .7rem; }
+.loft-carte-desc { font-size: .94rem; color: var(--texte-corps); margin-bottom: 1.1rem; }
+.loft-carte-bas { margin-top: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.loft-carte-prix-montant { font-size: 1.4rem; font-weight: 700; color: #1d5055; }
+.loft-carte-prix-nuit { font-size: .85rem; color: var(--texte-doux); margin-left: .2rem; }
+.loft-carte-actions { display: flex; gap: .5rem; }
+.loft-btn-primaire, .loft-btn-secondaire { display: inline-flex; align-items: center; justify-content: center; padding: .6rem 1rem; border-radius: 999px; font-size: .9rem; font-weight: 600; transition: var(--transi); }
+.loft-btn-primaire { background: #1d5055; color: #fff; }
+.loft-btn-primaire:hover { background: #16403f; transform: translateY(-2px); }
+.loft-btn-secondaire { background: transparent; color: #1d5055; border: 1.5px solid #b9cfca; }
+.loft-btn-secondaire:hover { border-color: #1d5055; background: #eef4f2; }
+
+/* Bande "Pourquoi sejourner" (sarcelle) */
+.lofts-reassurance { background: #1d5055; color: #cfe0dc; padding-block: clamp(3rem, 2rem + 4vw, 5rem); }
+.lofts-section-titre { text-align: center; font-family: var(--f-script); font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem); margin-bottom: clamp(2rem, 1.2rem + 2vw, 3rem); }
+.lofts-section-titre-clair { color: #fff; }
+.lofts-reassurance-grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(1.5rem, 1rem + 2vw, 2.5rem); }
+.lofts-atout { text-align: center; }
+.lofts-atout-icone { display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; margin-bottom: 1rem; border-radius: 50%; background: rgba(231, 201, 160, .14); }
+.lofts-atout-icone svg { width: 28px; height: 28px; fill: none; stroke: #e7c9a0; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.lofts-atout h3 { color: #fff; font-size: 1.1rem; margin-bottom: .5rem; }
+.lofts-atout p { font-size: .92rem; color: #b9cfca; }
+
+/* CTA finale */
+.lofts-cta-finale { background: var(--creme); padding-block: clamp(3rem, 2rem + 4vw, 5.5rem); }
+.lofts-cta-interieur { max-width: 640px; margin-inline: auto; text-align: center; background: linear-gradient(160deg, #1d5055, #16403f); border-radius: var(--rayon-l); padding: clamp(2.5rem, 1.8rem + 3vw, 4rem) clamp(1.5rem, 1rem + 2vw, 3rem); box-shadow: var(--ombre); }
+.lofts-cta-interieur h2 { color: #fff; font-family: var(--f-script); font-size: clamp(2rem, 1.4rem + 3vw, 3.2rem); margin-bottom: .8rem; }
+.lofts-cta-interieur p { color: #b9cfca; margin-bottom: 1.6rem; }
+.lofts-cta { display: inline-flex; align-items: center; justify-content: center; background: #e7c9a0; color: #1d3d3f; font-weight: 700; padding: .95rem 2rem; border-radius: 999px; font-size: 1.02rem; transition: var(--transi); }
+.lofts-cta:hover { background: #f0d8b4; transform: translateY(-3px); }
+.lofts-contact-ligne { margin-top: 1.6rem; font-size: .86rem; color: #9fbab5; }
+.lofts-contact-ligne a { color: #e7c9a0; }
+.lofts-contact-ligne a:hover { color: #f0d8b4; }
+
+@media (max-width: 860px) {
+  .lofts-reassurance-grille { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .lofts-reassurance-grille { grid-template-columns: 1fr; }
+  .lofts-entete-meta { gap: .5rem 1.2rem; }
+  .loft-carte-actions { width: 100%; }
+  .loft-btn-primaire, .loft-btn-secondaire { flex: 1; }
 }
 
-/* L'affiche africaine s'affiche en entier (pas de recadrage qui coupe le bas) */
-.section-hero-africaine .hero-image {
-  aspect-ratio: auto;
-  box-shadow: none;
-  background-color: transparent;
+/* Responsive pages internes */
+@media (max-width: 860px) {
+  .apropos-split, .contact-grille, .single-grille, .prod-hero, .loft-single { grid-template-columns: 1fr; }
+  .apropos-media, .single-media { max-width: 460px; margin-inline: auto; }
+  .valeurs-grille, .promo-grille, .loft-grille { grid-template-columns: 1fr 1fr; }
+  .prod-hero .photo { max-width: 420px; margin-inline: auto; }
+  .loft-resa { position: static; }
+  .loft-galerie { grid-template-columns: 1fr 1fr; aspect-ratio: 3/2; }
+  .loft-galerie img:first-child { grid-column: 1 / 3; grid-row: auto; aspect-ratio: 2/1; }
 }
-
-.section-hero-africaine .hero-image img {
-  height: auto;
-  object-fit: contain;
-}
-
-/* Affiche haute → on aligne le texte sur le haut de l'image (pas de décalage) */
-.section-hero-africaine .hero-interieur {
-  align-items: start;
-}
-
-/* Présentation */
-.section-africaine-presentation {
-  padding: 5.5rem 0;
-}
-
-.africaine-presentation-grille {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: center;
-}
-
-.africaine-presentation-texte {
-  font-size: 1.05rem;
-  line-height: 1.9;
-  color: var(--texte-moyen);
-}
-
-.africaine-presentation-texte p {
-  margin-bottom: 1.3em;
-}
-
-.africaine-presentation-image {
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: 14px;
-  box-shadow: 0 16px 48px rgba(77, 96, 64, 0.18);
-}
-
-.africaine-presentation-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Spécialités — fond chaud breakout */
-.section-africaine-specialites {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 5.5rem max(1.5rem, calc(50vw - 600px));
-  background-color: #f3e2c8;
-  position: relative;
-  overflow: hidden;
-}
-
-.section-africaine-specialites::after {
-  content: "";
-  position: absolute;
-  right: 2%;
-  bottom: -20px;
-  width: 220px;
-  height: 220px;
-  background: url("assets/images/illustrations/fleur 04.svg") no-repeat center /
-    contain;
-  opacity: 0.12;
-  pointer-events: none;
-}
-
-.africaine-specialites-grille {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  margin-top: 3rem;
-}
-
-.africaine-carte {
-  background-color: var(--blanc);
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 4px 24px rgba(31, 41, 55, 0.08);
-  display: flex;
-  flex-direction: column;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.africaine-carte:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 44px rgba(31, 41, 55, 0.14);
-}
-
-.africaine-carte-image {
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  background-color: #e6d3b3;
-}
-
-.africaine-carte-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.africaine-carte:hover .africaine-carte-image img {
-  transform: scale(1.07);
-}
-
-.africaine-carte-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  background: linear-gradient(135deg, #e6d3b3 0%, #d9b98a 100%);
-}
-
-.africaine-carte-corps {
-  padding: 1.5rem 1.5rem 1.75rem;
-}
-
-.africaine-carte-corps h3 {
-  font-family: var(--police-titre);
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--sauge);
-  margin-bottom: 0.6rem;
-}
-
-.africaine-carte-corps p {
-  font-size: 0.9rem;
-  color: var(--texte-moyen);
-  line-height: 1.7;
-  margin: 0;
-}
-
-/* Bande finale CTA */
-.section-africaine-cta {
-  padding: 5rem 0;
-}
-
-.africaine-cta-interieur {
-  max-width: 640px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.africaine-cta-interieur h2 {
-  font-family: var(--police-accent);
-  font-size: 2.2rem;
-  font-weight: 400;
-  color: var(--sauge);
-  margin-bottom: 0.75rem;
-}
-
-.africaine-cta-interieur p {
-  font-size: 1.05rem;
-  color: var(--texte-moyen);
-  line-height: 1.75;
-  margin-bottom: 1.75rem;
-}
-
-/* Responsive */
-@media (max-width: 992px) {
-  .africaine-presentation-grille {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-  }
-  .africaine-presentation-image {
-    order: -1;
-  }
-}
-
-@media (max-width: 768px) {
-  .africaine-specialites-grille {
-    grid-template-columns: 1fr;
-  }
+@media (max-width: 560px) {
+  .valeurs-grille, .promo-grille, .loft-grille { grid-template-columns: 1fr; }
 }
 
 /* ======================================================
-   BOUTONS
+   DÉCOR BOTANIQUE
+   Vraies illustrations du magasin (assets/img/illustrations)
+   intégrées en grand, en filigrane d'encre, derrière le contenu.
 ====================================================== */
+.section { position: relative; }
+.section > .conteneur { position: relative; z-index: 1; }
+.engagements, .producteurs, .produits { overflow: hidden; }
 
-.bouton-primaire {
-  display: inline-block;
-  font-family: var(--police-titre);
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--blanc);
-  background-color: var(--sauge);
-  padding: 0.85em 2em;
-  border-radius: 2px;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
+.engagements::after {
+  content: ""; position: absolute; z-index: 0; pointer-events: none;
+  right: -6%; bottom: -18%; width: clamp(260px, 32vw, 500px); aspect-ratio: 1;
+  background: url("assets/images/illustrations/fleur 04.svg") no-repeat center / contain;
+  opacity: .12;
 }
-
-.bouton-primaire:hover {
-  background-color: var(--sauge-moyen);
-  color: var(--blanc);
+.produits::before {
+  content: ""; position: absolute; z-index: 0; pointer-events: none;
+  left: -6%; top: -16%; width: clamp(260px, 32vw, 500px); aspect-ratio: 1;
+  background: url("assets/images/illustrations/branche 01.svg") no-repeat center / contain;
+  opacity: .11;
 }
-
-.bouton-secondaire {
-  display: inline-block;
-  font-family: var(--police-titre);
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--sauge);
-  background-color: transparent;
-  border: 2px solid var(--sauge);
-  padding: 0.8em 1.75em;
-  border-radius: 2px;
-  text-decoration: none;
-  cursor: pointer;
-  transition:
-    background-color 0.2s,
-    color 0.2s;
+.producteurs::after {
+  content: ""; position: absolute; z-index: 0; pointer-events: none;
+  right: -5%; top: -14%; width: clamp(280px, 34vw, 540px); aspect-ratio: 1;
+  background: url("assets/images/illustrations/petits fruits 01.svg") no-repeat center / contain;
+  opacity: .13;
 }
-
-.bouton-secondaire:hover {
-  background-color: var(--sauge);
-  color: var(--blanc);
+.page-entete::after {
+  content: ""; position: absolute; z-index: 0; pointer-events: none;
+  left: -5%; bottom: -34%; width: clamp(260px, 32vw, 520px); aspect-ratio: 1;
+  background: url("assets/images/illustrations/fleur 05.svg") no-repeat center / contain;
+  opacity: .14;
 }
+/* Page Lofts : fleur d'en-tête mieux posée + univers sarcelle complet (plus aucun vert) */
+body.univers-lofts .page-entete::after { filter: brightness(0) invert(1); opacity: .14; left: -1%; top: 16%; bottom: auto; width: clamp(220px, 26vw, 360px); }
+body.univers-lofts .entete .logo { color: #1d5055; }
+body.univers-lofts .burger span { background: #1d5055; }
+body.univers-lofts .nav-principale > a.actif { color: #1d5055; }
+body.univers-lofts .nav-principale > a::after { background: #1d5055; }
+body.univers-lofts .nav-principale .btn-primaire { background: #1d5055; }
+body.univers-lofts .nav-principale .btn-primaire:hover { background: #16403f; }
+body.univers-lofts .btn-fantome { color: #1d5055; }
+body.univers-lofts .btn-fantome:hover { background: #d9e6e3; border-color: #1d5055; }
+body.univers-lofts .pied { background: #15393b; }
+body.univers-lofts .pied a:hover { color: #e7c9a0; }
 
-.bouton-accent {
-  display: inline-block;
-  font-family: var(--police-titre);
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--blanc);
-  background-color: var(--terracotta);
-  padding: 0.85em 2em;
-  border-radius: 2px;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.bouton-accent:hover {
-  background-color: #9e4d43;
-  color: var(--blanc);
-}
-
-.bouton-plein {
-  display: block;
-  width: 100%;
-  text-align: center;
+/* ======================================================
+   PONT MENU WORDPRESS (structure <ul><li><a> dans la nav)
+====================================================== */
+.nav-principale ul { display: flex; align-items: center; gap: 2rem; list-style: none; margin: 0; padding: 0; }
+.nav-principale ul li { margin: 0; }
+.nav-principale ul a { font-size: .92rem; font-weight: 500; color: var(--texte); position: relative; padding-block: .3rem; }
+.nav-principale ul a::after { content: ""; position: absolute; left: 0; bottom: 0; width: 0; height: 2px; background: var(--terra); transition: width var(--transi); }
+.nav-principale ul a:hover::after,
+.nav-principale ul .current-menu-item > a::after,
+.nav-principale ul .current_page_item > a::after { width: 100%; }
+.nav-principale ul .current-menu-item > a,
+.nav-principale ul .current_page_item > a { color: var(--terra-fonce); }
+.univers-lofts .nav-principale ul .current-menu-item > a,
+.univers-lofts .nav-principale ul .current_page_item > a { color: #1d5055; }
+.univers-lofts .nav-principale ul a::after { background: #1d5055; }
+@media (max-width: 720px) {
+  .nav-principale ul { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+  .nav-principale ul a { font-size: 1.15rem; }
 }
 
 /* ======================================================
-   RECHERCHE
+   PAGES INTERNES — compléments de migration
+   (épicerie / boutique / promotions vers le design system bouquet)
 ====================================================== */
+/* Grille d'engagements à 3 éléments : centrée (sinon 4e colonne vide = effet décalé) */
+.engagements-grille.cols-3 { grid-template-columns: repeat(3, 1fr); max-width: 980px; margin-inline: auto; }
+@media (max-width: 720px) { .engagements-grille.cols-3 { grid-template-columns: 1fr; max-width: 420px; } }
 
-.formulaire-recherche {
-  display: flex;
-  gap: 0;
-}
+/* Section au rythme resserré (départements, valeurs) */
+.section-compacte { padding-block: clamp(2.4rem, 1.6rem + 2.5vw, 3.6rem); }
+.section-compacte .section-titre { margin-bottom: clamp(1.4rem, 1rem + 1.5vw, 2.2rem); }
 
-.formulaire-recherche input[type="search"] {
-  padding: 0.5em 0.9em;
-  border: 2px solid var(--sauge);
-  border-right: none;
-  background-color: var(--blanc);
-  color: var(--sauge);
-  font-family: var(--police-corps);
-  font-size: 0.85rem;
-  outline: none;
-  width: 200px;
-}
+/* Page À propos : prose lisible, carte Google plein cadre, duo de champs */
+.page-prose { max-width: 70ch; margin-inline: auto; }
+.page-prose p { margin-bottom: 1rem; }
+.page-prose h2, .page-prose h3 { color: var(--sauge); margin: 1.6rem 0 .6rem; }
+.carte-map iframe { width: 100%; height: 100%; border: 0; display: block; }
+.champ-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+@media (max-width: 560px) { .champ-duo { grid-template-columns: 1fr; } }
 
-.formulaire-recherche input[type="search"]::placeholder {
-  color: rgba(77, 96, 64, 0.5);
-}
+/* Page Commander : étapes numérotées */
+.etapes { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(1.2rem, .6rem + 2vw, 2.2rem); }
+.etape { text-align: center; }
+.etape-num { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: var(--terra); color: #fff; font-family: var(--f-titre); font-weight: 700; font-size: 1.2rem; margin-bottom: .9rem; }
+.etape h3 { font-size: 1.05rem; color: var(--sauge); margin-bottom: .4rem; }
+.etape p { font-size: .9rem; color: var(--texte-corps); }
 
-.formulaire-recherche input[type="search"]:focus {
-  background-color: var(--creme);
-}
+/* Page Commander : cartes « bon de commande » */
+.cmd-grille { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(1.2rem, .8rem + 1.5vw, 2rem); max-width: 880px; margin-inline: auto; }
+.cmd-carte { background: var(--blanc); border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre-douce); display: flex; flex-direction: column; transition: transform var(--transi), box-shadow var(--transi); }
+.cmd-carte:hover { transform: translateY(-6px); box-shadow: var(--ombre); }
+.cmd-carte-haut { aspect-ratio: 16 / 9; background: var(--sauge-pale); display: grid; place-items: center; position: relative; overflow: hidden; }
+.cmd-carte-haut img { width: 100%; height: 100%; object-fit: cover; }
+.cmd-carte-haut svg { width: 54px; height: 54px; fill: none; stroke: var(--sauge); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.cmd-carte-corps { padding: 1.5rem 1.6rem 1.7rem; display: flex; flex-direction: column; flex: 1; }
+.cmd-carte-corps h3 { color: var(--sauge); font-size: 1.25rem; margin-bottom: .5rem; }
+.cmd-liste { margin: .8rem 0 1.4rem; display: grid; gap: .45rem; }
+.cmd-liste li { position: relative; padding-left: 1.4rem; font-size: .9rem; }
+.cmd-liste li::before { content: ""; position: absolute; left: 0; top: .55em; width: 8px; height: 8px; border-radius: 50%; background: var(--terra); }
+.cmd-carte .btn { margin-top: auto; align-self: flex-start; }
+.cmd-cta-bientot { pointer-events: none; opacity: .55; }
+.cmd-badge-bientot { position: absolute; top: .8rem; left: .8rem; background: var(--encre); color: #fff; font-size: .72rem; font-weight: 700; letter-spacing: .04em; padding: .3rem .7rem; border-radius: 50px; }
 
-.formulaire-recherche button[type="submit"] {
-  padding: 0.5em 1em;
-  background-color: var(--terracotta);
-  color: var(--blanc);
-  border: none;
-  font-family: var(--police-titre);
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
+/* Panneau CTA (relance bas de page) */
+.cta-panel { max-width: 780px; margin-inline: auto; text-align: center; background: linear-gradient(160deg, var(--sauge), var(--sauge-fonce)); color: #e7eee0; border-radius: var(--rayon-l); padding: clamp(2.2rem, 1.6rem + 3vw, 3.6rem); box-shadow: var(--ombre); }
+.cta-panel h2 { color: #fff; font-size: var(--t-h2); margin-bottom: .7rem; }
+.cta-panel p { color: #cdd8c2; max-width: 48ch; margin: 0 auto 1.6rem; }
+.cta-panel p a { color: #fff; text-decoration: underline; }
+.cta-panel-actions { display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap; }
+.cta-panel .btn-clair { background: #fff; color: var(--sauge); }
+.cta-panel .btn-clair:hover { background: var(--ocre-pale); }
+.cta-panel .btn-contour { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.5); }
+.cta-panel .btn-contour:hover { background: rgba(255,255,255,.12); border-color: #fff; }
 
-.formulaire-recherche button[type="submit"]:hover {
-  background-color: var(--sauge);
-}
+@media (max-width: 860px) { .etapes { grid-template-columns: repeat(2, 1fr); } .cmd-grille { grid-template-columns: 1fr; max-width: 460px; } }
+@media (max-width: 520px) { .etapes { grid-template-columns: 1fr; } }
+
+/* Pages de détail (fiche produit / producteur) — dégagent l'en-tête fixe */
+.section-detail { padding-top: clamp(6.5rem, 5rem + 5vw, 8.5rem); padding-bottom: clamp(2.5rem, 1.5rem + 3vw, 4rem); }
+.single-media--photo { aspect-ratio: 1; padding: 0; }
+.single-media--photo img { width: 100%; height: 100%; object-fit: cover; opacity: 1; }
+.single-badge { display: inline-block; background: var(--ocre-pale); color: var(--terra-fonce); font-size: .75rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: .3rem .8rem; border-radius: 50px; margin-bottom: .6rem; }
+.prod-region-ligne { display: inline-flex; align-items: center; gap: .45rem; color: var(--terra-fonce); font-weight: 600; font-size: .9rem; margin-top: .6rem; }
+.prod-region-ligne svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.prod-reseaux { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: 1.4rem; }
+
+/* CTA panneau — variante terracotta (épicerie africaine) */
+.cta-panel--terra { background: linear-gradient(160deg, var(--terra), var(--terra-fonce)); color: #fbe6df; }
+.cta-panel--terra p { color: #f3d3c9; }
+.cta-panel--terra .btn-clair { color: var(--terra-fonce); }
+.cta-panel--terra .btn-clair:hover { background: #fff; }
+
+/* Page 404 */
+.erreur-404-code { font-family: var(--f-script); font-size: clamp(4rem, 3rem + 6vw, 8rem); color: var(--terra); line-height: 1; margin-bottom: .3rem; }
+
+/* Résultats de recherche */
+.recherche-liste { max-width: 760px; margin-inline: auto; display: grid; gap: 1rem; list-style: none; }
+.recherche-item { background: var(--blanc); border-radius: var(--rayon); padding: 1.3rem 1.5rem; box-shadow: var(--ombre-douce); transition: transform var(--transi), box-shadow var(--transi); }
+.recherche-item:hover { transform: translateY(-3px); box-shadow: var(--ombre); }
+.recherche-titre { font-family: var(--f-titre); font-weight: 700; color: var(--sauge); font-size: 1.1rem; }
+.recherche-titre:hover { color: var(--terra-fonce); }
+.recherche-item p { color: var(--texte-corps); font-size: .92rem; margin-top: .3rem; }
+
+/* Message « grille vide » */
+.grille-vide { text-align: center; color: var(--texte-doux); max-width: 52ch; margin: 1rem auto 0; }
+
+/* Carte boutique : marque sous le titre */
+.carte-marque { font-size: .82rem; color: var(--texte-doux); margin-top: .15rem; }
+
+/* Producteurs groupés par type (page Épicerie) */
+.prod-groupes { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 2rem); }
+.prod-groupe { background: var(--blanc); border-radius: var(--rayon); padding: 1.5rem 1.6rem; box-shadow: var(--ombre-douce); }
+.prod-groupe-titre { color: var(--sauge); font-size: 1.05rem; letter-spacing: .02em; margin-bottom: 1rem; padding-bottom: .7rem; border-bottom: 1px solid var(--bordure); }
+.prod-liste li { padding: .4rem 0; }
+.prod-liste li + li { border-top: 1px solid var(--sable); }
+.prod-nom { font-weight: 600; color: var(--texte); transition: color var(--transi); }
+.prod-nom:hover { color: var(--terra-fonce); }
+.prod-region { display: block; font-size: .8rem; color: var(--texte-doux); }
+
+/* Cartes promotion : photo plein cadre + textes */
+.promo-img--photo { display: block; }
+.promo-img--photo img { width: 100%; height: 100%; object-fit: cover; opacity: 1; }
+.promo-desc { font-size: .88rem; color: var(--texte-corps); margin: .5rem 0 .8rem; }
+.promo-validite { font-size: .78rem; color: var(--texte-doux); margin-top: .7rem; }
+
+/* État vide générique (promos, etc.) */
+.etat-vide { text-align: center; max-width: 460px; margin: 0 auto; padding: 2rem 1rem; }
+.etat-vide-icone { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: var(--sauge-pale); margin-bottom: 1rem; }
+.etat-vide-icone svg { width: 32px; height: 32px; fill: none; stroke: var(--sauge); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.etat-vide h3 { color: var(--sauge); font-size: 1.2rem; margin-bottom: .5rem; }
+.etat-vide p { color: var(--texte-corps); }
+
+@media (max-width: 860px) { .prod-groupes { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .prod-groupes { grid-template-columns: 1fr; } }
 
 /* ======================================================
-   RÉSULTATS RECHERCHE
+   PAGE DÉTAIL D'UN LOFT — mise en page style Airbnb (charte sarcelle)
+   Migré depuis style.css.bak-refonte vers les tokens actifs.
 ====================================================== */
-
-.resultats-recherche h2 {
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 3px solid var(--sauge-pale);
+/* Tokens locaux à l'univers Lofts (scopés sur le wrapper de la fiche) */
+.loft-detail {
+  --sarcelle: #1d5055;
+  --lofts-txt: #1d3d3f;
+  --lofts-terra: var(--terra);
+  --lofts-creme: var(--creme);
 }
 
-.resultat-item {
-  padding: 1.25rem;
-  border: 1px solid var(--bordure);
-  border-radius: 4px;
-  margin-bottom: 0.75rem;
-  background-color: var(--blanc);
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
-}
-
-.resultat-item:hover {
-  border-color: var(--sauge-moyen);
-  box-shadow: 0 2px 8px rgba(77, 96, 64, 0.1);
-}
-
-.resultat-item .resultat-titre {
-  font-family: var(--police-titre);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--texte);
-  text-decoration: none;
-}
-
-.resultat-item .resultat-titre:hover {
-  color: var(--sauge-moyen);
-}
-
-/* ======================================================
-   PAGE / ARTICLE
-====================================================== */
-
-.titre-page {
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 0.5rem;
-  color: var(--sauge);
-}
-
-.sous-titre-page {
-  font-size: 1rem;
-  color: var(--texte-moyen);
-  font-style: italic;
-  margin-bottom: 2.5rem;
-}
-
-.corps-article {
-  font-size: 1rem;
-  line-height: 1.85;
-  color: var(--texte);
-}
-
-.corps-article p {
-  margin-bottom: 1.1em;
-}
-
-.corps-article a {
-  color: var(--sauge-moyen);
-  border-bottom: 1px solid var(--sauge-pale);
-}
-
-.corps-article a:hover {
-  color: var(--terracotta);
-  border-color: var(--terracotta);
-}
-
-/* ======================================================
-   404
-====================================================== */
-
-.page-404 {
-  text-align: center;
-  padding: 4rem 1rem;
-  max-width: 560px;
-  margin: 0 auto;
-}
-
-.page-404 .code-erreur {
-  font-family: var(--police-accent);
-  font-size: 9rem;
-  font-weight: 400;
-  line-height: 1;
-  color: var(--sauge-pale);
-  margin-bottom: 0;
-}
-
-/* ======================================================
-   FOOTER
-====================================================== */
-
-.site-footer {
-  background-color: var(--sauge);
-  color: rgba(255, 255, 255, 0.78);
-  padding: 3rem 1.5rem 2rem;
-  margin-top: auto;
-  position: relative;
-  overflow: hidden;
-}
-
-.site-footer::before {
-  content: "";
-  position: absolute;
-  right: 2%;
-  bottom: -20px;
-  width: 200px;
-  height: 200px;
-  background: url("assets/images/illustrations/branche 02.svg") no-repeat
-    center / contain;
-  opacity: 0.08;
-  pointer-events: none;
-}
-
-.footer-interieur {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 3rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  margin-bottom: 1.5rem;
-  position: relative;
-}
-
-.footer-marque .footer-nom {
-  font-family: var(--police-accent);
-  font-size: 2rem;
-  font-weight: 400;
-  color: var(--blanc);
-  display: block;
-  margin-bottom: 0.5rem;
-  text-decoration: none;
-}
-
-.footer-marque p {
-  font-size: 0.88rem;
-  line-height: 1.65;
-  color: rgba(255, 255, 255, 0.72);
-  margin-bottom: 0.5rem;
-}
-
-.footer-marque a {
-  color: rgba(255, 255, 255, 0.78);
-}
-
-.footer-marque a:hover {
-  color: var(--blanc);
-}
-
-.footer-col h4 {
-  font-family: var(--police-titre);
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--blanc);
-  margin-bottom: 1rem;
-}
-
-.footer-col ul {
-  list-style: none;
-}
-
-.footer-col ul li {
-  margin-bottom: 0.5rem;
-}
-
-.footer-col ul li a {
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 0.9rem;
-  transition: color 0.2s;
-}
-
-.footer-col ul li a:hover {
-  color: var(--blanc);
-}
-
-.footer-bas {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  position: relative;
-}
-
-.footer-copyright {
-  font-family: var(--police-titre);
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.5);
-  margin: 0;
-}
-
-/* ======================================================
-   SECTION APROPOS BLOC — fond terracotta-pale (comme le héros)
-====================================================== */
-
-.section-apropos-bloc {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 3.5rem max(1.5rem, calc(50vw - 600px)) 5rem;
-  background-color: var(--terracotta-pale);
-  position: relative;
-  overflow: hidden;
-}
-
-.section-apropos-bloc::before {
-  content: "";
-  position: absolute;
-  right: 3%;
-  bottom: -30px;
-  width: 280px;
-  height: 280px;
-  background: url("assets/images/illustrations/fleur 01.svg") no-repeat center /
-    contain;
-  opacity: 0.1;
-  pointer-events: none;
-}
-
-.section-apropos-bloc::after {
-  content: "";
-  position: absolute;
-  left: 1%;
-  top: -10px;
-  width: 180px;
-  height: 180px;
-  background: url("assets/images/illustrations/branche 01.svg") no-repeat
-    center / contain;
-  opacity: 0.08;
-  pointer-events: none;
-}
-
-.section-apropos {
-  display: grid;
-  grid-template-columns: 55fr 45fr;
-  gap: 4rem;
-  align-items: center;
-}
-
-.apropos-texte .corps-article {
-  font-size: 1.05rem;
-  line-height: 1.9;
-  color: var(--texte-moyen);
-}
-
-/* Titre de la page À propos en police décorative Professor */
-.apropos-texte .corps-article h1,
-.apropos-texte .corps-article h2 {
-  font-family: var(--police-accent);
-  font-weight: 400;
-  color: var(--sauge);
-  font-size: clamp(2.6rem, 5vw, 4rem);
-  line-height: 1.05;
-  margin-bottom: 1.25rem;
-}
-
-.apropos-texte .corps-article p {
-  margin-bottom: 1.4em;
-}
-
-/* Section coordonnées — fond transparent (crème du body) */
-.section-contact-bloc {
-  padding: 6rem 0;
-}
-
-.section-contact-bloc .titre-section {
-  margin-bottom: 3rem;
-}
-
-/* Section formulaire — fond sauge sombre (comme la newsletter) */
-.section-formulaire-contact {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 6rem max(1.5rem, calc(50vw - 600px));
-  background-color: var(--sauge);
-  position: relative;
-  overflow: hidden;
-}
-
-.section-formulaire-contact::before {
-  content: "";
-  position: absolute;
-  right: 2%;
-  bottom: -20px;
-  width: 240px;
-  height: 240px;
-  background: url("assets/images/illustrations/branche 02.svg") no-repeat
-    center / contain;
-  opacity: 0.07;
-  pointer-events: none;
-}
-
-/* Titre et sous-titre blancs sur fond sombre */
-.section-formulaire-contact .titre-section {
-  color: var(--blanc);
-  border-bottom-color: rgba(255, 255, 255, 0.2);
-}
-
-.formulaire-contact-interieur {
-  width: 70%;
-  max-width: 900px;
-  min-width: 320px;
-  margin: 0 auto;
-}
-
-.sous-titre-formulaire {
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.82);
-  margin-bottom: 2.5rem;
-}
-
-/* Carte formulaire sur fond sombre */
-.section-formulaire-contact .formulaire-bloc {
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-  border-radius: 6px;
-}
-
-/* ======================================================
-   SECTION ENGAGEMENTS
-====================================================== */
-
-.section-engagements {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 1rem max(1.5rem, calc(50vw - 600px)) 4.5rem;
-  background-color: var(--creme);
-}
-
-.engagements-grille {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-  background: var(--blanc);
-  border-radius: 18px;
-  box-shadow: 0 12px 44px rgba(77, 96, 64, 0.1);
-  padding: 2.75rem 2rem;
-}
-
-.engagement-item {
-  text-align: center;
-  padding: 0.5rem;
-}
-
-.engagement-icone {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 66px;
-  height: 66px;
-  border-radius: 50%;
-  background: var(--sauge-pale);
-  font-size: 1.85rem;
-  margin: 0 auto 1rem;
-}
-
-.engagement-item h3 {
-  font-family: var(--police-titre);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--sauge);
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.engagement-item p {
-  font-size: 0.88rem;
-  color: var(--texte-moyen);
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* ======================================================
-   SECTION PRODUITS VEDETTES
-====================================================== */
-
-.section-produits-vedettes {
-  padding: 4rem 0;
-}
-
-.section-lien-centre {
-  text-align: center;
-  margin-top: 2.5rem;
-}
-
-/* ======================================================
-   SECTION PRODUCTEURS ACCUEIL
-====================================================== */
-
-.section-producteurs-accueil {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 4rem max(1.5rem, calc(50vw - 600px));
-  background-color: var(--sauge-pale);
-}
-
-.producteurs-entete {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 2.5rem;
-  gap: 2rem;
-}
-
-.producteurs-entete h2 {
-  font-family: var(--police-accent);
-  font-size: 2rem;
-  font-weight: 400;
-  color: var(--sauge);
-  margin-bottom: 0.4rem;
-}
-
-.producteurs-entete p {
-  color: var(--texte-moyen);
-  font-size: 0.95rem;
-  margin: 0;
-}
-
-/* ======================================================
-   SECTION NEWSLETTER
-====================================================== */
-
-.section-newsletter {
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 4rem max(1.5rem, calc(50vw - 600px));
-  background-color: var(--sauge);
-  text-align: center;
-}
-
-.newsletter-interieur {
-  max-width: 540px;
-  margin: 0 auto;
-}
-
-.newsletter-interieur h2 {
-  font-family: var(--police-accent);
-  font-size: 2rem;
-  font-weight: 400;
-  color: var(--blanc);
-  margin-bottom: 0.5rem;
-}
-
-.newsletter-interieur p {
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 0.95rem;
-  margin-bottom: 1.5rem;
-}
-
-/* ======================================================
-   RESPONSIVE
-====================================================== */
-
-@media (max-width: 1100px) {
-  .grille-cartes-4 {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 1024px) {
-  .producteurs-categories-grille {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 992px) {
-  .grille-cartes {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .grille-temoignages {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .grille-departements {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-  }
-  .grille-cartes-4 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .producteurs-categories-grille {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .section-mission,
-  .section-apropos {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  .hero-interieur {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-  .hero-image {
-    order: -1;
-    max-width: 480px;
-  }
-
-  .contact-interieur {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-  }
-
-  .footer-interieur {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .section-apropos-bloc {
-    padding: 4rem max(1.5rem, calc(50vw - 600px));
-  }
-  .section-contact-bloc {
-    padding: 4rem max(1.5rem, calc(50vw - 600px));
-  }
-  .section-formulaire-contact {
-    padding: 4rem max(1.5rem, calc(50vw - 600px));
-  }
-  .section-apropos {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-  .apropos-image-cadre {
-    order: -1;
-    max-width: 480px;
-    margin: 0 auto;
-  }
-  .hero-image-cadre {
-    order: -1;
-    max-width: 520px;
-    margin: 0 auto;
-  }
-}
-
-@media (max-width: 768px) {
-  h1 {
-    font-size: 1.9rem;
-  }
-  h2 {
-    font-size: 1.5rem;
-  }
-
-  .hamburger {
-    display: flex;
-  }
-
-  .menu-principal {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: var(--sauge);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
-    z-index: 99;
-    padding: 0.75rem 1.5rem 1rem;
-  }
-
-  .menu-principal.ouvert {
-    display: block;
-  }
-
-  .menu-principal > div {
-    width: 100%;
-    padding: 0;
-    max-width: none;
-  }
-
-  .menu-principal ul {
-    flex-direction: column;
-    flex-wrap: nowrap;
-    gap: 0.35rem;
-  }
-
-  .menu-principal ul li a {
-    display: block;
-    padding: 0.75rem 1.1rem;
-    font-size: 0.88rem;
-    background-color: rgba(255, 255, 255, 0.12);
-    color: var(--blanc);
-    border-radius: 5px;
-    border: none;
-  }
-
-  .menu-principal ul li a:hover {
-    background-color: rgba(255, 255, 255, 0.22);
-    color: var(--blanc);
-  }
-
-  .menu-principal ul li.current-menu-item a,
-  .menu-principal ul li.current-page-ancestor a {
-    background-color: var(--terracotta);
-    color: var(--blanc);
-  }
-
-  .section-hero {
-    padding: 3rem 1.5rem;
-  }
-  .hero-image {
-    order: 2;
-    max-width: 100%;
-  }
-
-  .section-apropos-bloc {
-    padding: 3rem 1.5rem;
-  }
-  .section-contact-bloc {
-    padding: 3rem 0;
-  }
-  .section-formulaire-contact {
-    padding: 3rem 1.5rem;
-  }
-  .formulaire-contact-interieur {
-    width: 90%;
-  }
-
-  .apropos-image {
-    aspect-ratio: 4 / 3;
-  }
-  .formulaire-bloc {
-    padding: 2rem 1.5rem;
-  }
-  .engagements-grille {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .producteurs-entete {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .grille-cartes {
-    grid-template-columns: 1fr;
-  }
-  .grille-departements {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-  .producteurs-categories-grille {
-    grid-template-columns: 1fr;
-  }
-  .grille-cartes-4 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .engagements-grille {
-    grid-template-columns: 1fr 1fr;
-  }
-  .grille-temoignages {
-    grid-template-columns: 1fr;
-  }
-  .grille-etapes {
-    grid-template-columns: 1fr;
-  }
-  .grille-cartes-4 {
-    grid-template-columns: 1fr;
-  }
-  .formulaire-grille-2 {
-    grid-template-columns: 1fr;
-  }
-
-  .footer-interieur {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-  .footer-bas {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .newsletter-formulaire {
-    flex-direction: column;
-  }
-
-  .newsletter-formulaire input[type="email"] {
-    border-right: 2px solid rgba(255, 255, 255, 0.4);
-    border-bottom: none;
-    border-radius: 2px 2px 0 0;
-  }
-
-  .newsletter-formulaire button {
-    border-radius: 0 0 2px 2px;
-  }
-
-  .titre-section {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-/* ======================================================
-   PAGE DÉTAIL D'UN LOFT — mise en page style Airbnb
-====================================================== */
 .loft-d-conteneur {
-  padding-top: 2rem;
+  padding-top: clamp(6rem, 4.5rem + 4vw, 8rem);
   padding-bottom: 4rem;
 }
 
@@ -4951,7 +777,7 @@ a.producteur-nom:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  font-family: var(--police-titre);
+  font-family: var(--f-titre);
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -4981,7 +807,7 @@ a.producteur-nom:hover {
 }
 
 .loft-d-titre {
-  font-family: var(--police-accent);
+  font-family: var(--f-script);
   font-size: clamp(2.6rem, 5vw, 4rem);
   font-weight: 400;
   line-height: 1;
@@ -4990,7 +816,7 @@ a.producteur-nom:hover {
 }
 
 .loft-d-voir-airbnb {
-  font-family: var(--police-titre);
+  font-family: var(--f-titre);
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--sarcelle);
@@ -5041,7 +867,7 @@ a.producteur-nom:hover {
   border: 1px solid var(--lofts-txt);
   border-radius: 10px;
   padding: 0.6em 1.1em;
-  font-family: var(--police-titre);
+  font-family: var(--f-titre);
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
@@ -5071,7 +897,7 @@ a.producteur-nom:hover {
 }
 
 .loft-d-soustitre {
-  font-family: var(--police-titre);
+  font-family: var(--f-titre);
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--lofts-txt);
@@ -5080,7 +906,7 @@ a.producteur-nom:hover {
 
 .loft-d-meta {
   font-size: 0.98rem;
-  color: var(--texte-moyen);
+  color: var(--texte-corps);
   margin: 0 0 1.75rem;
 }
 
@@ -5111,13 +937,13 @@ a.producteur-nom:hover {
 }
 .loft-d-hl-texte { display: flex; flex-direction: column; gap: 0.15rem; }
 .loft-d-hl-texte strong {
-  font-family: var(--police-titre);
+  font-family: var(--f-titre);
   font-size: 1rem;
   color: var(--lofts-txt);
 }
 .loft-d-hl-desc {
   font-size: 0.9rem;
-  color: var(--texte-moyen);
+  color: var(--texte-corps);
   line-height: 1.5;
 }
 
@@ -5151,7 +977,7 @@ a.producteur-nom:hover {
   background: none;
   border: none;
   padding: 0;
-  font-family: var(--police-titre);
+  font-family: var(--f-titre);
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--sarcelle);
@@ -5163,7 +989,7 @@ a.producteur-nom:hover {
 
 /* Commodités */
 .loft-d-h2 {
-  font-family: var(--police-titre);
+  font-family: var(--f-titre);
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--lofts-txt);
@@ -5202,7 +1028,7 @@ a.producteur-nom:hover {
   background: none;
   border: 1.5px solid var(--lofts-txt);
   color: var(--lofts-txt);
-  font-family: var(--police-titre);
+  font-family: var(--f-titre);
   font-size: 0.85rem;
   font-weight: 700;
   padding: 0.8em 1.5em;
@@ -5216,7 +1042,7 @@ a.producteur-nom:hover {
 }
 
 /* Carte de réservation (collante) */
-.loft-d-resa-col { position: sticky; top: 2rem; }
+.loft-d-resa-col { position: sticky; top: 100px; }
 .loft-d-resa-carte {
   background: var(--blanc);
   border: 1px solid var(--bordure);
@@ -5231,12 +1057,12 @@ a.producteur-nom:hover {
   margin-bottom: 0.15rem;
 }
 .loft-d-resa-montant {
-  font-family: var(--police-titre);
+  font-family: var(--f-titre);
   font-size: 1.9rem;
   font-weight: 800;
   color: var(--lofts-txt);
 }
-.loft-d-resa-nuit { font-size: 0.95rem; color: var(--texte-moyen); }
+.loft-d-resa-nuit { font-size: 0.95rem; color: var(--texte-corps); }
 .loft-d-resa-sub {
   font-size: 0.82rem;
   letter-spacing: 0.08em;
@@ -5251,7 +1077,7 @@ a.producteur-nom:hover {
   text-align: center;
   background: var(--lofts-terra);
   color: var(--blanc);
-  font-family: var(--police-titre);
+  font-family: var(--f-titre);
   font-size: 1rem;
   font-weight: 700;
   padding: 0.95em 1em;
@@ -5277,14 +1103,14 @@ a.producteur-nom:hover {
 .loft-d-resa-note {
   text-align: center;
   font-size: 0.84rem;
-  color: var(--texte-moyen);
+  color: var(--texte-corps);
   margin: 0.9rem 0 0;
 }
 .loft-d-resa-tel {
   display: block;
   text-align: center;
   margin-top: 0.85rem;
-  font-family: var(--police-titre);
+  font-family: var(--f-titre);
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--sarcelle);
@@ -5300,7 +1126,7 @@ a.producteur-nom:hover {
 }
 .loft-d-loc-adresse {
   font-size: 1rem;
-  color: var(--texte-moyen);
+  color: var(--texte-corps);
   margin: 0 0 1.5rem;
 }
 .loft-d-loc-carte {
@@ -5323,7 +1149,7 @@ a.producteur-nom:hover {
 .loft-d-loc-lien {
   display: inline-block;
   margin-top: 1rem;
-  font-family: var(--police-titre);
+  font-family: var(--f-titre);
   font-size: 0.9rem;
   font-weight: 700;
   color: var(--sarcelle);
@@ -5348,7 +1174,7 @@ a.producteur-nom:hover {
   margin: 0 auto;
 }
 .loft-d-overlay-titre {
-  font-family: var(--police-accent);
+  font-family: var(--f-script);
   font-weight: 400;
   font-size: 2.6rem;
   color: var(--lofts-creme);
@@ -5368,7 +1194,7 @@ a.producteur-nom:hover {
   background: rgba(20, 30, 31, 0.97);
 }
 .loft-d-overlay-nav a {
-  font-family: var(--police-titre);
+  font-family: var(--f-titre);
   font-size: 0.8rem;
   font-weight: 600;
   color: rgba(250, 240, 238, 0.85);
@@ -5388,7 +1214,7 @@ a.producteur-nom:hover {
   margin-bottom: 2.5rem;
 }
 .loft-d-overlay-cat h3 {
-  font-family: var(--police-titre);
+  font-family: var(--f-titre);
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--lofts-creme);
@@ -5457,70 +1283,10 @@ a.producteur-nom:hover {
   }
   .loft-d-barre-mobile .loft-d-resa-btn { width: auto; padding: 0.8em 1.6em; }
   .loft-d-barre-prix {
-    font-family: var(--police-titre);
+    font-family: var(--f-titre);
     font-weight: 800;
     font-size: 1.1rem;
     color: var(--lofts-txt);
   }
-  .loft-d-barre-prix small { font-weight: 500; color: var(--texte-moyen); }
-}
-
-/* ======================================================
-   UNIVERS LOFTS — recoloration header / menu / footer
-   (appliqué via la classe body.univers-lofts)
-====================================================== */
-
-/* En-tête : fond crème sarcelle, ombre teintée */
-.univers-lofts .site-header {
-  background-color: #faf0ee;
-  border-bottom: 1px solid rgba(29, 80, 85, 0.15);
-  box-shadow: 0 2px 10px rgba(29, 80, 85, 0.1);
-}
-
-/* Menu : boutons sarcelle au lieu de vert sauge */
-.univers-lofts .menu-principal ul li a {
-  background-color: #1d5055;
-  color: #faf0ee;
-}
-.univers-lofts .menu-principal ul li a:hover {
-  background-color: #174448;
-  color: #ffffff;
-}
-.univers-lofts .menu-principal ul li.current-menu-item a,
-.univers-lofts .menu-principal ul li.current-page-ancestor a {
-  background-color: #c4715a;
-  color: #ffffff;
-}
-
-/* Hamburger mobile en sarcelle */
-.univers-lofts .hamburger-barre {
-  background-color: #1d5055;
-}
-
-/* Bandeau promo (si affiché) accordé à l'univers */
-.univers-lofts .bandeau-promo {
-  background-color: #174448;
-}
-
-/* Pied de page sarcelle au lieu de vert sauge */
-.univers-lofts .site-footer {
-  background-color: #1d5055;
-}
-
-/* Menu mobile déroulant sarcelle */
-@media (max-width: 768px) {
-  .univers-lofts .menu-principal {
-    background-color: #1d5055;
-  }
-  .univers-lofts .menu-principal ul li a {
-    background-color: rgba(255, 255, 255, 0.12);
-    color: #ffffff;
-  }
-  .univers-lofts .menu-principal ul li a:hover {
-    background-color: rgba(255, 255, 255, 0.22);
-  }
-  .univers-lofts .menu-principal ul li.current-menu-item a,
-  .univers-lofts .menu-principal ul li.current-page-ancestor a {
-    background-color: #c4715a;
-  }
+  .loft-d-barre-prix small { font-weight: 500; color: var(--texte-corps); }
 }

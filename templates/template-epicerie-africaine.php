@@ -39,16 +39,20 @@ $cta_titre = get_field('afr_cta_titre') ?: 'Venez découvrir nos saveurs';
 $cta_texte = get_field('afr_cta_texte') ?: 'Passez en boutique à Matane pour explorer toute notre sélection africaine. Notre équipe se fera un plaisir de vous conseiller.';
 $cta_lien  = get_field('afr_cta_lien')  ?: get_permalink(get_page_by_path('a-propos'));
 $cta_label = get_field('afr_cta_label') ?: 'Nous trouver';
+
+$illu = get_stylesheet_directory_uri() . '/assets/images/illustrations/';
 ?>
 
 <!-- ======================================================
-     HÉROS
+     EN-TÊTE
 ====================================================== -->
-<section class="section-hero-direct section-hero-direct--beige">
+<section class="page-entete">
+    <span class="arche-mini am-terra"></span>
+    <span class="arche-mini am-ocre"></span>
     <div class="conteneur">
-        <p class="banniere-surtitre"><?php echo esc_html($surtitre); ?></p>
-        <h1 class="hero-direct-titre"><?php the_title(); ?></h1>
-        <div class="hero-direct-accroche"><?php echo wpautop(esc_html($intro)); ?></div>
+        <p class="eyebrow"><?php echo esc_html($surtitre); ?></p>
+        <h1><?php the_title(); ?></h1>
+        <p><?php echo esc_html($intro); ?></p>
     </div>
 </section>
 
@@ -56,24 +60,22 @@ $cta_label = get_field('afr_cta_label') ?: 'Nous trouver';
      PRÉSENTATION (texte = éditeur WP) + image
 ====================================================== -->
 <?php if (get_the_content() || $pres_image): ?>
-<section class="section-africaine-presentation">
+<section class="section" style="padding-top:clamp(1.5rem,1rem+2vw,2.5rem)">
     <div class="conteneur">
-        <div class="africaine-presentation-grille">
-
-            <?php if (get_the_content()): ?>
-            <div class="africaine-presentation-texte corps-article">
-                <?php the_content(); ?>
+        <?php if (get_the_content() && $pres_image): ?>
+        <div class="apropos-split">
+            <div class="page-prose reveal" style="margin:0"><?php the_content(); ?></div>
+            <div class="apropos-media reveal">
+                <div class="cadre"><img src="<?php echo esc_url($pres_image['sizes']['large'] ?? $pres_image['url']); ?>" alt="<?php echo esc_attr($pres_image['alt'] ?: 'Épicerie Africaine'); ?>"></div>
             </div>
-            <?php endif; ?>
-
-            <?php if ($pres_image): ?>
-            <div class="africaine-presentation-image">
-                <img src="<?php echo esc_url($pres_image['sizes']['large'] ?? $pres_image['url']); ?>"
-                     alt="<?php echo esc_attr($pres_image['alt'] ?: 'Épicerie Africaine'); ?>">
-            </div>
-            <?php endif; ?>
-
         </div>
+        <?php elseif (get_the_content()): ?>
+            <div class="page-prose reveal"><?php the_content(); ?></div>
+        <?php elseif ($pres_image): ?>
+            <div class="apropos-media reveal" style="max-width:640px;margin-inline:auto">
+                <div class="cadre"><img src="<?php echo esc_url($pres_image['sizes']['large'] ?? $pres_image['url']); ?>" alt="<?php echo esc_attr($pres_image['alt'] ?: 'Épicerie Africaine'); ?>"></div>
+            </div>
+        <?php endif; ?>
     </div>
 </section>
 <?php endif; ?>
@@ -81,44 +83,46 @@ $cta_label = get_field('afr_cta_label') ?: 'Nous trouver';
 <!-- ======================================================
      SPÉCIALITÉS — 3 cartes
 ====================================================== -->
-<section class="section-africaine-specialites">
+<section class="section produits">
     <div class="conteneur">
+        <div class="section-titre">
+            <h2>Nos spécialités</h2>
+            <p>Un aperçu des trésors culinaires à découvrir en boutique</p>
+        </div>
 
-        <h2 class="titre-section-centre">Nos spécialités</h2>
-        <p class="sous-titre-section">Un aperçu des trésors culinaires à découvrir en boutique</p>
-
-        <div class="africaine-specialites-grille">
-            <?php foreach ($specialites as $spec): ?>
-            <div class="africaine-carte">
-                <div class="africaine-carte-image">
+        <div class="grille-prod">
+            <?php $i = 0; foreach ($specialites as $spec): $delai = $i ? ' reveal-delai-' . $i : ''; $i++; ?>
+            <article class="carte-prod reveal<?php echo $delai; ?>">
+                <div class="photo">
                     <?php if ($spec['image']): ?>
                         <img src="<?php echo esc_url($spec['image']['sizes']['medium_large'] ?? $spec['image']['url']); ?>"
                              alt="<?php echo esc_attr($spec['image']['alt'] ?: $spec['titre']); ?>">
                     <?php else: ?>
-                        <div class="africaine-carte-placeholder">🌍</div>
+                        <div class="carte-vide"><img src="<?php echo esc_url($illu); ?>branche%2002.svg" alt=""></div>
                     <?php endif; ?>
                 </div>
-                <div class="africaine-carte-corps">
+                <div class="corps">
                     <h3><?php echo esc_html($spec['titre']); ?></h3>
                     <p><?php echo esc_html($spec['texte']); ?></p>
                 </div>
-            </div>
+            </article>
             <?php endforeach; ?>
         </div>
-
     </div>
 </section>
 
 <!-- ======================================================
      BANDE FINALE — CTA
 ====================================================== -->
-<section class="section-africaine-cta">
+<section class="section">
     <div class="conteneur">
-        <div class="africaine-cta-interieur">
+        <div class="cta-panel cta-panel--terra reveal">
             <h2><?php echo esc_html($cta_titre); ?></h2>
             <p><?php echo esc_html($cta_texte); ?></p>
             <?php if ($cta_lien && $cta_label): ?>
-                <a href="<?php echo esc_url($cta_lien); ?>" class="bouton-accent"><?php echo esc_html($cta_label); ?></a>
+                <div class="cta-panel-actions">
+                    <a href="<?php echo esc_url($cta_lien); ?>" class="btn btn-clair"><?php echo esc_html($cta_label); ?></a>
+                </div>
             <?php endif; ?>
         </div>
     </div>

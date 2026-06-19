@@ -55,27 +55,9 @@ function lv_theme_setup()
 }
 add_action('after_setup_theme', 'lv_theme_setup');
 
-/* Liens d'archives ajoutés aux menus :
-   - « Producteurs » : en-tête + pied de page (menu principal)
-   - « Produits »    : pied de page uniquement (arg lv_footer) */
-add_filter('wp_nav_menu_items', function ($items, $args) {
-
-    if (($args->menu ?? '') === 'principal') {
-        $url = get_post_type_archive_link('producteur');
-        if ($url && strpos($items, $url) === false) {
-            $items .= '<li class="menu-item"><a href="' . esc_url($url) . '">Producteurs</a></li>';
-        }
-    }
-
-    if (!empty($args->lv_footer)) {
-        $url = get_post_type_archive_link('produit');
-        if ($url && strpos($items, $url) === false) {
-            $items .= '<li class="menu-item"><a href="' . esc_url($url) . '">Produits</a></li>';
-        }
-    }
-
-    return $items;
-}, 10, 2);
+/* Header = menu court (menu principal, 5 pages, SANS Producteurs).
+   Footer = navigation complete auto-generee (toutes les pages publiees
+   + archives Producteurs/Produits), voir footer.php. */
 
 /* Univers visuel « Lofts » : classe sur le body pour recolorer header/footer/menu */
 add_filter('body_class', function ($classes) {

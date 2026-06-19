@@ -21,12 +21,14 @@ $booking   = $reservit ?: $airbnb;
 $lien_resa = $booking ?: 'tel:' . preg_replace('/\D/', '', $telephone);
 ?>
 
-<article class="loft-carte">
+<article class="loft-carte reveal">
     <a href="<?php echo esc_url(get_permalink()); ?>" class="loft-carte-image">
         <?php if (has_post_thumbnail()):
             the_post_thumbnail('large', ['alt' => get_the_title()]);
         else: ?>
-            <div class="loft-carte-placeholder">🏠</div>
+            <div class="loft-carte-placeholder">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></svg>
+            </div>
         <?php endif; ?>
         <?php if ($badge): ?>
             <span class="loft-carte-badge"><?php echo esc_html($badge); ?></span>

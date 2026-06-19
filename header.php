@@ -10,52 +10,31 @@
 <body <?php body_class(); ?>>
     <?php wp_body_open(); ?>
 
-    <header class="site-header">
+    <header class="entete">
+        <div class="conteneur entete-barre">
 
-        <div class="header-barre">
+            <a class="logo" href="<?php echo esc_url(home_url('/')); ?>">
+                <?php bloginfo('name'); ?>
+            </a>
 
-            <div class="logo-zone">
+            <nav class="nav-principale" id="nav-menu" aria-label="Menu principal">
                 <?php
-                if (has_custom_logo()):
-                    the_custom_logo();
-                else: ?>
-                    <!-- <a class="nom-site" href="<?php echo esc_url(home_url('/')); ?>">
-                        <?php bloginfo('name'); ?>
-                    </a> -->
-                <?php endif; ?>
-            </div>
-
-            <nav class="menu-principal" id="nav-menu" aria-label="Menu principal">
-                <div>
-                    <?php wp_nav_menu(['menu' => 'principal', 'container' => false]); ?>
-                </div>
+                wp_nav_menu([
+                    'menu'        => 'principal',
+                    'container'   => false,
+                    'fallback_cb' => false,
+                ]);
+                $page_commande = get_page_by_path('commandez');
+                $url_commande  = $page_commande ? get_permalink($page_commande) : home_url('/');
+                ?>
+                <a href="<?php echo esc_url($url_commande); ?>" class="btn btn-primaire">Commander</a>
             </nav>
 
-            <button class="hamburger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu">
-                <span class="hamburger-barre"></span>
-                <span class="hamburger-barre"></span>
-                <span class="hamburger-barre"></span>
+            <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+                <span></span><span></span><span></span>
             </button>
 
         </div>
-
     </header>
 
-    <?php
-    /* Bande promo dynamique : affiche les promos actives, sinon message par défaut */
-    $bandeau_promos = function_exists('lv_get_promotions_actives') ? lv_get_promotions_actives(6) : null;
-    if ($bandeau_promos && $bandeau_promos->have_posts()):
-        $items = [];
-        while ($bandeau_promos->have_posts()): $bandeau_promos->the_post();
-            $pp = get_field('promo_prix_promo');
-            $items[] = get_the_title() . ($pp ? ' — ' . $pp : '');
-        endwhile;
-        wp_reset_postdata();
-    ?>
-    <div class="bandeau-promo">
-        <p>🌿 Promotions de la semaine — <?php echo esc_html(implode('  ·  ', $items)); ?> 🌿</p>
-    </div>
-    <?php endif; ?>
-
     <main>
-        <div class="conteneur">
