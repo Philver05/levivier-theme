@@ -10,7 +10,7 @@ if (have_posts()) the_post();
    Champs ACF + valeurs par défaut — tout éditable dans l'admin
 ---------------------------------------------------------- */
 $surtitre = get_field('afr_surtitre') ?: 'Saveurs d\'Afrique · Le Vivier';
-$intro    = get_field('afr_intro')    ?: "Découvrez notre sélection de produits africains : épices parfumées, sauces authentiques, féculents et trésors culinaires venus tout droit du continent. Une invitation au voyage, au cœur de Matane.";
+$intro    = get_field('afr_intro')    ?: "Épices, sauces, féculents et trésors culinaires venus du continent.\nUne invitation au voyage, au cœur de Matane.";
 
 /* Présentation */
 $pres_image = get_field('afr_presentation_image');
@@ -52,7 +52,7 @@ $illu = get_stylesheet_directory_uri() . '/assets/images/illustrations/';
     <div class="conteneur">
         <p class="eyebrow"><?php echo esc_html($surtitre); ?></p>
         <h1><?php the_title(); ?></h1>
-        <p><?php echo esc_html($intro); ?></p>
+        <p><?php echo nl2br(esc_html($intro)); ?></p>
     </div>
 </section>
 
@@ -114,17 +114,16 @@ $illu = get_stylesheet_directory_uri() . '/assets/images/illustrations/';
 <!-- ======================================================
      BANDE FINALE — CTA
 ====================================================== -->
-<section class="section">
-    <div class="conteneur">
-        <div class="cta-panel cta-panel--terra reveal">
-            <h2><?php echo esc_html($cta_titre); ?></h2>
-            <p><?php echo esc_html($cta_texte); ?></p>
-            <?php if ($cta_lien && $cta_label): ?>
-                <div class="cta-panel-actions">
-                    <a href="<?php echo esc_url($cta_lien); ?>" class="btn btn-clair"><?php echo esc_html($cta_label); ?></a>
-                </div>
-            <?php endif; ?>
-        </div>
+<section class="cta-finale">
+    <div class="cta-finale-deco" aria-hidden="true"></div>
+    <div class="conteneur cta-finale-inner reveal">
+        <h2><?php echo esc_html($cta_titre); ?></h2>
+        <p><?php echo esc_html($cta_texte); ?></p>
+        <?php if ($cta_lien && $cta_label): ?>
+            <div class="cta-finale-actions">
+                <a href="<?php echo esc_url($cta_lien); ?>" class="btn btn-clair"><?php echo esc_html($cta_label); ?></a>
+            </div>
+        <?php endif; ?>
     </div>
 </section>
 

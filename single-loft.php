@@ -42,6 +42,7 @@ $telephone = get_field('loft_telephone') ?: '418 562-5230';
 $map_q       = trim($adresse) . ', Matane, Québec';
 $map_lien    = 'https://www.google.com/maps/dir/?api=1&destination=' . rawurlencode($map_q);
 $map_saisie  = trim((string) get_field('loft_map_embed'));
+$map_auto    = 'https://www.google.com/maps?q=' . rawurlencode($map_q) . '&z=16&hl=fr&output=embed';
 
 if ($map_saisie !== '' && stripos($map_saisie, '<iframe') !== false) {
     /* L'utilisateur a collé le code <iframe> complet : on l'affiche tel quel (nettoyé) */
@@ -53,9 +54,12 @@ if ($map_saisie !== '' && stripos($map_saisie, '<iframe') !== false) {
         ],
     ]);
 } else {
-    /* Sinon : une URL d'intégration, ou génération auto depuis l'adresse */
-    $map_src  = $map_saisie ?: 'https://maps.google.com/maps?q=' . rawurlencode($map_q) . '&z=16&hl=fr&output=embed';
-    $map_html = '<iframe src="' . esc_url($map_src) . '" title="Carte — ' . esc_attr($adresse) . '" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>';
+    /* Sinon : on n'utilise la valeur collée comme source que si c'est une vraie URL
+       d'intégration (un lien de partage maps.app.goo.gl ne s'affiche pas en iframe).
+       À défaut, on génère la carte depuis l'adresse. */
+    $est_embed = (stripos($map_saisie, 'output=embed') !== false) || (stripos($map_saisie, '/maps/embed') !== false);
+    $map_src   = ($map_saisie !== '' && $est_embed) ? $map_saisie : $map_auto;
+    $map_html  = '<iframe src="' . esc_url($map_src) . '" title="Carte — ' . esc_attr($adresse) . '" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>';
 }
 
 /* URL de la page liste des lofts (repérée par son template, repli sur /lofts/) */
@@ -166,7 +170,7 @@ if (!function_exists('lv_loft_icone')) {
 <div class="page-lofts loft-detail">
     <div class="conteneur loft-d-conteneur">
 
-        <a href="<?php echo esc_url($lofts_url); ?>" class="loft-d-retour"><span aria-hidden="true">←</span> Tous les lofts</a>
+        <a href="<?php echo esc_url($lofts_url); ?>" class="loft-d-retour">Tous les lofts</a>
 
         <div class="loft-d-titre-row">
             <h1 class="loft-d-titre"><?php the_title(); ?></h1>

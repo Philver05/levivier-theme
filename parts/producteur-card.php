@@ -8,7 +8,7 @@ $logo   = get_field('producteur_logo');
 ?>
 
 <a class="carte-prod reveal" href="<?php echo esc_url(get_permalink()); ?>" data-cat="<?php echo esc_attr($type_slugs); ?>">
-    <div class="photo">
+    <div class="photo<?php echo $logo ? ' photo-logo' : ''; ?>">
         <?php if ($logo): ?>
             <img src="<?php echo esc_url($logo['sizes']['medium_large'] ?? $logo['url']); ?>"
                  alt="<?php echo esc_attr($logo['alt'] ?: get_the_title()); ?>">
@@ -22,8 +22,17 @@ $logo   = get_field('producteur_logo');
     </div>
     <div class="corps">
         <?php if ($region): ?>
-            <span class="lieu"><?php echo esc_html($region); ?></span>
+            <span class="lieu">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.6 7-12a7 7 0 1 0-14 0c0 5.4 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                <?php echo esc_html($region); ?>
+            </span>
         <?php endif; ?>
         <h3><?php the_title(); ?></h3>
+        <?php
+        $extrait = wp_trim_words(wp_strip_all_tags(get_the_excerpt()), 16, '…');
+        if ($extrait): ?>
+            <p class="carte-prod-desc"><?php echo esc_html($extrait); ?></p>
+        <?php endif; ?>
+        <span class="carte-prod-cta">Voir la fiche</span>
     </div>
 </a>

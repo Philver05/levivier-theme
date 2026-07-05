@@ -2,6 +2,11 @@
 
 require_once 'includes/post-types.php';
 require_once 'includes/seed-data.php';
+require_once 'includes/import-producteurs.php';
+require_once 'includes/image-optim.php';
+require_once 'includes/pam-ajax.php';
+require_once 'includes/vrac-ajax.php';
+require_once 'includes/pm-ajax.php';
 
 /* Avertit dans l'admin si ACF n'est pas actif (sinon aucun champ éditable n'apparaît) */
 add_action('admin_notices', function () {
@@ -15,17 +20,130 @@ add_action('admin_notices', function () {
 /* Chargement des styles et scripts */
 function lv_enqueue_scripts_styles()
 {
-    wp_enqueue_style('main', get_stylesheet_uri());
+    // Polices Google : chargées en parallèle (WP ajoute le preconnect vers fonts.gstatic),
+    // au lieu d'un @import en cascade qui bloquait le rendu.
+    wp_enqueue_style(
+        'lv-google-fonts',
+        'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap',
+        [],
+        null
+    );
+
+    // Versions basées sur la date de modification : cache navigateur long ET
+    // rafraîchissement automatique à chaque mise à jour de fichier.
+    $css_path = get_stylesheet_directory() . '/style.css';
+    $js_path  = get_stylesheet_directory() . '/assets/scripts/main.js';
+    $css_ver  = file_exists($css_path) ? filemtime($css_path) : null;
+    $js_ver   = file_exists($js_path)  ? filemtime($js_path)  : null;
+
+    wp_enqueue_style('main', get_stylesheet_uri(), ['lv-google-fonts'], $css_ver);
 
     wp_enqueue_script(
         'main',
         get_stylesheet_directory_uri() . '/assets/scripts/main.js',
         [],
-        null,
-        true
+        $js_ver,
+        ['strategy' => 'defer', 'in_footer' => true]
     );
+
+    wp_localize_script('main', 'LV_RECHERCHE', [
+        'ajax' => admin_url('admin-ajax.php'),
+    ]);
 }
 add_action('wp_enqueue_scripts', 'lv_enqueue_scripts_styles');
+
+/* Scripts spécifiques PAM et Vrac — chargés uniquement sur leur template */
+add_action('wp_enqueue_scripts', function () {
+
+    if (is_page_template('templates/template-bon-pam.php')) {
+        $path = get_stylesheet_directory() . '/assets/scripts/pam-commande.js';
+        wp_enqueue_script(
+            'pam-commande',
+            get_stylesheet_directory_uri() . '/assets/scripts/pam-commande.js',
+            [],
+            file_exists($path) ? filemtime($path) : null,
+            ['strategy' => 'defer', 'in_footer' => true]
+        );
+        wp_localize_script('pam-commande', 'PAM', [
+            'ajax'  => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pam_commande'),
+        ]);
+    }
+
+    if (is_page_template('templates/template-bon-pm.php')) {
+        $path = get_stylesheet_directory() . '/assets/scripts/pm-commande.js';
+        wp_enqueue_script(
+            'pm-commande',
+            get_stylesheet_directory_uri() . '/assets/scripts/pm-commande.js',
+            [],
+            file_exists($path) ? filemtime($path) : null,
+            ['strategy' => 'defer', 'in_footer' => true]
+        );
+        wp_localize_script('pm-commande', 'PM', [
+            'ajax'  => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pm_commande'),
+        ]);
+    }
+
+    if (is_page_template('templates/template-bon-vrac.php')) {
+        $path = get_stylesheet_directory() . '/assets/scripts/vrac-commande.js';
+        wp_enqueue_script(
+            'vrac-commande',
+            get_stylesheet_directory_uri() . '/assets/scripts/vrac-commande.js',
+            [],
+            file_exists($path) ? filemtime($path) : null,
+            ['strategy' => 'defer', 'in_footer' => true]
+        );
+        wp_localize_script('vrac-commande', 'VRAC', [
+            'ajax'      => admin_url('admin-ajax.php'),
+            'nonce'     => wp_create_nonce('vrac_commande'),
+            'escomptes' => lv_vrac_escomptes_globaux(),
+        ]);
+    }
+});
+
+/* Suggestions de recherche en direct (AJAX) */
+function lv_recherche_suggestions()
+{
+    $terme = isset($_GET['q']) ? sanitize_text_field(wp_unslash($_GET['q'])) : '';
+    if (mb_strlen($terme) < 2) {
+        wp_send_json([]);
+    }
+
+    $q = new WP_Query([
+        's'              => $terme,
+        'post_type'      => ['produit', 'producteur', 'article_boutique', 'loft', 'post', 'page'],
+        'post_status'    => 'publish',
+        'posts_per_page' => 6,
+        'no_found_rows'  => true,
+        'ignore_sticky_posts' => true,
+    ]);
+
+    $labels = [
+        'produit'         => 'Produit',
+        'producteur'      => 'Producteur',
+        'article_boutique' => 'Boutique',
+        'loft'            => 'Loft',
+        'post'            => 'Article',
+        'page'            => 'Page',
+    ];
+
+    $resultats = [];
+    while ($q->have_posts()) {
+        $q->the_post();
+        $type = get_post_type();
+        $resultats[] = [
+            'titre' => html_entity_decode(get_the_title()),
+            'url'   => get_permalink(),
+            'type'  => $labels[$type] ?? '',
+        ];
+    }
+    wp_reset_postdata();
+
+    wp_send_json($resultats);
+}
+add_action('wp_ajax_lv_suggestions', 'lv_recherche_suggestions');
+add_action('wp_ajax_nopriv_lv_suggestions', 'lv_recherche_suggestions');
 
 /* Configuration du thème */
 function lv_theme_setup()
@@ -59,10 +177,51 @@ add_action('after_setup_theme', 'lv_theme_setup');
    Footer = navigation complete auto-generee (toutes les pages publiees
    + archives Producteurs/Produits), voir footer.php. */
 
-/* Univers visuel « Lofts » : classe sur le body pour recolorer header/footer/menu */
+/* Recherche : inclure les contenus du Vivier (produits, producteurs, boutique, lofts)
+   en plus des articles et pages. */
+add_action('pre_get_posts', function ($q) {
+    if (!is_admin() && $q->is_main_query() && $q->is_search()) {
+        $q->set('post_type', ['post', 'page', 'produit', 'producteur', 'article_boutique', 'loft']);
+    }
+});
+
+/* Produits : n'afficher dans les listes que ceux avec une photo mise en avant.
+   La fiche produit seule (acces direct) reste consultable pendant que Marie
+   ajoute la photo, donc on exclut les requetes "singular". */
+add_action('pre_get_posts', function ($q) {
+    if (is_admin() || $q->get('post_type') !== 'produit' || $q->is_singular()) {
+        return;
+    }
+    $meta_query   = $q->get('meta_query') ?: [];
+    $meta_query[] = ['key' => '_thumbnail_id', 'compare' => 'EXISTS'];
+    $q->set('meta_query', $meta_query);
+});
+
+/* Logo : chargement immédiat et prioritaire (il est tout en haut de page),
+   au lieu du « lazy » par défaut qui le faisait apparaître en retard. */
+add_filter('get_custom_logo_image_attributes', function ($attr) {
+    $attr['loading']       = 'eager';
+    $attr['fetchpriority']  = 'high';
+    $attr['decoding']       = 'async';
+    return $attr;
+});
+
+/* Univers visuels (classe sur le body pour recolorer header/footer/menu) */
 add_filter('body_class', function ($classes) {
     if (is_singular('loft') || is_page_template('templates/template-lofts.php')) {
         $classes[] = 'univers-lofts';
+    }
+    if (is_page_template('templates/template-epicerie-africaine.php')) {
+        $classes[] = 'univers-africaine';
+    }
+    if (is_page_template('templates/template-boutique.php')) {
+        $classes[] = 'page-boutique';
+    }
+    if (is_page_template('templates/template-epicerie.php')) {
+        $classes[] = 'page-epicerie';
+    }
+    if (is_page_template('templates/template-produits-maison.php')) {
+        $classes[] = 'page-produits-maison';
     }
     return $classes;
 });
@@ -168,6 +327,42 @@ function lv_loft_galerie_fields()
     return $fields;
 }
 
+/* Collecte les paliers d'escompte vrac depuis tous les produits (max % par palier) */
+function lv_vrac_escomptes_globaux()
+{
+    if (!function_exists('get_field')) return [];
+
+    $q = new WP_Query([
+        'post_type'      => 'vrac_produit',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'no_found_rows'  => true,
+        'fields'         => 'ids',
+    ]);
+
+    $paliers = [];
+    foreach ($q->posts as $id) {
+        $rows = get_field('vrac_escomptes', $id);
+        if (!$rows || !is_array($rows)) continue;
+        foreach ($rows as $row) {
+            $min = (int) ($row['palier_min']   ?? 0);
+            $pct = (int) ($row['pourcentage']  ?? 0);
+            if ($min > 0 && $pct > 0) {
+                if (!isset($paliers[$min]) || $paliers[$min] < $pct) {
+                    $paliers[$min] = $pct;
+                }
+            }
+        }
+    }
+
+    ksort($paliers);
+    $result = [];
+    foreach ($paliers as $min => $pct) {
+        $result[] = ['min' => $min, 'pct' => $pct];
+    }
+    return $result;
+}
+
 /* ======================================================
    CHAMPS ACF — enregistrement programmatique
 ====================================================== */
@@ -217,6 +412,21 @@ add_action('acf/init', function () {
                 ],
                 'allow_null' => 1,
             ],
+            [
+                'key'          => 'field_produit_bon_url',
+                'name'         => 'produit_bon_url',
+                'label'        => 'Lien du bon de commande (réservation)',
+                'type'         => 'url',
+                'instructions' => 'Optionnel. Lien JotForm pour réserver ce produit (utile pour les produits maison). Laissez vide pour ne pas afficher de bouton.',
+            ],
+            [
+                'key'           => 'field_produit_bon_label',
+                'name'          => 'produit_bon_label',
+                'label'         => 'Texte du bouton de réservation',
+                'type'          => 'text',
+                'default_value' => 'Réserver ce produit',
+                'instructions'  => 'Affiché seulement si un lien de bon de commande est renseigné.',
+            ],
         ],
         'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => 'produit']]],
         'menu_order' => 0,
@@ -228,96 +438,15 @@ add_action('acf/init', function () {
         'title'  => 'Contenu de la page Commander',
         'fields' => [
 
-            /* ---- HÉROS ---- */
+            /* ---- HÉROS ----
+               La description s'écrit dans l'éditeur principal de la page.
+               Les bons de commande sont gérés par « Bons de commande ». */
             [
                 'key'   => 'field_cmd_surtitre',
                 'name'  => 'cmd_surtitre',
                 'label' => '① Héros — Surtitre',
                 'type'  => 'text',
-                'instructions' => 'Petit texte au-dessus du titre. Ex: Commandes · Le Vivier',
-            ],
-            [
-                'key'          => 'field_cmd_intro',
-                'name'         => 'cmd_intro',
-                'label'        => '① Héros — Texte d\'introduction',
-                'type'         => 'textarea',
-                'rows'         => 3,
-                'instructions' => 'Court paragraphe d\'accroche sous le titre.',
-            ],
-
-            /* ---- CARTE THÉS ---- */
-            [
-                'key'           => 'field_cmd_the_image',
-                'name'          => 'cmd_the_image',
-                'label'         => '② Carte Thés — Image',
-                'type'          => 'image',
-                'return_format' => 'array',
-                'preview_size'  => 'medium',
-                'instructions'  => 'Image d\'en-tête de la carte. Si vide, une icône 🍵 est utilisée.',
-            ],
-            [
-                'key'   => 'field_cmd_the_titre',
-                'name'  => 'cmd_the_titre',
-                'label' => '② Carte Thés — Titre',
-                'type'  => 'text',
-            ],
-            [
-                'key'       => 'field_cmd_the_texte',
-                'name'      => 'cmd_the_texte',
-                'label'     => '② Carte Thés — Description',
-                'type'      => 'textarea',
-                'rows'      => 3,
-            ],
-            [
-                'key'          => 'field_cmd_the_liste',
-                'name'         => 'cmd_the_liste',
-                'label'        => '② Carte Thés — Liste (un élément par ligne)',
-                'type'         => 'textarea',
-                'rows'         => 5,
-                'instructions' => 'Une catégorie par ligne. Ex: Thés noirs, verts et matcha',
-            ],
-            [
-                'key'   => 'field_cmd_the_url',
-                'name'  => 'cmd_the_url',
-                'label' => '② Carte Thés — Lien du formulaire JotForm',
-                'type'  => 'url',
-            ],
-
-            /* ---- CARTE VRAC ---- */
-            [
-                'key'           => 'field_cmd_vrac_image',
-                'name'          => 'cmd_vrac_image',
-                'label'         => '③ Carte Vrac — Image',
-                'type'          => 'image',
-                'return_format' => 'array',
-                'preview_size'  => 'medium',
-                'instructions'  => 'Image d\'en-tête de la carte. Si vide, une icône 🌾 est utilisée.',
-            ],
-            [
-                'key'   => 'field_cmd_vrac_titre',
-                'name'  => 'cmd_vrac_titre',
-                'label' => '③ Carte Vrac — Titre',
-                'type'  => 'text',
-            ],
-            [
-                'key'       => 'field_cmd_vrac_texte',
-                'name'      => 'cmd_vrac_texte',
-                'label'     => '③ Carte Vrac — Description',
-                'type'      => 'textarea',
-                'rows'      => 3,
-            ],
-            [
-                'key'          => 'field_cmd_vrac_liste',
-                'name'         => 'cmd_vrac_liste',
-                'label'        => '③ Carte Vrac — Liste (un élément par ligne)',
-                'type'         => 'textarea',
-                'rows'         => 5,
-            ],
-            [
-                'key'   => 'field_cmd_vrac_url',
-                'name'  => 'cmd_vrac_url',
-                'label' => '③ Carte Vrac — Lien du formulaire JotForm',
-                'type'  => 'url',
+                'instructions' => 'Petit texte au-dessus du titre. Ex: Commandes · Le Vivier. La description se rédige dans l\'éditeur principal de la page.',
             ],
         ],
         'location' => [[[
@@ -549,6 +678,94 @@ add_action('acf/init', function () {
         'menu_order' => 0,
     ]);
 
+    /* Page Produits Maison : héros + présentation + bon de commande */
+    acf_add_local_field_group([
+        'key'    => 'group_page_maison',
+        'title'  => 'Contenu — Produits Maison',
+        'fields' => [
+            /* Héros */
+            [
+                'key'   => 'field_pm_surtitre',
+                'name'  => 'pm_surtitre',
+                'label' => '① Héros — Surtitre',
+                'type'  => 'text',
+            ],
+            [
+                'key'          => 'field_pm_intro',
+                'name'         => 'pm_intro',
+                'label'        => '① Héros — Texte d\'introduction',
+                'type'         => 'textarea',
+                'rows'         => 2,
+                'instructions' => 'Gardez 2 à 3 lignes courtes pour la lisibilité.',
+            ],
+            /* Présentation */
+            [
+                'key'           => 'field_pm_presentation_image',
+                'name'          => 'pm_presentation_image',
+                'label'         => '② Présentation — Image (le texte = éditeur principal ci-dessus)',
+                'type'          => 'image',
+                'return_format' => 'array',
+                'preview_size'  => 'medium',
+            ],
+            /* Bon de commande / réservation */
+            [
+                'key'          => 'field_pm_bon_url',
+                'name'         => 'pm_bon_url',
+                'label'        => '③ Bon de commande — Lien du formulaire (JotForm)',
+                'type'         => 'url',
+                'instructions' => 'URL du bon de commande en ligne. Laissez vide pour masquer le bloc de réservation.',
+            ],
+            [
+                'key'   => 'field_pm_bon_label',
+                'name'  => 'pm_bon_label',
+                'label' => '③ Bon de commande — Texte du bouton',
+                'type'  => 'text',
+            ],
+            [
+                'key'          => 'field_pm_bon_note',
+                'name'         => 'pm_bon_note',
+                'label'        => '③ Bon de commande — Texte d\'accompagnement',
+                'type'         => 'textarea',
+                'rows'         => 2,
+                'instructions' => 'Gardez 2 à 3 lignes courtes.',
+            ],
+            /* Bande finale */
+            [
+                'key'   => 'field_pm_cta_titre',
+                'name'  => 'pm_cta_titre',
+                'label' => '④ Bande finale — Titre',
+                'type'  => 'text',
+            ],
+            [
+                'key'          => 'field_pm_cta_texte',
+                'name'         => 'pm_cta_texte',
+                'label'        => '④ Bande finale — Texte',
+                'type'         => 'textarea',
+                'rows'         => 2,
+                'instructions' => 'Gardez 2 à 3 lignes courtes.',
+            ],
+            [
+                'key'   => 'field_pm_cta_label',
+                'name'  => 'pm_cta_label',
+                'label' => '④ Bande finale — Texte du bouton',
+                'type'  => 'text',
+            ],
+            [
+                'key'          => 'field_pm_cta_lien',
+                'name'         => 'pm_cta_lien',
+                'label'        => '④ Bande finale — Lien du bouton',
+                'type'         => 'url',
+                'instructions' => 'Laissez vide pour masquer le bouton.',
+            ],
+        ],
+        'location' => [[[
+            'param'    => 'page_template',
+            'operator' => '==',
+            'value'    => 'templates/template-produits-maison.php',
+        ]]],
+        'menu_order' => 0,
+    ]);
+
     /* Promotion : image + prix + dates de validité */
     acf_add_local_field_group([
         'key'    => 'group_promotion',
@@ -650,6 +867,255 @@ add_action('acf/init', function () {
         'menu_order' => 0,
     ]);
 
+    /* Produit Prêt à manger */
+    acf_add_local_field_group([
+        'key'    => 'group_pam_produit',
+        'title'  => 'Informations PAM',
+        'fields' => [
+            [
+                'key'          => 'field_pam_prix',
+                'name'         => 'pam_prix',
+                'label'        => 'Prix',
+                'type'         => 'number',
+                'required'     => 1,
+                'prepend'      => '$',
+                'step'         => '0.01',
+                'min'          => 0,
+                'instructions' => 'Ex: 6.50',
+            ],
+            [
+                'key'     => 'field_pam_jours',
+                'name'    => 'pam_jours',
+                'label'   => 'Disponibilité',
+                'type'    => 'checkbox',
+                'choices' => [
+                    'tous_les_jours' => 'Disponibles tous les jours',
+                    'lundi'          => 'Spécial lundi',
+                    'mardi'          => 'Spécial mardi',
+                    'mercredi'       => 'Spécial mercredi',
+                    'jeudi'          => 'Spécial jeudi',
+                    'vendredi'       => 'Spécial vendredi',
+                    'samedi'         => 'Spécial samedi',
+                    'dimanche'       => 'Spécial dimanche',
+                ],
+                'layout'       => 'vertical',
+                'instructions' => 'Cochez les jours où ce produit est disponible.',
+            ],
+            [
+                'key'   => 'field_pam_description',
+                'name'  => 'pam_description',
+                'label' => 'Description courte',
+                'type'  => 'textarea',
+                'rows'  => 2,
+            ],
+        ],
+        'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => 'pam_produit']]],
+        'menu_order' => 0,
+    ]);
+
+    /* Page bon PAM */
+    acf_add_local_field_group([
+        'key'    => 'group_page_bon_pam',
+        'title'  => 'Contenu — Bon de commande PAM',
+        'fields' => [
+            [
+                'key'          => 'field_pam_surtitre',
+                'name'         => 'pam_surtitre',
+                'label'        => 'Surtitre',
+                'type'         => 'text',
+                'instructions' => 'Petit texte au-dessus du titre, ex : Prêt à manger · Le Vivier',
+            ],
+            [
+                'key'          => 'field_pam_messages_jours',
+                'name'         => 'pam_messages_jours',
+                'label'        => 'Messages par jour spécial',
+                'type'         => 'repeater',
+                'instructions' => 'Ajoutez un message visible par les clients quand ils sélectionnent un jour. Ex: "Cette semaine : focaccia aux tomates séchées et basilic !"',
+                'button_label' => 'Ajouter un message',
+                'layout'       => 'block',
+                'sub_fields'   => [
+                    [
+                        'key'          => 'field_pam_msg_jour',
+                        'name'         => 'msg_jour',
+                        'label'        => 'Jour',
+                        'type'         => 'select',
+                        'allow_null'   => 1,
+                        'instructions' => 'Choisissez le jour auquel ce message doit s\'afficher.',
+                        'choices'      => [
+                            'lundi'    => 'Lundi',
+                            'mardi'    => 'Mardi',
+                            'mercredi' => 'Mercredi',
+                            'jeudi'    => 'Jeudi',
+                            'vendredi' => 'Vendredi',
+                            'samedi'   => 'Samedi',
+                            'dimanche' => 'Dimanche',
+                        ],
+                        'wrapper' => ['width' => '100'],
+                    ],
+                    [
+                        'key'          => 'field_pam_msg_titre',
+                        'name'         => 'msg_titre',
+                        'label'        => 'Titre',
+                        'type'         => 'text',
+                        'placeholder'  => 'Ex : Les jeudis sushis au Vivier',
+                        'instructions' => 'Titre accrocheur affiché en gras.',
+                        'wrapper'      => ['width' => '100'],
+                    ],
+                    [
+                        'key'          => 'field_pam_msg_description',
+                        'name'         => 'msg_description',
+                        'label'        => 'Description',
+                        'type'         => 'textarea',
+                        'rows'         => 3,
+                        'placeholder'  => 'Ex : Le Vivier accueille chaque jeudi Le P\'tit Béret, un traiteur passionné qui vous propose de généreux sushis maison.',
+                        'instructions' => 'Courte description du spécial du jour.',
+                        'wrapper'      => ['width' => '100'],
+                    ],
+                    [
+                        'key'          => 'field_pam_msg_cta',
+                        'name'         => 'msg_cta',
+                        'label'        => 'Infos pratiques',
+                        'type'         => 'textarea',
+                        'rows'         => 2,
+                        'placeholder'  => "Commandez avant 10h le mercredi\nRécupérez au Vivier à partir de 12h le jeudi",
+                        'instructions' => 'Délais de commande, heure de récupération, conditions, etc. Chaque ligne = une ligne affichée.',
+                        'wrapper'      => ['width' => '100'],
+                    ],
+                ],
+            ],
+        ],
+        'location' => [[[
+            'param'    => 'page_template',
+            'operator' => '==',
+            'value'    => 'templates/template-bon-pam.php',
+        ]]],
+        'menu_order' => 0,
+    ]);
+
+    /* Produit Vrac */
+    acf_add_local_field_group([
+        'key'    => 'group_vrac_produit',
+        'title'  => 'Informations Vrac',
+        'fields' => [
+            [
+                'key'          => 'field_vrac_formats',
+                'name'         => 'vrac_formats',
+                'label'        => 'Formats disponibles',
+                'type'         => 'repeater',
+                'instructions' => 'Ajoutez un format par ligne. Ex: 25 gr = 6,63 $',
+                'min'          => 1,
+                'button_label' => 'Ajouter un format',
+                'sub_fields'   => [
+                    [
+                        'key'          => 'field_vrac_format_label',
+                        'name'         => 'format_label',
+                        'label'        => 'Format',
+                        'type'         => 'text',
+                        'instructions' => 'Ex: 25 gr, 100 gr, 250 gr',
+                        'required'     => 1,
+                        'wrapper'      => ['width' => '50'],
+                    ],
+                    [
+                        'key'      => 'field_vrac_format_prix',
+                        'name'     => 'format_prix',
+                        'label'    => 'Prix',
+                        'type'     => 'number',
+                        'prepend'  => '$',
+                        'step'     => '0.01',
+                        'min'      => 0,
+                        'required' => 1,
+                        'wrapper'  => ['width' => '50'],
+                    ],
+                ],
+            ],
+            [
+                'key'          => 'field_vrac_escomptes',
+                'name'         => 'vrac_escomptes',
+                'label'        => 'Paliers d\'escompte',
+                'type'         => 'repeater',
+                'instructions' => 'Montant minimum de commande (en $) pour déclencher l\'escompte. Ex : 30$ = 5%.',
+                'button_label' => 'Ajouter un palier',
+                'sub_fields'   => [
+                    [
+                        'key'          => 'field_vrac_palier_min',
+                        'name'         => 'palier_min',
+                        'label'        => 'Montant minimum ($)',
+                        'type'         => 'number',
+                        'instructions' => 'Ex: 30 pour déclencher à partir de 30 $ de commande',
+                        'min'          => 0,
+                        'wrapper'      => ['width' => '50'],
+                    ],
+                    [
+                        'key'     => 'field_vrac_pourcentage',
+                        'name'    => 'pourcentage',
+                        'label'   => 'Escompte (%)',
+                        'type'    => 'number',
+                        'min'     => 1,
+                        'max'     => 100,
+                        'wrapper' => ['width' => '50'],
+                    ],
+                ],
+            ],
+            [
+                'key'   => 'field_vrac_description',
+                'name'  => 'vrac_description',
+                'label' => 'Description',
+                'type'  => 'textarea',
+                'rows'  => 3,
+            ],
+            [
+                'key'          => 'field_vrac_code',
+                'name'         => 'vrac_code',
+                'label'        => 'Code produit (optionnel)',
+                'type'         => 'text',
+                'instructions' => 'Code interne, ex: 9870',
+            ],
+        ],
+        'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => 'vrac_produit']]],
+        'menu_order' => 0,
+    ]);
+
+    /* Page bon Vrac */
+    acf_add_local_field_group([
+        'key'    => 'group_page_bon_vrac',
+        'title'  => 'Contenu — Bon de commande Vrac',
+        'fields' => [
+            [
+                'key'          => 'field_vrac_surtitre',
+                'name'         => 'vrac_surtitre',
+                'label'        => 'Surtitre',
+                'type'         => 'text',
+                'instructions' => 'Petit texte au-dessus du titre, ex : Commande en vrac · Le Vivier',
+            ],
+            [
+                'key'          => 'field_vrac_intro',
+                'name'         => 'vrac_intro',
+                'label'        => 'Introduction',
+                'type'         => 'wysiwyg',
+                'tabs'         => 'visual',
+                'toolbar'      => 'basic',
+                'media_upload' => 0,
+                'instructions' => 'Paragraphe d\'accroche sous le titre.',
+            ],
+            [
+                'key'          => 'field_vrac_bandeau_escompte',
+                'name'         => 'vrac_bandeau_escompte',
+                'label'        => 'Bandeau escompte',
+                'type'         => 'wysiwyg',
+                'tabs'         => 'visual',
+                'toolbar'      => 'basic',
+                'media_upload' => 0,
+                'instructions' => 'Bloc d\'information sur les escomptes vrac (ex: Opte pour le vrac écono & écolo).',
+            ],
+        ],
+        'location' => [[[
+            'param'    => 'page_template',
+            'operator' => '==',
+            'value'    => 'templates/template-bon-vrac.php',
+        ]]],
+        'menu_order' => 0,
+    ]);
+
     /* Producteur : tous les champs */
     acf_add_local_field_group([
         'key'    => 'group_producteur',
@@ -718,6 +1184,15 @@ add_action('acf/init', function () {
                 'label'        => 'Instagram',
                 'type'         => 'url',
             ],
+            [
+                'key'          => 'field_producteur_produits',
+                'name'         => 'producteur_produits',
+                'label'        => 'Produits disponibles au Vivier',
+                'type'         => 'textarea',
+                'rows'         => 8,
+                'new_lines'    => '',
+                'instructions' => 'Un produit par ligne. Affiché en liste sur la fiche du producteur (section « Disponibles au Vivier »). Laisser vide pour masquer la section.',
+            ],
         ],
         'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => 'producteur']]],
         'menu_order' => 0,
@@ -767,4 +1242,28 @@ function lv_calc_rabais($prix_regulier, $prix_promo)
         return '-' . round(($reg - $pro) / $reg * 100) . ' %';
     }
     return '';
+}
+
+/* IDs de la categorie « Produit Maison » + ses sous-categories (enfants).
+   Sert a regrouper les produits maison sur leur page et a les exclure de l'Epicerie. */
+function lv_maison_term_ids()
+{
+    $parent = get_term_by('slug', 'produit-maison', 'categorie_produit');
+    if (!$parent || is_wp_error($parent)) {
+        return [];
+    }
+
+    $ids = [(int) $parent->term_id];
+
+    $enfants = get_terms([
+        'taxonomy'   => 'categorie_produit',
+        'child_of'   => $parent->term_id,
+        'hide_empty' => false,
+        'fields'     => 'ids',
+    ]);
+    if ($enfants && !is_wp_error($enfants)) {
+        $ids = array_merge($ids, array_map('intval', $enfants));
+    }
+
+    return $ids;
 }

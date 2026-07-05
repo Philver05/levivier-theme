@@ -31,7 +31,6 @@ $url_lofts  = $page_lofts ? get_permalink($page_lofts) : home_url('/');
         <div class="hero-fleur" aria-hidden="true">
             <span class="cercle-ocre"></span>
             <div class="fleur-parallax">
-                <img class="bq bq-sprig" src="<?php echo esc_url($illu); ?>fleur%2006.svg" alt="">
                 <img class="bq bq-rose" src="<?php echo esc_url($illu); ?>fleur%2001.svg" alt="">
             </div>
         </div>

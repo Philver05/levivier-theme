@@ -24,7 +24,7 @@
                 <?php the_content(); ?>
 
                 <p style="margin-top:2rem">
-                    <a class="btn btn-fantome" href="<?php echo esc_url(get_permalink(get_option('page_for_posts')) ?: home_url('/')); ?>">← Retour aux nouvelles</a>
+                    <a class="btn btn-fantome" href="<?php echo esc_url(get_permalink(get_option('page_for_posts')) ?: home_url('/')); ?>">Retour aux nouvelles</a>
                 </p>
             </div>
         </div>

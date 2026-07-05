@@ -5,7 +5,8 @@ Version: 1.1.0
 Description: Theme personnalise pour l'epicerie fine locale Le Vivier, Matane, Quebec. Refonte 2026 (design system bouquet + univers Lofts sarcelle).
 */
 
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap");
+/* Police Montserrat chargée via functions.php (wp_enqueue_style + preconnect),
+   et non par @import qui bloquait le rendu en cascade. */
 
 @font-face {
   font-family: "Professor";
@@ -61,7 +62,7 @@ Description: Theme personnalise pour l'epicerie fine locale Le Vivier, Matane, Q
   --t-corps: clamp(.95rem, .92rem + .2vw, 1.05rem);
 
   /* Rythme / formes */
-  --max:        1200px;
+  --max:        clamp(1200px, 85vw, 1632px);
   --gouttiere:  clamp(1.2rem, .6rem + 3vw, 3rem);
   --rayon:      18px;
   --rayon-l:    26px;
@@ -73,7 +74,7 @@ Description: Theme personnalise pour l'epicerie fine locale Le Vivier, Matane, Q
 /* ------------------------------------------------------------------- RESET */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { font-size: 16px; scroll-behavior: smooth; scroll-padding-top: clamp(80px, 9vw, 140px); -webkit-text-size-adjust: 100%; }
 
 body {
   font-family: var(--f-corps);
@@ -81,7 +82,7 @@ body {
   line-height: 1.7;
   color: var(--texte-corps);
   background: var(--creme);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 img, svg { display: block; max-width: 100%; }
@@ -108,6 +109,8 @@ h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 
 .conteneur { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: var(--gouttiere); }
 .section { padding-block: clamp(3.5rem, 2rem + 6vw, 7rem); }
 .section-titre { text-align: center; max-width: 640px; margin: 0 auto clamp(2rem, 1rem + 3vw, 3.5rem); }
+.section-titre--large { max-width: 900px; }
+.section-titre--large h2 { text-wrap: balance; }
 .section-titre h2 { font-size: var(--t-h2); margin-bottom: .6rem; }
 .section-titre p { color: var(--texte-doux); }
 
@@ -133,11 +136,15 @@ h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 
 .entete {
   position: fixed; inset: 0 0 auto 0; z-index: 50;
   transition: background var(--transi), box-shadow var(--transi), padding var(--transi);
-  padding-block: 1.1rem;
+  padding-block: 1rem;
 }
-.entete.colle { background: rgba(249, 245, 240, .92); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--bordure); padding-block: .6rem; }
+.entete.colle { background: rgba(249, 245, 240, .96); box-shadow: 0 1px 0 var(--bordure); padding-block: .55rem; }
 .entete-barre { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
 .logo { font-family: var(--f-script); font-size: 2rem; color: var(--sauge); line-height: 1; }
+.logo-img { line-height: 0; }
+.logo-img img.custom-logo { height: clamp(56px, 8.5vw, 124px); width: auto; display: block; transition: height var(--transi); }
+/* Le logo rétrécit quand l'en-tête devient collant au scroll → header compact */
+.entete.colle .logo-img img.custom-logo { height: clamp(46px, 4.5vw, 66px); }
 .nav-principale { display: flex; align-items: center; gap: 2rem; }
 .nav-principale > a { font-size: .92rem; font-weight: 500; color: var(--texte); position: relative; padding-block: .3rem; }
 .nav-principale > a::after {
@@ -154,9 +161,48 @@ h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 
 .burger.actif span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
 .burger.actif span:nth-child(2) { opacity: 0; }
 .burger.actif span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+/* Cachés en desktop : n'apparaissent que dans le menu burger mobile */
+.nav-fermer { display: none; }
+.nav-overlay { display: none; }
+
+/* Bloc droit du header (nav + recherche + burger) */
+.entete-droite { display: flex; align-items: center; gap: clamp(.6rem, .3rem + 1vw, 2rem); }
+
+/* Recherche : icône loupe + panneau déroulant */
+.recherche-toggle { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; padding: 0; border: 0; background: none; color: var(--sauge); border-radius: 50%; cursor: pointer; transition: background var(--transi); }
+.recherche-toggle:hover { background: var(--sauge-pale); }
+.recherche-toggle svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; }
+.recherche-panneau { position: absolute; left: 0; right: 0; top: 100%; z-index: 55; background: var(--creme); border-top: 1px solid var(--bordure); box-shadow: 0 22px 34px -24px rgba(0,0,0,.35); padding: 1.2rem 0; transform: translateY(-14px); opacity: 0; visibility: hidden; transition: transform var(--transi), opacity var(--transi), visibility var(--transi); }
+.recherche-panneau.ouvert { transform: none; opacity: 1; visibility: visible; }
+.formulaire-recherche { display: flex; gap: .6rem; max-width: 640px; margin: 0 auto; flex-wrap: wrap; }
+.formulaire-recherche input[type="search"] { flex: 1; min-width: 0; padding: .8rem 1.1rem; border: 1px solid var(--bordure); border-radius: 999px; background: var(--blanc); font: inherit; color: var(--texte); }
+.formulaire-recherche input[type="search"]:focus-visible { outline: 2px solid var(--sauge); outline-offset: 1px; }
+.formulaire-recherche button { padding: .8rem 1.5rem; border-radius: 999px; background: var(--sauge); color: #fff; border: 0; font: inherit; font-weight: 600; cursor: pointer; transition: background var(--transi); }
+.formulaire-recherche button:hover { background: var(--sauge-fonce); }
+body.univers-lofts .recherche-toggle { color: #1d5055; }
+body.univers-africaine .recherche-toggle { color: var(--afr-terra); }
+
+/* Bouton fermer (X) du panneau de recherche */
+.recherche-panneau { padding-top: 2.6rem; }
+.recherche-fermer { position: absolute; top: .7rem; right: clamp(1rem, 3vw, 2rem); width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; background: none; border: 0; cursor: pointer; border-radius: 50%; transition: background var(--transi); }
+.recherche-fermer:hover { background: var(--sauge-pale); }
+.recherche-fermer span { position: absolute; width: 20px; height: 2px; background: var(--sauge); border-radius: 2px; }
+.recherche-fermer span:nth-child(1) { transform: rotate(45deg); }
+.recherche-fermer span:nth-child(2) { transform: rotate(-45deg); }
+
+/* Suggestions en direct */
+.recherche-conteneur { position: relative; }
+.recherche-suggestions { list-style: none; margin: .6rem auto 0; padding: 0; max-width: 640px; background: var(--blanc); border: 1px solid var(--bordure); border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre-douce); }
+.recherche-suggestions li { margin: 0; }
+.recherche-suggestions a { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .75rem 1.1rem; color: var(--texte); }
+.recherche-suggestions li + li a { border-top: 1px solid var(--bordure); }
+.recherche-suggestions a:hover,
+.recherche-suggestions li.actif a { background: var(--sauge-pale); }
+.sugg-titre { font-weight: 500; }
+.sugg-type { font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; color: var(--terra-fonce); font-weight: 600; flex: none; }
 
 /* ------------------------------------------------------------------- HERO */
-.hero { position: relative; overflow: hidden; background: var(--creme); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding-top: clamp(6rem, 11vh, 8.5rem); padding-bottom: clamp(2.5rem, 6vh, 4rem); }
+.hero { position: relative; overflow: hidden; background: var(--creme); min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; padding-top: clamp(6.5rem, 12vh, 9.5rem); padding-bottom: clamp(2.5rem, 6vh, 4rem); }
 /* La barre d'admin WP (32px) decale la page : sans ca, le bas du hero (indicateur de scroll anime) passe sous le pli */
 .admin-bar .hero { min-height: calc(100vh - 32px); }
 .hero-grille { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 2rem; min-height: 0; width: 100%; }
@@ -173,13 +219,13 @@ h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 
 .cercle-ocre { position: absolute; width: clamp(250px, 30vw, 400px); aspect-ratio: 1; background: var(--ocre); border-radius: 50%; left: 50%; top: 42%; transform: translate(-50%, -50%); z-index: 1; }
 
 /* Bouquet du hero - plusieurs illustrations réelles, balancées à des rythmes différents */
-.hero-fleur { position: relative; z-index: 2; justify-self: center; aspect-ratio: 1 / 1.28; height: clamp(380px, 68vh, 640px); width: auto; animation: eclore-fleur 1.5s cubic-bezier(.22,.61,.36,1) both; }
+.hero-fleur { position: relative; z-index: 2; justify-self: center; aspect-ratio: 1 / 1.28; height: clamp(440px, 80vh, 760px); width: auto; animation: eclore-fleur 1.5s cubic-bezier(.22,.61,.36,1) both; }
 .hero-fleur svg { width: 100%; height: auto; overflow: visible; }
 .bq { position: absolute; transform-origin: bottom center; }
-.bq-rose  { width: 78%; left: 13%; top: 8%; z-index: 3; animation: sway-rose 7s ease-in-out infinite; }
+.bq-rose  { width: 94%; left: 6%; top: -3%; z-index: 3; transform-origin: center; animation: sway-rose 7s ease-in-out infinite; }
 .bq-sprig { width: 44%; left: -3%; top: -10%; z-index: 2; animation: sway-a 8.5s ease-in-out infinite; }
 @keyframes eclore-fleur { from { opacity: 0; transform: translateY(26px) scale(.93); } to { opacity: 1; transform: none; } }
-@keyframes sway-rose { 0%,100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+@keyframes sway-rose { 0%,100% { transform: rotate(92deg); } 50% { transform: rotate(88deg); } }
 @keyframes sway-a { 0%,100% { transform: rotate(-17deg); } 50% { transform: rotate(-11deg); } }
 @keyframes sway-b { 0%,100% { transform: rotate(9deg); } 50% { transform: rotate(14deg); } }
 @keyframes sway-c { 0%,100% { transform: rotate(-9deg); } 50% { transform: rotate(-4deg); } }
@@ -200,10 +246,22 @@ h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 
 .petale { transform-box: fill-box; transform-origin: bottom center; transition: transform .5s var(--transi); }
 .hero-fleur:hover .petale { transform: scale(1.08); }
 
-.hero-scroll { position: absolute; left: 50%; bottom: 1.2rem; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: .5rem; color: var(--texte-doux); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; }
+.hero-scroll { position: absolute; left: 50%; bottom: 3rem; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: .5rem; color: var(--texte-doux); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; }
 .hero-scroll .souris { width: 22px; height: 34px; border: 2px solid var(--texte-doux); border-radius: 12px; position: relative; }
 .hero-scroll .souris::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; background: var(--texte-doux); border-radius: 2px; transform: translateX(-50%); animation: molette 1.5s ease infinite; }
 @keyframes molette { 0% { opacity: 0; transform: translate(-50%, 0); } 40% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, 10px); } }
+/* Mobile : la souris (métaphore desktop) devient un chevron qui rebondit */
+@media (max-width: 720px) {
+  .hero-scroll .souris { display: none; }
+  .hero-scroll::after {
+    content: ""; width: 12px; height: 12px;
+    border-right: 2px solid var(--texte-doux);
+    border-bottom: 2px solid var(--texte-doux);
+    transform: rotate(45deg); position: relative;
+    animation: rebond-chevron 1.5s ease-in-out infinite;
+  }
+}
+@keyframes rebond-chevron { 0%, 100% { top: 0; } 50% { top: 6px; } }
 
 /* -------------------------------------------------------------- INTRO SPLIT */
 .intro { background: var(--creme); }
@@ -255,14 +313,21 @@ h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 
 .producteurs-entete .script-accent { font-family: var(--f-script); color: var(--olive); font-size: 1.5rem; display: block; margin-bottom: -.3rem; }
 .producteurs-entete p { color: var(--texte-doux); margin-top: .3rem; }
 .grille-prod { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 1.8rem); }
-.carte-prod { background: var(--blanc); border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre-douce); transition: transform var(--transi), box-shadow var(--transi); }
+.carte-prod { background: var(--blanc); border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre-douce); transition: transform var(--transi), box-shadow var(--transi); display: flex; flex-direction: column; }
 .carte-prod:hover { transform: translateY(-6px); box-shadow: var(--ombre); }
 .carte-prod .photo { aspect-ratio: 16/10; overflow: hidden; background: var(--sauge-pale); }
 .carte-prod .photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--transi); }
 .carte-prod:hover .photo img { transform: scale(1.05); }
-.carte-prod .corps { padding: 1.2rem 1.3rem 1.4rem; }
-.carte-prod h3 { color: var(--sauge); font-size: 1.15rem; margin-bottom: .3rem; }
-.carte-prod .lieu { font-size: .82rem; color: var(--terra-fonce); font-weight: 600; letter-spacing: .04em; }
+/* Logo producteur : jamais recadré (contain + fond blanc + marge) */
+.carte-prod .photo.photo-logo { background: #fff; display: grid; place-items: center; padding: clamp(1rem, .6rem + 1.5vw, 1.6rem); }
+.carte-prod .photo.photo-logo img { width: 100%; height: 100%; object-fit: contain; }
+.carte-prod:hover .photo.photo-logo img { transform: scale(1.03); }
+.carte-prod .corps { padding: 1.2rem 1.3rem 1.4rem; display: flex; flex-direction: column; flex: 1; }
+.carte-prod h3 { color: var(--sauge); font-size: 1.18rem; margin: .35rem 0 0; }
+.carte-prod .lieu { display: inline-flex; align-items: center; gap: .35rem; font-size: .76rem; color: var(--terra-fonce); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.carte-prod .lieu svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.carte-prod-desc { font-size: .9rem; line-height: 1.55; color: var(--texte-corps); margin: .6rem 0 0; }
+.carte-prod-cta { margin-top: auto; padding-top: 1rem; display: inline-flex; align-items: center; gap: .4rem; font-size: .88rem; font-weight: 600; color: var(--sauge); }
 
 /* --------------------------------------------------------------- LOFTS */
 .lofts-band { background: var(--creme); }
@@ -318,9 +383,9 @@ h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 
   .hero-texte { max-width: none; margin-inline: auto; }
   .hero-texte p { margin-inline: auto; }
   .hero-actions { justify-content: center; }
-  .hero { min-height: auto; }
   .hero-fleur { grid-row: 1; margin-bottom: 1rem; height: auto; width: clamp(260px, 74vw, 360px); }
   .cercle-ocre { left: 50%; top: 42%; width: clamp(200px, 52vw, 320px); transform: translate(-50%, -50%); }
+  .hero { min-height: 100vh; min-height: 100dvh; }
   .intro-grille { grid-template-columns: 1fr; }
   .intro-media { max-width: 440px; margin-inline: auto; order: -1; }
   .engagements-grille { grid-template-columns: repeat(2, 1fr); gap: 2rem 1rem; }
@@ -332,18 +397,62 @@ h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 
   .pied-marque { grid-column: 1 / -1; }
 }
 
-@media (max-width: 720px) {
+/* ===== Menu burger mobile (panneau à droite, opposé au logo) ===== */
+@media (max-width: 900px) {
+  .burger { display: flex; z-index: 80; position: relative; }
+
+  /* Voile assombri derrière le panneau */
+  .nav-overlay { display: block; position: fixed; inset: 0; background: rgba(33, 42, 27, .5); opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease; z-index: 60; }
+  .nav-overlay.actif { opacity: 1; visibility: visible; }
+
+  /* Panneau */
   .nav-principale {
-    position: fixed; inset: 0 0 0 auto; width: min(82vw, 340px);
-    flex-direction: column; align-items: flex-start; justify-content: center;
-    gap: 1.6rem; background: var(--creme); padding: 2rem 2.2rem;
-    box-shadow: -20px 0 50px -30px rgba(0,0,0,.5);
-    transform: translateX(100%); transition: transform var(--transi); z-index: 60;
+    position: fixed; inset: 0 0 0 auto;
+    width: min(86vw, 360px);
+    flex-direction: column; align-items: stretch; justify-content: flex-start;
+    gap: 0; background: var(--creme); padding: 5.5rem 1.7rem 2rem;
+    box-shadow: -24px 0 60px -28px rgba(0, 0, 0, .45);
+    transform: translateX(100%); visibility: hidden;
+    transition: transform .32s cubic-bezier(.4, 0, .2, 1), visibility .32s;
+    z-index: 70; overflow-y: auto; overscroll-behavior: contain;
   }
-  .nav-principale.ouvert { transform: none; }
-  .nav-principale > a { font-size: 1.15rem; }
-  .burger { display: flex; z-index: 70; }
+  .nav-principale.ouvert { transform: none; visibility: visible; }
+
+  /* Bouton fermer (X) en haut à droite du panneau */
+  /* Pas de second X : le burger se transforme déjà en X pour fermer */
+  .nav-fermer { display: none; }
+  .nav-fermer span { position: absolute; width: 22px; height: 2px; background: var(--sauge); border-radius: 2px; }
+  .nav-fermer span:nth-child(1) { transform: rotate(45deg); }
+  .nav-fermer span:nth-child(2) { transform: rotate(-45deg); }
+
+  /* Liste des liens : pleine largeur, séparateurs, touch targets confortables */
+  .nav-principale ul { flex-direction: column; align-items: stretch; gap: 0; width: 100%; }
+  .nav-principale ul li { width: 100%; border-bottom: 1px solid var(--bordure); }
+  .nav-principale ul a { display: block; width: 100%; font-size: 1.05rem; padding: 1rem .2rem; }
+  .nav-principale ul a::after { display: none; }
+
+  /* CTA en bas, pleine largeur */
+  .nav-principale .nav-cta { margin-top: 1.6rem; width: 100%; justify-content: center; padding: .95rem 1rem; font-size: 1rem; }
+
+  /* Verrou de défilement du fond quand le menu est ouvert */
+  body.menu-ouvert { overflow: hidden; }
+}
+
+@media (max-width: 720px) {
   .grille-prod { grid-template-columns: 1fr; }
+  /* Mobile : on retire la fleur + le cercle ocre du hero d'accueil (allège l'écran) */
+  .hero-fleur { display: none; }
+}
+
+/* Mobile : on retire les décors botaniques fins (encombrants / débordent),
+   on garde les grandes formes colorées qui portent l'identité. */
+@media (max-width: 640px) {
+  .page-entete::after,
+  .engagements::after,
+  .produits::before,
+  .producteurs::after,
+  .pied::before,
+  .pied::after { display: none; }
 }
 
 @media (max-width: 520px) {
@@ -352,6 +461,7 @@ h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 
   .pied-grille { grid-template-columns: 1fr; }
   .hero-actions { flex-wrap: wrap; }
   .hero-actions .btn { width: 100%; justify-content: center; }
+  .grille-vide { white-space: normal; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -367,9 +477,10 @@ body.interne .entete { background: rgba(249, 245, 240, .95); backdrop-filter: bl
 .nav-principale > a.actif::after { width: 100%; }
 
 /* En-tête de page */
-.page-entete { position: relative; overflow: hidden; background: var(--creme); padding-top: clamp(5.5rem, 4rem + 4vw, 7.5rem); padding-bottom: clamp(2.5rem, 1.5rem + 3vw, 4rem); text-align: center; }
+.page-entete { position: relative; overflow: hidden; background: var(--creme); padding-top: clamp(8rem, 5.5rem + 4vw, 10rem); padding-bottom: clamp(2.5rem, 1.5rem + 3vw, 4rem); text-align: center; }
 .page-entete .conteneur { position: relative; z-index: 1; }
 .page-entete .eyebrow { display: block; margin-bottom: .8rem; }
+@media (min-width: 768px) { .page-entete .eyebrow { white-space: nowrap; letter-spacing: .18em; } }
 .page-entete h1 { font-size: var(--t-h1); color: var(--sauge-fonce); margin-bottom: .9rem; }
 .page-entete h1 .script { color: var(--terra); font-size: 1.25em; }
 .page-entete > .conteneur > p { max-width: 56ch; margin: 0 auto; color: var(--texte-corps); }
@@ -378,8 +489,19 @@ body.interne .entete { background: rgba(249, 245, 240, .95); backdrop-filter: bl
 .am-ocre { width: clamp(150px, 20vw, 240px); aspect-ratio: 1; background: var(--ocre-pale); right: -5%; bottom: -30%; }
 
 /* Fil d'Ariane */
-.fil { font-size: .82rem; color: var(--texte-doux); }
-.fil a:hover { color: var(--terra); }
+.fil { margin-bottom: 1.3rem; }
+.fil a {
+  display: inline-flex; align-items: center; gap: .45rem;
+  font-size: .84rem; font-weight: 600; letter-spacing: .01em;
+  color: var(--sauge);
+  padding: .5rem 1rem .5rem .85rem;
+  background: var(--blanc);
+  border: 1px solid var(--bordure);
+  border-radius: 999px;
+  box-shadow: var(--ombre-douce);
+  transition: var(--transi);
+}
+.fil a:hover { border-color: var(--sauge); background: var(--sauge-pale); color: var(--sauge-fonce); transform: translateX(-2px); }
 
 /* Filtres */
 .filtres { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center; margin-bottom: clamp(1.6rem, 1rem + 2vw, 2.6rem); }
@@ -394,6 +516,15 @@ body.interne .entete { background: rgba(249, 245, 240, .95); backdrop-filter: bl
 .apropos-media { position: relative; }
 .apropos-media .cadre { border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre); aspect-ratio: 4 / 5; }
 .apropos-media .cadre img { width: 100%; height: 100%; object-fit: cover; }
+
+/* À propos : l'image épouse la hauteur du texte (colonnes de même hauteur) */
+.apropos-split--histoire { align-items: stretch; }
+.apropos-split--histoire .apropos-media { min-height: 340px; }
+.apropos-split--histoire .apropos-media .cadre { position: absolute; inset: 0; aspect-ratio: auto; }
+@media (max-width: 860px) {
+  .apropos-split--histoire .apropos-media { min-height: 0; }
+  .apropos-split--histoire .apropos-media .cadre { position: static; aspect-ratio: 4 / 3; }
+}
 .valeurs-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 2rem); }
 .valeur { background: var(--blanc); border-radius: var(--rayon); padding: 1.8rem; box-shadow: var(--ombre-douce); }
 .valeur .ico { width: 52px; height: 52px; border-radius: 50%; background: var(--sauge-pale); display: grid; place-items: center; margin-bottom: 1rem; }
@@ -406,6 +537,14 @@ body.interne .entete { background: rgba(249, 245, 240, .95); backdrop-filter: bl
 
 /* Contact */
 .contact-grille { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 1rem + 3vw, 4rem); }
+
+/* Page À propos : coordonnées en carte + carte large (disposition pro) */
+.contact-grille--carte { grid-template-columns: minmax(0, 350px) 1fr; align-items: start; gap: clamp(1.5rem, 1rem + 2vw, 2.8rem); }
+.contact-grille--carte .contact-info { margin: 0; background: var(--blanc); border: 1px solid var(--bordure); border-radius: var(--rayon-l); box-shadow: var(--ombre-douce); padding: .3rem 1.6rem; }
+.contact-grille--carte .contact-info li { padding: 1.15rem 0; margin: 0; border-bottom: 1px solid var(--bordure); }
+.contact-grille--carte .contact-info li:last-child { border-bottom: 0; }
+.contact-grille--carte .carte-map { margin-top: 0; aspect-ratio: 4 / 3; }
+
 .contact-info li { display: flex; gap: .9rem; margin-bottom: 1.3rem; align-items: flex-start; }
 .contact-info .ico { width: 44px; height: 44px; border-radius: 12px; background: var(--sauge-pale); display: grid; place-items: center; flex: none; }
 .contact-info .ico svg { width: 20px; height: 20px; fill: none; stroke: var(--sauge); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
@@ -416,7 +555,7 @@ body.interne .entete { background: rgba(249, 245, 240, .95); backdrop-filter: bl
 .champ label { display: block; font-size: .85rem; font-weight: 600; color: var(--texte); margin-bottom: .35rem; }
 .champ input, .champ textarea { width: 100%; padding: .8rem 1rem; border: 1.5px solid var(--bordure); border-radius: 12px; font-family: inherit; font-size: .95rem; background: var(--creme); color: var(--texte); }
 .champ textarea { min-height: 120px; resize: vertical; }
-.carte-map { border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre-douce); aspect-ratio: 16/10; background: var(--sauge-pale); display: grid; place-items: center; color: var(--texte-doux); font-size: .9rem; margin-top: 1.5rem; }
+.carte-map { border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre); border: 1px solid var(--bordure); aspect-ratio: 16/10; background: var(--sauge-pale); display: grid; place-items: center; color: var(--texte-doux); font-size: .9rem; margin-top: 1.5rem; }
 
 /* Fiche produit */
 .single-grille { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 1rem + 4vw, 4rem); align-items: start; }
@@ -426,15 +565,78 @@ body.interne .entete { background: rgba(249, 245, 240, .95); backdrop-filter: bl
 .single-info h1 { font-size: clamp(1.8rem, 1.4rem + 1.6vw, 2.6rem); margin: .5rem 0; color: var(--texte); }
 .single-prix { font-size: 1.6rem; font-weight: 700; color: var(--terra-fonce); margin: .6rem 0 1.2rem; }
 .single-info .desc { margin-bottom: 1.4rem; }
+.produit-resa { margin-top: 1.6rem; padding: 1.1rem 1.3rem; background: var(--sauge-pale); border-radius: var(--rayon); }
+.produit-resa .btn { margin-bottom: .55rem; }
+.produit-resa-note { margin: 0; font-size: .82rem; color: var(--sauge-fonce); }
 .single-meta { border-top: 1px solid var(--bordure); margin-top: 1.6rem; padding-top: 1.2rem; display: grid; gap: .5rem; font-size: .9rem; }
 .single-meta div span { color: var(--texte-doux); display: inline-block; min-width: 130px; }
 
 /* Fiche producteur */
-.prod-hero { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(2rem, 1rem + 3vw, 4rem); align-items: center; }
-.prod-hero .photo { border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre); aspect-ratio: 4 / 5; }
-.prod-hero .photo img { width: 100%; height: 100%; object-fit: cover; }
-.prod-hero .lieu { color: var(--terra-fonce); font-weight: 600; letter-spacing: .04em; font-size: .85rem; }
-.prod-hero h1 { font-size: var(--t-h2); color: var(--sauge); margin: .4rem 0 1rem; }
+/* === Fiche producteur : hero unifie (une carte sobre et pro) === */
+.prod-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 200px) 1fr;
+  gap: clamp(1.6rem, 1rem + 2.5vw, 3rem);
+  align-items: center;
+  padding: clamp(1.5rem, 1rem + 2.4vw, 2.75rem);
+  background: var(--blanc);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-l);
+  box-shadow: var(--ombre);
+  overflow: hidden;
+}
+.prod-hero--solo { grid-template-columns: 1fr; }
+.prod-hero > * { position: relative; z-index: 1; }
+
+/* filigrane botanique : discret, en bas a droite de la carte */
+.prod-hero-deco {
+  position: absolute;
+  right: -2%;
+  bottom: -16%;
+  width: clamp(190px, 32%, 340px);
+  aspect-ratio: 1;
+  background: url("assets/images/illustrations/branche%2002.svg") no-repeat center / contain;
+  opacity: .07;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* tuile logo : compacte, blanche, filet fin (les logos sur fond blanc s'y fondent,
+   ceux sur fond fonce sont encadres proprement), logo jamais recadre */
+.prod-hero .prod-logo {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  max-width: 200px;
+  display: grid;
+  place-items: center;
+  padding: clamp(.85rem, .5rem + 1.2vw, 1.4rem);
+  background: var(--blanc);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre-douce);
+}
+.prod-hero .prod-logo img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* repli photo (producteur sans logo) : portrait recadre, meme esprit */
+.prod-hero .prod-photo {
+  border-radius: var(--rayon);
+  overflow: hidden;
+  box-shadow: var(--ombre-douce);
+  aspect-ratio: 4 / 5;
+  max-width: 240px;
+}
+.prod-hero .prod-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+/* hierarchie texte */
+.prod-hero .lieu { display: inline-block; color: var(--terra-fonce); font-weight: 600; letter-spacing: .09em; font-size: .76rem; text-transform: uppercase; }
+.prod-hero h1 { font-size: var(--t-h2); color: var(--sauge); margin: .4rem 0 .9rem; }
 
 /* Promotions */
 .promo-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 1.8rem); }
@@ -537,19 +739,29 @@ body.univers-lofts .am-ocre { background: rgba(255,255,255,.08); }
 .lofts-atout { text-align: center; }
 .lofts-atout-icone { display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; margin-bottom: 1rem; border-radius: 50%; background: rgba(231, 201, 160, .14); }
 .lofts-atout-icone svg { width: 28px; height: 28px; fill: none; stroke: #e7c9a0; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.lofts-atout h3 { color: #fff; font-size: 1.1rem; margin-bottom: .5rem; }
-.lofts-atout p { font-size: .92rem; color: #b9cfca; }
+.lofts-atout h3 { color: #fff; font-size: 1.1rem; margin-bottom: .5rem; min-height: 2.6em; display: flex; align-items: flex-end; justify-content: center; }
+.lofts-atout p { font-size: .92rem; color: #d2e2dd; }
 
-/* CTA finale */
-.lofts-cta-finale { background: var(--creme); padding-block: clamp(3rem, 2rem + 4vw, 5.5rem); }
-.lofts-cta-interieur { max-width: 640px; margin-inline: auto; text-align: center; background: linear-gradient(160deg, #1d5055, #16403f); border-radius: var(--rayon-l); padding: clamp(2.5rem, 1.8rem + 3vw, 4rem) clamp(1.5rem, 1rem + 2vw, 3rem); box-shadow: var(--ombre); }
-.lofts-cta-interieur h2 { color: #fff; font-family: var(--f-script); font-size: clamp(2rem, 1.4rem + 3vw, 3.2rem); margin-bottom: .8rem; }
-.lofts-cta-interieur p { color: #b9cfca; margin-bottom: 1.6rem; }
-.lofts-cta { display: inline-flex; align-items: center; justify-content: center; background: #e7c9a0; color: #1d3d3f; font-weight: 700; padding: .95rem 2rem; border-radius: 999px; font-size: 1.02rem; transition: var(--transi); }
+/* CTA finale — bande pleine largeur (pas une carte flottante dans le vide) */
+.lofts-cta-finale { position: relative; overflow: hidden; background: linear-gradient(160deg, #1d5055, #16403f); padding-block: clamp(3.4rem, 2.4rem + 4vw, 6.2rem); }
+.lofts-cta-finale::after {
+  content: ""; position: absolute; z-index: 0; pointer-events: none;
+  right: -6%; top: 50%; transform: translateY(-50%);
+  width: clamp(260px, 30vw, 460px); aspect-ratio: 1;
+  background: url("assets/images/illustrations/fleur 05.svg") no-repeat center / contain;
+  filter: brightness(0) invert(1); opacity: .1;
+}
+.lofts-cta-interieur { position: relative; z-index: 1; max-width: 560px; text-align: left; }
+.lofts-cta-interieur h2 { color: #fff; font-family: var(--f-script); font-size: clamp(2.2rem, 1.5rem + 3.4vw, 3.6rem); line-height: 1.05; margin-bottom: .9rem; }
+.lofts-cta-interieur p { color: #b9cfca; max-width: 46ch; line-height: 1.7; margin-bottom: 1.8rem; }
+.lofts-cta { display: inline-flex; align-items: center; justify-content: center; background: #e7c9a0; color: #1d3d3f; font-weight: 700; padding: .95rem 2.2rem; border-radius: 999px; font-size: 1.02rem; transition: var(--transi); }
 .lofts-cta:hover { background: #f0d8b4; transform: translateY(-3px); }
-.lofts-contact-ligne { margin-top: 1.6rem; font-size: .86rem; color: #9fbab5; }
+.lofts-contact-ligne { margin-top: 1.8rem; padding-top: 1.4rem; border-top: 1px solid rgba(255,255,255,.16); font-size: .86rem; color: #9fbab5; }
 .lofts-contact-ligne a { color: #e7c9a0; }
 .lofts-contact-ligne a:hover { color: #f0d8b4; }
+@media (max-width: 720px) {
+  .lofts-cta-finale::after { width: clamp(200px, 60vw, 320px); opacity: .08; }
+}
 
 @media (max-width: 860px) {
   .lofts-reassurance-grille { grid-template-columns: repeat(2, 1fr); }
@@ -566,7 +778,9 @@ body.univers-lofts .am-ocre { background: rgba(255,255,255,.08); }
   .apropos-split, .contact-grille, .single-grille, .prod-hero, .loft-single { grid-template-columns: 1fr; }
   .apropos-media, .single-media { max-width: 460px; margin-inline: auto; }
   .valeurs-grille, .promo-grille, .loft-grille { grid-template-columns: 1fr 1fr; }
-  .prod-hero .photo { max-width: 420px; margin-inline: auto; }
+  .prod-hero { text-align: center; }
+  .prod-hero .prod-logo, .prod-hero .prod-photo { margin-inline: auto; }
+  .prod-hero .lieu { letter-spacing: .07em; }
   .loft-resa { position: static; }
   .loft-galerie { grid-template-columns: 1fr 1fr; aspect-ratio: 3/2; }
   .loft-galerie img:first-child { grid-column: 1 / 3; grid-row: auto; aspect-ratio: 2/1; }
@@ -596,6 +810,9 @@ body.univers-lofts .am-ocre { background: rgba(255,255,255,.08); }
   background: url("assets/images/illustrations/branche 01.svg") no-repeat center / contain;
   opacity: .11;
 }
+/* Boutique + Épicerie : on retire ce décor (demande de Marie/Philippe) */
+body.page-boutique .produits::before,
+body.page-epicerie .produits::before { display: none; }
 .producteurs::after {
   content: ""; position: absolute; z-index: 0; pointer-events: none;
   right: -5%; top: -14%; width: clamp(280px, 34vw, 540px); aspect-ratio: 1;
@@ -604,10 +821,14 @@ body.univers-lofts .am-ocre { background: rgba(255,255,255,.08); }
 }
 .page-entete::after {
   content: ""; position: absolute; z-index: 0; pointer-events: none;
-  left: -5%; bottom: -34%; width: clamp(260px, 32vw, 520px); aspect-ratio: 1;
+  right: -5%; top: 12%; left: auto; bottom: auto; width: clamp(240px, 30vw, 500px); aspect-ratio: 1;
   background: url("assets/images/illustrations/fleur 05.svg") no-repeat center / contain;
   opacity: .14;
 }
+/* Épicerie, Boutique, Produits Maison : en-tête plus sobre, sans la fleur décorative */
+body.page-epicerie .page-entete::after,
+body.page-boutique .page-entete::after,
+body.page-produits-maison .page-entete::after { display: none; }
 /* Page Lofts : fleur d'en-tête mieux posée + univers sarcelle complet (plus aucun vert) */
 body.univers-lofts .page-entete::after { filter: brightness(0) invert(1); opacity: .14; left: -1%; top: 16%; bottom: auto; width: clamp(220px, 26vw, 360px); }
 body.univers-lofts .entete .logo { color: #1d5055; }
@@ -636,10 +857,60 @@ body.univers-lofts .pied a:hover { color: #e7c9a0; }
 .univers-lofts .nav-principale ul .current-menu-item > a,
 .univers-lofts .nav-principale ul .current_page_item > a { color: #1d5055; }
 .univers-lofts .nav-principale ul a::after { background: #1d5055; }
-@media (max-width: 720px) {
-  .nav-principale ul { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
-  .nav-principale ul a { font-size: 1.15rem; }
+
+/* ======================================================
+   UNIVERS ÉPICERIE AFRICAINE (sous-marque « Okavi »)
+   Charte chaleureuse : terracotta / ocre / olive + motif géométrique
+====================================================== */
+:root { --afr-terra: #a8482e; --afr-terra-f: #8d3a23; --afr-ocre: #e0a73f; --afr-olive: #6e7a48; --afr-pied: #5a3526; }
+
+/* En-tête de page : bandeau terracotta (comme la bannière de l'affiche).
+   Header forcé opaque ci-dessus (arête nette, pas un fondu sur la crème) :
+   il faut plus de marge ici qu'ailleurs pour que le sur-titre ne s'écrase
+   pas contre cette arête. */
+body.univers-africaine .page-entete { background: var(--afr-terra); padding-top: clamp(9.5rem, 7rem + 4vw, 12rem); }
+body.univers-africaine .page-entete h1 { color: #fff; }
+body.univers-africaine .page-entete h1 .script { color: var(--afr-ocre); }
+body.univers-africaine .page-entete .eyebrow { color: var(--afr-ocre); }
+body.univers-africaine .page-entete > .conteneur > p { color: #f6e3d6; }
+body.univers-africaine .am-terra { background: rgba(224,167,63,.25); }
+body.univers-africaine .am-ocre  { background: rgba(255,255,255,.14); }
+
+/* Cette page mise sur le géométrique (bande ci-dessous), pas sur le botanique
+   du reste du site : la fleur générique ne lui appartient pas. */
+body.univers-africaine .page-entete::after { display: none; }
+
+/* Bande géométrique sous le titre = signature africaine (vs le botanique du reste) */
+body.univers-africaine .page-entete > .conteneur::after {
+  content: "";
+  display: block;
+  height: 10px;
+  width: clamp(160px, 28vw, 240px);
+  margin: 1.2rem auto 0;
+  background: repeating-linear-gradient(45deg, var(--afr-ocre) 0 7px, transparent 7px 14px);
+  border-radius: 2px;
 }
+
+/* En-tête : fond crème opaque sur cette page → le menu reste lisible
+   au-dessus du bandeau terracotta (en haut comme au scroll). */
+body.univers-africaine .entete { background: var(--creme); box-shadow: 0 1px 0 var(--bordure); }
+body.univers-africaine .entete .logo { color: var(--afr-terra); }
+body.univers-africaine .burger span { background: var(--afr-terra); }
+body.univers-africaine .nav-principale .btn-primaire { background: var(--afr-terra); }
+body.univers-africaine .nav-principale .btn-primaire:hover { background: var(--afr-terra-f); }
+body.univers-africaine .btn-fantome { color: var(--afr-terra); }
+body.univers-africaine .btn-fantome:hover { background: #f3ddd2; border-color: var(--afr-terra); }
+.univers-africaine .nav-principale ul .current-menu-item > a,
+.univers-africaine .nav-principale ul .current_page_item > a { color: var(--afr-terra); }
+.univers-africaine .nav-principale ul a::after { background: var(--afr-terra); }
+
+/* Pied de page chaleureux */
+body.univers-africaine .pied { background: var(--afr-pied); }
+body.univers-africaine .pied a:hover { color: var(--afr-ocre); }
+
+/* Accents internes : panneau CTA + cartes spécialités aux tons Okavi */
+body.univers-africaine .cta-panel--terra { background: linear-gradient(160deg, var(--afr-terra), var(--afr-terra-f)); }
+body.univers-africaine .carte-prod h3 { color: var(--afr-terra); }
 
 /* ======================================================
    PAGES INTERNES — compléments de migration
@@ -675,11 +946,13 @@ body.univers-lofts .pied a:hover { color: #e7c9a0; }
 .cmd-carte-haut { aspect-ratio: 16 / 9; background: var(--sauge-pale); display: grid; place-items: center; position: relative; overflow: hidden; }
 .cmd-carte-haut img { width: 100%; height: 100%; object-fit: cover; }
 .cmd-carte-haut svg { width: 54px; height: 54px; fill: none; stroke: var(--sauge); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.cmd-carte-corps { padding: 1.5rem 1.6rem 1.7rem; display: flex; flex-direction: column; flex: 1; }
-.cmd-carte-corps h3 { color: var(--sauge); font-size: 1.25rem; margin-bottom: .5rem; }
-.cmd-liste { margin: .8rem 0 1.4rem; display: grid; gap: .45rem; }
-.cmd-liste li { position: relative; padding-left: 1.4rem; font-size: .9rem; }
-.cmd-liste li::before { content: ""; position: absolute; left: 0; top: .55em; width: 8px; height: 8px; border-radius: 50%; background: var(--terra); }
+.cmd-carte-icone { font-size: 3rem; line-height: 1; }
+.cmd-carte-corps { padding: 1.9rem 1.9rem 2rem; display: flex; flex-direction: column; flex: 1; }
+.cmd-carte-corps h3 { color: var(--sauge); font-size: 1.35rem; margin-bottom: .7rem; }
+.cmd-carte-corps p { color: var(--texte-corps); line-height: 1.7; margin-bottom: 1.5rem; }
+.cmd-liste { margin: .2rem 0 1.6rem; display: grid; gap: .55rem; }
+.cmd-liste li { position: relative; padding-left: 1.5rem; font-size: .92rem; line-height: 1.5; }
+.cmd-liste li::before { content: ""; position: absolute; left: 0; top: .5em; width: 7px; height: 7px; border-radius: 50%; background: var(--terra); }
 .cmd-carte .btn { margin-top: auto; align-self: flex-start; }
 .cmd-cta-bientot { pointer-events: none; opacity: .55; }
 .cmd-badge-bientot { position: absolute; top: .8rem; left: .8rem; background: var(--encre); color: #fff; font-size: .72rem; font-weight: 700; letter-spacing: .04em; padding: .3rem .7rem; border-radius: 50px; }
@@ -687,8 +960,9 @@ body.univers-lofts .pied a:hover { color: #e7c9a0; }
 /* Panneau CTA (relance bas de page) */
 .cta-panel { max-width: 780px; margin-inline: auto; text-align: center; background: linear-gradient(160deg, var(--sauge), var(--sauge-fonce)); color: #e7eee0; border-radius: var(--rayon-l); padding: clamp(2.2rem, 1.6rem + 3vw, 3.6rem); box-shadow: var(--ombre); }
 .cta-panel h2 { color: #fff; font-size: var(--t-h2); margin-bottom: .7rem; }
-.cta-panel p { color: #cdd8c2; max-width: 48ch; margin: 0 auto 1.6rem; }
+.cta-panel p { color: #cdd8c2; max-width: 48ch; margin: 0 auto 1.6rem; line-height: 1.6; text-wrap: balance; }
 .cta-panel p a { color: #fff; text-decoration: underline; }
+.cta-panel .cta-tel { white-space: nowrap; }
 .cta-panel-actions { display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap; }
 .cta-panel .btn-clair { background: #fff; color: var(--sauge); }
 .cta-panel .btn-clair:hover { background: var(--ocre-pale); }
@@ -699,7 +973,7 @@ body.univers-lofts .pied a:hover { color: #e7c9a0; }
 @media (max-width: 520px) { .etapes { grid-template-columns: 1fr; } }
 
 /* Pages de détail (fiche produit / producteur) — dégagent l'en-tête fixe */
-.section-detail { padding-top: clamp(6.5rem, 5rem + 5vw, 8.5rem); padding-bottom: clamp(2.5rem, 1.5rem + 3vw, 4rem); }
+.section-detail { padding-top: clamp(7rem, 5rem + 3vw, 9rem); padding-bottom: clamp(2.5rem, 1.5rem + 3vw, 4rem); }
 .single-media--photo { aspect-ratio: 1; padding: 0; }
 .single-media--photo img { width: 100%; height: 100%; object-fit: cover; opacity: 1; }
 .single-badge { display: inline-block; background: var(--ocre-pale); color: var(--terra-fonce); font-size: .75rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: .3rem .8rem; border-radius: 50px; margin-bottom: .6rem; }
@@ -709,9 +983,40 @@ body.univers-lofts .pied a:hover { color: #e7c9a0; }
 
 /* CTA panneau — variante terracotta (épicerie africaine) */
 .cta-panel--terra { background: linear-gradient(160deg, var(--terra), var(--terra-fonce)); color: #fbe6df; }
-.cta-panel--terra p { color: #f3d3c9; }
+.cta-panel--terra p { color: #f3d3c9; max-width: 58ch; }
 .cta-panel--terra .btn-clair { color: var(--terra-fonce); }
 .cta-panel--terra .btn-clair:hover { background: #fff; }
+
+/* ======================================================
+   BANDE CTA FINALE — pleine largeur, asymétrique
+   (Produits Maison + Épicerie Africaine ; remplace le
+   panneau flottant générique isolé dans le vide)
+====================================================== */
+.cta-finale { position: relative; overflow: hidden; background: linear-gradient(155deg, var(--terra), var(--terra-fonce)); color: #fbe6df; padding-block: clamp(3.2rem, 2.2rem + 4vw, 5.5rem); }
+.cta-finale-inner { position: relative; z-index: 1; max-width: 620px; margin-inline: 0; }
+.cta-finale h2 { color: #fff; font-size: var(--t-h2); margin-bottom: .8rem; text-wrap: balance; }
+.cta-finale p { color: #f3d3c9; max-width: 46ch; line-height: 1.7; margin-bottom: 1.7rem; text-wrap: balance; }
+.cta-finale-actions { display: flex; gap: .9rem; flex-wrap: wrap; }
+.cta-finale .btn-clair { background: #fff; color: var(--terra-fonce); }
+.cta-finale .btn-clair:hover { background: var(--ocre-pale); }
+.cta-finale-deco {
+  position: absolute; z-index: 0; pointer-events: none;
+  right: -4%; top: 50%; transform: translateY(-50%);
+  width: clamp(280px, 30vw, 460px); aspect-ratio: 1;
+  background: url("assets/images/illustrations/branche 02.svg") no-repeat center / contain;
+  filter: brightness(0) invert(1); opacity: .16;
+}
+@media (max-width: 720px) { .cta-finale-deco { width: clamp(200px, 60vw, 320px); right: -10%; opacity: .12; } }
+
+/* Variante Épicerie Africaine : motif géométrique (signature Okavi), pas de botanique */
+body.univers-africaine .cta-finale { background: linear-gradient(155deg, var(--afr-terra), var(--afr-terra-f)); }
+body.univers-africaine .cta-finale-deco {
+  background: repeating-linear-gradient(45deg, rgba(255,255,255,.16) 0 10px, transparent 10px 20px);
+  filter: none; border-radius: 50%;
+  right: -8%; top: -22%; bottom: auto; transform: none;
+  width: clamp(260px, 32vw, 420px);
+}
+body.univers-africaine .cta-finale .btn-clair { color: var(--afr-terra-f); }
 
 /* Page 404 */
 .erreur-404-code { font-family: var(--f-script); font-size: clamp(4rem, 3rem + 6vw, 8rem); color: var(--terra); line-height: 1; margin-bottom: .3rem; }
@@ -725,7 +1030,7 @@ body.univers-lofts .pied a:hover { color: #e7c9a0; }
 .recherche-item p { color: var(--texte-corps); font-size: .92rem; margin-top: .3rem; }
 
 /* Message « grille vide » */
-.grille-vide { text-align: center; color: var(--texte-doux); max-width: 52ch; margin: 1rem auto 0; }
+.grille-vide { grid-column: 1 / -1; text-align: center; color: var(--texte-doux); white-space: nowrap; margin: 1rem auto 0; }
 
 /* Carte boutique : marque sous le titre */
 .carte-marque { font-size: .82rem; color: var(--texte-doux); margin-top: .15rem; }
@@ -769,7 +1074,7 @@ body.univers-lofts .pied a:hover { color: #e7c9a0; }
 }
 
 .loft-d-conteneur {
-  padding-top: clamp(6rem, 4.5rem + 4vw, 8rem);
+  padding-top: clamp(7rem, 5rem + 4vw, 10rem);
   padding-bottom: 4rem;
 }
 
@@ -1290,3 +1595,701 @@ body.univers-lofts .pied a:hover { color: #e7c9a0; }
   }
   .loft-d-barre-prix small { font-weight: 500; color: var(--texte-corps); }
 }
+
+/* Fiche loft en mobile : une seule photo + bouton « Afficher toutes les photos » */
+@media (max-width: 768px) {
+  .loft-d-galerie .loft-d-photo:not(.loft-d-photo-big) { display: none; }
+  .loft-d-photo-big { height: clamp(280px, 62vw, 400px) !important; }
+  .loft-d-voir-photos { bottom: 1rem; right: 1rem; }
+}
+
+/* ======================================================
+   FICHE PRODUCTEUR — Disponibles au Vivier
+====================================================== */
+.prod-dispo {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--bordure);
+}
+.prod-dispo h2 {
+  color: var(--sauge);
+}
+.prod-dispo-liste {
+  list-style: none;
+  margin: 1.2rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.55rem 1.8rem;
+}
+.prod-dispo-liste li {
+  position: relative;
+  padding-left: 1.4rem;
+  line-height: 1.4;
+  color: var(--texte-corps);
+}
+.prod-dispo-liste li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--terra);
+}
+@media (max-width: 640px) {
+  .prod-dispo-liste { grid-template-columns: 1fr; }
+}
+
+/* ======================================================
+   PAM — Bon de commande prêt à manger
+====================================================== */
+
+/* Grille principale (infos client | produits) */
+.pam-grille-form {
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  width: 100%;
+  min-width: 0;
+}
+
+/* Tous les enfants directs de la grille ne peuvent pas deborder */
+.pam-grille-form > *,
+.pam-infos-client,
+.pam-produits-col {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Mobile : produits en premier */
+@media (max-width: 859px) {
+  .pam-infos-client { order: 2; }
+  .pam-produits-col  { order: 1; }
+}
+
+/* Tablette 580-859px : champs coordonnées en 2 colonnes */
+@media (min-width: 580px) and (max-width: 859px) {
+  .pam-infos-client {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1.25rem;
+  }
+  .pam-infos-client > * { min-width: 0; }
+  .pam-infos-client .pam-section-titre,
+  .pam-infos-client .pam-champ:nth-child(6) { grid-column: 1 / -1; }
+}
+
+/* Desktop 860px+ : grille 2 colonnes, coordonnées sticky */
+@media (min-width: 860px) {
+  .pam-grille-form {
+    grid-template-columns: minmax(280px, 340px) 1fr;
+    align-items: start;
+  }
+  .pam-infos-client {
+    position: sticky;
+    top: 110px;
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+/* Champ générique */
+.pam-section-titre {
+  font-size: var(--t-h3);
+  color: var(--sauge);
+  margin-bottom: 1.4rem;
+  padding-bottom: .5rem;
+  border-bottom: 2px solid var(--sauge-pale);
+}
+.pam-champ { display: flex; flex-direction: column; gap: .35rem; margin-bottom: 1rem; }
+.pam-champ label { font-size: .88rem; font-weight: 600; color: var(--texte); }
+.pam-champ abbr { text-decoration: none; color: var(--terra); }
+.pam-champ input,
+.pam-champ textarea {
+  font-family: var(--f-corps);
+  font-size: var(--t-corps);
+  color: var(--texte);
+  background: var(--blanc);
+  border: 1.5px solid var(--bordure);
+  border-radius: 10px;
+  padding: .65rem .9rem;
+  width: 100%;
+  transition: border-color var(--transi);
+}
+.pam-champ input:focus,
+.pam-champ textarea:focus { outline: none; border-color: var(--sauge); }
+.pam-champ textarea { resize: vertical; min-height: 80px; }
+
+/* Champ invalide */
+.pam-invalide {
+  border-color: var(--terra) !important;
+  background: var(--terra-pale) !important;
+}
+.pam-invalide:focus { border-color: var(--terra-fonce) !important; }
+.pam-hint-erreur {
+  font-size: .8rem;
+  color: var(--terra-fonce);
+  font-weight: 600;
+}
+/* Légère animation d'attention sur le label du champ en erreur */
+.pam-champ--erreur label { color: var(--terra-fonce); }
+
+/* Filtre par jour */
+.pam-filtre-jours {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1.8rem;
+}
+.pam-filtre-label {
+  width: 100%;
+  font-size: .82rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--texte-doux);
+  margin-bottom: .2rem;
+}
+.pam-filtre-option { display: flex; }
+.pam-filtre-option input[type="radio"] { display: none; }
+.pam-filtre-option span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: .42rem 1rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--bordure);
+  font-size: .88rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--blanc);
+  color: var(--texte-corps);
+  transition: background var(--transi), border-color var(--transi), color var(--transi);
+}
+.pam-filtre-option input[type="radio"]:checked + span {
+  background: var(--sauge);
+  border-color: var(--sauge);
+  color: var(--blanc);
+}
+.pam-filtre-option span:hover {
+  border-color: var(--sauge-moyen);
+  color: var(--sauge);
+}
+
+/* Messages informatifs par jour */
+.pam-messages-jours { margin-bottom: 1.4rem; }
+.pam-msg-jour {
+  background: var(--sauge-pale);
+  border-left: 3px solid var(--sauge);
+  border-radius: 0 12px 12px 0;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+}
+.pam-msg-jour[hidden] { display: none; }
+.pam-msg-titre {
+  font-family: var(--f-titre);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--sauge);
+  margin: 0;
+  line-height: 1.3;
+}
+.pam-msg-desc {
+  font-size: .92rem;
+  color: var(--texte);
+  line-height: 1.65;
+  margin: 0;
+}
+.pam-msg-cta {
+  background: rgba(255, 255, 255, .65);
+  border: 1px solid rgba(77, 96, 64, .18);
+  border-radius: 8px;
+  padding: .6rem .9rem;
+  font-size: .84rem;
+  font-weight: 600;
+  color: var(--texte);
+  line-height: 1.7;
+}
+
+/* Onglets catégorie */
+.pam-filtre-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1.5rem;
+}
+.pam-cat-tab {
+  min-height: 44px;
+  padding: .4rem 1.1rem;
+  border-radius: 10px;
+  border: 1.5px solid var(--bordure);
+  background: var(--blanc);
+  font-family: var(--f-titre);
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--texte-corps);
+  cursor: pointer;
+  transition: background var(--transi), border-color var(--transi), color var(--transi);
+}
+.pam-cat-tab:hover {
+  border-color: var(--terra);
+  color: var(--terra);
+}
+.pam-cat-tab--active {
+  background: var(--terra);
+  border-color: var(--terra);
+  color: var(--blanc);
+}
+.pam-cat-tab[hidden] { display: none; }
+
+/* Section catégorie */
+.pam-categorie { margin-bottom: 0; }
+.pam-categorie-titre {
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--terra-fonce);
+  margin-bottom: 1rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--bordure);
+}
+
+/* Carousel produits */
+.pam-carousel {
+  position: relative;
+}
+.pam-carousel,
+.pam-carousel * {
+  cursor: grab;
+}
+.pam-carousel .pam-qty-moins,
+.pam-carousel .pam-qty-plus,
+.pam-carousel .pam-qty-input { cursor: default; }
+.pam-drag-actif,
+.pam-drag-actif * {
+  cursor: grabbing !important;
+}
+
+/* Flèches de navigation desktop */
+.pam-fleche {
+  display: none;
+}
+@media (min-width: 768px) {
+  .pam-fleche {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--sauge);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease;
+    box-shadow: 0 2px 10px rgba(77,96,64,.35);
+    pointer-events: auto;
+  }
+  .pam-carousel:hover .pam-fleche {
+    opacity: 1;
+  }
+  .pam-fleche:hover {
+    background: var(--sauge-moyen);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 4px 16px rgba(77,96,64,.45);
+  }
+  .pam-fleche-prev { left: 8px; }
+  .pam-fleche-next { right: 8px; }
+  .pam-fleche svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+}
+.pam-produits-grille {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: auto;
+  padding-bottom: .5rem;
+  user-select: none;
+  width: 100%;
+  min-width: 0;
+}
+.pam-produits-grille.pam-drag-actif {
+  cursor: grabbing;
+}
+.pam-produits-grille::-webkit-scrollbar { height: 4px; }
+.pam-produits-grille::-webkit-scrollbar-track { background: var(--sable); border-radius: 4px; }
+.pam-produits-grille::-webkit-scrollbar-thumb { background: var(--sauge-pale); border-radius: 4px; }
+
+
+/* Entrée des cartes après changement de filtre */
+@keyframes pam-entree {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Carte produit */
+.pam-produit-item {
+  background: var(--blanc);
+  border: 1.5px solid var(--bordure);
+  border-radius: var(--rayon);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow var(--transi), border-color var(--transi), transform var(--transi);
+  flex: 0 0 clamp(240px, 80%, 300px);
+  animation: pam-entree .4s ease both;
+}
+.pam-produit-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--ombre);
+  border-color: var(--sauge-pale);
+}
+.pam-produit-item[hidden] { display: none; }
+.pam-produit-item:has(.pam-qty-input:not([value="0"])) {
+  border-color: var(--sauge-moyen);
+  box-shadow: var(--ombre-douce);
+}
+.pam-produit-item img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+.pam-produit-placeholder {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--sable);
+}
+.pam-produit-corps {
+  padding: .9rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: .3rem;
+}
+.pam-produit-nom {
+  font-family: var(--f-titre);
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--texte);
+  line-height: 1.3;
+}
+.pam-produit-desc {
+  font-size: .82rem;
+  color: var(--texte-doux);
+  line-height: 1.4;
+}
+.pam-produit-prix {
+  font-weight: 700;
+  color: var(--sauge);
+  font-size: .95rem;
+  margin-top: auto;
+  padding-top: .4rem;
+}
+
+/* Contrôle quantité +/- */
+.pam-qty-controle {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin-top: .5rem;
+}
+.pam-qty-moins,
+.pam-qty-plus {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--bordure);
+  background: var(--creme);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--sauge);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transi), border-color var(--transi);
+  flex-shrink: 0;
+}
+.pam-qty-moins:hover,
+.pam-qty-plus:hover { background: var(--sauge-pale); border-color: var(--sauge); }
+.pam-qty-input {
+  width: 52px;
+  text-align: center;
+  font-family: var(--f-titre);
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--texte);
+  border: 1.5px solid var(--bordure);
+  border-radius: 8px;
+  padding: .3rem .4rem;
+  background: var(--blanc);
+}
+.pam-qty-input:focus { outline: none; border-color: var(--sauge); }
+.pam-qty-input::-webkit-outer-spin-button,
+.pam-qty-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.pam-qty-input[type=number] { -moz-appearance: textfield; }
+
+/* Barre de total sticky */
+.pam-barre-total {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--blanc);
+  border-top: 2px solid var(--sauge-pale);
+  padding: .9rem 0;
+  box-shadow: 0 -8px 24px -10px rgba(56, 73, 45, .2);
+  transform: translateY(100%);
+  transition: transform .4s cubic-bezier(.22, .61, .36, 1);
+}
+.pam-barre-total--active { transform: translateY(0); }
+.pam-barre-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.pam-total-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--texte);
+}
+.pam-total-label strong { color: var(--sauge); font-size: 1.15rem; }
+
+/* Messages succès / erreur */
+.pam-msg-succes,
+.pam-msg-erreur {
+  padding: 1rem 1.4rem;
+  border-radius: var(--rayon);
+  margin-top: 1.5rem;
+  font-weight: 600;
+}
+.pam-msg-succes { background: var(--sauge-pale); color: var(--sauge-fonce); }
+.pam-msg-erreur { background: var(--terra-pale); color: var(--terra-fonce); }
+
+/* Cartes plus larges à partir de la tablette */
+@media (min-width: 580px) {
+  .pam-produit-item { flex: 0 0 clamp(260px, 45%, 320px); }
+}
+@media (min-width: 860px) {
+  .pam-produit-item { flex: 0 0 clamp(280px, 40%, 360px); }
+}
+
+/* Padding bas pour éviter que la sticky bar masque le contenu
+   Le sélecteur ~ ne fonctionne pas ici car la section est AVANT la barre dans le DOM.
+   On utilise :has() pour cibler la section parente. */
+body:has(.pam-barre-total--active) main,
+body:has(.pam-barre-total--active) .section:last-of-type {
+  padding-bottom: 100px;
+}
+
+/* Barre inner : colonne sur mobile */
+@media (max-width: 480px) {
+  .pam-barre-inner { flex-direction: column; align-items: stretch; }
+  .pam-barre-inner .btn { text-align: center; }
+}
+
+/* Espacements réduits sur petits écrans */
+@media (max-width: 480px) {
+  .pam-section-titre { font-size: 1.05rem; margin-bottom: 1rem; }
+  .pam-filtre-jours  { margin-bottom: 1.2rem; }
+  .pam-categorie     { margin-bottom: 1.8rem; }
+  .pam-produits-grille::-webkit-scrollbar { display: none; }
+}
+
+/* ======================================================
+   VRAC — Bon de commande en vrac
+====================================================== */
+
+/* Bandeau escompte */
+.vrac-bandeau-escompte { padding-block: clamp(1.5rem, 2vw, 2.5rem); background: var(--sauge-pale); }
+.vrac-bandeau-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+}
+.vrac-bandeau-inner p { color: var(--sauge-fonce); font-weight: 500; }
+
+/* Note de sélection */
+.vrac-selection-note {
+  font-size: .88rem;
+  color: var(--texte-doux);
+  margin-bottom: 1.8rem;
+  margin-top: -.5rem;
+}
+
+/* Grille produits vrac */
+.vrac-produits-grille {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 1100px) { .vrac-produits-grille { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px)  { .vrac-produits-grille { grid-template-columns: 1fr; } }
+
+/* Carte produit vrac */
+.vrac-produit-item {
+  background: var(--blanc);
+  border: 1.5px solid var(--bordure);
+  border-radius: var(--rayon);
+  overflow: hidden;
+  position: relative;
+  transition: box-shadow var(--transi), border-color var(--transi);
+}
+.vrac-produit-item.selectionne {
+  border-color: var(--sauge);
+  box-shadow: var(--ombre-douce);
+}
+.vrac-produit-item img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+
+/* Checkbox de sélection */
+.vrac-produit-select {
+  position: absolute;
+  top: .7rem;
+  left: .7rem;
+  z-index: 2;
+  cursor: pointer;
+}
+.vrac-produit-select input[type="checkbox"] { display: none; }
+.vrac-check-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--blanc);
+  border: 2px solid var(--bordure);
+  transition: background var(--transi), border-color var(--transi);
+}
+.vrac-check-icon::after {
+  content: '';
+  display: none;
+  width: 10px;
+  height: 6px;
+  border-left: 2px solid var(--blanc);
+  border-bottom: 2px solid var(--blanc);
+  transform: rotate(-45deg) translateY(-1px);
+}
+.vrac-produit-select input[type="checkbox"]:checked + .vrac-check-icon {
+  background: var(--sauge);
+  border-color: var(--sauge);
+}
+.vrac-produit-select input[type="checkbox"]:checked + .vrac-check-icon::after { display: block; }
+
+.vrac-produit-corps { padding: .9rem; }
+.vrac-produit-code {
+  font-size: .78rem;
+  color: var(--texte-doux);
+  margin-top: .15rem;
+}
+
+/* Tableau des formats */
+.vrac-formats-tableau {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .84rem;
+  border-top: 1px solid var(--bordure);
+}
+.vrac-formats-tableau th {
+  background: var(--sauge-pale);
+  color: var(--sauge-fonce);
+  font-weight: 600;
+  padding: .45rem .7rem;
+  text-align: left;
+  font-size: .78rem;
+  letter-spacing: .04em;
+}
+.vrac-formats-tableau td {
+  padding: .45rem .7rem;
+  border-top: 1px solid var(--bordure);
+  color: var(--texte-corps);
+  vertical-align: middle;
+}
+.vrac-formats-tableau tr:last-child td { border-bottom: none; }
+.vrac-ligne-total { font-weight: 600; color: var(--sauge); text-align: right; }
+.vrac-qty-input {
+  width: 60px;
+  text-align: center;
+  font-family: var(--f-titre);
+  font-weight: 700;
+  font-size: .9rem;
+  border: 1.5px solid var(--bordure);
+  border-radius: 8px;
+  padding: .3rem .4rem;
+  background: var(--blanc);
+  color: var(--texte);
+}
+.vrac-qty-input:focus { outline: none; border-color: var(--sauge); }
+.vrac-qty-input::-webkit-outer-spin-button,
+.vrac-qty-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.vrac-qty-input[type=number] { -moz-appearance: textfield; }
+
+/* Barre sticky vrac */
+.vrac-barre-total {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--blanc);
+  border-top: 2px solid var(--sauge-pale);
+  padding: .9rem 0;
+  box-shadow: 0 -8px 24px -10px rgba(56, 73, 45, .2);
+  transform: translateY(100%);
+  transition: transform .4s cubic-bezier(.22, .61, .36, 1);
+}
+.vrac-barre-total--active { transform: translateY(0); }
+.vrac-barre-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.vrac-totaux {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+}
+.vrac-total-ligne { font-size: .9rem; color: var(--texte-corps); }
+.vrac-total-ligne strong { color: var(--texte); }
+.vrac-escompte-info {
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--sauge);
+  background: var(--sauge-pale);
+  padding: .15rem .6rem;
+  border-radius: 999px;
+  width: fit-content;
+}
+.vrac-total-final-ligne { font-size: 1rem; font-weight: 700; color: var(--texte); }
+.vrac-total-final-ligne strong { color: var(--sauge); font-size: 1.15rem; }
+
+/* Infos client vrac (pas de grille 2 col, section pleine) */
+.vrac-infos-client { margin-bottom: 1rem; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+}
+@media (max-width: 480px) { .vrac-barre-inner { flex-direction: column; align-items: stretch; } }

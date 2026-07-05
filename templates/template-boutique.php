@@ -99,7 +99,7 @@ get_header();
                 endwhile;
                 wp_reset_postdata();
             else: ?>
-                <p class="grille-vide">Les articles arrivent bientôt — revenez nous voir !</p>
+                <p class="grille-vide">Les articles arrivent bientôt, revenez nous voir !</p>
             <?php endif; ?>
         </div>
 

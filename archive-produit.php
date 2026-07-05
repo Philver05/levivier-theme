@@ -55,7 +55,7 @@ $pr_intro    = get_theme_mod('lv_produits_intro', lv_produits_intro_defaut());
                     get_template_part('parts/produit', 'card');
                 endwhile; wp_reset_postdata();
             else: ?>
-                <p class="grille-vide">Les produits arrivent bientôt — revenez nous voir&nbsp;!</p>
+                <p class="grille-vide">Les produits arrivent bientôt, revenez nous voir&nbsp;!</p>
             <?php endif; ?>
         </div>
 

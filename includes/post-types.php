@@ -307,6 +307,125 @@ function lv_register_type_producteur()
     ]);
 }
 
+/* CPT : Produit Prêt à manger */
+function lv_register_pam_produit()
+{
+    register_post_type('pam_produit', [
+        'label'         => 'Prêt à manger',
+        'labels'        => [
+            'name'               => 'Prêt à manger',
+            'singular_name'      => 'Produit PAM',
+            'add_new'            => 'Ajouter un produit',
+            'add_new_item'       => 'Ajouter un produit PAM',
+            'edit_item'          => 'Modifier le produit PAM',
+            'new_item'           => 'Nouveau produit PAM',
+            'search_items'       => 'Rechercher un produit PAM',
+            'not_found'          => 'Aucun produit PAM trouvé',
+            'not_found_in_trash' => 'Aucun produit PAM dans la corbeille',
+            'all_items'          => 'Tous les produits PAM',
+            'menu_name'          => 'Prêt à manger',
+        ],
+        'description'   => 'Produits du bon de commande Prêt à manger',
+        'public'        => false,
+        'show_ui'       => true,
+        'show_in_menu'  => true,
+        'show_in_rest'  => false,
+        'menu_position' => 9,
+        'menu_icon'     => 'dashicons-food',
+        'supports'      => ['title', 'thumbnail', 'excerpt', 'page-attributes'],
+        'rewrite'       => false,
+    ]);
+}
+
+/* Taxonomie : Catégorie PAM */
+function lv_register_pam_categorie()
+{
+    register_taxonomy('pam_categorie', 'pam_produit', [
+        'labels' => [
+            'name'          => 'Catégories PAM',
+            'singular_name' => 'Catégorie PAM',
+            'add_new_item'  => 'Ajouter une catégorie',
+            'edit_item'     => 'Modifier la catégorie',
+            'search_items'  => 'Rechercher une catégorie',
+            'all_items'     => 'Toutes les catégories',
+            'menu_name'     => 'Catégories',
+        ],
+        'hierarchical'      => true,
+        'show_ui'           => true,
+        'show_in_rest'      => false,
+        'show_admin_column' => true,
+        'rewrite'           => false,
+    ]);
+}
+
+/* Seed des termes PAM — une seule fois au premier flush */
+function lv_pam_seeder_termes()
+{
+    if (get_option('lv_pam_termes_seeded')) return;
+
+    $termes = [
+        'Focaccias', 'Pizzas', 'Sandwichs', 'Salades',
+        'Pâtés', 'Sushis', 'Sauces', 'Divers prêt-à-manger',
+    ];
+    foreach ($termes as $terme) {
+        if (!term_exists($terme, 'pam_categorie')) {
+            wp_insert_term($terme, 'pam_categorie');
+        }
+    }
+    update_option('lv_pam_termes_seeded', true);
+}
+
+/* CPT : Produit Vrac */
+function lv_register_vrac_produit()
+{
+    register_post_type('vrac_produit', [
+        'label'         => 'Produits vrac',
+        'labels'        => [
+            'name'               => 'Produits vrac',
+            'singular_name'      => 'Produit vrac',
+            'add_new'            => 'Ajouter un produit',
+            'add_new_item'       => 'Ajouter un produit vrac',
+            'edit_item'          => 'Modifier le produit vrac',
+            'new_item'           => 'Nouveau produit vrac',
+            'search_items'       => 'Rechercher un produit vrac',
+            'not_found'          => 'Aucun produit vrac trouvé',
+            'not_found_in_trash' => 'Aucun produit vrac dans la corbeille',
+            'all_items'          => 'Tous les produits vrac',
+            'menu_name'          => 'Vrac',
+        ],
+        'description'   => 'Produits du bon de commande en vrac (thés, tisanes, noix, grains…)',
+        'public'        => false,
+        'show_ui'       => true,
+        'show_in_menu'  => true,
+        'show_in_rest'  => false,
+        'menu_position' => 10,
+        'menu_icon'     => 'dashicons-carrot',
+        'supports'      => ['title', 'thumbnail', 'excerpt', 'page-attributes'],
+        'rewrite'       => false,
+    ]);
+}
+
+/* Taxonomie : Catégorie vrac */
+function lv_register_vrac_categorie()
+{
+    register_taxonomy('vrac_categorie', 'vrac_produit', [
+        'labels' => [
+            'name'          => 'Catégories vrac',
+            'singular_name' => 'Catégorie vrac',
+            'add_new_item'  => 'Ajouter une catégorie',
+            'edit_item'     => 'Modifier la catégorie',
+            'search_items'  => 'Rechercher une catégorie',
+            'all_items'     => 'Toutes les catégories',
+            'menu_name'     => 'Catégories',
+        ],
+        'hierarchical'      => true,
+        'show_ui'           => true,
+        'show_in_rest'      => false,
+        'show_admin_column' => true,
+        'rewrite'           => false,
+    ]);
+}
+
 function lv_register_post_types()
 {
     lv_register_produit();
@@ -316,8 +435,13 @@ function lv_register_post_types()
     lv_register_bon_commande();
     lv_register_promotion();
     lv_register_article_boutique();
+    lv_register_pam_produit();
+    lv_register_vrac_produit();
     lv_register_categorie_produit();
     lv_register_type_producteur();
     lv_register_categorie_boutique();
+    lv_register_pam_categorie();
+    lv_register_vrac_categorie();
 }
 add_action('init', 'lv_register_post_types');
+add_action('init', 'lv_pam_seeder_termes', 20);

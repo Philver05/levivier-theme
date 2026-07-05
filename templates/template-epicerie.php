@@ -71,25 +71,39 @@ get_header();
             'order'      => 'ASC',
         ]);
         ?>
+        <?php
+        // « Produit Maison » + ses sous-categories ont leur propre page → exclus ici
+        $maison_ids = function_exists('lv_maison_term_ids') ? lv_maison_term_ids() : [];
+        ?>
         <nav class="filtres" aria-label="Filtrer par catégorie">
             <a href="#" class="filtre filtre-lien actif" data-cat="tout">Tout voir</a>
             <?php if ($categories_produit && !is_wp_error($categories_produit)):
-                foreach ($categories_produit as $cat): ?>
+                foreach ($categories_produit as $cat):
+                    if (in_array((int) $cat->term_id, $maison_ids, true)) continue; ?>
                     <a href="#" class="filtre filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
                         <?php echo esc_html($cat->name); ?>
                     </a>
             <?php endforeach; endif; ?>
         </nav>
 
-        <!-- Grille produits -->
+        <!-- Grille produits (les produits maison sont présentés sur leur page dédiée) -->
         <?php
-        $produits = new WP_Query([
+        $args_produits = [
             'post_type'      => 'produit',
             'post_status'    => 'publish',
             'posts_per_page' => -1,
             'orderby'        => 'title',
             'order'          => 'ASC',
-        ]);
+        ];
+        if ($maison_ids) {
+            $args_produits['tax_query'] = [[
+                'taxonomy' => 'categorie_produit',
+                'field'    => 'term_id',
+                'terms'    => $maison_ids,
+                'operator' => 'NOT IN',
+            ]];
+        }
+        $produits = new WP_Query($args_produits);
         ?>
         <div class="grille-cartes" id="grille-produits">
             <?php if ($produits->have_posts()):
@@ -98,7 +112,7 @@ get_header();
                 endwhile;
                 wp_reset_postdata();
             else: ?>
-                <p class="grille-vide">Les produits arrivent bientôt — revenez nous voir !</p>
+                <p class="grille-vide">Les produits arrivent bientôt, revenez nous voir !</p>
             <?php endif; ?>
         </div>
 

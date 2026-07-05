@@ -30,10 +30,25 @@ $horaire_dimanche = get_field('horaire_dimanche');
      NOTRE HISTOIRE — contenu éditeur
 ====================================================== -->
 <?php if (have_posts()): while (have_posts()): the_post();
-    if (trim(get_the_content()) !== ''): ?>
+    $a_contenu = trim(get_the_content()) !== '';
+    $a_image   = has_post_thumbnail();
+    if ($a_contenu || $a_image): ?>
         <section class="section" style="padding-top:clamp(1.5rem,1rem+2vw,2.5rem)">
             <div class="conteneur">
-                <div class="page-prose reveal"><?php the_content(); ?></div>
+                <?php if ($a_contenu && $a_image): ?>
+                    <div class="apropos-split apropos-split--histoire">
+                        <div class="page-prose reveal" style="margin:0"><?php the_content(); ?></div>
+                        <div class="apropos-media reveal">
+                            <div class="cadre"><?php the_post_thumbnail('large', ['alt' => get_the_title()]); ?></div>
+                        </div>
+                    </div>
+                <?php elseif ($a_contenu): ?>
+                    <div class="page-prose reveal"><?php the_content(); ?></div>
+                <?php else: ?>
+                    <div class="apropos-media reveal" style="max-width:640px;margin-inline:auto">
+                        <div class="cadre"><?php the_post_thumbnail('large', ['alt' => get_the_title()]); ?></div>
+                    </div>
+                <?php endif; ?>
             </div>
         </section>
     <?php endif;
@@ -48,7 +63,7 @@ endwhile; endif; ?>
             <h2>Venez nous voir</h2>
         </div>
 
-        <div class="contact-grille">
+        <div class="contact-grille contact-grille--carte">
             <ul class="contact-info reveal">
                 <?php if ($adresse): ?>
                     <li>

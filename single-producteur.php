@@ -21,6 +21,18 @@ $adresse   = get_field('producteur_adresse');
 $site_web  = get_field('producteur_site_web');
 $facebook  = get_field('producteur_facebook');
 $instagram = get_field('producteur_instagram');
+$produits  = get_field('producteur_produits');
+
+/* Liste « Disponibles au Vivier » : une ligne = un produit */
+$produits_liste = [];
+if ($produits) {
+    foreach (preg_split('/\r\n|\r|\n/', $produits) as $ligne) {
+        $ligne = trim($ligne);
+        if ($ligne !== '') {
+            $produits_liste[] = $ligne;
+        }
+    }
+}
 
 /* Taxonomie */
 $terms_type = get_the_terms(get_the_ID(), 'type_producteur');
@@ -35,21 +47,22 @@ $archive_producteur = get_post_type_archive_link('producteur') ?: get_permalink(
 <section class="section section-detail">
     <div class="conteneur">
 
-        <p class="fil"><a href="<?php echo esc_url($archive_producteur); ?>">← Tous les producteurs</a></p>
+        <p class="fil"><a href="<?php echo esc_url($archive_producteur); ?>">Tous les producteurs</a></p>
 
-        <div class="prod-hero" style="margin-top:1.4rem">
+        <div class="prod-hero<?php echo ($logo || has_post_thumbnail()) ? '' : ' prod-hero--solo'; ?>">
+            <span class="prod-hero-deco" aria-hidden="true"></span>
 
-            <?php if ($logo || has_post_thumbnail()): ?>
-            <div class="photo reveal">
-                <?php if ($logo): ?>
-                    <img src="<?php echo esc_url($logo['sizes']['large'] ?? $logo['url']); ?>" alt="<?php echo esc_attr($logo['alt'] ?: get_the_title()); ?>">
-                <?php else:
-                    the_post_thumbnail('large', ['alt' => get_the_title()]);
-                endif; ?>
+            <?php if ($logo): ?>
+            <div class="prod-logo reveal">
+                <img src="<?php echo esc_url($logo['sizes']['large'] ?? $logo['url']); ?>" alt="<?php echo esc_attr($logo['alt'] ?: get_the_title()); ?>">
+            </div>
+            <?php elseif (has_post_thumbnail()): ?>
+            <div class="prod-photo reveal">
+                <?php the_post_thumbnail('large', ['alt' => get_the_title()]); ?>
             </div>
             <?php endif; ?>
 
-            <div class="reveal">
+            <div class="prod-hero-info reveal">
                 <?php if ($type): ?>
                     <span class="lieu"><?php echo esc_html($type); ?></span>
                 <?php endif; ?>
@@ -83,6 +96,17 @@ $archive_producteur = get_post_type_archive_link('producteur') ?: get_permalink(
                 <?php if (get_the_content()): ?>
                     <h2>À propos</h2>
                     <?php the_content(); ?>
+                <?php endif; ?>
+
+                <?php if ($produits_liste): ?>
+                <div class="prod-dispo">
+                    <h2>Disponibles au Vivier</h2>
+                    <ul class="prod-dispo-liste">
+                        <?php foreach ($produits_liste as $item): ?>
+                            <li><?php echo esc_html($item); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
                 <?php endif; ?>
             </div>
 
