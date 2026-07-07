@@ -17,7 +17,7 @@
 
     function filtrerParJour(jour) {
         /* 1. Masquer les produits qui ne correspondent pas au jour */
-        document.querySelectorAll('.pam-produit-item:not(.pam-clone)').forEach(function (item) {
+        document.querySelectorAll('.pam-produit-item').forEach(function (item) {
             var jours   = item.dataset.jours ? item.dataset.jours.split(' ') : [];
             var visible = jours.indexOf(jour) !== -1;
             item.hidden = !visible;
@@ -30,7 +30,7 @@
         /* 2. Identifier les catégories qui ont encore des produits visibles */
         var catsDispos = [];
         document.querySelectorAll('.pam-categorie').forEach(function (cat) {
-            var nb = cat.querySelectorAll('.pam-produit-item:not(.pam-clone):not([hidden])').length;
+            var nb = cat.querySelectorAll('.pam-produit-item:not([hidden])').length;
             if (nb > 0) catsDispos.push(cat.dataset.cat);
         });
 
@@ -55,7 +55,7 @@
 
     function appliquerFiltreCategorie() {
         document.querySelectorAll('.pam-categorie').forEach(function (cat) {
-            var aProduits = cat.querySelectorAll('.pam-produit-item:not(.pam-clone):not([hidden])').length > 0;
+            var aProduits = cat.querySelectorAll('.pam-produit-item:not([hidden])').length > 0;
             var correspond = !categorieActive || cat.dataset.cat === categorieActive;
             cat.hidden = !aProduits || !correspond;
         });
@@ -64,17 +64,14 @@
         document.querySelectorAll('.pam-cat-tab').forEach(function (tab) {
             tab.classList.toggle('pam-cat-tab--active', tab.dataset.cat === categorieActive);
         });
-
-        carouselTimers.forEach(function (c) { c.track.scrollLeft = 0; });
-        initCarousels();
     }
 
     /* -------------------------------------------------------
-       Calcul du total (exclut les clones)
+       Calcul du total
     ------------------------------------------------------- */
     function calculerTotal() {
         var total = 0;
-        document.querySelectorAll('.pam-produit-item:not(.pam-clone):not([hidden]) .pam-qty-input').forEach(function (input) {
+        document.querySelectorAll('.pam-produit-item:not([hidden]) .pam-qty-input').forEach(function (input) {
             var item = input.closest('.pam-produit-item');
             var prix = parseFloat(item.dataset.prix) || 0;
             var qty  = parseInt(input.value, 10)     || 0;
@@ -87,173 +84,6 @@
     function formatMontant(n) {
         return n.toFixed(2).replace('.', ',') + ' $';
     }
-
-    /* -------------------------------------------------------
-       Carousels : easing + boucle infinie par clonage
-    ------------------------------------------------------- */
-    var DELAI_AUTOPLAY = 15000;
-    var carouselTimers = [];
-
-    function easeInOutCubic(t) {
-        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    }
-
-    function scrollSmooth(track, cible, duree) {
-        if (track._animId) { cancelAnimationFrame(track._animId); track._animId = null; }
-        var debut     = track.scrollLeft;
-        var distance  = cible - debut;
-        var startTime = null;
-
-        function step(ts) {
-            if (!startTime) startTime = ts;
-            var progress     = Math.min((ts - startTime) / duree, 1);
-            track.scrollLeft = debut + distance * easeInOutCubic(progress);
-            if (progress < 1) {
-                track._animId = requestAnimationFrame(step);
-            } else {
-                track._animId = null;
-            }
-        }
-        track._animId = requestAnimationFrame(step);
-    }
-
-    function largeurCarte(track) {
-        var carte = track.querySelector('.pam-produit-item:not(.pam-clone):not([hidden])');
-        return carte ? carte.offsetWidth + 16 : 300;
-    }
-
-    function setupClones(track) {
-        track.querySelectorAll('.pam-clone').forEach(function (c) { c.remove(); });
-
-        var cartes = Array.from(track.querySelectorAll('.pam-produit-item:not([hidden])'));
-        if (cartes.length < 2) return 0;
-
-        cartes.forEach(function (carte) {
-            var clone = carte.cloneNode(true);
-            clone.classList.add('pam-clone');
-            clone.setAttribute('aria-hidden', 'true');
-            clone.querySelectorAll('input, button').forEach(function (el) {
-                el.disabled = true;
-                el.setAttribute('tabindex', '-1');
-            });
-            track.appendChild(clone);
-        });
-
-        /* scrollWidth inclut maintenant originaux + clones = 2x originaux */
-        return track.scrollWidth / 2;
-    }
-
-    function initCarousel(carousel) {
-        var track = carousel.querySelector('.pam-produits-grille');
-        if (!track) return null;
-
-        if (track._loopListener) track.removeEventListener('scroll', track._loopListener);
-        if (track._animId) { cancelAnimationFrame(track._animId); track._animId = null; }
-        track.scrollLeft = 0;
-
-        var largeurOri = setupClones(track);
-        var timer  = null;
-        var pause  = false;
-        var drag   = false;
-        var dragX  = 0;
-        var dragSL = 0;
-
-        track._animTarget = null;
-
-        /* Boucle infinie : quand on atteint les clones, on saute silencieusement
-           au début sans que l'utilisateur le perçoive */
-        track._loopListener = function () {
-            if (largeurOri > 0 && track.scrollLeft >= largeurOri) {
-                if (track._animId) { cancelAnimationFrame(track._animId); track._animId = null; }
-                track.scrollLeft -= largeurOri;
-                if (track._animTarget != null) track._animTarget -= largeurOri;
-            }
-        };
-        track.addEventListener('scroll', track._loopListener);
-
-        function avancer() {
-            if (pause) return;
-            scrollSmooth(track, track.scrollLeft + largeurCarte(track), 900);
-        }
-
-        function demarrer() {
-            arreter();
-            timer = setInterval(avancer, DELAI_AUTOPLAY);
-        }
-
-        function arreter() {
-            clearInterval(timer);
-            timer = null;
-        }
-
-        /* Pause au survol */
-        carousel.addEventListener('mouseenter', function () { if (!drag) { pause = true; arreter(); } });
-        carousel.addEventListener('mouseleave', function () { if (!drag) { pause = false; demarrer(); } });
-
-        /* Drag-to-scroll */
-        track.addEventListener('mousedown', function (e) {
-            if (track._animId) { cancelAnimationFrame(track._animId); track._animId = null; }
-            drag   = true;
-            dragX  = e.pageX;
-            dragSL = track.scrollLeft;
-            track.classList.add('pam-drag-actif');
-            pause  = true;
-            arreter();
-        });
-        document.addEventListener('mousemove', function (e) {
-            if (!drag) return;
-            track.scrollLeft = dragSL - (e.pageX - dragX);
-        });
-        document.addEventListener('mouseup', function () {
-            if (!drag) return;
-            drag = false;
-            track.classList.remove('pam-drag-actif');
-            setTimeout(function () { pause = false; demarrer(); }, 800);
-        });
-
-
-        /* Touch */
-        track.addEventListener('touchstart', function () { pause = true; arreter(); }, { passive: true });
-        track.addEventListener('touchend', function () {
-            setTimeout(function () { pause = false; demarrer(); }, 1500);
-        }, { passive: true });
-
-        /* Flèches desktop */
-        var btnPrev = carousel.querySelector('.pam-fleche-prev');
-        var btnNext = carousel.querySelector('.pam-fleche-next');
-        if (btnPrev) {
-            btnPrev.addEventListener('click', function () {
-                arreter();
-                scrollSmooth(track, track.scrollLeft - largeurCarte(track), 380);
-                setTimeout(function () { pause = false; demarrer(); }, 1200);
-            });
-        }
-        if (btnNext) {
-            btnNext.addEventListener('click', function () {
-                arreter();
-                scrollSmooth(track, track.scrollLeft + largeurCarte(track), 380);
-                setTimeout(function () { pause = false; demarrer(); }, 1200);
-            });
-        }
-
-        return { demarrer: demarrer, arreter: arreter, track: track };
-    }
-
-    function initCarousels() {
-        carouselTimers.forEach(function (c) { c.arreter(); });
-        carouselTimers = [];
-
-        document.querySelectorAll('.pam-carousel').forEach(function (carousel) {
-            var cat = carousel.closest('.pam-categorie');
-            if (cat && cat.hidden) return;
-            var ctrl = initCarousel(carousel);
-            if (ctrl) {
-                carouselTimers.push(ctrl);
-                ctrl.demarrer();
-            }
-        });
-    }
-    initCarousels();
 
     /* -------------------------------------------------------
        Message informatif par jour
@@ -380,7 +210,7 @@
     }
 
     /* -------------------------------------------------------
-       Soumission AJAX (exclut les clones)
+       Soumission AJAX
     ------------------------------------------------------- */
     form.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -404,8 +234,7 @@
         var jourChecked = form.querySelector('input[name="jour"]:checked');
         data.append('jour', jourChecked ? jourChecked.value : 'tous_les_jours');
 
-        /* Uniquement les originaux, pas les clones */
-        document.querySelectorAll('.pam-produit-item:not(.pam-clone) .pam-qty-input').forEach(function (input) {
+        document.querySelectorAll('.pam-produit-item .pam-qty-input').forEach(function (input) {
             var qty = parseInt(input.value, 10) || 0;
             if (qty > 0) {
                 var item = input.closest('.pam-produit-item');

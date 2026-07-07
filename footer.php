@@ -1,5 +1,9 @@
     </main>
 
+    <?php /* Pied masqué sur tout l'univers Lofts (liste + fiches détail) :
+             la bande sarcelle en bas de page joue déjà ce rôle, un pied en
+             sauge tout de suite après casserait l'identité de l'univers. */ ?>
+    <?php if (!is_page_template('templates/template-lofts.php') && !is_singular('loft')): ?>
     <footer class="pied">
         <div class="conteneur pied-grille">
             <div class="pied-marque">
@@ -49,6 +53,7 @@
             &copy; <?php echo wp_date('Y'); ?> Le Vivier · Matane, Québec
         </div>
     </footer>
+    <?php endif; ?>
 
     <?php wp_footer(); ?>
 </body>

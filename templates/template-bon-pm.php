@@ -25,50 +25,11 @@ $surtitre = get_field('pm_bon_surtitre') ?: 'Produits Maison · Le Vivier';
 <section class="section">
     <div class="conteneur">
 
-        <form id="pm-formulaire" class="pam-grille-form" novalidate>
+        <form id="pm-formulaire" class="pam-form" novalidate>
 
-            <!-- ---- Colonne gauche : infos client ---- -->
-            <div class="pam-infos-client">
-                <h2 class="pam-section-titre">Vos coordonnées</h2>
-
-                <div class="pam-champ">
-                    <label for="pm_prenom">Prénom <abbr title="requis">*</abbr></label>
-                    <input type="text" id="pm_prenom" name="prenom" required autocomplete="given-name">
-                </div>
-                <div class="pam-champ">
-                    <label for="pm_nom">Nom <abbr title="requis">*</abbr></label>
-                    <input type="text" id="pm_nom" name="nom" required autocomplete="family-name">
-                </div>
-                <div class="pam-champ">
-                    <label for="pm_telephone">Téléphone</label>
-                    <input type="tel" id="pm_telephone" name="telephone" autocomplete="tel">
-                </div>
-                <div class="pam-champ">
-                    <label for="pm_email">Courriel <abbr title="requis">*</abbr></label>
-                    <input type="email" id="pm_email" name="email" required autocomplete="email">
-                </div>
-                <div class="pam-champ">
-                    <label for="pm_commentaire">Commentaire (optionnel)</label>
-                    <textarea id="pm_commentaire" name="commentaire" rows="3" placeholder="Allergies, préférences, questions…"></textarea>
-                </div>
-
-                <!-- Barre de total (sticky) -->
-                <div id="pm-barre-total" class="pam-barre-total">
-                    <span>Total estimé</span>
-                    <strong id="pm-total-montant">0,00 $</strong>
-                </div>
-
-                <p id="pm-msg-succes" class="pam-msg-succes" hidden></p>
-                <p id="pm-msg-erreur" class="pam-msg-erreur" hidden></p>
-
-                <button type="submit" id="pm-btn-soumettre" class="btn btn-primaire" style="width:100%;margin-top:.5rem">
-                    Envoyer le bon de commande
-                </button>
-            </div>
-
-            <!-- ---- Colonne droite : produits ---- -->
+            <!-- ---- Étape 1 : produits ---- -->
             <div class="pam-produits-col">
-                <h2 class="pam-section-titre">Votre commande</h2>
+                <h2 class="pam-section-titre"><span class="pam-etape" aria-hidden="true">1</span>Votre commande</h2>
 
                 <?php
                 $parent_maison = get_term_by('slug', 'produit-maison', 'categorie_produit');
@@ -122,11 +83,7 @@ $surtitre = get_field('pm_bon_surtitre') ?: 'Produits Maison · Le Vivier';
                 ?>
                 <div class="pam-categorie" data-cat="<?php echo esc_attr($cat->slug); ?>">
                     <h3 class="pam-categorie-titre"><?php echo esc_html($cat->name); ?></h3>
-                    <div class="pam-carousel">
-                        <button type="button" class="pam-fleche pam-fleche-prev" aria-label="Produits précédents">
-                            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-                        </button>
-                        <div class="pam-produits-grille">
+                    <div class="pam-produits-grille">
                         <?php while ($produits->have_posts()): $produits->the_post();
                             $pid   = get_the_ID();
                             $prix  = (float) get_field('pm_prix');
@@ -164,11 +121,7 @@ $surtitre = get_field('pm_bon_surtitre') ?: 'Produits Maison · Le Vivier';
                             </div>
                         </div>
                         <?php endwhile; wp_reset_postdata(); ?>
-                        </div><!-- .pam-produits-grille -->
-                        <button type="button" class="pam-fleche pam-fleche-next" aria-label="Produits suivants">
-                            <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
-                        </button>
-                    </div><!-- .pam-carousel -->
+                    </div><!-- .pam-produits-grille -->
                 </div><!-- .pam-categorie -->
                 <?php endforeach;
                 endif;
@@ -204,11 +157,7 @@ $surtitre = get_field('pm_bon_surtitre') ?: 'Produits Maison · Le Vivier';
                         $a_des_produits = true;
                 ?>
                 <div class="pam-categorie" data-cat="tout">
-                    <div class="pam-carousel">
-                        <button type="button" class="pam-fleche pam-fleche-prev" aria-label="Produits précédents">
-                            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-                        </button>
-                        <div class="pam-produits-grille">
+                    <div class="pam-produits-grille">
                         <?php while ($produits->have_posts()): $produits->the_post();
                             $pid   = get_the_ID();
                             $prix  = (float) get_field('pm_prix');
@@ -246,11 +195,7 @@ $surtitre = get_field('pm_bon_surtitre') ?: 'Produits Maison · Le Vivier';
                             </div>
                         </div>
                         <?php endwhile; wp_reset_postdata(); ?>
-                        </div><!-- .pam-produits-grille -->
-                        <button type="button" class="pam-fleche pam-fleche-next" aria-label="Produits suivants">
-                            <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
-                        </button>
-                    </div><!-- .pam-carousel -->
+                    </div><!-- .pam-produits-grille -->
                 </div><!-- .pam-categorie -->
                 <?php endif;
                 endif; ?>
@@ -261,8 +206,52 @@ $surtitre = get_field('pm_bon_surtitre') ?: 'Produits Maison · Le Vivier';
 
             </div><!-- .pam-produits-col -->
 
+            <!-- ---- Étape 2 : infos client ---- -->
+            <div class="pam-infos-client pam-bloc-coordonnees">
+                <h2 class="pam-section-titre"><span class="pam-etape" aria-hidden="true">2</span>Vos coordonnées</h2>
+
+                <div class="pam-grille-form">
+                    <div class="pam-champ">
+                        <label for="pm_prenom">Prénom <abbr title="requis">*</abbr></label>
+                        <input type="text" id="pm_prenom" name="prenom" required autocomplete="given-name">
+                    </div>
+                    <div class="pam-champ">
+                        <label for="pm_nom">Nom <abbr title="requis">*</abbr></label>
+                        <input type="text" id="pm_nom" name="nom" required autocomplete="family-name">
+                    </div>
+                    <div class="pam-champ">
+                        <label for="pm_telephone">Téléphone</label>
+                        <input type="tel" id="pm_telephone" name="telephone" autocomplete="tel">
+                    </div>
+                    <div class="pam-champ">
+                        <label for="pm_email">Courriel <abbr title="requis">*</abbr></label>
+                        <input type="email" id="pm_email" name="email" required autocomplete="email">
+                    </div>
+                    <div class="pam-champ pam-champ--pleine">
+                        <label for="pm_commentaire">Commentaire (optionnel)</label>
+                        <textarea id="pm_commentaire" name="commentaire" rows="3" placeholder="Allergies, préférences, questions…"></textarea>
+                    </div>
+                </div>
+            </div>
+
         </form>
+
+        <div id="pm-msg-succes" class="pam-msg-succes" role="alert" hidden></div>
+        <div id="pm-msg-erreur" class="pam-msg-erreur" role="alert" hidden></div>
+
     </div>
 </section>
+
+<!-- ======================================================
+     BARRE DE TOTAL (sticky bottom)
+====================================================== -->
+<div class="pam-barre-total" id="pm-barre-total" aria-live="polite">
+    <div class="pam-barre-inner conteneur">
+        <p class="pam-total-label">Total&nbsp;: <strong id="pm-total-montant">0,00&nbsp;$</strong></p>
+        <button type="submit" form="pm-formulaire" class="btn btn-primaire" id="pm-btn-soumettre">
+            Envoyer le bon de commande
+        </button>
+    </div>
+</div>
 
 <?php get_footer(); ?>

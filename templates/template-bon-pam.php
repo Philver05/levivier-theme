@@ -25,37 +25,11 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
 <section class="section">
     <div class="conteneur">
 
-        <form id="pam-formulaire" class="pam-grille-form" novalidate>
+        <form id="pam-formulaire" class="pam-form" novalidate>
 
-            <!-- ---- Colonne gauche : infos client ---- -->
-            <div class="pam-infos-client">
-                <h2 class="pam-section-titre">Vos coordonnées</h2>
-
-                <div class="pam-champ">
-                    <label for="pam_prenom">Prénom <abbr title="requis">*</abbr></label>
-                    <input type="text" id="pam_prenom" name="prenom" required autocomplete="given-name">
-                </div>
-                <div class="pam-champ">
-                    <label for="pam_nom">Nom <abbr title="requis">*</abbr></label>
-                    <input type="text" id="pam_nom" name="nom" required autocomplete="family-name">
-                </div>
-                <div class="pam-champ">
-                    <label for="pam_telephone">Téléphone</label>
-                    <input type="tel" id="pam_telephone" name="telephone" autocomplete="tel">
-                </div>
-                <div class="pam-champ">
-                    <label for="pam_email">Courriel <abbr title="requis">*</abbr></label>
-                    <input type="email" id="pam_email" name="email" required autocomplete="email">
-                </div>
-                <div class="pam-champ">
-                    <label for="pam_commentaire">Commentaire (optionnel)</label>
-                    <textarea id="pam_commentaire" name="commentaire" rows="3" placeholder="Allergies, préférences, questions…"></textarea>
-                </div>
-            </div>
-
-            <!-- ---- Colonne droite : filtre jour + produits ---- -->
+            <!-- ---- Étape 1 : filtre jour + produits ---- -->
             <div class="pam-produits-col">
-                <h2 class="pam-section-titre">Votre commande</h2>
+                <h2 class="pam-section-titre"><span class="pam-etape" aria-hidden="true">1</span>Votre commande</h2>
 
                 <?php
                 /* Jours qui ont au moins un produit publié */
@@ -180,11 +154,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                 ?>
                 <div class="pam-categorie" data-cat="<?php echo esc_attr($cat->slug); ?>">
                     <h3 class="pam-categorie-titre"><?php echo esc_html($cat->name); ?></h3>
-                    <div class="pam-carousel">
-                        <button type="button" class="pam-fleche pam-fleche-prev" aria-label="Produits précédents">
-                            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-                        </button>
-                        <div class="pam-produits-grille">
+                    <div class="pam-produits-grille">
                         <?php while ($produits->have_posts()): $produits->the_post();
                             $pid         = get_the_ID();
                             $prix        = (float) get_field('pam_prix');
@@ -224,11 +194,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                             </div>
                         </div>
                         <?php endwhile; wp_reset_postdata(); ?>
-                        </div><!-- .pam-produits-grille -->
-                        <button type="button" class="pam-fleche pam-fleche-next" aria-label="Produits suivants">
-                            <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
-                        </button>
-                    </div><!-- .pam-carousel -->
+                    </div><!-- .pam-produits-grille -->
                 </div><!-- .pam-categorie -->
                 <?php endforeach; endif; ?>
 
@@ -236,6 +202,34 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                 <p class="grille-vide">Les produits Prêt à manger seront disponibles ici très bientôt.</p>
                 <?php endif; ?>
             </div><!-- .pam-produits-col -->
+
+            <!-- ---- Étape 2 : infos client ---- -->
+            <div class="pam-infos-client pam-bloc-coordonnees">
+                <h2 class="pam-section-titre"><span class="pam-etape" aria-hidden="true">2</span>Vos coordonnées</h2>
+
+                <div class="pam-grille-form">
+                    <div class="pam-champ">
+                        <label for="pam_prenom">Prénom <abbr title="requis">*</abbr></label>
+                        <input type="text" id="pam_prenom" name="prenom" required autocomplete="given-name">
+                    </div>
+                    <div class="pam-champ">
+                        <label for="pam_nom">Nom <abbr title="requis">*</abbr></label>
+                        <input type="text" id="pam_nom" name="nom" required autocomplete="family-name">
+                    </div>
+                    <div class="pam-champ">
+                        <label for="pam_telephone">Téléphone</label>
+                        <input type="tel" id="pam_telephone" name="telephone" autocomplete="tel">
+                    </div>
+                    <div class="pam-champ">
+                        <label for="pam_email">Courriel <abbr title="requis">*</abbr></label>
+                        <input type="email" id="pam_email" name="email" required autocomplete="email">
+                    </div>
+                    <div class="pam-champ pam-champ--pleine">
+                        <label for="pam_commentaire">Commentaire (optionnel)</label>
+                        <textarea id="pam_commentaire" name="commentaire" rows="3" placeholder="Allergies, préférences, questions…"></textarea>
+                    </div>
+                </div>
+            </div>
 
         </form>
 

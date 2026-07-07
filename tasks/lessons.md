@@ -1,0 +1,7 @@
+# Lessons
+
+[2026-07-07] | Bug "mauvais titre dans le header" : j'ai accusé le contenu WP puis le cache avant de relire le code, alors qu'un `foreach (... as $post)` dans template-produits-maison.php écrasait le post global | Quand un template affiche une donnée du mauvais post, chercher D'ABORD une réassignation de `$post` (ou une boucle sans wp_reset_postdata) dans le PHP avant de blâmer le contenu, le cache ou la synchro.
+
+[2026-07-07] | J'ai deplace lv_loft_icone() de single-loft.php vers functions.php et les fiches loft ont plante chez Philippe (fatale si functions.php pas a jour en meme temps - le site ne tourne pas dans Local sur cette machine, deploiement fichier par fichier possible) | Ne jamais deplacer une fonction hors d'un template sans laisser un filet function_exists avec repli minimal dans le template.
+
+[2026-07-07] | J'ai fait pointer le bouton de la bande CTA finale de chaque fiche loft individuelle vers un champ ACF partage (lofts_cta_lien, sur la page hub /lofts/) - mais chaque loft a son propre lien de reservation (Reservit/Airbnb), pas un lien commun | Pour du contenu par loft (CPT `loft`, plusieurs unites), ne jamais reutiliser un champ ACF de la page hub partagee pour un lien d'action (bouton, reservation) : verifier s'il existe deja une variable par-post equivalente (ici $resa_principal) avant d'en creer une nouvelle partagee. Seuls titre/texte editoriaux generiques peuvent rester partages.

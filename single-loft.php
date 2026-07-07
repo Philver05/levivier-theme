@@ -70,7 +70,15 @@ $lofts_page = get_posts([
     'numberposts' => 1,
     'fields'      => 'ids',
 ]);
-$lofts_url = $lofts_page ? get_permalink($lofts_page[0]) : home_url('/lofts/');
+$lofts_page_id = $lofts_page ? (int) $lofts_page[0] : 0;
+$lofts_url = $lofts_page_id ? get_permalink($lofts_page_id) : home_url('/lofts/');
+
+/* Bande finale : titre/texte repris de la page Lofts (générique, un seul
+   endroit à modifier dans WP). Le bouton, lui, reste propre à CE loft
+   (voir plus bas $resa_principal) : chaque appart a son propre lien de
+   réservation, contrairement au titre/texte qui peuvent rester partagés. */
+$cta_titre = get_field('lofts_cta_titre', $lofts_page_id) ?: 'Vos dates partent vite';
+$cta_texte = get_field('lofts_cta_texte', $lofts_page_id) ?: "Deux lofts seulement, un calendrier qui se remplit. Réservez les vôtres pendant qu'ils sont libres.";
 
 $type      = get_field('loft_type')      ?: 'Logement de location en entier';
 $voyageurs = get_field('loft_voyageurs') ?: '2';
@@ -86,6 +94,11 @@ if ($airbnb_url)   $resa_options[] = ['url' => $airbnb_url,   'label' => 'Réser
 if (!$resa_options) $resa_options[] = ['url' => 'tel:' . preg_replace('/\D/', '', $telephone), 'label' => 'Réserver par téléphone', 'ext' => false];
 $resa_principal = $resa_options[0];
 $resa_en_ligne  = ($reservit_url || $airbnb_url);
+
+/* Bouton de la bande finale = même lien/texte que la réservation principale
+   ci-dessus : propre à ce loft, pas partagé avec les autres fiches. */
+$cta_bouton = $resa_principal['label'];
+$cta_lien   = $resa_principal['url'];
 
 /* Liste des commodités */
 $amenites = array_filter(array_map('trim', explode("\n", str_replace("\r", '', $features))));
@@ -110,59 +123,12 @@ foreach ($galerie_cats as $imgs) {
     foreach ($imgs as $p) $photos[] = $p;
 }
 
-/* Icône SVG (style ligne, couleur via currentColor) choisie selon un libellé */
+/* Filet de sécurité : lv_loft_icone() vit dans functions.php, mais si ce
+   fichier-là n'est pas encore à jour sur le serveur (envoi partiel), la
+   fiche planterait en fatale. Repli minimal : icône crochet générique. */
 if (!function_exists('lv_loft_icone')) {
     function lv_loft_icone($label) {
-        $l = ' ' . mb_strtolower($label) . ' ';
-        $mots = [
-            'wifi'      => ['wi-fi', 'wifi', 'internet'],
-            'sechoir'   => ['cheveux', 'sèche-cheveux'],
-            'cuisine'   => ['cuisin', 'vaisselle'],
-            'tele'      => ['télé', 'tele', ' tv ', 'téléviseur'],
-            'parking'   => ['stationnement', 'parking'],
-            'douche'    => ['bain', 'douche'],
-            'lit'       => ['lit', 'chambre', 'literie', 'couchage'],
-            'cafe'      => ['café', 'cafe', 'cafetière'],
-            'buanderie' => ['laveuse', 'sécheuse', 'buanderie', 'lavage', 'laverie'],
-            'camera'    => ['caméra', 'surveillance', 'sécurité', 'vidéo'],
-            'volume'    => ['volume', 'bruit', 'silence', 'tapage'],
-            'poubelle'  => ['poubelle', 'déchet', 'ordure', 'recyclage', 'tri'],
-            'interdit'  => ['réservé', 'personnel', 'interdit', 'défense'],
-            'porte'     => ['entrée', 'porte', 'accès'],
-            'cle'       => ['arrivée', 'serrure', 'autonome', 'clé'],
-            'eau'       => ['eau', 'rivière', 'fleuve', 'mer', 'vue'],
-            'air'       => ['climatis', 'chauffage', 'ventil'],
-            'produits'  => ['corporel', 'produit', 'savon', 'toilette'],
-        ];
-        $key = 'check';
-        foreach ($mots as $k => $liste) {
-            foreach ($liste as $m) {
-                if (strpos($l, $m) !== false) { $key = $k; break 2; }
-            }
-        }
-        $paths = [
-            'wifi'      => '<path d="M4 11a12 12 0 0 1 16 0"/><path d="M7.5 14.5a7 7 0 0 1 9 0"/><path d="M10.5 18a3 3 0 0 1 3 0"/>',
-            'cuisine'   => '<path d="M8 3v18"/><path d="M6 3v5a2 2 0 0 0 4 0V3"/><path d="M16 3v18"/><path d="M16 3c-2 0-3 2-3 4s1 3 3 3"/>',
-            'tele'      => '<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8"/><path d="M12 16v4"/>',
-            'parking'   => '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 16V8h3a2.5 2.5 0 0 1 0 5H9"/>',
-            'douche'    => '<path d="M12 3s6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 6-10 6-10Z"/>',
-            'lit'       => '<path d="M2 17h20"/><path d="M4 17v-4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M4 21v-4"/><path d="M20 21v-4"/><path d="M7 11V9a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v2"/>',
-            'cafe'      => '<path d="M5 8h11v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V8Z"/><path d="M16 9h2a2 2 0 0 1 0 4h-2"/><path d="M8 3v2"/><path d="M11 3v2"/>',
-            'buanderie' => '<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4"/><path d="M7 6h.01"/><path d="M10 6h.01"/>',
-            'cle'       => '<circle cx="8" cy="8" r="4"/><path d="M11 11l9 9"/><path d="M20 17l-2 2"/><path d="M17 14l-2 2"/>',
-            'eau'       => '<path d="M2 9q3-3 6 0t6 0 6 0"/><path d="M2 14q3-3 6 0t6 0 6 0"/><path d="M2 19q3-3 6 0t6 0 6 0"/>',
-            'air'       => '<path d="M4 8h11a3 3 0 1 0-3-3"/><path d="M2 12h15a3 3 0 1 1-3 3"/><path d="M4 16h8a2.5 2.5 0 1 1-2.5 2.5"/>',
-            'produits'  => '<path d="M10 3h4v3l1 2v11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V8l1-2Z"/><path d="M9 12h6"/>',
-            'sechoir'   => '<path d="M3 8h9a4 4 0 0 1 0 8h-2"/><path d="M10 16l-1 4a1.5 1.5 0 0 1-3 0v-4"/><path d="M3 8v8h3"/><circle cx="8.5" cy="12" r="1.2"/>',
-            'camera'    => '<path d="M2 8l15-4 1.2 4.6L3.2 12.6z"/><path d="M4.2 12.4 5 16a2 2 0 0 0 2 1.5h2.5"/><path d="M17.5 7.2 22 6"/><circle cx="9" cy="20" r="1.4"/>',
-            'volume'    => '<path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="M17 9a4 4 0 0 1 0 6"/><path d="M19.5 7a7 7 0 0 1 0 10"/>',
-            'porte'     => '<path d="M5 21V4a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v17"/><path d="M3 21h16"/><circle cx="13" cy="12" r="0.9" fill="currentColor" stroke="none"/>',
-            'interdit'  => '<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
-            'poubelle'  => '<path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/><path d="M10 11v6"/><path d="M14 11v6"/>',
-            'check'     => '<path d="M4 12l5 5L20 6"/>',
-        ];
-        $inner = $paths[$key] ?? $paths['check'];
-        return '<svg class="lv-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $inner . '</svg>';
+        return '<svg class="lv-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>';
     }
 }
 ?>
@@ -269,6 +235,25 @@ if (!function_exists('lv_loft_icone')) {
         </section>
 
     </div>
+
+    <!-- Le pied habituel du site (en sauge) est retiré sur les fiches loft :
+         cette bande CTA (même contenu et design que le bas de /lofts/) en
+         tient lieu. Titre/texte/bouton/lien modifiables dans WP, sur la
+         page Lofts (Contenu — Page Lofts > Bande finale). -->
+    <section class="lofts-cta-finale">
+        <div class="conteneur">
+            <div class="lofts-cta-interieur reveal">
+                <h2><?php echo esc_html($cta_titre); ?></h2>
+                <p><?php echo esc_html($cta_texte); ?></p>
+                <a href="<?php echo esc_url($cta_lien); ?>" class="lofts-cta"><?php echo esc_html($cta_bouton); ?></a>
+                <p class="lofts-contact-ligne">
+                    <?php echo esc_html($adresse); ?>, Matane (QC) &nbsp;·&nbsp;
+                    <a href="tel:<?php echo esc_attr(preg_replace('/\D/', '', $telephone)); ?>"><?php echo esc_html($telephone); ?></a> &nbsp;·&nbsp; CITQ&nbsp;323422
+                </p>
+            </div>
+        </div>
+        <div class="conteneur lofts-cta-bas">&copy; <?php echo esc_html(wp_date('Y')); ?> Le Vivier · Matane, Québec</div>
+    </section>
 
     <?php if (count($photos) > 1): ?>
     <div class="loft-d-overlay" id="loftOverlay" hidden>

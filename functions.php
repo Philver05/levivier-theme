@@ -788,6 +788,32 @@ add_action('acf/init', function () {
             ['key' => 'field_lofts_surtitre', 'name' => 'lofts_surtitre', 'label' => 'Surtitre', 'type' => 'text'],
             ['key' => 'field_lofts_intro', 'name' => 'lofts_intro', 'label' => 'Introduction (ou utilisez l\'éditeur principal)', 'type' => 'textarea', 'rows' => 3],
             ['key' => 'field_lofts_tagline', 'name' => 'lofts_tagline', 'label' => 'Slogan (ex: L\'art de vivre en ville)', 'type' => 'text'],
+
+            /* ---- SECTION « POURQUOI VOUS ALLEZ ADORER » ---- */
+            ['key' => 'field_lofts_msg_atouts', 'label' => '', 'type' => 'message', 'message' => '<strong>💚 Section « Pourquoi vous allez adorer »</strong>'],
+            ['key' => 'field_lofts_atouts_titre', 'name' => 'lofts_atouts_titre', 'label' => 'Titre de la section', 'type' => 'text', 'default_value' => 'Pourquoi vous allez adorer'],
+            [
+                'key'           => 'field_lofts_atouts',
+                'name'          => 'lofts_atouts',
+                'label'         => 'Atouts',
+                'type'          => 'textarea',
+                'rows'          => 6,
+                'instructions'  => 'Une ligne par atout, au format : <code>Titre | Description</code>. L\'icône est choisie automatiquement selon le titre.',
+                'default_value' => "Tout à distance de marche | Restos, cafés, commerces et bord de mer à quelques minutes. Stationnez gratuitement une fois, puis oubliez la voiture.\nRien à apporter | Cuisinette complète, Wi-Fi rapide, téléviseur 65 pouces et literie soignée. Vous n'avez qu'à vous installer.\nUne épicerie sous vos pieds | Le Vivier vous attend au rez-de-chaussée : produits frais, cafés et prêt-à-manger des artisans d'ici. Le déjeuner commence dans l'escalier.\nRéservez l'esprit tranquille | Hébergement enregistré (CITQ 323422). Échanges directs, conditions claires, aucune surprise à l'arrivée.",
+            ],
+
+            /* ---- CTA FINALE (fait aussi office de pied de page sur cette page) ---- */
+            ['key' => 'field_lofts_msg_cta', 'label' => '', 'type' => 'message', 'message' => '<strong>📣 Bande finale</strong> (cette bande remplace le pied de page habituel sur /lofts/)'],
+            ['key' => 'field_lofts_cta_titre', 'name' => 'lofts_cta_titre', 'label' => 'Titre', 'type' => 'text', 'default_value' => 'Vos dates partent vite'],
+            ['key' => 'field_lofts_cta_texte', 'name' => 'lofts_cta_texte', 'label' => 'Texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Deux lofts seulement, un calendrier qui se remplit. Réservez les vôtres pendant qu\'ils sont libres.'],
+            ['key' => 'field_lofts_cta_bouton', 'name' => 'lofts_cta_bouton', 'label' => 'Texte du bouton', 'type' => 'text', 'default_value' => 'Voir les lofts et réserver'],
+            [
+                'key'          => 'field_lofts_cta_lien',
+                'name'         => 'lofts_cta_lien',
+                'label'        => 'Lien du bouton',
+                'type'         => 'url',
+                'instructions' => 'Ex : votre lien Reservit ou Airbnb. Laissez vide pour faire défiler jusqu\'à la liste des lofts. Ce bouton apparaît ici et en bas de chaque fiche loft individuelle.',
+            ],
         ],
         'location' => [[[
             'param'    => 'page_template',
@@ -1254,6 +1280,16 @@ add_action('acf/init', function () {
                         'wrapper' => ['width' => '100'],
                     ],
                     [
+                        'key'           => 'field_pam_msg_image',
+                        'name'          => 'msg_image',
+                        'label'         => 'Logo ou photo (optionnel)',
+                        'type'          => 'image',
+                        'return_format' => 'array',
+                        'preview_size'  => 'medium',
+                        'instructions'  => 'Ex : le logo du traiteur partenaire. Laissez vide pour un message texte seul.',
+                        'wrapper'       => ['width' => '100'],
+                    ],
+                    [
                         'key'          => 'field_pam_msg_titre',
                         'name'         => 'msg_titre',
                         'label'        => 'Titre',
@@ -1579,6 +1615,96 @@ function lv_opt($cle, $defaut = '')
 function lv_opt_tel_lien()
 {
     return 'tel:' . preg_replace('/\D/', '', lv_opt('opt_telephone', '(418) 562-5230'));
+}
+
+/* Icône SVG (style ligne, couleur via currentColor) choisie selon un libellé.
+   Déplacée depuis single-loft.php pour être réutilisable sur toutes les
+   pages Lofts (liste ET fiche détail) sans dupliquer la fonction. */
+if (!function_exists('lv_loft_icone')) {
+    function lv_loft_icone($label) {
+        $l = ' ' . mb_strtolower($label) . ' ';
+        $mots = [
+            'wifi'      => ['wi-fi', 'wifi', 'internet'],
+            'sechoir'   => ['cheveux', 'sèche-cheveux'],
+            'cuisine'   => ['cuisin', 'vaisselle'],
+            'tele'      => ['télé', 'tele', ' tv ', 'téléviseur'],
+            'parking'   => ['stationnement', 'parking'],
+            'douche'    => ['bain', 'douche'],
+            'lit'       => ['lit', 'chambre', 'literie', 'couchage'],
+            'cafe'      => ['café', 'cafe', 'cafetière'],
+            'buanderie' => ['laveuse', 'sécheuse', 'buanderie', 'lavage', 'laverie'],
+            'camera'    => ['caméra', 'surveillance', 'sécurité', 'vidéo'],
+            'volume'    => ['volume', 'bruit', 'silence', 'tapage'],
+            'poubelle'  => ['poubelle', 'déchet', 'ordure', 'recyclage', 'tri'],
+            'interdit'  => ['réservé', 'personnel', 'interdit', 'défense'],
+            'porte'     => ['entrée', 'porte', 'accès'],
+            'cle'       => ['arrivée', 'serrure', 'autonome', 'clé'],
+            'eau'       => ['eau', 'rivière', 'fleuve', 'mer', 'vue'],
+            'air'       => ['climatis', 'chauffage', 'ventil'],
+            'produits'  => ['corporel', 'produit', 'savon', 'toilette'],
+        ];
+        $key = 'check';
+        foreach ($mots as $k => $liste) {
+            foreach ($liste as $m) {
+                if (strpos($l, $m) !== false) { $key = $k; break 2; }
+            }
+        }
+        $paths = [
+            'wifi'      => '<path d="M4 11a12 12 0 0 1 16 0"/><path d="M7.5 14.5a7 7 0 0 1 9 0"/><path d="M10.5 18a3 3 0 0 1 3 0"/>',
+            'cuisine'   => '<path d="M8 3v18"/><path d="M6 3v5a2 2 0 0 0 4 0V3"/><path d="M16 3v18"/><path d="M16 3c-2 0-3 2-3 4s1 3 3 3"/>',
+            'tele'      => '<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8"/><path d="M12 16v4"/>',
+            'parking'   => '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 16V8h3a2.5 2.5 0 0 1 0 5H9"/>',
+            'douche'    => '<path d="M12 3s6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 6-10 6-10Z"/>',
+            'lit'       => '<path d="M2 17h20"/><path d="M4 17v-4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M4 21v-4"/><path d="M20 21v-4"/><path d="M7 11V9a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v2"/>',
+            'cafe'      => '<path d="M5 8h11v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V8Z"/><path d="M16 9h2a2 2 0 0 1 0 4h-2"/><path d="M8 3v2"/><path d="M11 3v2"/>',
+            'buanderie' => '<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4"/><path d="M7 6h.01"/><path d="M10 6h.01"/>',
+            'cle'       => '<circle cx="8" cy="8" r="4"/><path d="M11 11l9 9"/><path d="M20 17l-2 2"/><path d="M17 14l-2 2"/>',
+            'eau'       => '<path d="M2 9q3-3 6 0t6 0 6 0"/><path d="M2 14q3-3 6 0t6 0 6 0"/><path d="M2 19q3-3 6 0t6 0 6 0"/>',
+            'air'       => '<path d="M4 8h11a3 3 0 1 0-3-3"/><path d="M2 12h15a3 3 0 1 1-3 3"/><path d="M4 16h8a2.5 2.5 0 1 1-2.5 2.5"/>',
+            'produits'  => '<path d="M10 3h4v3l1 2v11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V8l1-2Z"/><path d="M9 12h6"/>',
+            'sechoir'   => '<path d="M3 8h9a4 4 0 0 1 0 8h-2"/><path d="M10 16l-1 4a1.5 1.5 0 0 1-3 0v-4"/><path d="M3 8v8h3"/><circle cx="8.5" cy="12" r="1.2"/>',
+            'camera'    => '<path d="M2 8l15-4 1.2 4.6L3.2 12.6z"/><path d="M4.2 12.4 5 16a2 2 0 0 0 2 1.5h2.5"/><path d="M17.5 7.2 22 6"/><circle cx="9" cy="20" r="1.4"/>',
+            'volume'    => '<path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="M17 9a4 4 0 0 1 0 6"/><path d="M19.5 7a7 7 0 0 1 0 10"/>',
+            'porte'     => '<path d="M5 21V4a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v17"/><path d="M3 21h16"/><circle cx="13" cy="12" r="0.9" fill="currentColor" stroke="none"/>',
+            'interdit'  => '<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
+            'poubelle'  => '<path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/><path d="M10 11v6"/><path d="M14 11v6"/>',
+            'check'     => '<path d="M4 12l5 5L20 6"/>',
+        ];
+        $inner = $paths[$key] ?? $paths['check'];
+        return '<svg class="lv-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $inner . '</svg>';
+    }
+}
+
+/* Icône des 4 « atouts » de la page Lofts (section « Pourquoi vous allez
+   adorer ») : registre de mots-clés distinct de lv_loft_icone() (pensée
+   pour les commodités d'une fiche) car ces titres marketing ("Tout à
+   distance de marche", "Rien à apporter"...) ne matchent aucun mot-clé
+   d'amenité et retomberaient tous sur la même icône générique. */
+if (!function_exists('lv_lofts_atout_icone')) {
+    function lv_lofts_atout_icone($label) {
+        $l = ' ' . mb_strtolower($label) . ' ';
+        $mots = [
+            'marche'    => ['marche', 'distance', 'pied', 'centre-ville', 'proche'],
+            'confort'   => ['apporter', 'cuisinette', 'wifi', 'confort', 'literie', 'équipé'],
+            'epicerie'  => ['épicerie', 'epicerie', 'vivier', 'produits', 'déjeuner'],
+            'securite'  => ['tranquille', 'réserv', 'enregistr', 'citq', 'sécur'],
+        ];
+        $key = 'coeur';
+        foreach ($mots as $k => $liste) {
+            foreach ($liste as $m) {
+                if (strpos($l, $m) !== false) { $key = $k; break 2; }
+            }
+        }
+        $paths = [
+            'marche'   => '<path d="M12 21s7-6.6 7-12a7 7 0 1 0-14 0c0 5.4 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/>',
+            'confort'  => '<rect x="4" y="8" width="16" height="11" rx="2"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M9 11v5M15 11v5"/>',
+            'epicerie' => '<path d="M5 8h14l-1.4 11.1a1 1 0 0 1-1 .9H7.4a1 1 0 0 1-1-.9L5 8Z"/><path d="M9 8 12 3l3 5"/>',
+            'securite' => '<path d="M12 3 5 6v6c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6l-7-3Z"/><path d="m9 12 2 2 4-4"/>',
+            'coeur'    => '<path d="M20 8.6c0-2.6-2-4.6-4.5-4.6-1.4 0-2.7.7-3.5 1.8-.8-1.1-2.1-1.8-3.5-1.8C6 4 4 6 4 8.6 4 13.5 12 20 12 20s8-6.5 8-11.4Z"/>',
+        ];
+        $inner = $paths[$key];
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $inner . '</svg>';
+    }
 }
 
 /* ======================================================

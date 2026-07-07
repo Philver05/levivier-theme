@@ -12,8 +12,13 @@ if (have_posts()) the_post();
 $surtitre = get_field('afr_surtitre') ?: 'Saveurs d\'Afrique · Le Vivier';
 $intro    = get_field('afr_intro')    ?: "Épices, sauces, féculents et trésors culinaires venus du continent.\nUne invitation au voyage, au cœur de Matane.";
 
-/* Présentation */
+/* Présentation : $pres_texte sert à détecter un contenu réellement visible
+   (get_the_content() seul renvoie souvent une chaîne "vide" du point de vue
+   visuel mais non-vide en PHP, ex: <p></p> laissé par l'éditeur WP, ce qui
+   affichait un bloc invisible mais quand même paddé). */
 $pres_image = get_field('afr_presentation_image');
+$pres_texte = trim(wp_strip_all_tags(get_the_content()));
+$pres_presente = ($pres_texte !== '' || $pres_image);
 
 /* Spécialités (3 cartes) */
 $specialites = [
@@ -34,12 +39,6 @@ $specialites = [
     ],
 ];
 
-/* Bande finale */
-$cta_titre = get_field('afr_cta_titre') ?: 'Venez découvrir nos saveurs';
-$cta_texte = get_field('afr_cta_texte') ?: 'Passez en boutique à Matane pour explorer toute notre sélection africaine. Notre équipe se fera un plaisir de vous conseiller.';
-$cta_lien  = get_field('afr_cta_lien')  ?: get_permalink(get_page_by_path('a-propos'));
-$cta_label = get_field('afr_cta_label') ?: 'Nous trouver';
-
 ?>
 
 <!-- ======================================================
@@ -56,17 +55,17 @@ $cta_label = get_field('afr_cta_label') ?: 'Nous trouver';
 <!-- ======================================================
      PRÉSENTATION (texte = éditeur WP) + image
 ====================================================== -->
-<?php if (get_the_content() || $pres_image): ?>
-<section class="section" style="padding-top:clamp(1.5rem,1rem+2vw,2.5rem)">
+<?php if ($pres_presente): ?>
+<section class="section" style="padding-top:clamp(1rem,.75rem+1vw,1.5rem)">
     <div class="conteneur">
-        <?php if (get_the_content() && $pres_image): ?>
+        <?php if ($pres_texte !== '' && $pres_image): ?>
         <div class="apropos-split">
             <div class="page-prose reveal" style="margin:0"><?php the_content(); ?></div>
             <div class="apropos-media reveal">
                 <div class="cadre"><img src="<?php echo esc_url($pres_image['sizes']['large'] ?? $pres_image['url']); ?>" alt="<?php echo esc_attr($pres_image['alt'] ?: 'Épicerie Africaine'); ?>"></div>
             </div>
         </div>
-        <?php elseif (get_the_content()): ?>
+        <?php elseif ($pres_texte !== ''): ?>
             <div class="page-prose reveal"><?php the_content(); ?></div>
         <?php elseif ($pres_image): ?>
             <div class="apropos-media reveal" style="max-width:640px;margin-inline:auto">
@@ -80,7 +79,7 @@ $cta_label = get_field('afr_cta_label') ?: 'Nous trouver';
 <!-- ======================================================
      SPÉCIALITÉS — 3 cartes
 ====================================================== -->
-<section class="section produits">
+<section class="section produits"<?php echo $pres_presente ? '' : ' style="padding-top:clamp(1rem,.75rem+1vw,1.5rem)"'; ?>>
     <div class="conteneur">
         <div class="section-titre">
             <h2>Nos spécialités</h2>
@@ -105,22 +104,6 @@ $cta_label = get_field('afr_cta_label') ?: 'Nous trouver';
             </article>
             <?php endforeach; ?>
         </div>
-    </div>
-</section>
-
-<!-- ======================================================
-     BANDE FINALE — CTA
-====================================================== -->
-<section class="cta-finale">
-    <div class="cta-finale-deco" aria-hidden="true"></div>
-    <div class="conteneur cta-finale-inner reveal">
-        <h2><?php echo esc_html($cta_titre); ?></h2>
-        <p><?php echo esc_html($cta_texte); ?></p>
-        <?php if ($cta_lien && $cta_label): ?>
-            <div class="cta-finale-actions">
-                <a href="<?php echo esc_url($cta_lien); ?>" class="btn btn-clair"><?php echo esc_html($cta_label); ?></a>
-            </div>
-        <?php endif; ?>
     </div>
 </section>
 

@@ -38,8 +38,8 @@ $familles = new WP_Query([
 /* Catégories utilisées (pour les boutons de filtre) */
 $cats_utilisees = [];
 if ($familles->have_posts()) {
-    foreach ($familles->posts as $post) {
-        $terms = get_the_terms($post->ID, 'categorie_famille');
+    foreach ($familles->posts as $famille) {
+        $terms = get_the_terms($famille->ID, 'categorie_famille');
         if ($terms && !is_wp_error($terms)) {
             foreach ($terms as $t) {
                 $cats_utilisees[$t->term_id] = $t;

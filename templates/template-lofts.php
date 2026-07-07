@@ -8,6 +8,29 @@ if (have_posts()) the_post();
 
 $surtitre = get_field('lofts_surtitre') ?: 'Location touristique · Centre-ville de Matane';
 $intro    = get_field('lofts_intro')    ?: "Deux lofts modernes avec cuisinette, pensés pour qu'il ne vous manque rien. Vous arrivez, vous déposez vos valises, et Matane est déjà à vos pieds.";
+
+$atouts_titre = get_field('lofts_atouts_titre') ?: 'Pourquoi vous allez adorer';
+$atouts_brut  = get_field('lofts_atouts') ?: "Tout à distance de marche | Restos, cafés, commerces et bord de mer à quelques minutes. Stationnez gratuitement une fois, puis oubliez la voiture.\nRien à apporter | Cuisinette complète, Wi-Fi rapide, téléviseur 65 pouces et literie soignée. Vous n'avez qu'à vous installer.\nUne épicerie sous vos pieds | Le Vivier vous attend au rez-de-chaussée : produits frais, cafés et prêt-à-manger des artisans d'ici. Le déjeuner commence dans l'escalier.\nRéservez l'esprit tranquille | Hébergement enregistré (CITQ 323422). Échanges directs, conditions claires, aucune surprise à l'arrivée.";
+$atouts = [];
+foreach (array_filter(array_map('trim', explode("\n", str_replace("\r", '', $atouts_brut)))) as $ligne) {
+    $parts = array_map('trim', explode('|', $ligne, 2));
+    if (count($parts) === 2) {
+        $atouts[] = ['titre' => $parts[0], 'desc' => $parts[1]];
+    }
+}
+
+$cta_titre  = get_field('lofts_cta_titre')  ?: 'Vos dates partent vite';
+$cta_texte  = get_field('lofts_cta_texte')  ?: "Deux lofts seulement, un calendrier qui se remplit. Réservez les vôtres pendant qu'ils sont libres.";
+$cta_bouton = get_field('lofts_cta_bouton') ?: 'Voir les lofts et réserver';
+$cta_lien   = get_field('lofts_cta_lien')   ?: '#nos-lofts';
+
+/* Filet de sécurité si functions.php n'est pas encore à jour sur le serveur
+   (même logique que dans single-loft.php) : icône cœur générique. */
+if (!function_exists('lv_lofts_atout_icone')) {
+    function lv_lofts_atout_icone($label) {
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 8.6c0-2.6-2-4.6-4.5-4.6-1.4 0-2.7.7-3.5 1.8-.8-1.1-2.1-1.8-3.5-1.8C6 4 4 6 4 8.6 4 13.5 12 20 12 20s8-6.5 8-11.4Z"/></svg>';
+    }
+}
 ?>
 
 <div class="page-lofts">
@@ -71,36 +94,15 @@ $intro    = get_field('lofts_intro')    ?: "Deux lofts modernes avec cuisinette,
     ====================================================== -->
     <section class="lofts-reassurance">
         <div class="conteneur">
-            <h2 class="lofts-section-titre lofts-section-titre-clair">Pourquoi vous allez adorer</h2>
+            <h2 class="lofts-section-titre"><?php echo esc_html($atouts_titre); ?></h2>
             <div class="lofts-reassurance-grille">
-                <div class="lofts-atout reveal">
-                    <span class="lofts-atout-icone" aria-hidden="true">
-                        <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l5-3v16M14 21V11l5 2v8"/><path d="M8 9h0M8 12h0M8 15h0"/></svg>
-                    </span>
-                    <h3>Tout à distance de marche</h3>
-                    <p>Restos, cafés, commerces et bord de mer à quelques minutes. Stationnez gratuitement une fois, puis oubliez la voiture.</p>
+                <?php foreach ($atouts as $i => $a): ?>
+                <div class="lofts-atout reveal<?php echo $i > 0 ? ' reveal-delai-' . min($i, 3) : ''; ?>">
+                    <span class="lofts-atout-icone" aria-hidden="true"><?php echo lv_lofts_atout_icone($a['titre']); ?></span>
+                    <h3><?php echo esc_html($a['titre']); ?></h3>
+                    <p><?php echo esc_html($a['desc']); ?></p>
                 </div>
-                <div class="lofts-atout reveal reveal-delai-1">
-                    <span class="lofts-atout-icone" aria-hidden="true">
-                        <svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="11" rx="2"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M9 11v5M15 11v5"/></svg>
-                    </span>
-                    <h3>Rien à apporter</h3>
-                    <p>Cuisinette complète, Wi-Fi rapide, téléviseur 65 pouces et literie soignée. Vous n'avez qu'à vous installer.</p>
-                </div>
-                <div class="lofts-atout reveal reveal-delai-2">
-                    <span class="lofts-atout-icone" aria-hidden="true">
-                        <svg viewBox="0 0 24 24"><path d="M5 8h14l-1.4 11.1a1 1 0 0 1-1 .9H7.4a1 1 0 0 1-1-.9L5 8Z"/><path d="M9 8 12 3l3 5"/></svg>
-                    </span>
-                    <h3>Une épicerie sous vos pieds</h3>
-                    <p>Le Vivier vous attend au rez-de-chaussée : produits frais, cafés et prêt-à-manger des artisans d'ici. Le déjeuner commence dans l'escalier.</p>
-                </div>
-                <div class="lofts-atout reveal reveal-delai-3">
-                    <span class="lofts-atout-icone" aria-hidden="true">
-                        <svg viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
-                    </span>
-                    <h3>Réservez l'esprit tranquille</h3>
-                    <p>Hébergement enregistré (CITQ&nbsp;323422). Échanges directs, conditions claires, aucune surprise à l'arrivée.</p>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>
@@ -111,15 +113,19 @@ $intro    = get_field('lofts_intro')    ?: "Deux lofts modernes avec cuisinette,
     <section class="lofts-cta-finale">
         <div class="conteneur">
             <div class="lofts-cta-interieur reveal">
-                <h2>Vos dates partent vite</h2>
-                <p>Deux lofts seulement, un calendrier qui se remplit. Réservez les vôtres pendant qu'ils sont libres.</p>
-                <a href="#nos-lofts" class="lofts-cta">Voir les lofts et réserver</a>
+                <h2><?php echo esc_html($cta_titre); ?></h2>
+                <p><?php echo esc_html($cta_texte); ?></p>
+                <a href="<?php echo esc_url($cta_lien); ?>" class="lofts-cta"><?php echo esc_html($cta_bouton); ?></a>
                 <p class="lofts-contact-ligne">
                     14, avenue D'Amours, Matane (QC) &nbsp;·&nbsp;
                     <a href="tel:+14185625230">418&nbsp;562-5230</a> &nbsp;·&nbsp; CITQ&nbsp;323422
                 </p>
             </div>
         </div>
+        <!-- Cette bande fait office de pied de page sur /lofts/ (le pied
+             habituel du site, en sauge, est retiré ici pour ne pas casser
+             l'identité sarcelle en toute fin de page) -->
+        <div class="conteneur lofts-cta-bas">&copy; <?php echo esc_html(wp_date('Y')); ?> Le Vivier · Matane, Québec</div>
     </section>
 
 </div>

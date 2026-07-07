@@ -288,7 +288,7 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 .engagement p { font-size: .9rem; color: var(--texte-corps); }
 
 /* --------------------------------------------------------------- PRODUITS */
-.produits { background: linear-gradient(180deg, var(--creme) 0%, var(--creme) 82%, var(--sable) 100%); position: relative; }
+.produits { background: var(--creme); position: relative; }
 .grille-cartes { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 1.8rem); }
 .carte {
   background: var(--blanc); border-radius: var(--rayon); overflow: hidden;
@@ -335,8 +335,8 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 
 /* ------------------------------------------------------------- NEWSLETTER */
 /* Le bas de la section reprend le fond du footer : la carte blanche chevauche
-   la limite sable/vert foncé et la transition vers le pied est continue. */
-.newsletter { background: linear-gradient(180deg, var(--sable) 0%, var(--sable) 55%, var(--pied-fond) 55%, var(--pied-fond) 100%); }
+   la limite crème/vert foncé et la transition vers le pied est continue. */
+.newsletter { background: linear-gradient(180deg, var(--creme) 0%, var(--creme) 55%, var(--pied-fond) 55%, var(--pied-fond) 100%); }
 .newsletter-carte { position: relative; overflow: hidden; max-width: 720px; margin: 0 auto; background: var(--blanc); border-radius: var(--rayon-l); padding: clamp(2.2rem, 1.4rem + 3vw, 3.6rem); text-align: center; box-shadow: var(--ombre); }
 .newsletter-carte h2 { color: var(--sauge); font-size: var(--t-h2); margin-bottom: .6rem; }
 .newsletter-carte > p { color: var(--texte-corps); max-width: 46ch; margin: 0 auto 1.8rem; }
@@ -350,8 +350,8 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 /* ----------------------------------------------------------------- FOOTER */
 .pied { position: relative; overflow: hidden; background: var(--pied-fond); color: #b6c0a4; padding-block: clamp(3.5rem, 2.5rem + 3vw, 5rem) 0; }
 .pied .conteneur { position: relative; z-index: 1; }
-.pied::after { content: ""; position: absolute; z-index: 0; right: -2%; bottom: -24%; width: clamp(220px, 24vw, 360px); aspect-ratio: .72; background: url("assets/images/illustrations/fleur 01.svg") no-repeat center / contain; filter: brightness(0) invert(1); opacity: .07; pointer-events: none; }
-.pied::before { content: ""; position: absolute; z-index: 0; left: -3%; top: -18%; width: clamp(160px, 16vw, 240px); aspect-ratio: .7; background: url("assets/images/illustrations/fleur 06.svg") no-repeat center / contain; filter: brightness(0) invert(1); opacity: .05; pointer-events: none; }
+.pied::after { content: ""; position: absolute; z-index: 0; right: -2%; bottom: -2%; width: clamp(220px, 24vw, 360px); aspect-ratio: .72; background: url("assets/images/illustrations/fleur 01.svg") no-repeat center / contain; filter: brightness(0) invert(1); opacity: .07; pointer-events: none; }
+.pied::before { content: ""; position: absolute; z-index: 0; left: -3%; top: -2%; width: clamp(160px, 16vw, 240px); aspect-ratio: .7; background: url("assets/images/illustrations/fleur 06.svg") no-repeat center / contain; filter: brightness(0) invert(1); opacity: .05; pointer-events: none; }
 .pied-grille { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 2.5rem; }
 .pied .logo { color: #f4efe4; margin-bottom: 1.1rem; font-size: 2.3rem; }
 .pied h4 { color: #e6dcc7; font-size: .76rem; font-weight: 600; letter-spacing: .18em; margin-bottom: 1.1rem; text-transform: uppercase; }
@@ -470,7 +470,7 @@ body.interne .entete { background: rgba(249, 245, 240, .95); backdrop-filter: bl
 @media (min-width: 768px) { .page-entete .eyebrow { white-space: nowrap; letter-spacing: .18em; } }
 .page-entete h1 { font-size: var(--t-h1); color: var(--sauge-fonce); margin-bottom: .9rem; }
 .page-entete h1 .script { color: var(--terra); font-size: 1.25em; }
-.page-entete > .conteneur > p { max-width: 56ch; margin: 0 auto; color: var(--texte-corps); }
+.page-entete > .conteneur > p { max-width: 85%; margin: 0 auto; color: var(--texte-corps); }
 
 /* Fil d'Ariane */
 .fil { margin-bottom: 1.3rem; }
@@ -689,7 +689,9 @@ body.univers-lofts .page-entete .eyebrow { color: #e7c9a0; }
 
 /* Grille des lofts */
 .lofts-liste-section { padding-block: clamp(.4rem, .2rem + 1vw, 1.1rem) clamp(3rem, 2rem + 4vw, 5rem); }
-.lofts-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 440px)); gap: clamp(1.4rem, 1rem + 1.5vw, 2.2rem); justify-content: center; }
+/* Les cartes s'étirent sur toute la largeur du conteneur (avec 2 lofts,
+   l'ancien plafond de 440px laissait ~40% de vide de chaque côté) */
+.lofts-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(1.4rem, 1rem + 1.5vw, 2.2rem); justify-content: center; }
 .lofts-vide { text-align: center; color: var(--texte-doux); max-width: 52ch; margin-inline: auto; }
 .lofts-grille > .reveal:nth-child(2) { transition-delay: .09s; }
 .lofts-grille > .reveal:nth-child(3) { transition-delay: .18s; }
@@ -720,35 +722,43 @@ body.univers-lofts .page-entete .eyebrow { color: #e7c9a0; }
 .loft-btn-secondaire:hover { border-color: #1d5055; background: #eef4f2; }
 
 /* Bande "Pourquoi sejourner" (sarcelle) */
-.lofts-reassurance { background: linear-gradient(150deg, #1d5055 0%, #123638 100%); color: #cfe0dc; padding-block: clamp(3rem, 2rem + 4vw, 5rem); }
-.lofts-section-titre { text-align: center; font-family: var(--f-script); font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem); margin-bottom: clamp(2rem, 1.2rem + 2vw, 3rem); }
+/* Trois blocs sarcelle empilés (réassurance / CTA / pied) fondaient en une
+   seule masse sombre sans rythme. Cette section repasse au clair (nacre
+   Lofts) : elle respire entre la grille de lofts et le crescendo sombre de
+   la CTA + du pied, au lieu de l'alourdir encore. */
+.lofts-reassurance { background: var(--lofts-perle); color: var(--texte-corps); padding-block: clamp(3rem, 2rem + 4vw, 5rem); }
+.lofts-section-titre { text-align: center; font-family: var(--f-script); font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem); margin-bottom: clamp(2rem, 1.2rem + 2vw, 3rem); color: #1d5055; }
 .lofts-section-titre-clair { color: #fff; }
 .lofts-reassurance-grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(1.5rem, 1rem + 2vw, 2.5rem); }
 .lofts-atout { text-align: center; }
-.lofts-atout-icone { display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; margin-bottom: 1rem; border-radius: 50%; background: rgba(231, 201, 160, .14); }
-.lofts-atout-icone svg { width: 28px; height: 28px; fill: none; stroke: #e7c9a0; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.lofts-atout h3 { color: #fff; font-size: 1.1rem; margin-bottom: .5rem; min-height: 2.6em; display: flex; align-items: flex-end; justify-content: center; }
-.lofts-atout p { font-size: .92rem; color: #d2e2dd; }
+.lofts-atout-icone { display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; margin-bottom: 1rem; border-radius: 50%; background: rgba(29, 80, 85, .08); }
+.lofts-atout-icone svg { width: 28px; height: 28px; fill: none; stroke: #1d5055; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.lofts-atout h3 { color: #1d3d3f; font-size: 1.1rem; margin-bottom: .5rem; min-height: 2.6em; display: flex; align-items: flex-end; justify-content: center; }
+.lofts-atout p { font-size: .92rem; color: var(--texte-corps); }
 
 /* CTA finale — bande pleine largeur (pas une carte flottante dans le vide) */
 .lofts-cta-finale { position: relative; overflow: hidden; background: linear-gradient(160deg, #1d5055, #16403f); padding-block: clamp(3.4rem, 2.4rem + 4vw, 6.2rem); }
 .lofts-cta-finale::after {
   content: ""; position: absolute; z-index: 0; pointer-events: none;
   right: -6%; top: 50%; transform: translateY(-50%);
-  width: clamp(260px, 30vw, 460px); aspect-ratio: 1;
+  width: clamp(340px, 40vw, 600px); aspect-ratio: 1;
   background: url("assets/images/illustrations/fleur 05.svg") no-repeat center / contain;
   filter: brightness(0) invert(1); opacity: .1;
 }
 .lofts-cta-interieur { position: relative; z-index: 1; max-width: 560px; text-align: left; }
-.lofts-cta-interieur h2 { color: #fff; font-family: var(--f-script); font-size: clamp(2.2rem, 1.5rem + 3.4vw, 3.6rem); line-height: 1.05; margin-bottom: .9rem; }
+.lofts-cta-interieur h2 { color: #fff; text-shadow: 0 2px 20px rgba(0,0,0,.2); font-family: var(--f-script); font-size: clamp(2.2rem, 1.5rem + 3.4vw, 3.6rem); line-height: 1.05; margin-bottom: .9rem; }
 .lofts-cta-interieur p { color: #b9cfca; max-width: 46ch; line-height: 1.7; margin-bottom: 1.8rem; }
 .lofts-cta { display: inline-flex; align-items: center; justify-content: center; background: #e7c9a0; color: #1d3d3f; font-weight: 700; padding: .95rem 2.2rem; border-radius: 999px; font-size: 1.02rem; transition: var(--transi); }
 .lofts-cta:hover { background: #f0d8b4; transform: translateY(-3px); }
 .lofts-contact-ligne { margin-top: 1.8rem; padding-top: 1.4rem; border-top: 1px solid rgba(255,255,255,.16); font-size: .86rem; color: #9fbab5; }
 .lofts-contact-ligne a { color: #e7c9a0; }
 .lofts-contact-ligne a:hover { color: #f0d8b4; }
+/* Barre de copyright : cette bande tient lieu de pied de page sur /lofts/,
+   même traitement que .pied-bas (liseré + petit texte discret) mais dans
+   les tons sarcelle/or de l'univers Lofts. */
+.lofts-cta-bas { position: relative; z-index: 1; margin-top: clamp(3.5rem, 2.5rem + 3vw, 5rem); border-top: 1px solid rgba(231,201,160,.2); padding-block: 1.3rem; text-align: center; font-size: .8rem; color: #8aa6a2; letter-spacing: .02em; }
 @media (max-width: 720px) {
-  .lofts-cta-finale::after { width: clamp(200px, 60vw, 320px); opacity: .08; }
+  .lofts-cta-finale::after { width: clamp(260px, 68vw, 420px); opacity: .08; }
 }
 
 @media (max-width: 860px) {
@@ -796,7 +806,16 @@ body.univers-lofts .nav-principale .btn-primaire { background: #1d5055; }
 body.univers-lofts .nav-principale .btn-primaire:hover { background: #16403f; }
 body.univers-lofts .btn-fantome { color: #1d5055; }
 body.univers-lofts .btn-fantome:hover { background: #d9e6e3; border-color: #1d5055; }
-body.univers-lofts .pied { background: #15393b; }
+/* Le pied réutilisait une variante de sarcelle : collé à la CTA (elle-même
+   sarcelle), les deux se confondaient en un seul bloc mal raccordé. Le
+   reste du site règle ce même problème ailleurs (bandeau sauge → pied
+   presque noir ; bandeau rouille → pied cacao) : jamais deux nuances
+   proches l'une sous l'autre, toujours une couleur vive suivie d'un neutre
+   quasi noir. Le pied Lofts suit la même règle : encre neutre, plus
+   la sarcelle, avec un liseré or net qui marque franchement la charnière. */
+body.univers-lofts .pied { background: #12191a; border-top: 2px solid rgba(231,201,160,.35); color: #9db0ac; }
+body.univers-lofts .pied .logo { color: #eef3f0; }
+body.univers-lofts .pied h4 { color: #e7c9a0; }
 body.univers-lofts .pied a:hover { color: #e7c9a0; }
 
 /* ======================================================
@@ -832,6 +851,7 @@ body.univers-lofts .pied a:hover { color: #e7c9a0; }
   --afr-or-pale:    #f1ddb0;
   --afr-nuit:       #3c2a1e;
   --afr-fond:       #fbf4ea;
+  --afr-texte:      #6b5443;
 }
 
 /* Le corps de page (et pas seulement le bandeau) passe à l'ivoire chaud
@@ -839,29 +859,28 @@ body.univers-lofts .pied a:hover { color: #e7c9a0; }
    la rouille et casse la cohérence de l'univers. */
 body.univers-africaine { background: var(--afr-fond); }
 
-/* En-tête de page : bandeau rouille (comme la bannière de l'affiche). */
-body.univers-africaine .page-entete { background: linear-gradient(155deg, var(--afr-rouille) 0%, var(--afr-rouille-f) 100%); padding-top: clamp(9.5rem, 7rem + 4vw, 12rem); }
-body.univers-africaine .page-entete h1 { color: #fff; }
-body.univers-africaine .page-entete h1 .script { color: var(--afr-or-pale); }
-body.univers-africaine .page-entete .eyebrow { color: var(--afr-or-pale); }
-body.univers-africaine .page-entete > .conteneur > p { color: #f6e3d6; }
-
-/* Bande sous le titre = signature africaine (vs le botanique du reste).
-   L'ancien motif à rayures diagonales jurait avec le reste du site (seul
-   endroit géométrique dur) : un arc plein, même grammaire que les
-   « arches » du reste du thème, juste dans la palette épices. */
+/* En-tête de page : même structure claire que Produits Maison, mais
+   déclinée épices (aucun vert sur cette page) : titre cacao, surtitre
+   rouille, et l'arc or comme signature discrète sous le titre. */
+/* Le fond ivoire est continu entre l'en-tête et la 1re section : sans
+   rupture visuelle, les deux paddings s'additionnent en un grand vide.
+   On resserre donc le bas de l'en-tête sur cette page. */
+body.univers-africaine .page-entete { background: var(--afr-fond); padding-bottom: clamp(1.25rem, .75rem + 1.5vw, 2rem); }
+body.univers-africaine .page-entete .eyebrow { color: var(--afr-rouille); }
+body.univers-africaine .page-entete h1 { color: var(--afr-nuit); }
+body.univers-africaine .page-entete h1 .script { color: var(--afr-rouille); }
+body.univers-africaine .page-entete > .conteneur > p { color: var(--afr-texte); }
 body.univers-africaine .page-entete > .conteneur::after {
   content: "";
   display: block;
-  height: 5px;
-  width: clamp(120px, 20vw, 180px);
-  margin: 1.3rem auto 0;
+  height: 4px;
+  width: clamp(90px, 14vw, 140px);
+  margin: 1.4rem auto 0;
   background: var(--afr-or);
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
-/* En-tête : fond ivoire épices opaque sur cette page → le menu reste lisible
-   au-dessus du bandeau rouille (en haut comme au scroll). */
+/* En-tête : fond ivoire épices opaque sur cette page. */
 body.univers-africaine .entete { background: var(--afr-fond); box-shadow: 0 1px 0 var(--bordure); }
 body.univers-africaine .entete .logo { color: var(--afr-rouille); }
 body.univers-africaine .burger span { background: var(--afr-rouille); }
@@ -878,9 +897,68 @@ body.univers-africaine .btn-fantome:hover { background: #f3ddd2; border-color: v
 body.univers-africaine .pied { background: var(--afr-nuit); }
 body.univers-africaine .pied a:hover { color: var(--afr-or-pale); }
 
-/* Accents internes : panneau CTA + cartes spécialités aux tons épices */
+/* Accents internes : panneau CTA aux tons épices */
 body.univers-africaine .cta-panel--terra { background: linear-gradient(160deg, var(--afr-rouille), var(--afr-rouille-f)); }
-body.univers-africaine .carte-prod h3 { color: var(--afr-rouille); }
+
+/* Corps de page : plus aucun vert — titres et prose en cacao/rouille */
+body.univers-africaine .section-titre h2 { color: var(--afr-nuit); }
+body.univers-africaine .section-titre p { color: var(--afr-texte); }
+body.univers-africaine .page-prose h2,
+body.univers-africaine .page-prose h3 { color: var(--afr-rouille); }
+body.univers-africaine .apropos-split h2 { color: var(--afr-nuit); }
+body.univers-africaine .apropos-split .script-accent { color: var(--afr-rouille); }
+
+/* La section spécialités garde le fond ivoire épices (pas le crème
+   générique de .produits) */
+body.univers-africaine .produits { background: transparent; }
+
+/* Présentation : cadre or décalé derrière la photo (signature épices) */
+@media (min-width: 861px) {
+  body.univers-africaine .apropos-media::before {
+    content: "";
+    position: absolute;
+    inset: 1.4rem -1.1rem -1.4rem 1.1rem;
+    border: 2px solid var(--afr-or);
+    border-radius: var(--rayon-l);
+    opacity: .5;
+    pointer-events: none;
+  }
+}
+
+/* Spécialités : cartes numérotées façon comptoir d'épices (vs cartes
+   génériques) — filet or sous le numéro, titres rouille, photo 4/3 */
+body.univers-africaine .grille-prod { counter-reset: spec; align-items: start; }
+body.univers-africaine .carte-prod {
+  counter-increment: spec;
+  border: 1px solid #ecdfc8;
+  box-shadow: 0 10px 30px -18px rgba(60, 42, 30, .25);
+}
+body.univers-africaine .carte-prod:hover { box-shadow: 0 20px 44px -20px rgba(122, 51, 29, .4); }
+body.univers-africaine .carte-prod .photo { aspect-ratio: 4/3; background: var(--afr-or-pale); }
+body.univers-africaine .carte-prod .corps { padding: 1.5rem 1.5rem 1.7rem; }
+body.univers-africaine .carte-prod .corps::before {
+  content: "0" counter(spec);
+  display: block;
+  width: max-content;
+  font-family: var(--f-titre);
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .3em;
+  color: var(--afr-rouille);
+  padding-bottom: .5rem;
+  margin-bottom: .95rem;
+  border-bottom: 2px solid var(--afr-or);
+}
+body.univers-africaine .carte-prod h3 { color: var(--afr-rouille); margin: 0 0 .45rem; }
+body.univers-africaine .carte-prod .corps p { color: var(--afr-texte); }
+
+/* Rythme d'étal : la carte centrale descend légèrement sur desktop
+   (margin plutôt que transform : ne se bat pas avec .reveal / :hover ;
+   seulement quand la grille est à 3 colonnes) */
+@media (min-width: 961px) {
+  body.univers-africaine .grille-prod .carte-prod:nth-child(2) { margin-top: 2.2rem; }
+  body.univers-africaine .produits { padding-bottom: clamp(4.5rem, 3.5rem + 3vw, 6.5rem); }
+}
 
 /* ======================================================
    PAGES INTERNES — compléments de migration
@@ -910,7 +988,8 @@ body.univers-africaine .carte-prod h3 { color: var(--afr-rouille); }
 .etape p { font-size: .9rem; color: var(--texte-corps); }
 
 /* Page Commander : cartes « bon de commande » */
-.cmd-grille { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(1.2rem, .8rem + 1.5vw, 2rem); max-width: 880px; margin-inline: auto; }
+/* Pleine largeur du conteneur (ancien plafond 880px = vide sur les côtés) */
+.cmd-grille { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(1.2rem, .8rem + 1.5vw, 2rem); }
 .cmd-carte { background: var(--blanc); border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre-douce); display: flex; flex-direction: column; transition: transform var(--transi), box-shadow var(--transi); }
 .cmd-carte:hover { transform: translateY(-6px); box-shadow: var(--ombre); }
 .cmd-carte-haut { aspect-ratio: 16 / 9; background: var(--sauge-pale); display: grid; place-items: center; position: relative; overflow: hidden; }
@@ -1618,57 +1697,63 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
    PAM — Bon de commande prêt à manger
 ====================================================== */
 
-/* Grille principale (infos client | produits) */
-.pam-grille-form {
-  display: grid;
-  gap: clamp(1.5rem, 4vw, 3.5rem);
+/* Disposition en une colonne : produits d'abord, coordonnées ensuite */
+.pam-form {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.2rem, 5vw, 3.4rem);
   width: 100%;
   min-width: 0;
 }
-
-/* Tous les enfants directs de la grille ne peuvent pas deborder */
-.pam-grille-form > *,
-.pam-infos-client,
-.pam-produits-col {
+.pam-produits-col,
+.pam-infos-client {
   min-width: 0;
   max-width: 100%;
 }
 
-/* Mobile : produits en premier */
-@media (max-width: 859px) {
-  .pam-infos-client { order: 2; }
-  .pam-produits-col  { order: 1; }
+/* Grille de champs 2 colonnes (coordonnées PAM/PM + formulaire vrac) */
+.pam-grille-form {
+  display: grid;
+  gap: 0 1.25rem;
+  width: 100%;
+  min-width: 0;
+}
+.pam-grille-form > * { min-width: 0; }
+@media (min-width: 580px) {
+  .pam-grille-form { grid-template-columns: 1fr 1fr; }
+  .pam-grille-form > .pam-champ--pleine { grid-column: 1 / -1; }
 }
 
-/* Tablette 580-859px : champs coordonnées en 2 colonnes */
-@media (min-width: 580px) and (max-width: 859px) {
-  .pam-infos-client {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 1.25rem;
-  }
-  .pam-infos-client > * { min-width: 0; }
-  .pam-infos-client .pam-section-titre,
-  .pam-infos-client .pam-champ:nth-child(6) { grid-column: 1 / -1; }
+/* Carte coordonnées : pleine largeur, les 4 champs sur une rangée en desktop */
+.pam-bloc-coordonnees {
+  background: var(--creme);
+  border-radius: var(--rayon);
+  padding: clamp(1.5rem, 4vw, 2.8rem);
+}
+@media (min-width: 1000px) {
+  .pam-bloc-coordonnees .pam-grille-form { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* Desktop 860px+ : grille 2 colonnes, coordonnées sticky */
-@media (min-width: 860px) {
-  .pam-grille-form {
-    grid-template-columns: minmax(280px, 340px) 1fr;
-    align-items: start;
-  }
-  .pam-infos-client {
-    position: sticky;
-    top: 110px;
-    max-height: calc(100vh - 130px);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
+/* Pastille d'étape numérotée */
+.pam-etape {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  margin-right: .65rem;
+  border-radius: 50%;
+  background: var(--sauge);
+  color: var(--blanc);
+  font-size: .9rem;
+  font-weight: 700;
 }
 
 /* Champ générique */
 .pam-section-titre {
+  display: flex;
+  align-items: center;
   font-size: var(--t-h3);
   color: var(--sauge);
   margin-bottom: 1.4rem;
@@ -1831,76 +1916,15 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
   border-bottom: 1px solid var(--bordure);
 }
 
-/* Carousel produits */
-.pam-carousel {
-  position: relative;
-}
-.pam-carousel,
-.pam-carousel * {
-  cursor: grab;
-}
-.pam-carousel .pam-qty-moins,
-.pam-carousel .pam-qty-plus,
-.pam-carousel .pam-qty-input { cursor: default; }
-.pam-drag-actif,
-.pam-drag-actif * {
-  cursor: grabbing !important;
-}
-
-/* Flèches de navigation desktop */
-.pam-fleche {
-  display: none;
-}
-@media (min-width: 768px) {
-  .pam-fleche {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 2;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--sauge);
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease;
-    box-shadow: 0 2px 10px rgba(77,96,64,.35);
-    pointer-events: auto;
-  }
-  .pam-carousel:hover .pam-fleche {
-    opacity: 1;
-  }
-  .pam-fleche:hover {
-    background: var(--sauge-moyen);
-    transform: translateY(-50%) scale(1.1);
-    box-shadow: 0 4px 16px rgba(77,96,64,.45);
-  }
-  .pam-fleche-prev { left: 8px; }
-  .pam-fleche-next { right: 8px; }
-  .pam-fleche svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
-}
+/* Grille de produits statique (plusieurs rangées, aucun défilement).
+   Cartes larges : 3 par rangée sur écran standard, 4 sur très grand. */
 .pam-produits-grille {
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  scroll-behavior: auto;
-  padding-bottom: .5rem;
-  user-select: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.75rem;
   width: 100%;
   min-width: 0;
 }
-.pam-produits-grille.pam-drag-actif {
-  cursor: grabbing;
-}
-.pam-produits-grille::-webkit-scrollbar { height: 4px; }
-.pam-produits-grille::-webkit-scrollbar-track { background: var(--sable); border-radius: 4px; }
-.pam-produits-grille::-webkit-scrollbar-thumb { background: var(--sauge-pale); border-radius: 4px; }
-
 
 /* Entrée des cartes après changement de filtre */
 @keyframes pam-entree {
@@ -1917,7 +1941,6 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
   display: flex;
   flex-direction: column;
   transition: box-shadow var(--transi), border-color var(--transi), transform var(--transi);
-  flex: 0 0 clamp(240px, 80%, 300px);
   animation: pam-entree .4s ease both;
 }
 .pam-produit-item:hover {
@@ -1941,30 +1964,30 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
   background: var(--sable);
 }
 .pam-produit-corps {
-  padding: .9rem;
+  padding: 1.15rem 1.2rem 1.3rem;
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: .3rem;
+  gap: .4rem;
 }
 .pam-produit-nom {
   font-family: var(--f-titre);
   font-weight: 700;
-  font-size: .95rem;
+  font-size: 1.05rem;
   color: var(--texte);
   line-height: 1.3;
 }
 .pam-produit-desc {
-  font-size: .82rem;
+  font-size: .88rem;
   color: var(--texte-doux);
-  line-height: 1.4;
+  line-height: 1.5;
 }
 .pam-produit-prix {
   font-weight: 700;
   color: var(--sauge);
-  font-size: .95rem;
+  font-size: 1.05rem;
   margin-top: auto;
-  padding-top: .4rem;
+  padding-top: .5rem;
 }
 
 /* Contrôle quantité +/- */
@@ -1976,8 +1999,8 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
 }
 .pam-qty-moins,
 .pam-qty-plus {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: 1.5px solid var(--bordure);
   background: var(--creme);
@@ -2050,14 +2073,6 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
 .pam-msg-succes { background: var(--sauge-pale); color: var(--sauge-fonce); }
 .pam-msg-erreur { background: var(--terra-pale); color: var(--terra-fonce); }
 
-/* Cartes plus larges à partir de la tablette */
-@media (min-width: 580px) {
-  .pam-produit-item { flex: 0 0 clamp(260px, 45%, 320px); }
-}
-@media (min-width: 860px) {
-  .pam-produit-item { flex: 0 0 clamp(280px, 40%, 360px); }
-}
-
 /* Padding bas pour éviter que la sticky bar masque le contenu
    Le sélecteur ~ ne fonctionne pas ici car la section est AVANT la barre dans le DOM.
    On utilise :has() pour cibler la section parente. */
@@ -2077,7 +2092,9 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   .pam-section-titre { font-size: 1.05rem; margin-bottom: 1rem; }
   .pam-filtre-jours  { margin-bottom: 1.2rem; }
   .pam-categorie     { margin-bottom: 1.8rem; }
-  .pam-produits-grille::-webkit-scrollbar { display: none; }
+  .pam-produits-grille { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .8rem; }
+  .pam-produit-corps { padding: .85rem .9rem 1rem; }
+  .pam-produit-nom  { font-size: .95rem; }
 }
 
 /* ======================================================
