@@ -244,3 +244,171 @@ add_action('admin_init', function () {
     echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#b85c50;">← Retour au tableau de bord</a></p>';
     exit;
 });
+
+/**
+ * Seed Prêt à manger : 5 catégories + 18 produits (prix TEMPORAIRES plausibles,
+ * à corriger dans WP) + 2 produits amaretti pour le bon Produits Maison.
+ * Déclencher UNE SEULE FOIS en visitant : /wp-admin/?lv_seed_pam=1
+ */
+add_action('admin_init', function () {
+
+    if (!isset($_GET['lv_seed_pam']) || $_GET['lv_seed_pam'] !== '1') return;
+    if (!current_user_can('manage_options')) wp_die('Accès refusé.');
+    if (get_option('lv_seed_pam_done')) {
+        wp_die('✅ Le script Prêt à manger a déjà été exécuté. Modifiez les produits dans le menu « Prêt à manger ».');
+    }
+
+    $log = [];
+
+    /* Un post du même titre existe-t-il déjà ? (Philippe a du contenu en ligne) */
+    $titre_existe = function ($titre, $post_type) {
+        $q = new WP_Query([
+            'post_type'      => $post_type,
+            'post_status'    => 'any',
+            'title'          => $titre,
+            'posts_per_page' => 1,
+            'no_found_rows'  => true,
+            'fields'         => 'ids',
+        ]);
+        return !empty($q->posts);
+    };
+
+    /* ================================================================
+       1. Catégories + produits PAM (prix temporaires plausibles)
+    ================================================================ */
+    $catalogue = [
+        'Pâtisseries' => [
+            ['Tartelettes',       4.50],
+            ['Cake citron',      12.00],
+            ['Cake carottes',    12.00],
+            ['Biscuits déjeuner', 5.50],
+        ],
+        'Sandwichs' => [
+            ['Sandwich au jambon', 7.50],
+            ['Burger végé',        8.50],
+            ['Sandwich aux oeufs', 6.95],
+        ],
+        'Pâtés' => [
+            ['Pâté au saumon',               8.95],
+            ['Pâté saumon-crevettes',        9.95],
+            ['Pâté mexicain',                8.50],
+            ['Pâté mexicain extra jalapenos', 8.95],
+            ['Pâté mexicain végé',           8.50],
+        ],
+        'Salades' => [
+            ['Salade de carottes', 5.95],
+            ['Salade de patates',  5.95],
+            ['Salade de goberge',  7.50],
+        ],
+        'Sauces' => [
+            ['Sauce au saumon-crevettes', 9.50],
+            ['Chili à la viande',        10.50],
+            ['Chili végé',                9.50],
+        ],
+    ];
+
+    foreach ($catalogue as $cat_nom => $produits) {
+
+        $terme = term_exists($cat_nom, 'pam_categorie');
+        if (!$terme) {
+            $terme = wp_insert_term($cat_nom, 'pam_categorie');
+            if (is_wp_error($terme)) {
+                $log[] = "❌ Erreur catégorie « $cat_nom » : " . $terme->get_error_message();
+                continue;
+            }
+            $log[] = "✔ pam_categorie « $cat_nom » créée";
+        } else {
+            $log[] = "pam_categorie « $cat_nom » déjà existante";
+        }
+        $terme_id = is_array($terme) ? (int) $terme['term_id'] : (int) $terme;
+
+        foreach ($produits as [$titre, $prix]) {
+            if ($titre_existe($titre, 'pam_produit')) {
+                $log[] = "« $titre » existe déjà, sauté";
+                continue;
+            }
+            $post_id = wp_insert_post([
+                'post_type'   => 'pam_produit',
+                'post_title'  => $titre,
+                'post_status' => 'publish',
+            ]);
+            if (is_wp_error($post_id)) {
+                $log[] = "❌ Erreur produit « $titre » : " . $post_id->get_error_message();
+                continue;
+            }
+            wp_set_object_terms($post_id, $terme_id, 'pam_categorie');
+            if (function_exists('update_field')) {
+                update_field('field_pam_prix', $prix, $post_id);
+                update_field('field_pam_jours', ['tous_les_jours'], $post_id);
+            }
+            $log[] = "✔ Produit PAM « $titre » créé ($cat_nom, " . number_format($prix, 2, ',', ' ') . " $)";
+        }
+    }
+
+    /* ================================================================
+       2. Amaretti du bon Produits Maison : mini paquet de 6 + boîte
+          mixte de 24, placés en FIN de liste via menu_order.
+          Ordre voulu : individuels (0) → boîtes de 6 par saveur
+          (menu_order 10-89, saisies par Philippe) → paquet de 6 minis
+          (90) → boîte mixte de 24 (95).
+    ================================================================ */
+    $parent_maison = get_term_by('slug', 'produit-maison', 'categorie_produit');
+    $terme_amaretti_id = 0;
+    if ($parent_maison && !is_wp_error($parent_maison)) {
+        $terme_amaretti = term_exists('Amaretti', 'categorie_produit', $parent_maison->term_id);
+        if (!$terme_amaretti) {
+            $terme_amaretti = wp_insert_term('Amaretti', 'categorie_produit', ['parent' => $parent_maison->term_id]);
+        }
+        if (!is_wp_error($terme_amaretti)) {
+            $terme_amaretti_id = is_array($terme_amaretti) ? (int) $terme_amaretti['term_id'] : (int) $terme_amaretti;
+        }
+    }
+
+    if ($terme_amaretti_id) {
+        $amaretti = [
+            ['Mini amaretti — paquet de 6', 9.00, 90],
+            ['Boîte mixte de 24',          28.00, 95],
+        ];
+        foreach ($amaretti as [$titre, $prix, $ordre]) {
+            if ($titre_existe($titre, 'produit')) {
+                $log[] = "« $titre » existe déjà, sauté";
+                continue;
+            }
+            $post_id = wp_insert_post([
+                'post_type'   => 'produit',
+                'post_title'  => $titre,
+                'post_status' => 'publish',
+                'menu_order'  => $ordre,
+            ]);
+            if (is_wp_error($post_id)) {
+                $log[] = "❌ Erreur produit « $titre » : " . $post_id->get_error_message();
+                continue;
+            }
+            wp_set_object_terms($post_id, $terme_amaretti_id, 'categorie_produit');
+            if (function_exists('update_field')) {
+                update_field('field_pm_commandable', 1, $post_id);
+                update_field('field_pm_prix', $prix, $post_id);
+            }
+            $log[] = "✔ Produit amaretti « $titre » créé (menu_order $ordre, " . number_format($prix, 2, ',', ' ') . " $)";
+        }
+    } else {
+        $log[] = "❌ Catégorie parent « produit-maison » introuvable : produits amaretti non créés (lancer d'abord ?lv_seed_maison=1).";
+    }
+
+    update_option('lv_seed_pam_done', true);
+
+    echo '<style>body{font-family:monospace;padding:2rem;background:#f9f5f0;}
+          h1{color:#b85c50;} li{margin:.3rem 0;} .ok{color:#4d6040;} .err{color:#c00;}</style>';
+    echo '<h1>🥗 Le Vivier — Seed Prêt à manger</h1>';
+    echo '<p><strong>✅ Terminé !</strong></p>';
+    echo '<ul>';
+    foreach ($log as $ligne) {
+        $class = str_contains($ligne, '❌') ? 'err' : 'ok';
+        echo '<li class="' . $class . '">' . esc_html($ligne) . '</li>';
+    }
+    echo '</ul>';
+    echo '<p><strong>⚠ Les prix sont des exemples plausibles</strong> : Marie doit les corriger dans le menu « Prêt à manger ».</p>';
+    echo '<p>Ordre des amaretti dans le bon Produits Maison : individuels (ordre 0) → boîtes de 6 par saveur (mettre « Ordre » entre 10 et 89 dans l\'attribut de page) → paquet de 6 minis (90) → boîte mixte de 24 (95).</p>';
+    echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#b85c50;">← Retour au tableau de bord</a></p>';
+    exit;
+});

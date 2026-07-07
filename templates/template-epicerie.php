@@ -3,6 +3,16 @@
 Template Name: L'Épicerie
 */
 get_header();
+
+/* Catégories produit (bande de filtres sous l'en-tête, comme Produits Maison) */
+$categories_produit = get_terms([
+    'taxonomy'   => 'categorie_produit',
+    'hide_empty' => false,
+    'orderby'    => 'name',
+    'order'      => 'ASC',
+]);
+// « Produit Maison » + ses sous-categories ont leur propre page → exclus ici
+$maison_ids = function_exists('lv_maison_term_ids') ? lv_maison_term_ids() : [];
 ?>
 
 <!-- ======================================================
@@ -19,9 +29,27 @@ get_header();
 </section>
 
 <!-- ======================================================
+     FILTRE PAR CATÉGORIE (bande sous l'en-tête)
+====================================================== -->
+<div class="pm-filtres-wrap">
+    <div class="conteneur">
+        <nav class="pm-filtres" aria-label="Filtrer par catégorie">
+            <a href="#produits" class="pm-filtre filtre-lien actif" data-cat="tout">Tout voir</a>
+            <?php if ($categories_produit && !is_wp_error($categories_produit)):
+                foreach ($categories_produit as $cat):
+                    if (in_array((int) $cat->term_id, $maison_ids, true)) continue; ?>
+                    <a href="#produits" class="pm-filtre filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
+                        <?php echo esc_html($cat->name); ?>
+                    </a>
+            <?php endforeach; endif; ?>
+        </nav>
+    </div>
+</div>
+
+<!-- ======================================================
      LES DÉPARTEMENTS
 ====================================================== -->
-<section class="section section-compacte engagements">
+<section class="section section-compacte">
     <div class="conteneur">
 
         <div class="engagements-grille cols-3">
@@ -53,36 +81,12 @@ get_header();
 <!-- ======================================================
      NOS PRODUITS
 ====================================================== -->
-<section class="section produits" id="produits">
+<section class="section" id="produits">
     <div class="conteneur">
 
         <div class="section-titre">
             <h2>Nos produits</h2>
         </div>
-
-        <!-- Filtres dynamiques depuis la taxonomie categorie_produit -->
-        <?php
-        $categories_produit = get_terms([
-            'taxonomy'   => 'categorie_produit',
-            'hide_empty' => false,
-            'orderby'    => 'name',
-            'order'      => 'ASC',
-        ]);
-        ?>
-        <?php
-        // « Produit Maison » + ses sous-categories ont leur propre page → exclus ici
-        $maison_ids = function_exists('lv_maison_term_ids') ? lv_maison_term_ids() : [];
-        ?>
-        <nav class="filtres" aria-label="Filtrer par catégorie">
-            <a href="#" class="filtre filtre-lien actif" data-cat="tout">Tout voir</a>
-            <?php if ($categories_produit && !is_wp_error($categories_produit)):
-                foreach ($categories_produit as $cat):
-                    if (in_array((int) $cat->term_id, $maison_ids, true)) continue; ?>
-                    <a href="#" class="filtre filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
-                        <?php echo esc_html($cat->name); ?>
-                    </a>
-            <?php endforeach; endif; ?>
-        </nav>
 
         <!-- Grille produits (les produits maison sont présentés sur leur page dédiée) -->
         <?php
@@ -124,7 +128,7 @@ get_header();
 <!-- ======================================================
      NOS PRODUCTEURS & TRANSFORMATEURS
 ====================================================== -->
-<section class="section producteurs" id="producteurs">
+<section class="section bande-blanche" id="producteurs">
     <div class="conteneur">
 
         <div class="producteurs-entete">

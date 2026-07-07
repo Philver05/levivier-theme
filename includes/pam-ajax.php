@@ -14,11 +14,20 @@ function lv_pam_soumettre()
     $email       = sanitize_email(wp_unslash($_POST['email']            ?? ''));
     $commentaire = sanitize_textarea_field(wp_unslash($_POST['commentaire'] ?? ''));
     $jour        = sanitize_text_field(wp_unslash($_POST['jour']        ?? ''));
+    $date_recup  = sanitize_text_field(wp_unslash($_POST['date_recuperation']  ?? ''));
+    $heure_recup = sanitize_text_field(wp_unslash($_POST['heure_recuperation'] ?? ''));
     $produits_raw = (isset($_POST['produits']) && is_array($_POST['produits'])) ? $_POST['produits'] : [];
 
     if (!$prenom || !$nom || !$email || !is_email($email)) {
         wp_send_json_error(['message' => 'Veuillez remplir les champs obligatoires (prénom, nom, courriel valide).']);
     }
+
+    if (!$date_recup || !$heure_recup) {
+        wp_send_json_error(['message' => 'Veuillez choisir une date et une plage horaire de récupération.']);
+    }
+
+    $date_recup_ts    = strtotime($date_recup);
+    $date_recup_label = $date_recup_ts ? date_i18n('l j F Y', $date_recup_ts) : $date_recup;
 
     $produits = [];
     foreach ($produits_raw as $id => $qty) {
@@ -35,8 +44,13 @@ function lv_pam_soumettre()
 
     $jours_labels = [
         'tous_les_jours' => 'Disponibles tous les jours',
+        'lundi'          => 'Spécial lundi',
         'mardi'          => 'Spécial mardi',
+        'mercredi'       => 'Spécial mercredi',
         'jeudi'          => 'Spécial jeudi',
+        'vendredi'       => 'Spécial vendredi',
+        'samedi'         => 'Spécial samedi',
+        'dimanche'       => 'Spécial dimanche',
     ];
     $jour_label = $jours_labels[$jour] ?? $jour;
 
@@ -62,7 +76,9 @@ function lv_pam_soumettre()
         . '<tr><th style="text-align:left;padding:4px 16px 4px 0;font-weight:600;">Nom</th><td>' . esc_html($prenom . ' ' . $nom) . '</td></tr>'
         . '<tr><th style="text-align:left;padding:4px 16px 4px 0;font-weight:600;">Téléphone</th><td>' . esc_html($telephone) . '</td></tr>'
         . '<tr><th style="text-align:left;padding:4px 16px 4px 0;font-weight:600;">Courriel</th><td>' . esc_html($email) . '</td></tr>'
-        . '<tr><th style="text-align:left;padding:4px 16px 4px 0;font-weight:600;">Jour de récupération</th><td>' . esc_html($jour_label) . '</td></tr>'
+        . '<tr><th style="text-align:left;padding:4px 16px 4px 0;font-weight:600;">Jour choisi dans le bon</th><td>' . esc_html($jour_label) . '</td></tr>'
+        . '<tr><th style="text-align:left;padding:4px 16px 4px 0;font-weight:600;">Date de récupération</th><td>' . esc_html($date_recup_label) . '</td></tr>'
+        . '<tr><th style="text-align:left;padding:4px 16px 4px 0;font-weight:600;">Heure de récupération</th><td>' . esc_html($heure_recup) . '</td></tr>'
         . '</table>'
         . '<table style="border-collapse:collapse;width:100%;max-width:560px;">'
         . '<thead><tr style="background:#4d6040;color:#fff;">'

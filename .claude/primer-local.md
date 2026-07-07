@@ -10,6 +10,7 @@ Thème WP classique (PHP, pas de FSE), ACF/SCF pour les champs, site de dev dans
 Refonte du site de l'épicerie Le Vivier (Matane). Tout contenu visible éditable dans WP/ACF, jamais hardcodé.
 
 ## État actuel (7 juillet 2026, après-midi)
+- Page Épicerie redessinée sur le modèle Produits Maison : filtres déplacés dans une bande blanche à liserés sous l'en-tête (réutilise .pm-filtres-wrap/.pm-filtre en liens + classe filtre-lien pour le JS main.js, fallback document-wide OK), sections sans fonds crème/sable (.engagements/.produits/.producteurs retirés du template), section Producteurs en bande blanche (.bande-blanche, nouvelles règles style.css : fond blanc + liseré haut + cartes prod-groupe bordées). Fichiers : template-epicerie.php + style.css. Contenu départements/surtitre toujours hardcodé (pas ACF-ifié, à faire plus tard si demandé).
 - Prêt à manger (template-bon-pam.php) : message "spécial du jour" enrichi d'un champ image optionnel (logo/photo partenaire, nouveau `field_pam_msg_image` dans functions.php) + boîte agrandie (padding, ombre douce). Fix important : le filtre de jours ne listait que les jours ayant un vrai produit `pam_produit` publié, donc un message sans produit associé (ex: partenariat sushi du jeudi, pas un produit du catalogue) n'était jamais atteignable. Les jours qui ont un message comptent maintenant aussi comme "jours actifs". Repli de démo intégré (contenu sushis "Le P'tit Béret" de l'exemple de Philippe) tant que le champ ACF pam_messages_jours est vide, pour visualiser sans rien saisir dans WP — sélectionner "Spécial jeudi" dans le filtre pour le voir (pas forcément le jour coché par défaut si d'autres produits existent).
 - Bande CTA finale Lofts (/lofts/ et fiches loft individuelles, style.css .lofts-cta-finale) : fleur agrandie (clamp 260-460px → 340-600px, mobile 200-320px → 260-420px) ; copyright/liseré du bas repoussé plus bas (.lofts-cta-bas margin-top clamp 2-3rem → 3.5-5rem).
 - Page /lofts/ : cartes élargies sur toute la largeur du conteneur (.lofts-grille minmax(300px, 440px) → minmax(300px, 1fr) dans style.css ; avec 2 lofts le plafond 440px laissait ~40% de vide). Idem page Commander : max-width 880px retiré de .cmd-grille (cap mobile 460px conservé).
@@ -32,8 +33,20 @@ Refonte du site de l'épicerie Le Vivier (Matane). Tout contenu visible éditabl
 
 - Accueil 100% éditable (7 juil.): groupe ACF "Contenu de la page d'accueil" (onglets Hero/Intro/Engagements/Produits/Infolettre), textes actuels en défauts. Formulaire infolettre toujours décoratif (à brancher plus tard, JotForm?).
 
+## Chantier PAM du 7 juillet (soir) — codé, PAS déployé ni commité
+Refonte bon Prêt à manger, tout implémenté d'un coup :
+- Coordonnées : champs requis date de récupération (input date, min = aujourd'hui) + heure (select de plages 8h30-10h / 10h-12h / 12h-14h / 14h-16h / 16h-18h). Validés en JS (validerFormulaire + listener change pour select/date) et côté serveur ; affichés dans le courriel (date_i18n français). Fix au passage : $jours_labels de pam-ajax.php couvrait seulement mardi/jeudi → les 8 jours.
+- Nouveau champ ACF `field_pam_instructions` (textarea, groupe Informations PAM, functions.php) affiché en encart crème/filet sauge sous le prix (.pam-produit-instructions).
+- Description repliée en accordéon natif `<details class="pam-produit-details"><summary>Description</summary>` (aucun JS), chevron CSS ; mobile : clamp 2 lignes retiré.
+- Cartes denses : grille minmax 320→210px, gap 1.75→1rem, paddings/typo réduits, +/- 32px, input 46px (4-5 cartes/rangée).
+- Tri par prix croissant PAM seulement : WP_Query meta_key pam_prix + orderby meta_value_num ASC (attention : un pam_produit SANS prix serait exclu de la liste — champ requis donc OK).
+- Seed `/wp-admin/?lv_seed_pam=1` (seed-data.php, garde lv_seed_pam_done) : 5 pam_categorie (Pâtisseries, Sandwichs, Pâtés, Salades, Sauces) + 18 pam_produit prix PLAUSIBLES TEMPORAIRES (Marie corrige), jours = tous_les_jours, doublons par titre sautés. "Cake citron" = lecture de « cake citrin » [UNCLEAR à confirmer]. + 2 `produit` amaretti pour le bon PM : « Mini amaretti — paquet de 6 » (9 $, menu_order 90) et « Boîte mixte de 24 » (28 $, menu_order 95), pm_commandable=1. Ordre amaretti : individuels (0) → boîtes de 6 par saveur que Philippe saisira (ordre 10-89) → minis (90) → mixte 24 (95) ; le bon PM trie déjà par menu_order.
+
 ## Next step
-Rien d'urgent. Le lot du 7 juillet est déployé sur levivier.net, validé par Philippe/Marie et commité (293f7f0 thème + 4bcd05c prototype statique archivé). Prochain chantier possible : brancher le formulaire infolettre de l'accueil (toujours décoratif, JotForm?).
+1. Déployer ENSEMBLE sur levivier.net : templates/template-bon-pam.php, assets/scripts/pam-commande.js, includes/pam-ajax.php, includes/seed-data.php, functions.php, style.css.
+2. Visiter /wp-admin/?lv_seed_pam=1 (connecté admin).
+3. Vérifier : cartes denses, accordéons, tri par prix, date+heure requis, courriel test, onglet Amaretti du bon PM.
+4. Commiter une fois validé par Philippe (php -l impossible ici, pas de PHP CLI : relu à la main).
 
 ## Blockers
 [aucun]

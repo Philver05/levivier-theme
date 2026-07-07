@@ -232,17 +232,23 @@
         calculerTotal();
     });
 
+    function nettoyerErreurChamp(e) {
+        if (!e.target.closest('.pam-champ')) return;
+        e.target.classList.remove('pam-invalide');
+        var champ = e.target.closest('.pam-champ');
+        champ.classList.remove('pam-champ--erreur');
+        var hint = champ.querySelector('.pam-hint-erreur');
+        if (hint) hint.remove();
+    }
+
     form.addEventListener('input', function (e) {
         if (e.target.classList.contains('pam-qty-input')) calculerTotal();
         /* Retire l'état invalide dès que l'utilisateur corrige le champ */
-        if (e.target.closest('.pam-champ')) {
-            e.target.classList.remove('pam-invalide');
-            var champ = e.target.closest('.pam-champ');
-            champ.classList.remove('pam-champ--erreur');
-            var hint = champ.querySelector('.pam-hint-erreur');
-            if (hint) hint.remove();
-        }
+        nettoyerErreurChamp(e);
     });
+
+    /* Les select et champs date déclenchent "change", pas toujours "input" */
+    form.addEventListener('change', nettoyerErreurChamp);
 
     /* -------------------------------------------------------
        Validation côté client
@@ -275,9 +281,11 @@
         var premier = null;
 
         var regles = [
-            { name: 'prenom', msg: 'Veuillez entrer votre prénom.' },
-            { name: 'nom',    msg: 'Veuillez entrer votre nom.' },
-            { name: 'email',  msg: 'Veuillez entrer votre adresse courriel.' },
+            { name: 'prenom',             msg: 'Veuillez entrer votre prénom.' },
+            { name: 'nom',                msg: 'Veuillez entrer votre nom.' },
+            { name: 'email',              msg: 'Veuillez entrer votre adresse courriel.' },
+            { name: 'date_recuperation',  msg: 'Veuillez choisir une date de récupération.' },
+            { name: 'heure_recuperation', msg: 'Veuillez choisir une plage horaire.' },
         ];
 
         regles.forEach(function (regle) {
@@ -333,6 +341,8 @@
         data.append('telephone',   form.querySelector('[name="telephone"]').value.trim());
         data.append('email',       form.querySelector('[name="email"]').value.trim());
         data.append('commentaire', form.querySelector('[name="commentaire"]').value.trim());
+        data.append('date_recuperation',  form.querySelector('[name="date_recuperation"]').value);
+        data.append('heure_recuperation', form.querySelector('[name="heure_recuperation"]').value);
 
         var jourChecked = form.querySelector('input[name="jour"]:checked');
         data.append('jour', jourChecked ? jourChecked.value : 'tous_les_jours');

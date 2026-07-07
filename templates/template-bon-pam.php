@@ -159,8 +159,8 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                                 'field'    => 'term_id',
                                 'terms'    => $cat->term_id,
                             ]],
-                            'orderby'        => 'menu_order title',
-                            'order'          => 'ASC',
+                            'meta_key'       => 'pam_prix',
+                            'orderby'        => ['meta_value_num' => 'ASC', 'title' => 'ASC'],
                         ]);
 
                         if (!$produits->have_posts()) continue;
@@ -170,11 +170,12 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                     <h3 class="pam-categorie-titre"><?php echo esc_html($cat->name); ?></h3>
                     <div class="pam-produits-grille">
                         <?php while ($produits->have_posts()): $produits->the_post();
-                            $pid         = get_the_ID();
-                            $prix        = (float) get_field('pam_prix');
-                            $jours       = (array) (get_field('pam_jours') ?: ['tous_les_jours']);
-                            $description = get_field('pam_description');
-                            $thumb       = get_the_post_thumbnail_url($pid, 'medium');
+                            $pid          = get_the_ID();
+                            $prix         = (float) get_field('pam_prix');
+                            $jours        = (array) (get_field('pam_jours') ?: ['tous_les_jours']);
+                            $description  = get_field('pam_description');
+                            $instructions = get_field('pam_instructions');
+                            $thumb        = get_the_post_thumbnail_url($pid, 'medium');
                         ?>
                         <div class="pam-produit-item"
                              data-id="<?php echo esc_attr($pid); ?>"
@@ -192,9 +193,15 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                             <div class="pam-produit-corps">
                                 <p class="pam-produit-nom"><?php the_title(); ?></p>
                                 <?php if ($description): ?>
-                                <p class="pam-produit-desc"><?php echo esc_html($description); ?></p>
+                                <details class="pam-produit-details">
+                                    <summary>Description</summary>
+                                    <p class="pam-produit-desc"><?php echo esc_html($description); ?></p>
+                                </details>
                                 <?php endif; ?>
                                 <p class="pam-produit-prix"><?php echo esc_html(number_format($prix, 2, ',', ' ')); ?>&nbsp;$</p>
+                                <?php if ($instructions): ?>
+                                <p class="pam-produit-instructions"><?php echo nl2br(esc_html($instructions)); ?></p>
+                                <?php endif; ?>
 
                                 <div class="pam-qty-controle">
                                     <button type="button" class="pam-qty-moins" aria-label="Retirer un">-</button>
@@ -237,6 +244,22 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                     <div class="pam-champ">
                         <label for="pam_email">Courriel <abbr title="requis">*</abbr></label>
                         <input type="email" id="pam_email" name="email" required autocomplete="email">
+                    </div>
+                    <div class="pam-champ">
+                        <label for="pam_date">Date de récupération <abbr title="requis">*</abbr></label>
+                        <input type="date" id="pam_date" name="date_recuperation" required
+                               min="<?php echo esc_attr(wp_date('Y-m-d')); ?>">
+                    </div>
+                    <div class="pam-champ">
+                        <label for="pam_heure">Heure de récupération <abbr title="requis">*</abbr></label>
+                        <select id="pam_heure" name="heure_recuperation" required>
+                            <option value="">Choisir une plage</option>
+                            <option value="8h30 – 10h">8h30 – 10h</option>
+                            <option value="10h – 12h">10h – 12h</option>
+                            <option value="12h – 14h">12h – 14h</option>
+                            <option value="14h – 16h">14h – 16h</option>
+                            <option value="16h – 18h">16h – 18h</option>
+                        </select>
                     </div>
                     <div class="pam-champ pam-champ--pleine">
                         <label for="pam_commentaire">Commentaire (optionnel)</label>
