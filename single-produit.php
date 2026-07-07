@@ -24,7 +24,6 @@ $categorie_slug = ($terms_cat && !is_wp_error($terms_cat)) ? $terms_cat[0]->slug
 $cat_slugs      = ($terms_cat && !is_wp_error($terms_cat)) ? wp_list_pluck($terms_cat, 'slug') : [];
 
 $url_epicerie = get_permalink(get_page_by_path('epicerie'));
-$illu = get_stylesheet_directory_uri() . '/assets/images/illustrations/';
 
 /* Les produits maison ont leur propre page : on y renvoie au lieu de l'épicerie */
 $is_maison  = in_array('produit-maison', $cat_slugs, true);
@@ -55,11 +54,9 @@ $retour_label = ($is_maison && $url_maison) ? 'Retour aux produits maison' : 'Re
         <div class="single-grille" style="margin-top:1.4rem">
 
             <div class="single-media<?php echo has_post_thumbnail() ? ' single-media--photo' : ''; ?> reveal">
-                <?php if (has_post_thumbnail()):
+                <?php if (has_post_thumbnail()) {
                     the_post_thumbnail('large', ['alt' => get_the_title()]);
-                else: ?>
-                    <img src="<?php echo esc_url($illu); ?>fleur%2005.svg" alt="">
-                <?php endif; ?>
+                } ?>
             </div>
 
             <div class="single-info reveal">

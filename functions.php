@@ -173,6 +173,24 @@ function lv_theme_setup()
 }
 add_action('after_setup_theme', 'lv_theme_setup');
 
+/* Le menu "principal" est construit à la main dans Apparence > Menus : un
+   lien vers une page reste dans le menu même si Marie repasse ensuite cette
+   page en brouillon ou en privé, ce qui donnerait un lien mort (404) côté
+   client. On retire ici, à l'affichage, tout élément de menu qui pointe
+   vers une page/publication qui n'est pas "publish". */
+add_filter('wp_nav_menu_objects', function ($items) {
+    if (is_admin()) {
+        return $items;
+    }
+
+    return array_values(array_filter($items, function ($item) {
+        if ($item->type !== 'post_type') {
+            return true; // lien personnalisé, catégorie, etc. : non concerné
+        }
+        return get_post_status($item->object_id) === 'publish';
+    }));
+});
+
 /* Header = menu court (menu principal, 5 pages, SANS Producteurs).
    Footer = navigation complete auto-generee (toutes les pages publiees
    + archives Producteurs/Produits), voir footer.php. */
@@ -429,6 +447,77 @@ add_action('acf/init', function () {
             ],
         ],
         'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => 'produit']]],
+        'menu_order' => 0,
+    ]);
+
+    /* Produit — champs spécifiques au bon de commande Produits Maison */
+    acf_add_local_field_group([
+        'key'    => 'group_produit_pm',
+        'title'  => 'Bon de commande Produits Maison',
+        'fields' => [
+            [
+                'key'           => 'field_pm_commandable',
+                'name'          => 'pm_commandable',
+                'label'         => 'Disponible à la commande (bon Produits Maison)',
+                'type'          => 'true_false',
+                'default_value' => 0,
+                'ui'            => 1,
+                'instructions'  => 'Activez pour que ce produit apparaisse dans le bon de commande Produits Maison.',
+            ],
+            [
+                'key'               => 'field_pm_prix',
+                'name'              => 'pm_prix',
+                'label'             => 'Prix (bon PM)',
+                'type'              => 'number',
+                'default_value'     => '',
+                'min'               => 0,
+                'step'              => 0.01,
+                'instructions'      => 'Prix affiché sur le bon de commande Produits Maison (peut différer du prix rayons).',
+                'conditional_logic' => [[['field' => 'field_pm_commandable', 'operator' => '==', 'value' => '1']]],
+            ],
+            [
+                'key'               => 'field_pm_description',
+                'name'              => 'pm_description',
+                'label'             => 'Description courte (bon PM)',
+                'type'              => 'textarea',
+                'rows'              => 2,
+                'instructions'      => 'Texte affiché sous le nom sur le bon de commande.',
+                'conditional_logic' => [[['field' => 'field_pm_commandable', 'operator' => '==', 'value' => '1']]],
+            ],
+        ],
+        'location'   => [[['param' => 'post_type', 'operator' => '==', 'value' => 'produit']]],
+        'menu_order' => 10,
+    ]);
+
+    /* Famille Maison (CPT famille_maison) */
+    acf_add_local_field_group([
+        'key'    => 'group_famille_maison',
+        'title'  => 'Options Produit Maison',
+        'fields' => [
+            [
+                'key'           => 'field_famille_cta_label',
+                'name'          => 'famille_cta_label',
+                'label'         => 'Texte du bouton Commander',
+                'type'          => 'text',
+                'default_value' => 'Commander',
+                'instructions'  => 'Texte du bouton qui redirige vers le bon de commande.',
+            ],
+            [
+                'key'           => 'field_famille_cta_categorie',
+                'name'          => 'famille_cta_categorie',
+                'label'         => 'Catégorie du bon de commande',
+                'type'          => 'taxonomy',
+                'taxonomy'      => 'categorie_produit',
+                'field_type'    => 'select',
+                'allow_null'    => 1,
+                'return_format' => 'object',
+                'save_terms'    => 0,
+                'load_terms'    => 0,
+                'add_term'      => 0,
+                'instructions'  => 'Le bouton ouvre le bon de commande Produits Maison directement sur cette catégorie (ex : Amaretti). Laissez vide pour ouvrir le bon sans catégorie présélectionnée.',
+            ],
+        ],
+        'location'   => [[['param' => 'post_type', 'operator' => '==', 'value' => 'famille_maison']]],
         'menu_order' => 0,
     ]);
 
@@ -1116,6 +1205,28 @@ add_action('acf/init', function () {
         'menu_order' => 0,
     ]);
 
+    /* Bon de commande Produits Maison — page */
+    acf_add_local_field_group([
+        'key'    => 'group_page_bon_pm',
+        'title'  => 'Contenu — Bon de commande Produits Maison',
+        'fields' => [
+            [
+                'key'           => 'field_pm_bon_surtitre',
+                'name'          => 'pm_bon_surtitre',
+                'label'         => 'Surtitre',
+                'type'          => 'text',
+                'default_value' => 'Produits Maison · Le Vivier',
+                'instructions'  => 'Petit texte au-dessus du titre, ex : Produits Maison · Le Vivier',
+            ],
+        ],
+        'location' => [[[
+            'param'    => 'page_template',
+            'operator' => '==',
+            'value'    => 'templates/template-bon-pm.php',
+        ]]],
+        'menu_order' => 0,
+    ]);
+
     /* Producteur : tous les champs */
     acf_add_local_field_group([
         'key'    => 'group_producteur',
@@ -1198,6 +1309,65 @@ add_action('acf/init', function () {
         'menu_order' => 0,
     ]);
 });
+
+/* ======================================================
+   RÉGLAGES DU SITE — page d'options (téléphone, etc.)
+   lv_opt() / lv_opt_tel_lien() sont appelés dans plusieurs templates
+   (single-loft.php, template-produits-maison.php) mais n'avaient pas
+   d'implémentation : ça provoquait une erreur PHP fatale ("Call to
+   undefined function") qui coupait le rendu de la page en plein milieu
+   (d'où l'impression de CSS cassé — ce n'était pas le CSS, la page
+   s'arrêtait avant même d'atteindre la suite du gabarit).
+====================================================== */
+if (function_exists('acf_add_options_page')) {
+    acf_add_options_page([
+        'page_title' => 'Réglages du site',
+        'menu_title' => 'Réglages du site',
+        'menu_slug'  => 'lv-reglages',
+        'capability' => 'manage_options',
+        'redirect'   => false,
+        'icon_url'   => 'dashicons-admin-generic',
+    ]);
+}
+
+add_action('acf/init', function () {
+    if (!function_exists('acf_add_local_field_group')) return;
+
+    acf_add_local_field_group([
+        'key'    => 'group_reglages_site',
+        'title'  => 'Réglages du site',
+        'fields' => [
+            [
+                'key'           => 'field_opt_telephone',
+                'name'          => 'opt_telephone',
+                'label'         => 'Téléphone',
+                'type'          => 'text',
+                'default_value' => '(418) 562-5230',
+                'instructions'  => 'Numéro affiché sur le site (boutons d\'appel, bandes CTA...).',
+            ],
+        ],
+        'location' => [[[
+            'param'    => 'options_page',
+            'operator' => '==',
+            'value'    => 'lv-reglages',
+        ]]],
+    ]);
+});
+
+/* Valeur d'un réglage du site (page d'options ACF/SCF), avec repli si vide/absent. */
+function lv_opt($cle, $defaut = '')
+{
+    if (!function_exists('get_field')) return $defaut;
+    $valeur = get_field($cle, 'option');
+    return $valeur ?: $defaut;
+}
+
+/* Lien tel: à partir du téléphone des réglages du site (même format que les
+   autres liens tel: dynamiques du thème : chiffres seulement, sans indicatif). */
+function lv_opt_tel_lien()
+{
+    return 'tel:' . preg_replace('/\D/', '', lv_opt('opt_telephone', '(418) 562-5230'));
+}
 
 /* ======================================================
    PROMOTIONS — récupération des promos actives

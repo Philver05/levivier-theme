@@ -3,8 +3,6 @@
 <?php if (have_posts()): while (have_posts()): the_post(); ?>
 
     <section class="page-entete">
-        <span class="arche-mini am-terra"></span>
-        <span class="arche-mini am-ocre"></span>
         <div class="conteneur">
             <p class="eyebrow">Le journal · Le Vivier</p>
             <h1><?php the_title(); ?></h1>

@@ -9,8 +9,6 @@ get_header();
      EN-TÊTE
 ====================================================== -->
 <section class="page-entete">
-    <span class="arche-mini am-terra"></span>
-    <span class="arche-mini am-ocre"></span>
     <div class="conteneur">
         <?php if (have_posts()): the_post(); ?>
             <p class="eyebrow">Boutique · Le Vivier</p>

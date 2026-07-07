@@ -10,8 +10,6 @@ $prod_intro    = get_theme_mod('lv_prod_intro', lv_prod_intro_defaut());
 ?>
 
 <section class="page-entete">
-    <span class="arche-mini am-terra"></span>
-    <span class="arche-mini am-ocre"></span>
     <div class="conteneur">
         <?php if ($prod_surtitre): ?><p class="eyebrow"><?php echo esc_html($prod_surtitre); ?></p><?php endif; ?>
         <?php if ($prod_titre): ?><h1><?php echo esc_html($prod_titre); ?></h1><?php endif; ?>

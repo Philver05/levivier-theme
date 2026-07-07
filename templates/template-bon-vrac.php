@@ -14,8 +14,6 @@ $bandeau  = get_field('vrac_bandeau_escompte');
      EN-TÊTE
 ====================================================== -->
 <section class="page-entete">
-    <span class="arche-mini am-terra"></span>
-    <span class="arche-mini am-ocre"></span>
     <div class="conteneur">
         <p class="eyebrow"><?php echo esc_html($surtitre); ?></p>
         <h1><?php the_title(); ?></h1>

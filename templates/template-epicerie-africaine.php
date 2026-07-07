@@ -40,15 +40,12 @@ $cta_texte = get_field('afr_cta_texte') ?: 'Passez en boutique à Matane pour ex
 $cta_lien  = get_field('afr_cta_lien')  ?: get_permalink(get_page_by_path('a-propos'));
 $cta_label = get_field('afr_cta_label') ?: 'Nous trouver';
 
-$illu = get_stylesheet_directory_uri() . '/assets/images/illustrations/';
 ?>
 
 <!-- ======================================================
      EN-TÊTE
 ====================================================== -->
 <section class="page-entete">
-    <span class="arche-mini am-terra"></span>
-    <span class="arche-mini am-ocre"></span>
     <div class="conteneur">
         <p class="eyebrow"><?php echo esc_html($surtitre); ?></p>
         <h1><?php the_title(); ?></h1>
@@ -98,7 +95,7 @@ $illu = get_stylesheet_directory_uri() . '/assets/images/illustrations/';
                         <img src="<?php echo esc_url($spec['image']['sizes']['medium_large'] ?? $spec['image']['url']); ?>"
                              alt="<?php echo esc_attr($spec['image']['alt'] ?: $spec['titre']); ?>">
                     <?php else: ?>
-                        <div class="carte-vide"><img src="<?php echo esc_url($illu); ?>branche%2002.svg" alt=""></div>
+                        <div class="carte-vide" aria-hidden="true"></div>
                     <?php endif; ?>
                 </div>
                 <div class="corps">

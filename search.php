@@ -1,8 +1,6 @@
 <?php get_header(); ?>
 
 <section class="page-entete">
-    <span class="arche-mini am-terra"></span>
-    <span class="arche-mini am-ocre"></span>
     <div class="conteneur">
         <p class="eyebrow">Recherche</p>
         <h1>

@@ -1,8 +1,6 @@
 <?php get_header(); ?>
 
 <section class="page-entete">
-    <span class="arche-mini am-terra"></span>
-    <span class="arche-mini am-ocre"></span>
     <div class="conteneur">
         <?php if (is_home() && !is_front_page()): ?>
             <p class="eyebrow">Le journal · Le Vivier</p>

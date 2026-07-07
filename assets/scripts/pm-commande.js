@@ -208,9 +208,19 @@
         });
     });
 
-    /* Premier onglet actif par défaut */
-    var premierTab = document.querySelector('.pam-cat-tab');
+    /* Onglet initial : catégorie demandée dans l'URL (?cat=slug), sinon le premier */
+    var catDemandee = new URLSearchParams(window.location.search).get('cat');
+    var tabCible = null;
+    if (catDemandee) {
+        catDemandee = catDemandee.replace(/[^a-z0-9_-]/gi, '');
+        tabCible = document.querySelector('.pam-cat-tab[data-cat="' + catDemandee + '"]');
+    }
+    var premierTab = tabCible || document.querySelector('.pam-cat-tab');
     if (premierTab) premierTab.click();
+    if (tabCible) {
+        var colProduits = document.querySelector('.pam-produits-col');
+        if (colProduits) colProduits.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
     /* -------------------------------------------------------
        Boutons +/-

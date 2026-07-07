@@ -13,8 +13,6 @@ $intro = get_field('promo_page_intro') ?: "Chaque semaine, profitez de rabais ex
      EN-TÊTE
 ====================================================== -->
 <section class="page-entete">
-    <span class="arche-mini am-terra"></span>
-    <span class="arche-mini am-ocre"></span>
     <div class="conteneur">
         <p class="eyebrow">Offres de la semaine</p>
         <h1><?php the_title(); ?></h1>

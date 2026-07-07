@@ -6,159 +6,201 @@ get_header();
 
 if (have_posts()) the_post();
 
-/* ----------------------------------------------------------
-   Champs ACF + valeurs par défaut — tout éditable dans l'admin
----------------------------------------------------------- */
-$surtitre = get_field('pm_surtitre') ?: 'Préparé & fabriqué au Vivier';
-$intro    = get_field('pm_intro')    ?: "Nos produits maison, préparés sur place avec soin.\nÀ réserver par bon de commande, à récupérer en magasin.";
+$surtitre = get_field('pm_surtitre') ?: 'Fait maison · Le Vivier';
 
-/* Présentation (texte = éditeur principal + image) */
-$pres_image = get_field('pm_presentation_image');
+/* URL de la page Commander */
+$pages_commander = get_pages([
+    'meta_key'    => '_wp_page_template',
+    'meta_value'  => 'templates/template-commander.php',
+    'post_status' => 'publish',
+    'number'      => 1,
+]);
+$url_commander = !empty($pages_commander) ? get_permalink($pages_commander[0]->ID) : '#';
 
-/* Bon de commande / réservation */
-$bon_url   = get_field('pm_bon_url');
-$bon_label = get_field('pm_bon_label') ?: 'Réserver par bon de commande';
-$bon_note  = get_field('pm_bon_note')  ?: "Réservez vos produits maison en ligne.\nOn les prépare, vous récupérez et payez en magasin.";
+/* URL du bon de commande Produits Maison (cible des boutons par famille) */
+$pages_bon_pm = get_pages([
+    'meta_key'    => '_wp_page_template',
+    'meta_value'  => 'templates/template-bon-pm.php',
+    'post_status' => 'publish',
+    'number'      => 1,
+]);
+$url_bon_pm = !empty($pages_bon_pm) ? get_permalink($pages_bon_pm[0]->ID) : '';
 
-/* Bande finale */
-$cta_titre = get_field('pm_cta_titre') ?: 'Une envie de produits maison ?';
-$cta_texte = get_field('pm_cta_texte') ?: "Passez nous voir à Matane ou réservez à l'avance.\nNotre équipe se fera un plaisir de vous conseiller.";
-$cta_lien  = get_field('pm_cta_lien')  ?: get_permalink(get_page_by_path('a-propos'));
-$cta_label = get_field('pm_cta_label') ?: 'Nous trouver';
+/* Familles de produits maison */
+$familles = new WP_Query([
+    'post_type'      => 'famille_maison',
+    'post_status'    => 'publish',
+    'posts_per_page' => -1,
+    'orderby'        => 'menu_order title',
+    'order'          => 'ASC',
+]);
 
-$illu = get_stylesheet_directory_uri() . '/assets/images/illustrations/';
+/* Catégories utilisées (pour les boutons de filtre) */
+$cats_utilisees = [];
+if ($familles->have_posts()) {
+    foreach ($familles->posts as $post) {
+        $terms = get_the_terms($post->ID, 'categorie_famille');
+        if ($terms && !is_wp_error($terms)) {
+            foreach ($terms as $t) {
+                $cats_utilisees[$t->term_id] = $t;
+            }
+        }
+    }
+}
 ?>
 
 <!-- ======================================================
      EN-TÊTE
 ====================================================== -->
 <section class="page-entete">
-    <span class="arche-mini am-terra"></span>
-    <span class="arche-mini am-ocre"></span>
     <div class="conteneur">
         <p class="eyebrow"><?php echo esc_html($surtitre); ?></p>
         <h1><?php the_title(); ?></h1>
-        <p><?php echo nl2br(esc_html($intro)); ?></p>
+        <?php if (get_the_content()) the_content(); ?>
     </div>
 </section>
 
 <!-- ======================================================
-     PRÉSENTATION (texte = éditeur WP) + image
+     FILTRE PAR CATÉGORIE
 ====================================================== -->
-<?php if (get_the_content() || $pres_image): ?>
-<section class="section" style="padding-top:clamp(1.5rem,1rem+2vw,2.5rem)">
+<?php if (!empty($cats_utilisees)): ?>
+<div class="pm-filtres-wrap">
     <div class="conteneur">
-        <?php if (get_the_content() && $pres_image): ?>
-        <div class="apropos-split">
-            <div class="page-prose reveal" style="margin:0"><?php the_content(); ?></div>
-            <div class="apropos-media reveal">
-                <div class="cadre"><img src="<?php echo esc_url($pres_image['sizes']['large'] ?? $pres_image['url']); ?>" alt="<?php echo esc_attr($pres_image['alt'] ?: 'Produits maison'); ?>"></div>
+        <div class="pm-filtres" role="group" aria-label="Filtrer par catégorie">
+            <button class="pm-filtre actif" data-filtre="tout">Tout voir</button>
+            <?php foreach ($cats_utilisees as $cat): ?>
+                <button class="pm-filtre" data-filtre="<?php echo esc_attr($cat->slug); ?>">
+                    <?php echo esc_html($cat->name); ?>
+                </button>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
+<!-- ======================================================
+     ARTICLES PAR FAMILLE
+====================================================== -->
+<?php if ($familles->have_posts()):
+    $i = 0;
+    while ($familles->have_posts()): $familles->the_post();
+        $cta_label = (function_exists('get_field') ? get_field('famille_cta_label') : '') ?: 'Commander';
+
+        /* Cible du bouton : bon PM sur la catégorie choisie > bon PM > page Commander */
+        $cta_cat = function_exists('get_field') ? get_field('famille_cta_categorie') : null;
+        if ($url_bon_pm) {
+            $url_cta = ($cta_cat && !is_wp_error($cta_cat) && !empty($cta_cat->slug))
+                ? add_query_arg('cat', $cta_cat->slug, $url_bon_pm)
+                : $url_bon_pm;
+        } else {
+            $url_cta = $url_commander;
+        }
+        $thumb_id  = get_post_thumbnail_id();
+        $thumb     = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'large') : null;
+        $inverse   = ($i % 2 === 1) ? 'pm-article-inverse' : '';
+        $fond      = ($i % 2 === 1) ? 'pm-section-pair' : '';
+
+        $post_cats = get_the_terms(get_the_ID(), 'categorie_famille');
+        $data_cats = '';
+        if ($post_cats && !is_wp_error($post_cats)) {
+            $data_cats = implode(' ', array_column((array) $post_cats, 'slug'));
+        }
+
+        $i++;
+?>
+<section class="section pm-article-section <?php echo esc_attr($fond); ?>"
+         id="famille-<?php echo esc_attr(get_post_field('post_name')); ?>"
+         data-categories="<?php echo esc_attr($data_cats); ?>">
+    <div class="conteneur">
+        <div class="pm-article <?php echo esc_attr($inverse); ?> reveal">
+
+            <div class="pm-article-visuel">
+                <?php if ($thumb): ?>
+                    <img src="<?php echo esc_url($thumb[0]); ?>"
+                         alt="<?php echo esc_attr(get_the_title()); ?>"
+                         loading="lazy">
+                <?php else: ?>
+                    <div class="pm-article-placeholder" aria-hidden="true"></div>
+                <?php endif; ?>
+            </div>
+
+            <div class="pm-article-corps">
+                <?php if ($post_cats && !is_wp_error($post_cats)): ?>
+                    <span class="pm-article-eyebrow"><?php echo esc_html($post_cats[0]->name); ?></span>
+                <?php else: ?>
+                    <span class="pm-article-eyebrow">Produits maison</span>
+                <?php endif; ?>
+                <h2 class="pm-article-titre"><?php the_title(); ?></h2>
+
+                <?php if (get_the_content()): ?>
+                    <div class="pm-article-texte">
+                        <?php the_content(); ?>
+                    </div>
+                <?php endif; ?>
+
+                <a href="<?php echo esc_url($url_cta); ?>"
+                   class="btn btn-primaire pm-article-cta">
+                    <?php echo esc_html($cta_label); ?>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+<?php endwhile;
+    wp_reset_postdata();
+
+else:
+?>
+<section class="section pm-article-section">
+    <div class="conteneur">
+        <div class="pm-article reveal">
+            <div class="pm-article-placeholder pm-article-visuel" aria-hidden="true"></div>
+            <div class="pm-article-corps">
+                <span class="pm-article-eyebrow">Produits maison</span>
+                <h2 class="pm-article-titre">Nos produits maison</h2>
+                <div class="pm-article-texte">
+                    <p>Focaccias, amaretti, confitures et autres douceurs préparées sur place au Vivier.</p>
+                    <p><em>Pour ajouter une famille, allez dans <strong>Produits Maison</strong> dans le menu WP et créez votre premier article.</em></p>
+                </div>
+                <a href="<?php echo esc_url($url_commander); ?>" class="btn btn-primaire">Commander</a>
             </div>
         </div>
-        <?php elseif (get_the_content()): ?>
-            <div class="page-prose reveal"><?php the_content(); ?></div>
-        <?php elseif ($pres_image): ?>
-            <div class="apropos-media reveal" style="max-width:640px;margin-inline:auto">
-                <div class="cadre"><img src="<?php echo esc_url($pres_image['sizes']['large'] ?? $pres_image['url']); ?>" alt="<?php echo esc_attr($pres_image['alt'] ?: 'Produits maison'); ?>"></div>
-            </div>
-        <?php endif; ?>
     </div>
 </section>
 <?php endif; ?>
 
 <!-- ======================================================
-     NOS PRODUITS MAISON — vrais produits (catégorie « Produit Maison »)
+     CTA GLOBAL
 ====================================================== -->
-<section class="section produits" id="produits-maison">
-    <div class="conteneur">
-
-        <div class="section-titre">
-            <h2>Nos produits maison</h2>
-            <p>Focaccias, amaretti, salades et autres douceurs faites au Vivier</p>
-        </div>
-
-        <?php
-        $maison_ids    = function_exists('lv_maison_term_ids') ? lv_maison_term_ids() : [];
-        $parent_maison = get_term_by('slug', 'produit-maison', 'categorie_produit');
-
-        /* Sous-categories (enfants de « Produit Maison ») = filtres */
-        $sous_cats = ($parent_maison && !is_wp_error($parent_maison)) ? get_terms([
-            'taxonomy'   => 'categorie_produit',
-            'child_of'   => $parent_maison->term_id,
-            'hide_empty' => true,
-            'orderby'    => 'name',
-            'order'      => 'ASC',
-        ]) : [];
-        ?>
-
-        <?php if ($sous_cats && !is_wp_error($sous_cats)): ?>
-        <nav class="filtres" aria-label="Filtrer par catégorie">
-            <a href="#" class="filtre filtre-lien actif" data-cat="tout">Tout voir</a>
-            <?php foreach ($sous_cats as $sc): ?>
-                <a href="#" class="filtre filtre-lien" data-cat="<?php echo esc_attr($sc->slug); ?>"><?php echo esc_html($sc->name); ?></a>
-            <?php endforeach; ?>
-        </nav>
-        <?php endif; ?>
-
-        <?php
-        $maison = new WP_Query([
-            'post_type'      => 'produit',
-            'post_status'    => 'publish',
-            'posts_per_page' => -1,
-            'orderby'        => 'title',
-            'order'          => 'ASC',
-            'tax_query'      => [[
-                'taxonomy' => 'categorie_produit',
-                'field'    => 'term_id',
-                'terms'    => $maison_ids ?: [0],
-            ]],
-        ]);
-        ?>
-        <div class="grille-cartes" id="grille-maison">
-            <?php if ($maison->have_posts()):
-                while ($maison->have_posts()): $maison->the_post();
-                    get_template_part('parts/produit', 'card');
-                endwhile;
-                wp_reset_postdata();
-            else: ?>
-                <p class="grille-vide">Nos produits maison arrivent bientôt, revenez nous voir !</p>
-            <?php endif; ?>
-        </div>
-
-    </div>
-</section>
-
-<!-- ======================================================
-     BON DE COMMANDE — réservation
-====================================================== -->
-<?php if ($bon_url): ?>
-<section class="section section-compacte">
+<section class="section">
     <div class="conteneur">
         <div class="cta-panel reveal">
-            <h2>Réservez vos produits maison</h2>
-            <p><?php echo nl2br(esc_html($bon_note)); ?></p>
+            <h2>Prêt à commander&nbsp;?</h2>
+            <p>Remplissez votre bon de commande en ligne, on prépare tout pour vous. Récupérez et payez en magasin. Une question&nbsp;? Appelez-nous au <a href="<?php echo esc_attr(lv_opt_tel_lien()); ?>" class="cta-tel"><?php echo esc_html(lv_opt('opt_telephone', '(418) 562-5230')); ?></a>.</p>
             <div class="cta-panel-actions">
-                <a href="<?php echo esc_url($bon_url); ?>" target="_blank" rel="noopener" class="btn btn-clair"><?php echo esc_html($bon_label); ?></a>
+                <a href="<?php echo esc_url($url_commander); ?>" class="btn btn-clair">Voir tous les bons de commande</a>
             </div>
         </div>
     </div>
 </section>
-<?php endif; ?>
 
-<!-- ======================================================
-     BANDE FINALE — CTA
-====================================================== -->
-<section class="cta-finale">
-    <div class="cta-finale-deco" aria-hidden="true"></div>
-    <div class="conteneur cta-finale-inner reveal">
-        <h2><?php echo esc_html($cta_titre); ?></h2>
-        <p><?php echo nl2br(esc_html($cta_texte)); ?></p>
-        <?php if ($cta_lien && $cta_label): ?>
-            <div class="cta-finale-actions">
-                <a href="<?php echo esc_url($cta_lien); ?>" class="btn btn-clair"><?php echo esc_html($cta_label); ?></a>
-            </div>
-        <?php endif; ?>
-    </div>
-</section>
+<script>
+(function () {
+    var btns = document.querySelectorAll('.pm-filtre');
+    var sections = document.querySelectorAll('.pm-article-section[data-categories]');
+    if (!btns.length) return;
+    btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var filtre = btn.dataset.filtre;
+            btns.forEach(function (b) { b.classList.remove('actif'); });
+            btn.classList.add('actif');
+            sections.forEach(function (s) {
+                s.style.display = (filtre === 'tout' || s.dataset.categories.split(' ').includes(filtre)) ? '' : 'none';
+            });
+        });
+    });
+})();
+</script>
 
 <?php get_footer(); ?>

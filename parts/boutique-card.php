@@ -10,7 +10,6 @@ $marque = get_field('boutique_marque');
 $badge  = get_field('boutique_badge');
 
 $etiquette = $badge ?: $categorie_nom;
-$illu = get_stylesheet_directory_uri() . '/assets/images/illustrations/';
 ?>
 
 <a class="carte reveal" href="<?php echo esc_url(get_permalink()); ?>" data-cat="<?php echo esc_attr($categorie_slug); ?>">
@@ -21,7 +20,7 @@ $illu = get_stylesheet_directory_uri() . '/assets/images/illustrations/';
         <?php if (has_post_thumbnail()):
             the_post_thumbnail('medium', ['alt' => get_the_title()]);
         else: ?>
-            <div class="carte-vide"><img src="<?php echo esc_url($illu); ?>fleur%2001.svg" alt=""></div>
+            <div class="carte-vide" aria-hidden="true"></div>
         <?php endif; ?>
     </div>
     <div class="carte-corps">

@@ -9,8 +9,6 @@ $titre   = wp_kses(str_replace('durable', '<span class="script">durable</span>',
 $lien_ep = get_page_by_path('epicerie');
 $url_ep  = $lien_ep ? get_permalink($lien_ep) : home_url('/');
 $url_prod = get_post_type_archive_link('producteur') ?: home_url('/');
-$page_lofts = get_page_by_path('lofts');
-$url_lofts  = $page_lofts ? get_permalink($page_lofts) : home_url('/');
 ?>
 
 <!-- ============================ HERO ============================ -->
@@ -64,7 +62,7 @@ $url_lofts  = $page_lofts ? get_permalink($page_lofts) : home_url('/');
                 <?php if (has_post_thumbnail()):
                     the_post_thumbnail('large', ['alt' => get_bloginfo('name')]);
                 else: ?>
-                    <img src="<?php echo esc_url($illu); ?>fleur%2003.svg" alt="" style="object-fit:contain;padding:2rem;background:var(--sauge-pale)">
+                    <div aria-hidden="true" style="width:100%;height:100%;min-height:320px;background:var(--sauge-pale)"></div>
                 <?php endif; ?>
             </div>
             <span class="intro-badge">100 % local</span>
@@ -130,56 +128,10 @@ if ($produits_vedettes->have_posts()): ?>
 </section>
 <?php endif; ?>
 
-<!-- ======================== PRODUCTEURS ======================== -->
-<?php
-$producteurs = new WP_Query([
-    'post_type'      => 'producteur',
-    'post_status'    => 'publish',
-    'posts_per_page' => 3,
-    'orderby'        => 'rand',
-]);
-if ($producteurs->have_posts()): ?>
-<section class="section producteurs" id="producteurs">
-    <div class="conteneur">
-        <div class="producteurs-entete reveal">
-            <div>
-                <span class="script-accent">Nos producteurs</span>
-                <h2>Des visages derrière chaque produit</h2>
-                <p>Ils cultivent, récoltent et créent pour vous, à deux pas d'ici.</p>
-            </div>
-            <a href="<?php echo esc_url($url_prod); ?>" class="btn btn-fantome">Tous les producteurs</a>
-        </div>
-        <div class="grille-prod">
-            <?php while ($producteurs->have_posts()): $producteurs->the_post();
-                get_template_part('parts/producteur', 'card');
-            endwhile; wp_reset_postdata(); ?>
-        </div>
-    </div>
-</section>
-<?php endif; ?>
-
-<!-- ========================== LOFTS BAND ========================== -->
-<section class="section lofts-band" id="lofts">
-    <div class="conteneur">
-        <div class="lofts-panneau reveal">
-            <div>
-                <p class="eyebrow" style="color:#e7c9a0">Les Lofts de la Rivière</p>
-                <h2>Séjournez <span class="script">au cœur</span> de Matane</h2>
-                <p>Notre sous-marque d'hébergement : des lofts chaleureux pour découvrir la région à votre rythme, à quelques pas de l'épicerie.</p>
-                <a href="<?php echo esc_url($url_lofts); ?>" class="btn btn-clair">Découvrir les lofts</a>
-            </div>
-            <div class="lofts-illus">
-                <img src="<?php echo esc_url($illu); ?>quenouille01.svg" alt="" style="filter:brightness(0) invert(1);opacity:.5">
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- ========================= NEWSLETTER ========================= -->
 <section class="section newsletter" id="newsletter">
     <div class="conteneur">
         <div class="newsletter-carte reveal">
-            <img class="newsletter-deco" src="<?php echo esc_url($illu); ?>branche%2002.svg" alt="">
             <p class="eyebrow">Infolettre</p>
             <h2>Restez dans la boucle</h2>
             <p>Promotions, arrivages et nouvelles de nos producteurs, directement dans votre boîte de courriel.</p>

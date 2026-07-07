@@ -9,8 +9,6 @@ get_header();
      EN-TÊTE — intro de la page (titre + contenu éditeur WP)
 ====================================================== -->
 <section class="page-entete">
-    <span class="arche-mini am-terra"></span>
-    <span class="arche-mini am-ocre"></span>
     <div class="conteneur">
         <?php if (have_posts()): the_post(); ?>
             <p class="eyebrow">Épicerie boutique · Le Vivier</p>

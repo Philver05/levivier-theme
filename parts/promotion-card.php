@@ -40,7 +40,7 @@ $illu = get_stylesheet_directory_uri() . '/assets/images/illustrations/';
             <?php the_post_thumbnail('medium', ['alt' => get_the_title()]); ?>
         </div>
     <?php else: ?>
-        <div class="promo-img"><img src="<?php echo esc_url($illu); ?>petits%20fruits%2001.svg" alt=""></div>
+        <div class="promo-img" aria-hidden="true"></div>
     <?php endif; ?>
 
     <div class="promo-corps">
