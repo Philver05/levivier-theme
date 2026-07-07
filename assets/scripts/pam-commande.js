@@ -10,6 +10,11 @@
     var msgErreur = document.getElementById('pam-msg-erreur');
     var btnSubmit = document.getElementById('pam-btn-soumettre');
 
+    var recapEl     = document.getElementById('pam-recap');
+    var recapListe  = document.getElementById('pam-recap-liste');
+    var recapToggle = document.getElementById('pam-recap-toggle');
+    var recapCount  = document.getElementById('pam-recap-count');
+
     /* -------------------------------------------------------
        Filtrage par jour + catégorie
     ------------------------------------------------------- */
@@ -79,10 +84,108 @@
         });
         totalEl.textContent = formatMontant(total);
         barreEl.classList.toggle('pam-barre-total--active', total > 0);
+        majRecap();
     }
 
     function formatMontant(n) {
         return n.toFixed(2).replace('.', ',') + ' $';
+    }
+
+    /* -------------------------------------------------------
+       Récapitulatif de la sélection (dans la barre de total)
+    ------------------------------------------------------- */
+    function ouvrirRecap() {
+        recapEl.hidden = false;
+        recapToggle.setAttribute('aria-expanded', 'true');
+        barreEl.classList.add('pam-barre-total--ouverte');
+    }
+
+    function fermerRecap() {
+        if (!recapEl || recapEl.hidden) return;
+        recapEl.hidden = true;
+        recapToggle.setAttribute('aria-expanded', 'false');
+        barreEl.classList.remove('pam-barre-total--ouverte');
+    }
+
+    function retirerProduit(id) {
+        var input = document.querySelector('.pam-produit-item[data-id="' + id + '"] .pam-qty-input');
+        if (input) input.value = 0;
+        calculerTotal();
+    }
+
+    function allerAuProduit(id) {
+        var item = document.querySelector('.pam-produit-item[data-id="' + id + '"]');
+        if (!item) return;
+        /* Si le produit est dans une catégorie repliée, activer son onglet */
+        var cat = item.closest('.pam-categorie');
+        if (cat && cat.hidden) {
+            var tab = document.querySelector('.pam-cat-tab[data-cat="' + cat.dataset.cat + '"]');
+            if (tab) tab.click();
+        }
+        fermerRecap();
+        item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        item.classList.add('pam-produit-item--focus');
+        clearTimeout(item._focusTimer);
+        item._focusTimer = setTimeout(function () {
+            item.classList.remove('pam-produit-item--focus');
+        }, 1600);
+    }
+
+    function majRecap() {
+        if (!recapEl) return;
+
+        var items = [];
+        document.querySelectorAll('.pam-produit-item:not([hidden])').forEach(function (item) {
+            var input = item.querySelector('.pam-qty-input');
+            var qty   = input ? parseInt(input.value, 10) || 0 : 0;
+            if (qty < 1) return;
+            var nomEl = item.querySelector('.pam-produit-nom');
+            items.push({
+                id:   item.dataset.id,
+                nom:  nomEl ? nomEl.textContent.trim() : 'Produit',
+                qty:  qty,
+                sous: qty * (parseFloat(item.dataset.prix) || 0),
+            });
+        });
+
+        var nb = items.reduce(function (s, it) { return s + it.qty; }, 0);
+        recapCount.textContent = nb + (nb > 1 ? ' articles' : ' article');
+        recapToggle.hidden = nb === 0;
+        if (nb === 0) fermerRecap();
+
+        recapListe.innerHTML = '';
+        items.forEach(function (it) {
+            var li = document.createElement('li');
+
+            var nom = document.createElement('button');
+            nom.type = 'button';
+            nom.className = 'pam-recap-nom';
+            nom.textContent = it.qty + ' × ' + it.nom;
+            nom.setAttribute('aria-label', 'Voir ' + it.nom + ' dans la liste');
+            nom.addEventListener('click', function () { allerAuProduit(it.id); });
+
+            var detail = document.createElement('span');
+            detail.className = 'pam-recap-detail';
+            detail.textContent = formatMontant(it.sous);
+
+            var suppr = document.createElement('button');
+            suppr.type = 'button';
+            suppr.className = 'pam-recap-suppr';
+            suppr.setAttribute('aria-label', 'Retirer ' + it.nom);
+            suppr.textContent = '×';
+            suppr.addEventListener('click', function () { retirerProduit(it.id); });
+
+            li.appendChild(nom);
+            li.appendChild(detail);
+            li.appendChild(suppr);
+            recapListe.appendChild(li);
+        });
+    }
+
+    if (recapToggle) {
+        recapToggle.addEventListener('click', function () {
+            if (recapEl.hidden) { ouvrirRecap(); } else { fermerRecap(); }
+        });
     }
 
     /* -------------------------------------------------------

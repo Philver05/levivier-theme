@@ -44,7 +44,32 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                     'dimanche'       => 'Spécial dimanche',
                 ];
 
+                /* Messages par jour (ACF de la page) : calculé AVANT le filtre de jours
+                   pour qu'un message (ex: partenaire du jeudi) puisse afficher son jour
+                   dans le filtre même si aucun produit n'est encore rattaché à ce jour-là.
+                   Repli de démonstration (sushis du jeudi) tant que rien n'est saisi dans
+                   WP, pour visualiser le rendu sans avoir à remplir le champ. */
+                $messages_jours = [];
+                $msgs_raw = get_field('pam_messages_jours') ?: [[
+                    'msg_jour'        => 'jeudi',
+                    'msg_titre'       => 'Les jeudis sushis au Vivier',
+                    'msg_description' => "Le Vivier accueille chaque jeudi Le P'tit Béret, un traiteur passionné et authentique qui vous propose de généreux sushis maison préparés avec soin.",
+                    'msg_cta'         => "Commandez avant 10h le mercredi\nRécupérez au Vivier à partir de 12h le jeudi",
+                ]];
+                foreach ($msgs_raw as $m) {
+                    if (empty($m['msg_jour'])) continue;
+                    if (!empty($m['msg_titre']) || !empty($m['msg_description'])) {
+                        $messages_jours[$m['msg_jour']] = [
+                            'titre'       => $m['msg_titre']       ?? '',
+                            'description' => $m['msg_description'] ?? '',
+                            'cta'         => $m['msg_cta']         ?? '',
+                            'image'       => $m['msg_image']       ?? null,
+                        ];
+                    }
+                }
+
                 $jours_actifs = [];
+                foreach (array_keys($messages_jours) as $slug) $jours_actifs[$slug] = true;
                 $tous_pam = new WP_Query([
                     'post_type'      => 'pam_produit',
                     'post_status'    => 'publish',
@@ -59,22 +84,6 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                 /* Garder l'ordre de jours_defs, afficher seulement les actifs */
                 $jours_affiches = array_intersect_key($jours_defs, $jours_actifs);
                 if (empty($jours_affiches)) $jours_affiches = ['tous_les_jours' => 'Tous les jours'];
-
-                /* Messages par jour (ACF de la page) */
-                $messages_jours = [];
-                $msgs_raw = get_field('pam_messages_jours');
-                if ($msgs_raw) {
-                    foreach ($msgs_raw as $m) {
-                        if (empty($m['msg_jour'])) continue;
-                        if (!empty($m['msg_titre']) || !empty($m['msg_description'])) {
-                            $messages_jours[$m['msg_jour']] = [
-                                'titre'       => $m['msg_titre']       ?? '',
-                                'description' => $m['msg_description'] ?? '',
-                                'cta'         => $m['msg_cta']         ?? '',
-                            ];
-                        }
-                    }
-                }
                 ?>
 
                 <!-- Filtre par jour -->
@@ -93,16 +102,21 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                 <?php if ($messages_jours): ?>
                 <div class="pam-messages-jours" aria-live="polite">
                     <?php foreach ($messages_jours as $slug => $data): ?>
-                    <div class="pam-msg-jour" data-jour="<?php echo esc_attr($slug); ?>" hidden>
-                        <?php if ($data['titre']): ?>
-                        <p class="pam-msg-titre"><?php echo esc_html($data['titre']); ?></p>
+                    <div class="pam-msg-jour<?php echo $data['image'] ? ' pam-msg-jour--avec-image' : ''; ?>" data-jour="<?php echo esc_attr($slug); ?>" hidden>
+                        <?php if ($data['image']): ?>
+                        <img class="pam-msg-image" src="<?php echo esc_url($data['image']['sizes']['medium'] ?? $data['image']['url']); ?>" alt="<?php echo esc_attr($data['image']['alt'] ?: $data['titre']); ?>">
                         <?php endif; ?>
-                        <?php if ($data['description']): ?>
-                        <p class="pam-msg-desc"><?php echo nl2br(esc_html($data['description'])); ?></p>
-                        <?php endif; ?>
-                        <?php if ($data['cta']): ?>
-                        <div class="pam-msg-cta"><?php echo nl2br(esc_html($data['cta'])); ?></div>
-                        <?php endif; ?>
+                        <div class="pam-msg-corps">
+                            <?php if ($data['titre']): ?>
+                            <p class="pam-msg-titre"><?php echo esc_html($data['titre']); ?></p>
+                            <?php endif; ?>
+                            <?php if ($data['description']): ?>
+                            <p class="pam-msg-desc"><?php echo nl2br(esc_html($data['description'])); ?></p>
+                            <?php endif; ?>
+                            <?php if ($data['cta']): ?>
+                            <div class="pam-msg-cta"><?php echo nl2br(esc_html($data['cta'])); ?></div>
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -243,7 +257,16 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
      BARRE DE TOTAL (sticky bottom)
 ====================================================== -->
 <div class="pam-barre-total" id="pam-barre-total" aria-live="polite">
+    <!-- Récapitulatif de la sélection (déplié au-dessus de la barre) -->
+    <div class="pam-recap conteneur" id="pam-recap" hidden>
+        <ul class="pam-recap-liste" id="pam-recap-liste"></ul>
+    </div>
     <div class="pam-barre-inner conteneur">
+        <button type="button" class="pam-recap-toggle" id="pam-recap-toggle"
+                aria-expanded="false" aria-controls="pam-recap" hidden>
+            <span id="pam-recap-count">0 article</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 15 12 9 18 15"/></svg>
+        </button>
         <p class="pam-total-label">Total&nbsp;: <strong id="pam-total-montant">0,00&nbsp;$</strong></p>
         <button type="submit" form="pam-formulaire" class="btn btn-primaire" id="pam-btn-soumettre">
             Envoyer le bon de commande

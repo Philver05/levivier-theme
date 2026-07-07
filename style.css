@@ -1836,40 +1836,61 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
 }
 
 /* Messages informatifs par jour */
-.pam-messages-jours { margin-bottom: 1.4rem; }
+.pam-messages-jours { margin-bottom: 1.6rem; }
 .pam-msg-jour {
   background: var(--sauge-pale);
   border-left: 3px solid var(--sauge);
-  border-radius: 0 12px 12px 0;
-  padding: 1.1rem 1.25rem;
+  border-radius: 0 14px 14px 0;
+  padding: 1.4rem 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: .55rem;
+  gap: .7rem;
+  box-shadow: var(--ombre-douce);
 }
 .pam-msg-jour[hidden] { display: none; }
+.pam-msg-jour--avec-image {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1.2rem;
+}
+.pam-msg-image {
+  flex: none;
+  width: clamp(64px, 8vw, 84px);
+  aspect-ratio: 1;
+  object-fit: contain;
+  background: var(--blanc);
+  border: 1px solid rgba(77, 96, 64, .18);
+  border-radius: 12px;
+  padding: .4rem;
+}
+.pam-msg-corps { display: flex; flex-direction: column; gap: .7rem; min-width: 0; }
 .pam-msg-titre {
   font-family: var(--f-titre);
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1.12rem;
   color: var(--sauge);
   margin: 0;
   line-height: 1.3;
 }
 .pam-msg-desc {
-  font-size: .92rem;
+  font-size: .93rem;
   color: var(--texte);
-  line-height: 1.65;
+  line-height: 1.7;
   margin: 0;
 }
 .pam-msg-cta {
-  background: rgba(255, 255, 255, .65);
+  background: rgba(255, 255, 255, .7);
   border: 1px solid rgba(77, 96, 64, .18);
   border-radius: 8px;
-  padding: .6rem .9rem;
-  font-size: .84rem;
+  padding: .75rem 1rem;
+  font-size: .86rem;
   font-weight: 600;
   color: var(--texte);
-  line-height: 1.7;
+  line-height: 1.75;
+}
+@media (max-width: 560px) {
+  .pam-msg-jour--avec-image { flex-direction: column; }
+  .pam-msg-image { width: 56px; }
 }
 
 /* Onglets catégorie */
@@ -2062,6 +2083,108 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
 }
 .pam-total-label strong { color: var(--sauge); font-size: 1.15rem; }
 
+/* Bouton compteur d'articles (ouvre le récapitulatif) */
+.pam-recap-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  min-height: 44px;
+  padding: .4rem 1.1rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--sauge);
+  background: var(--blanc);
+  color: var(--sauge);
+  font-family: var(--f-titre);
+  font-weight: 700;
+  font-size: .9rem;
+  cursor: pointer;
+  transition: background var(--transi);
+}
+.pam-recap-toggle:hover { background: var(--sauge-pale); }
+.pam-recap-toggle[hidden] { display: none; }
+.pam-recap-toggle svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .25s ease;
+}
+.pam-barre-total--ouverte .pam-recap-toggle svg { transform: rotate(180deg); }
+
+/* Panneau récapitulatif : se déplie au-dessus de la barre (ancrée en bas,
+   elle grandit vers le haut) */
+.pam-recap {
+  padding-top: .9rem;
+  padding-bottom: .9rem;
+  margin-bottom: .6rem;
+  border-bottom: 1px solid var(--sauge-pale);
+  max-height: 45vh;
+  overflow-y: auto;
+}
+.pam-recap[hidden] { display: none; }
+.pam-recap-liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.pam-recap-liste li {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  padding: .45rem 0;
+  border-bottom: 1px dashed var(--bordure);
+}
+.pam-recap-liste li:last-child { border-bottom: none; }
+.pam-recap-nom {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--texte);
+  cursor: pointer;
+  text-align: left;
+  flex: 1;
+  min-width: 0;
+}
+.pam-recap-nom:hover { color: var(--sauge); text-decoration: underline; }
+.pam-recap-detail {
+  font-weight: 700;
+  font-size: .92rem;
+  color: var(--sauge);
+  white-space: nowrap;
+}
+.pam-recap-suppr {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--bordure);
+  background: var(--blanc);
+  color: var(--terra-fonce);
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transi), border-color var(--transi);
+}
+.pam-recap-suppr:hover { background: var(--terra-pale); border-color: var(--terra); }
+
+/* Halo de repérage quand on revient à un produit depuis le récap.
+   Transition (pas d'animation) pour ne pas écraser pam-entree. */
+.pam-produit-item--focus {
+  box-shadow: 0 0 0 5px var(--sauge-pale);
+  border-color: var(--sauge) !important;
+}
+
 /* Messages succès / erreur */
 .pam-msg-succes,
 .pam-msg-erreur {
@@ -2081,20 +2204,81 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   padding-bottom: 100px;
 }
 
-/* Barre inner : colonne sur mobile */
+/* Barre inner : colonne sur mobile (plus haute, dégagement accru) */
 @media (max-width: 480px) {
-  .pam-barre-inner { flex-direction: column; align-items: stretch; }
+  .pam-barre-inner { flex-direction: column; align-items: stretch; gap: .6rem; }
   .pam-barre-inner .btn { text-align: center; }
+  .pam-recap-toggle { justify-content: center; }
+  .pam-recap { max-height: 38vh; }
+  body:has(.pam-barre-total--active) main,
+  body:has(.pam-barre-total--active) .section:last-of-type {
+    padding-bottom: 160px;
+  }
 }
 
-/* Espacements réduits sur petits écrans */
+/* ------------------------------------------------------
+   Mobile : les cartes deviennent des rangées de liste
+   (vignette à gauche, infos à droite, description sur
+   2 lignes max) — bien plus dense et lisible que deux
+   cartes verticales côte à côte.
+------------------------------------------------------ */
+@media (max-width: 640px) {
+  .pam-produits-grille {
+    grid-template-columns: 1fr;
+    gap: .7rem;
+  }
+  .pam-produit-item {
+    flex-direction: row;
+    align-items: stretch;
+  }
+  .pam-produit-item img,
+  .pam-produit-placeholder {
+    width: 106px;
+    min-height: 106px;
+    height: auto;
+    aspect-ratio: auto;
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+  .pam-produit-corps {
+    padding: .7rem .85rem .75rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: flex-end;
+    gap: .25rem;
+  }
+  .pam-produit-nom,
+  .pam-produit-desc { width: 100%; }
+  .pam-produit-nom { font-size: .95rem; }
+  .pam-produit-desc {
+    font-size: .8rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  /* Prix à gauche et quantité à droite sur la même ligne de pied */
+  .pam-produit-prix {
+    font-size: .95rem;
+    margin-top: 0;
+    margin-right: auto;
+    padding-top: .3rem;
+  }
+  .pam-qty-controle { margin-top: 0; margin-left: auto; }
+  .pam-qty-moins,
+  .pam-qty-plus { width: 32px; height: 32px; }
+  .pam-qty-input { width: 46px; padding: .25rem .3rem; }
+  /* Survol inutile au doigt : pas de soulèvement */
+  .pam-produit-item:hover { transform: none; }
+}
+
+/* Espacements réduits sur très petits écrans */
 @media (max-width: 480px) {
   .pam-section-titre { font-size: 1.05rem; margin-bottom: 1rem; }
   .pam-filtre-jours  { margin-bottom: 1.2rem; }
   .pam-categorie     { margin-bottom: 1.8rem; }
-  .pam-produits-grille { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .8rem; }
-  .pam-produit-corps { padding: .85rem .9rem 1rem; }
-  .pam-produit-nom  { font-size: .95rem; }
 }
 
 /* ======================================================

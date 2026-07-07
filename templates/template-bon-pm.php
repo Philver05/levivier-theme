@@ -246,7 +246,16 @@ $surtitre = get_field('pm_bon_surtitre') ?: 'Produits Maison · Le Vivier';
      BARRE DE TOTAL (sticky bottom)
 ====================================================== -->
 <div class="pam-barre-total" id="pm-barre-total" aria-live="polite">
+    <!-- Récapitulatif de la sélection (déplié au-dessus de la barre) -->
+    <div class="pam-recap conteneur" id="pm-recap" hidden>
+        <ul class="pam-recap-liste" id="pm-recap-liste"></ul>
+    </div>
     <div class="pam-barre-inner conteneur">
+        <button type="button" class="pam-recap-toggle" id="pm-recap-toggle"
+                aria-expanded="false" aria-controls="pm-recap" hidden>
+            <span id="pm-recap-count">0 article</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 15 12 9 18 15"/></svg>
+        </button>
         <p class="pam-total-label">Total&nbsp;: <strong id="pm-total-montant">0,00&nbsp;$</strong></p>
         <button type="submit" form="pm-formulaire" class="btn btn-primaire" id="pm-btn-soumettre">
             Envoyer le bon de commande
