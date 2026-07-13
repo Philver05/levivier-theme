@@ -1236,6 +1236,15 @@ add_action('acf/init', function () {
                 'rows'  => 2,
             ],
             [
+                'key'           => 'field_pam_photo2',
+                'name'          => 'pam_photo2',
+                'label'         => 'Deuxième photo (optionnel)',
+                'type'          => 'image',
+                'return_format' => 'array',
+                'preview_size'  => 'medium',
+                'instructions'  => 'Un autre angle du produit. Si rentrée, la carte alterne automatiquement entre l\'image mise en avant et celle-ci.',
+            ],
+            [
                 'key'          => 'field_pam_instructions',
                 'name'         => 'pam_instructions',
                 'label'        => 'Instructions de commande',

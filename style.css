@@ -2000,6 +2000,21 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
   aspect-ratio: 4/3;
   background: var(--sable);
 }
+
+/* Deux photos par produit (angles différents) : alternance en fondu, sans JS. */
+.pam-produit-photos { position: relative; width: 100%; aspect-ratio: 4/3; overflow: hidden; }
+.pam-produit-photo {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  animation: pam-photo-alterne 9s ease-in-out infinite;
+}
+.pam-produit-photo--2 { animation-delay: -4.5s; }
+@keyframes pam-photo-alterne {
+  0%, 40%  { opacity: 1; }
+  50%, 90% { opacity: 0; }
+  100%     { opacity: 1; }
+}
 .pam-produit-corps {
   padding: .85rem .9rem 1rem;
   display: flex;

@@ -176,13 +176,19 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                             $description  = get_field('pam_description');
                             $instructions = get_field('pam_instructions');
                             $thumb        = get_the_post_thumbnail_url($pid, 'medium');
+                            $photo2       = get_field('pam_photo2');
                         ?>
                         <div class="pam-produit-item"
                              data-id="<?php echo esc_attr($pid); ?>"
                              data-prix="<?php echo esc_attr(number_format($prix, 2, '.', '')); ?>"
                              data-jours="<?php echo esc_attr(implode(' ', $jours)); ?>">
 
-                            <?php if ($thumb): ?>
+                            <?php if ($thumb && $photo2): ?>
+                            <div class="pam-produit-photos">
+                                <img class="pam-produit-photo pam-produit-photo--1" src="<?php echo esc_url($thumb); ?>" alt="<?php echo esc_attr(get_the_title()); ?>" loading="lazy">
+                                <img class="pam-produit-photo pam-produit-photo--2" src="<?php echo esc_url($photo2['sizes']['medium'] ?? $photo2['url']); ?>" alt="" loading="lazy">
+                            </div>
+                            <?php elseif ($thumb): ?>
                             <img src="<?php echo esc_url($thumb); ?>"
                                  alt="<?php echo esc_attr(get_the_title()); ?>"
                                  loading="lazy">
