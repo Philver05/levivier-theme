@@ -55,15 +55,28 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                     'msg_titre'       => 'Les jeudis sushis au Vivier',
                     'msg_description' => "Le Vivier accueille chaque jeudi Le P'tit Béret, un traiteur passionné et authentique qui vous propose de généreux sushis maison préparés avec soin.",
                     'msg_cta'         => "Commandez avant 10h le mercredi\nRécupérez au Vivier à partir de 12h le jeudi",
+                    'msg_note_titre'     => 'Fraîcheur et conservation des sushis',
+                    'msg_note_texte'     => "Les sushis se dégustent idéalement le jour même pour une expérience optimale. Ils peuvent se conserver jusqu'à 24 heures au réfrigérateur, bien scellés et au frais.\n\nSi vous les consommez le lendemain, les laisser reposer 10 à 15 minutes à température ambiante avant dégustation, afin que le riz retrouve sa texture moelleuse et les saveurs, leur équilibre.",
+                    'msg_categorie_slug' => 'sushis',
                 ]];
                 foreach ($msgs_raw as $m) {
                     if (empty($m['msg_jour'])) continue;
                     if (!empty($m['msg_titre']) || !empty($m['msg_description'])) {
+                        /* Catégorie associée (optionnel) : soit un terme réel choisi dans
+                           WP (ID), soit le slug de démo ci-dessus tant que rien n'est saisi. */
+                        $cat_slug = $m['msg_categorie_slug'] ?? '';
+                        if (!$cat_slug && !empty($m['msg_categorie'])) {
+                            $terme = get_term($m['msg_categorie'], 'pam_categorie');
+                            if ($terme && !is_wp_error($terme)) $cat_slug = $terme->slug;
+                        }
                         $messages_jours[$m['msg_jour']] = [
                             'titre'       => $m['msg_titre']       ?? '',
                             'description' => $m['msg_description'] ?? '',
                             'cta'         => $m['msg_cta']         ?? '',
                             'image'       => $m['msg_image']       ?? null,
+                            'note_titre'  => $m['msg_note_titre']  ?? '',
+                            'note_texte'  => $m['msg_note_texte']  ?? '',
+                            'categorie'   => $cat_slug,
                         ];
                     }
                 }
@@ -102,7 +115,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                 <?php if ($messages_jours): ?>
                 <div class="pam-messages-jours" aria-live="polite">
                     <?php foreach ($messages_jours as $slug => $data): ?>
-                    <div class="pam-msg-jour<?php echo $data['image'] ? ' pam-msg-jour--avec-image' : ''; ?>" data-jour="<?php echo esc_attr($slug); ?>" hidden>
+                    <div class="pam-msg-jour<?php echo $data['image'] ? ' pam-msg-jour--avec-image' : ''; ?>" data-jour="<?php echo esc_attr($slug); ?>" data-categorie="<?php echo esc_attr($data['categorie']); ?>" hidden>
                         <?php if ($data['image']): ?>
                         <img class="pam-msg-image" src="<?php echo esc_url($data['image']['sizes']['medium'] ?? $data['image']['url']); ?>" alt="<?php echo esc_attr($data['image']['alt'] ?: $data['titre']); ?>">
                         <?php endif; ?>
@@ -115,6 +128,16 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                             <?php endif; ?>
                             <?php if ($data['cta']): ?>
                             <div class="pam-msg-cta"><?php echo nl2br(esc_html($data['cta'])); ?></div>
+                            <?php endif; ?>
+                            <?php if ($data['note_titre'] || $data['note_texte']): ?>
+                            <div class="pam-msg-note">
+                                <?php if ($data['note_titre']): ?>
+                                <p class="pam-msg-note-titre"><?php echo esc_html($data['note_titre']); ?></p>
+                                <?php endif; ?>
+                                <?php if ($data['note_texte']): ?>
+                                <p class="pam-msg-note-texte"><?php echo nl2br(esc_html($data['note_texte'])); ?></p>
+                                <?php endif; ?>
+                            </div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -175,6 +198,8 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                             $jours        = (array) (get_field('pam_jours') ?: ['tous_les_jours']);
                             $description  = get_field('pam_description');
                             $instructions = get_field('pam_instructions');
+                            $poids        = get_field('pam_poids');
+                            $taxable      = get_field('pam_taxable');
                             $thumb        = get_the_post_thumbnail_url($pid, 'medium');
                             $photo2       = get_field('pam_photo2');
                         ?>
@@ -198,13 +223,19 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
 
                             <div class="pam-produit-corps">
                                 <p class="pam-produit-nom"><?php the_title(); ?></p>
+                                <?php if ($poids): ?>
+                                <p class="pam-produit-poids"><?php echo esc_html($poids); ?></p>
+                                <?php endif; ?>
                                 <?php if ($description): ?>
                                 <details class="pam-produit-details">
                                     <summary>Description</summary>
                                     <p class="pam-produit-desc"><?php echo esc_html($description); ?></p>
                                 </details>
                                 <?php endif; ?>
-                                <p class="pam-produit-prix"><?php echo esc_html(number_format($prix, 2, ',', ' ')); ?>&nbsp;$</p>
+                                <p class="pam-produit-prix">
+                                    <?php echo esc_html(number_format($prix, 2, ',', ' ')); ?>&nbsp;$
+                                    <?php if ($taxable): ?><span class="pam-produit-taxes">+ taxes</span><?php endif; ?>
+                                </p>
                                 <?php if ($instructions): ?>
                                 <p class="pam-produit-instructions"><?php echo nl2br(esc_html($instructions)); ?></p>
                                 <?php endif; ?>

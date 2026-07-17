@@ -189,11 +189,17 @@
     }
 
     /* -------------------------------------------------------
-       Message informatif par jour
+       Message informatif par jour et/ou par catégorie
+       (un message s'affiche si son jour OU sa catégorie associée
+       correspond à la sélection actuelle du client)
     ------------------------------------------------------- */
-    function afficherMessageJour(jour) {
+    function majMessagesJour() {
+        var jourChecked = form.querySelector('input[name="jour"]:checked');
+        var jour = jourChecked ? jourChecked.value : '';
         document.querySelectorAll('.pam-msg-jour').forEach(function (el) {
-            el.hidden = el.dataset.jour !== jour;
+            var matchJour = el.dataset.jour && el.dataset.jour === jour;
+            var matchCat  = el.dataset.categorie && el.dataset.categorie === categorieActive;
+            el.hidden = !(matchJour || matchCat);
         });
     }
 
@@ -203,7 +209,7 @@
     form.querySelectorAll('input[name="jour"]').forEach(function (radio) {
         radio.addEventListener('change', function () {
             filtrerParJour(radio.value);
-            afficherMessageJour(radio.value);
+            majMessagesJour();
         });
     });
 
@@ -214,6 +220,7 @@
         btn.addEventListener('click', function () {
             categorieActive = btn.dataset.cat;
             appliquerFiltreCategorie();
+            majMessagesJour();
         });
     });
 
@@ -383,6 +390,6 @@
     var jourInit = form.querySelector('input[name="jour"]:checked');
     if (jourInit) {
         filtrerParJour(jourInit.value);
-        afficherMessageJour(jourInit.value);
+        majMessagesJour();
     }
 })();
