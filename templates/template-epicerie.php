@@ -21,8 +21,7 @@ $maison_ids = function_exists('lv_maison_term_ids') ? lv_maison_term_ids() : [];
 <section class="page-entete">
     <div class="conteneur">
         <?php if (have_posts()): the_post(); ?>
-            <p class="eyebrow">Épicerie boutique · Le Vivier</p>
-            <h1><?php the_title(); ?></h1>
+            <h1 class="page-entete-titre-script"><?php the_title(); ?></h1>
             <?php the_content(); ?>
         <?php endif; ?>
     </div>

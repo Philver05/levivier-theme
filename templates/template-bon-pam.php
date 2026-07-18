@@ -22,7 +22,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
 <!-- ======================================================
      FORMULAIRE
 ====================================================== -->
-<section class="section">
+<section class="section" style="padding-top:.5rem;padding-bottom:2rem">
     <div class="conteneur">
 
         <form id="pam-formulaire" class="pam-form" novalidate>
@@ -127,7 +127,10 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                             <p class="pam-msg-desc"><?php echo nl2br(esc_html($data['description'])); ?></p>
                             <?php endif; ?>
                             <?php if ($data['cta']): ?>
-                            <div class="pam-msg-cta"><?php echo nl2br(esc_html($data['cta'])); ?></div>
+                            <div class="pam-msg-cta">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                                <span><?php echo esc_html(implode('  ·  ', array_filter(array_map('trim', explode("\n", $data['cta']))))); ?></span>
+                            </div>
                             <?php endif; ?>
                             <?php if ($data['note_titre'] || $data['note_texte']): ?>
                             <div class="pam-msg-note">
@@ -145,18 +148,51 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                 </div>
                 <?php endif; ?>
 
-                <!-- Onglets catégorie -->
+                <!-- Onglets catégorie (2 niveaux : catégories principales + sous-catégories) -->
                 <?php
-                $categories = get_terms([
+                /* Catégories principales = termes sans parent (regroupements comme
+                   Pâtisseries/Pains, et catégories autonomes comme Sushis) */
+                $categories_principales = get_terms([
                     'taxonomy'   => 'pam_categorie',
-                    'hide_empty' => true,
+                    'parent'     => 0,
+                    'hide_empty' => false,
                     'orderby'    => 'name',
                     'order'      => 'ASC',
                 ]);
+                if (is_wp_error($categories_principales)) $categories_principales = [];
+
+                /* Ne garder que celles qui ont au moins un produit, direct ou via une sous-catégorie */
+                $categories_principales = array_values(array_filter($categories_principales, function ($cat) {
+                    $q = new WP_Query([
+                        'post_type'      => 'pam_produit',
+                        'post_status'    => 'publish',
+                        'posts_per_page' => 1,
+                        'no_found_rows'  => true,
+                        'fields'         => 'ids',
+                        'tax_query'      => [['taxonomy' => 'pam_categorie', 'field' => 'term_id', 'terms' => $cat->term_id]],
+                    ]);
+                    return $q->have_posts();
+                }));
+
+                /* Ordre personnalisé demandé par Philippe (17 juillet), pas alphabétique.
+                   Toute catégorie non listée ici (ex: nouvelle catégorie pas encore ajoutée
+                   à cette liste) se retrouve à la fin, par ordre alphabétique. */
+                $ordre_pam_categories = [
+                    'Pains', 'Pâtisseries', 'Pâtés et Quiches', 'Prêt-à-manger',
+                    'Mets préparé', 'Divers prêt-à-manger', 'Sushis',
+                ];
+                usort($categories_principales, function ($a, $b) use ($ordre_pam_categories) {
+                    $pos_a = array_search($a->name, $ordre_pam_categories, true);
+                    $pos_b = array_search($b->name, $ordre_pam_categories, true);
+                    if ($pos_a === false) $pos_a = 999;
+                    if ($pos_b === false) $pos_b = 999;
+                    if ($pos_a === $pos_b) return strcasecmp($a->name, $b->name);
+                    return $pos_a <=> $pos_b;
+                });
                 ?>
-                <?php if ($categories && !is_wp_error($categories) && count($categories) > 1): ?>
+                <?php if (count($categories_principales) > 1): ?>
                 <div class="pam-filtre-cats" role="tablist" aria-label="Catégories">
-                    <?php foreach ($categories as $cat): ?>
+                    <?php foreach ($categories_principales as $cat): ?>
                     <button type="button"
                             class="pam-cat-tab"
                             role="tab"
@@ -167,30 +203,48 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                 </div>
                 <?php endif; ?>
 
-                <!-- Produits groupés par catégorie -->
+                <!-- Produits groupés par catégorie principale, avec sous-onglets si elle a des enfants -->
                 <?php
                 $a_des_produits = false;
 
-                if ($categories && !is_wp_error($categories)):
-                    foreach ($categories as $cat):
-                        $produits = new WP_Query([
-                            'post_type'      => 'pam_produit',
-                            'post_status'    => 'publish',
-                            'posts_per_page' => -1,
-                            'tax_query'      => [[
-                                'taxonomy' => 'pam_categorie',
-                                'field'    => 'term_id',
-                                'terms'    => $cat->term_id,
-                            ]],
-                            'meta_key'       => 'pam_prix',
-                            'orderby'        => ['meta_value_num' => 'ASC', 'title' => 'ASC'],
-                        ]);
+                foreach ($categories_principales as $cat):
+                    $enfants = get_terms([
+                        'taxonomy'   => 'pam_categorie',
+                        'parent'     => $cat->term_id,
+                        'hide_empty' => true,
+                    ]);
+                    if (is_wp_error($enfants)) $enfants = [];
 
-                        if (!$produits->have_posts()) continue;
-                        $a_des_produits = true;
+                    $produits = new WP_Query([
+                        'post_type'      => 'pam_produit',
+                        'post_status'    => 'publish',
+                        'posts_per_page' => -1,
+                        'tax_query'      => [[
+                            'taxonomy' => 'pam_categorie',
+                            'field'    => 'term_id',
+                            'terms'    => $cat->term_id,
+                        ]],
+                        'meta_key'       => 'pam_prix',
+                        'orderby'        => ['meta_value_num' => 'ASC', 'title' => 'ASC'],
+                    ]);
+
+                    if (!$produits->have_posts()) continue;
+                    $a_des_produits = true;
                 ?>
                 <div class="pam-categorie" data-cat="<?php echo esc_attr($cat->slug); ?>">
                     <h3 class="pam-categorie-titre"><?php echo esc_html($cat->name); ?></h3>
+
+                    <?php if ($enfants): ?>
+                    <div class="pam-filtre-souscats" role="tablist" aria-label="Sous-catégories de <?php echo esc_attr($cat->name); ?>">
+                        <button type="button" class="pam-souscat-tab pam-souscat-tab--actif" data-souscat="">Tout voir</button>
+                        <?php foreach ($enfants as $enfant): ?>
+                        <button type="button" class="pam-souscat-tab" data-souscat="<?php echo esc_attr($enfant->slug); ?>">
+                            <?php echo esc_html($enfant->name); ?>
+                        </button>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+
                     <div class="pam-produits-grille">
                         <?php while ($produits->have_posts()): $produits->the_post();
                             $pid          = get_the_ID();
@@ -200,18 +254,30 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                             $instructions = get_field('pam_instructions');
                             $poids        = get_field('pam_poids');
                             $taxable      = get_field('pam_taxable');
-                            $thumb        = get_the_post_thumbnail_url($pid, 'medium');
+                            $ingredients  = get_field('pam_ingredients');
+                            $thumb        = get_the_post_thumbnail_url($pid, 'large');
                             $photo2       = get_field('pam_photo2');
+
+                            /* Sous-catégorie de ce produit parmi les enfants de la
+                               catégorie principale active, pour le filtre à 2 niveaux */
+                            $souscat = '';
+                            if ($enfants) {
+                                $termes_produit = wp_get_post_terms($pid, 'pam_categorie', ['fields' => 'ids']);
+                                foreach ($enfants as $enfant) {
+                                    if (in_array($enfant->term_id, $termes_produit, true)) { $souscat = $enfant->slug; break; }
+                                }
+                            }
                         ?>
                         <div class="pam-produit-item"
                              data-id="<?php echo esc_attr($pid); ?>"
                              data-prix="<?php echo esc_attr(number_format($prix, 2, '.', '')); ?>"
-                             data-jours="<?php echo esc_attr(implode(' ', $jours)); ?>">
+                             data-jours="<?php echo esc_attr(implode(' ', $jours)); ?>"
+                             data-souscat="<?php echo esc_attr($souscat); ?>">
 
                             <?php if ($thumb && $photo2): ?>
                             <div class="pam-produit-photos">
                                 <img class="pam-produit-photo pam-produit-photo--1" src="<?php echo esc_url($thumb); ?>" alt="<?php echo esc_attr(get_the_title()); ?>" loading="lazy">
-                                <img class="pam-produit-photo pam-produit-photo--2" src="<?php echo esc_url($photo2['sizes']['medium'] ?? $photo2['url']); ?>" alt="" loading="lazy">
+                                <img class="pam-produit-photo pam-produit-photo--2" src="<?php echo esc_url($photo2['sizes']['large'] ?? $photo2['url']); ?>" alt="" loading="lazy">
                             </div>
                             <?php elseif ($thumb): ?>
                             <img src="<?php echo esc_url($thumb); ?>"
@@ -232,12 +298,21 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                                     <p class="pam-produit-desc"><?php echo esc_html($description); ?></p>
                                 </details>
                                 <?php endif; ?>
+                                <?php if ($ingredients): ?>
+                                <details class="pam-produit-details">
+                                    <summary>Ingrédients et allergènes</summary>
+                                    <p class="pam-produit-desc"><?php echo nl2br(esc_html($ingredients)); ?></p>
+                                </details>
+                                <?php endif; ?>
                                 <p class="pam-produit-prix">
                                     <?php echo esc_html(number_format($prix, 2, ',', ' ')); ?>&nbsp;$
                                     <?php if ($taxable): ?><span class="pam-produit-taxes">+ taxes</span><?php endif; ?>
                                 </p>
                                 <?php if ($instructions): ?>
-                                <p class="pam-produit-instructions"><?php echo nl2br(esc_html($instructions)); ?></p>
+                                <p class="pam-produit-instructions">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+                                    <span><?php echo nl2br(esc_html($instructions)); ?></span>
+                                </p>
                                 <?php endif; ?>
 
                                 <div class="pam-qty-controle">
@@ -254,7 +329,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                         <?php endwhile; wp_reset_postdata(); ?>
                     </div><!-- .pam-produits-grille -->
                 </div><!-- .pam-categorie -->
-                <?php endforeach; endif; ?>
+                <?php endforeach; ?>
 
                 <?php if (!$a_des_produits): ?>
                 <p class="grille-vide">Les produits Prêt à manger seront disponibles ici très bientôt.</p>

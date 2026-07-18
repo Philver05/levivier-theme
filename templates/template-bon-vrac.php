@@ -39,8 +39,9 @@ $bandeau  = get_field('vrac_bandeau_escompte');
 <!-- ======================================================
      FORMULAIRE
 ====================================================== -->
-<section class="section">
+<section class="section vrac-form-section" style="padding-bottom:2rem<?php echo $bandeau ? '' : ';padding-top:.5rem'; ?>">
     <div class="conteneur">
+    <div class="vrac-form-carte">
 
         <form id="vrac-formulaire" novalidate>
 
@@ -194,6 +195,7 @@ $bandeau  = get_field('vrac_bandeau_escompte');
         <div id="vrac-msg-succes" class="pam-msg-succes" role="alert" hidden></div>
         <div id="vrac-msg-erreur" class="pam-msg-erreur" role="alert" hidden></div>
 
+    </div><!-- .vrac-form-carte -->
     </div><!-- .conteneur -->
 </section>
 

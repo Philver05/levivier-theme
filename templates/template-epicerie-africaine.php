@@ -47,7 +47,7 @@ $specialites = [
 <section class="page-entete">
     <div class="conteneur">
         <p class="eyebrow"><?php echo esc_html($surtitre); ?></p>
-        <h1><?php the_title(); ?></h1>
+        <h1 class="page-entete-titre-script"><?php the_title(); ?></h1>
         <p><?php echo nl2br(esc_html($intro)); ?></p>
     </div>
 </section>

@@ -16,9 +16,18 @@
     var recapCount  = document.getElementById('pam-recap-count');
 
     /* -------------------------------------------------------
-       Filtrage par jour + catégorie
+       Filtrage par jour + catégorie (2 niveaux : catégorie
+       principale + sous-catégorie optionnelle).
+
+       Important : seul le filtre de JOUR masque un produit via
+       l'attribut `hidden` (et remet sa quantité à 0, puisqu'il
+       n'est vraiment pas disponible ce jour-là). Le filtre de
+       sous-catégorie est purement visuel (classe CSS) : il ne
+       doit ni vider la quantité déjà choisie, ni fausser le total
+       ou le récapitulatif, qui ne comptent que via `:not([hidden])`.
     ------------------------------------------------------- */
     var categorieActive = '';
+    var sousCategorieActive = '';
 
     function filtrerParJour(jour) {
         /* 1. Masquer les produits qui ne correspondent pas au jour */
@@ -42,11 +51,14 @@
         /* 3. Si la catégorie active n'a plus de produits, prendre la première dispo */
         if (!categorieActive || catsDispos.indexOf(categorieActive) === -1) {
             categorieActive = catsDispos[0] || '';
+            sousCategorieActive = '';
         }
 
         /* 4. Mettre à jour les onglets et afficher la bonne catégorie */
         majTabsCategorie(catsDispos);
         appliquerFiltreCategorie();
+        majSousCategorieTabs();
+        appliquerFiltreSousCategorie();
         calculerTotal();
     }
 
@@ -68,6 +80,26 @@
         /* Mettre à jour le style de l'onglet actif */
         document.querySelectorAll('.pam-cat-tab').forEach(function (tab) {
             tab.classList.toggle('pam-cat-tab--active', tab.dataset.cat === categorieActive);
+        });
+    }
+
+    /* Affiche la barre de sous-onglets de la catégorie active (si elle en a une) */
+    function majSousCategorieTabs() {
+        document.querySelectorAll('.pam-filtre-souscats').forEach(function (barre) {
+            var cat = barre.closest('.pam-categorie');
+            barre.hidden = !cat || cat.dataset.cat !== categorieActive;
+        });
+    }
+
+    /* Masque/affiche visuellement (sans toucher `hidden`) les produits de la
+       catégorie active selon la sous-catégorie choisie. */
+    function appliquerFiltreSousCategorie() {
+        document.querySelectorAll('.pam-categorie').forEach(function (cat) {
+            var filtre = (cat.dataset.cat === categorieActive) ? sousCategorieActive : '';
+            cat.querySelectorAll('.pam-produit-item').forEach(function (item) {
+                var correspond = !filtre || item.dataset.souscat === filtre;
+                item.classList.toggle('pam-produit-item--filtre-masque', !correspond);
+            });
         });
     }
 
@@ -121,6 +153,12 @@
         if (cat && cat.hidden) {
             var tab = document.querySelector('.pam-cat-tab[data-cat="' + cat.dataset.cat + '"]');
             if (tab) tab.click();
+        }
+        /* Si un filtre de sous-catégorie le masque encore, revenir à "Tout voir" */
+        if (item.classList.contains('pam-produit-item--filtre-masque')) {
+            var barreSous = cat ? cat.querySelector('.pam-filtre-souscats') : null;
+            var toutBtn = barreSous ? barreSous.querySelector('.pam-souscat-tab[data-souscat=""]') : null;
+            if (toutBtn) toutBtn.click();
         }
         fermerRecap();
         item.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -214,13 +252,29 @@
     });
 
     /* -------------------------------------------------------
-       Onglets catégorie
+       Onglets catégorie (principale) et sous-catégorie
     ------------------------------------------------------- */
     document.querySelectorAll('.pam-cat-tab').forEach(function (btn) {
         btn.addEventListener('click', function () {
             categorieActive = btn.dataset.cat;
+            sousCategorieActive = '';
             appliquerFiltreCategorie();
+            majSousCategorieTabs();
+            appliquerFiltreSousCategorie();
             majMessagesJour();
+        });
+    });
+
+    document.querySelectorAll('.pam-souscat-tab').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            sousCategorieActive = btn.dataset.souscat;
+            var barre = btn.closest('.pam-filtre-souscats');
+            if (barre) {
+                barre.querySelectorAll('.pam-souscat-tab').forEach(function (b) {
+                    b.classList.toggle('pam-souscat-tab--actif', b === btn);
+                });
+            }
+            appliquerFiltreSousCategorie();
         });
     });
 

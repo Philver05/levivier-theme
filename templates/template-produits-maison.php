@@ -55,7 +55,7 @@ if ($familles->have_posts()) {
 <section class="page-entete">
     <div class="conteneur">
         <p class="eyebrow"><?php echo esc_html($surtitre); ?></p>
-        <h1><?php the_title(); ?></h1>
+        <h1 class="page-entete-titre-script"><?php the_title(); ?></h1>
         <?php if (get_the_content()) the_content(); ?>
     </div>
 </section>

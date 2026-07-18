@@ -22,7 +22,7 @@ $surtitre = get_field('pm_bon_surtitre') ?: 'Produits Maison · Le Vivier';
 <!-- ======================================================
      FORMULAIRE
 ====================================================== -->
-<section class="section">
+<section class="section" style="padding-top:.5rem;padding-bottom:2rem">
     <div class="conteneur">
 
         <form id="pm-formulaire" class="pam-form" novalidate>

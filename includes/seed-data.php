@@ -412,3 +412,183 @@ add_action('admin_init', function () {
     echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#b85c50;">← Retour au tableau de bord</a></p>';
     exit;
 });
+
+/**
+ * Migration des catégories Prêt à manger vers une structure à deux niveaux
+ * (demande de Marie, juillet 2026).
+ * Déclencher UNE SEULE FOIS en visitant : /wp-admin/?lv_migrer_pam_categories=1
+ *
+ * Cible :
+ *   Pâtisseries      > Amaretti, Biscuits, Cake, Tarte
+ *   Pains            > Focaccias
+ *   Prêt-à-manger    > Pizzas, Sandwichs, Salades
+ *   Pâtés et Quiches (autonome)
+ *   Sushis           (autonome)
+ *   Divers prêt-à-manger > Sauces
+ *
+ * Ne crée/renomme QUE des termes retrouvés par nom exact (issus des scripts
+ * de seed) : ne devine pas les catégories ajoutées manuellement dans WP
+ * depuis (ex: si le vrai nom en ligne diffère légèrement, comme « Focaccia
+ * Maison » plutôt que « Focaccias »). Ne déplace AUCUN produit individuel
+ * entre sous-catégories : Philippe doit vérifier/réassigner dans WP après
+ * coup si des produits doivent changer de sous-catégorie précise.
+ */
+add_action('admin_init', function () {
+
+    if (!isset($_GET['lv_migrer_pam_categories']) || $_GET['lv_migrer_pam_categories'] !== '1') return;
+    if (!current_user_can('manage_options')) wp_die('Accès refusé.');
+    if (get_option('lv_migrer_pam_categories_done')) {
+        wp_die('✅ La migration des catégories PAM a déjà été exécutée. Ajustez la hiérarchie dans WP → Prêt à manger → Catégories si besoin.');
+    }
+
+    $log = [];
+
+    /* Retrouve un terme pam_categorie existant par nom exact, sinon le crée.
+       Si un parent est précisé et diffère du parent actuel, re-parente. */
+    $terme_id = function ($nom, $parent_id = 0) use (&$log) {
+        $existant = term_exists($nom, 'pam_categorie');
+        if ($existant) {
+            $id = is_array($existant) ? (int) $existant['term_id'] : (int) $existant;
+            $terme = get_term($id, 'pam_categorie');
+            if ($parent_id && (int) $terme->parent !== $parent_id) {
+                wp_update_term($id, 'pam_categorie', ['parent' => $parent_id]);
+                $log[] = "↳ « $nom » déplacée sous son nouveau parent";
+            } else {
+                $log[] = "« $nom » déjà existante, inchangée";
+            }
+            return $id;
+        }
+        $res = wp_insert_term($nom, 'pam_categorie', $parent_id ? ['parent' => $parent_id] : []);
+        if (is_wp_error($res)) {
+            $log[] = "❌ Erreur catégorie « $nom » : " . $res->get_error_message();
+            return 0;
+        }
+        $log[] = "✔ « $nom » créée" . ($parent_id ? ' (sous-catégorie)' : ' (catégorie principale)');
+        return (int) $res['term_id'];
+    };
+
+    /* Catégories principales */
+    $id_patisseries   = $terme_id('Pâtisseries');
+    $id_pains         = $terme_id('Pains');
+    $id_pretamanger   = $terme_id('Prêt-à-manger');
+    $id_pates_quiches = $terme_id('Pâtés et Quiches');
+    $terme_id('Sushis');
+    $id_divers        = $terme_id('Divers prêt-à-manger');
+
+    /* Renommer l'ancienne catégorie « Pâtés » en « Pâtés et Quiches » si elle
+       existe encore séparément (évite un doublon) */
+    $ancien_pates = term_exists('Pâtés', 'pam_categorie');
+    if ($ancien_pates) {
+        $id_ancien = is_array($ancien_pates) ? (int) $ancien_pates['term_id'] : (int) $ancien_pates;
+        if ($id_ancien !== $id_pates_quiches) {
+            wp_update_term($id_ancien, 'pam_categorie', ['name' => 'Pâtés et Quiches']);
+            $log[] = "✔ « Pâtés » renommée en « Pâtés et Quiches »";
+        }
+    }
+
+    /* Sous-catégories, rattachées à leur parent ci-dessus */
+    $terme_id('Amaretti', $id_patisseries);
+    $terme_id('Biscuits', $id_patisseries);
+    $terme_id('Cake', $id_patisseries);
+    $terme_id('Tarte', $id_patisseries);
+
+    $terme_id('Focaccias', $id_pains);
+
+    $terme_id('Pizzas', $id_pretamanger);
+    $terme_id('Sandwichs', $id_pretamanger);
+    $terme_id('Salades', $id_pretamanger);
+
+    $terme_id('Sauces', $id_divers);
+
+    update_option('lv_migrer_pam_categories_done', true);
+
+    echo '<style>body{font-family:monospace;padding:2rem;background:#f9f5f0;}
+          h1{color:#b85c50;} li{margin:.3rem 0;} .ok{color:#4d6040;} .err{color:#c00;}</style>';
+    echo '<h1>🥗 Le Vivier — Migration catégories PAM (2 niveaux)</h1>';
+    echo '<ul>';
+    foreach ($log as $ligne) {
+        $class = str_contains($ligne, '❌') ? 'err' : 'ok';
+        echo '<li class="' . $class . '">' . esc_html($ligne) . '</li>';
+    }
+    echo '</ul>';
+    echo '<p><strong>⚠ Cette migration ne déplace aucun produit</strong>, elle crée seulement la structure de catégories. Va dans WP → Prêt à manger → Catégories pour vérifier la hiérarchie (au cas où un nom en ligne diffère légèrement, ex: « Focaccia Maison » créerait un doublon à fusionner avec « Focaccias »), puis réassigne chaque produit à la bonne sous-catégorie si besoin.</p>';
+    echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#b85c50;">← Retour au tableau de bord</a></p>';
+    exit;
+});
+
+/**
+ * Ajustements catégories PAM (demande de Philippe, 17 juillet) :
+ *  - Nouvelle catégorie principale « Mets préparé »
+ *  - Fusion de l'ancienne catégorie « Amarettis » (à plat) vers la
+ *    sous-catégorie « Amaretti » (sous Pâtisseries) : déplace les produits,
+ *    ne supprime PAS le terme « Amarettis » (vérifier puis supprimer à la
+ *    main dans WP une fois confirmé vide).
+ * Déclencher UNE SEULE FOIS : /wp-admin/?lv_ajuster_pam_categories=1
+ */
+add_action('admin_init', function () {
+
+    if (!isset($_GET['lv_ajuster_pam_categories']) || $_GET['lv_ajuster_pam_categories'] !== '1') return;
+    if (!current_user_can('manage_options')) wp_die('Accès refusé.');
+    if (get_option('lv_ajuster_pam_categories_done')) {
+        wp_die('✅ Cet ajustement a déjà été exécuté.');
+    }
+
+    $log = [];
+
+    /* 1. Nouvelle catégorie principale « Mets préparé » */
+    $existant = term_exists('Mets préparé', 'pam_categorie');
+    if (!$existant) {
+        $res = wp_insert_term('Mets préparé', 'pam_categorie');
+        if (is_wp_error($res)) {
+            $log[] = "❌ Erreur catégorie « Mets préparé » : " . $res->get_error_message();
+        } else {
+            $log[] = "✔ « Mets préparé » créée";
+        }
+    } else {
+        $log[] = "« Mets préparé » déjà existante, inchangée";
+    }
+
+    /* 2. Fusionner « Amarettis » (ancienne catégorie à plat) dans
+       « Amaretti » (sous-catégorie de Pâtisseries) */
+    $ancien  = term_exists('Amarettis', 'pam_categorie');
+    $nouveau = term_exists('Amaretti', 'pam_categorie');
+    if ($ancien && $nouveau) {
+        $ancien_id  = is_array($ancien)  ? (int) $ancien['term_id']  : (int) $ancien;
+        $nouveau_id = is_array($nouveau) ? (int) $nouveau['term_id'] : (int) $nouveau;
+
+        $produits = get_posts([
+            'post_type'      => 'pam_produit',
+            'posts_per_page' => -1,
+            'post_status'    => 'any',
+            'fields'         => 'ids',
+            'tax_query'      => [['taxonomy' => 'pam_categorie', 'field' => 'term_id', 'terms' => $ancien_id]],
+        ]);
+
+        if ($produits) {
+            foreach ($produits as $pid) {
+                wp_set_object_terms($pid, $nouveau_id, 'pam_categorie', true);
+                wp_remove_object_terms($pid, $ancien_id, 'pam_categorie');
+                $log[] = "↳ Produit #$pid déplacé de « Amarettis » vers « Amaretti »";
+            }
+        } else {
+            $log[] = "Aucun produit trouvé dans « Amarettis » (peut-être déjà vide, ou le vrai nom en ligne diffère)";
+        }
+        $log[] = "⚠ Le terme « Amarettis » n'est pas supprimé automatiquement (par prudence). Une fois vérifié qu'il est vide, supprime-le dans WP → Prêt à manger → Catégories.";
+    } else {
+        $log[] = "❌ Terme « Amarettis » ou « Amaretti » introuvable : rien fait, vérifie les noms exacts dans WP → Prêt à manger → Catégories.";
+    }
+
+    update_option('lv_ajuster_pam_categories_done', true);
+
+    echo '<style>body{font-family:monospace;padding:2rem;background:#f9f5f0;}
+          h1{color:#b85c50;} li{margin:.3rem 0;} .ok{color:#4d6040;} .err{color:#c00;}</style>';
+    echo '<h1>🥗 Le Vivier — Ajustements catégories PAM</h1>';
+    echo '<ul>';
+    foreach ($log as $ligne) {
+        $class = str_contains($ligne, '❌') ? 'err' : 'ok';
+        echo '<li class="' . $class . '">' . esc_html($ligne) . '</li>';
+    }
+    echo '</ul>';
+    echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#b85c50;">← Retour au tableau de bord</a></p>';
+    exit;
+});

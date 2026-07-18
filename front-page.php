@@ -8,7 +8,10 @@ $slogan  = get_bloginfo('description') ?: 'Cultivons un avenir durable';
 $titre   = wp_kses(str_replace('durable', '<span class="script">durable</span>', esc_html($slogan)), ['span' => ['class' => []], 'br' => []]);
 $lien_ep = get_page_by_path('epicerie');
 $url_ep  = $lien_ep ? get_permalink($lien_ep) : home_url('/');
-$url_prod = get_post_type_archive_link('producteur') ?: home_url('/');
+$lien_boutique = get_page_by_path('boutique');
+$url_boutique  = $lien_boutique ? get_permalink($lien_boutique) : home_url('/boutique/');
+$lien_pm = get_page_by_path('produits-maison');
+$url_pm  = $lien_pm ? get_permalink($lien_pm) : home_url('/produits-maison/');
 
 /* Champ ACF de la page d'accueil, avec repli si vide ou ACF inactif */
 $acc = function ($cle, $defaut) {
@@ -25,10 +28,10 @@ $acc = function ($cle, $defaut) {
 
         <div class="hero-texte reveal">
             <h1><?php echo $titre; ?></h1>
-            <p><?php echo esc_html($acc('acc_hero_texte', 'Produits locaux, vrac et zéro déchet, choisis avec soin auprès de nos producteurs du Bas-Saint-Laurent.')); ?></p>
             <div class="hero-actions">
                 <a href="<?php echo esc_url($url_ep); ?>" class="btn btn-primaire"><?php echo esc_html($acc('acc_hero_btn1', 'Découvrir l\'épicerie')); ?></a>
-                <a href="<?php echo esc_url($url_prod); ?>" class="btn btn-ligne"><?php echo esc_html($acc('acc_hero_btn2', 'Nos producteurs')); ?></a>
+                <a href="<?php echo esc_url($url_boutique); ?>" class="btn btn-ligne"><?php echo esc_html($acc('acc_hero_btn2', 'Découvrir la Boutique')); ?></a>
+                <a href="<?php echo esc_url($url_pm); ?>" class="btn btn-ligne"><?php echo esc_html($acc('acc_hero_btn3', 'Découvrir nos produits maison')); ?></a>
             </div>
         </div>
 
@@ -71,7 +74,10 @@ $acc = function ($cle, $defaut) {
                     <div aria-hidden="true" style="width:100%;height:100%;min-height:320px;background:var(--sauge-pale)"></div>
                 <?php endif; ?>
             </div>
-            <span class="intro-badge"><?php echo esc_html($acc('acc_intro_badge', '100 % local')); ?></span>
+            <?php $badge_intro = $acc('acc_intro_badge', ''); ?>
+            <?php if ($badge_intro): ?>
+            <span class="intro-badge"><?php echo esc_html($badge_intro); ?></span>
+            <?php endif; ?>
         </div>
     </div>
 </section>

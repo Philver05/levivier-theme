@@ -210,12 +210,11 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 .hero-texte { position: relative; z-index: 3; max-width: 30rem; }
 .hero h1 { font-size: var(--t-h1); margin: 1.1rem 0 1.3rem; color: var(--sauge-fonce); }
 .hero h1 .script { color: var(--terra); font-size: 1.32em; display: inline-block; }
-.hero-texte p { font-size: 1.08rem; max-width: 38ch; margin-bottom: 2rem; }
-.hero-actions { display: flex; flex-wrap: nowrap; gap: .9rem; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: .9rem; }
 
 /* Arches de couleur (façon mural) */
 .arche { position: absolute; border-radius: 50%; z-index: 1; pointer-events: none; }
-.arche-terra { width: 46vw; max-width: 620px; aspect-ratio: 1; background: var(--terra); left: -16vw; bottom: -22vw; opacity: .9; }
+.arche-terra { width: 46vw; max-width: 620px; aspect-ratio: 1; background: var(--terra); left: -16vw; bottom: -22vw; opacity: .3; }
 .arche-olive { width: 30vw; max-width: 420px; aspect-ratio: 1; background: var(--olive); right: -12vw; bottom: -16vw; opacity: .9; }
 .cercle-ocre { position: absolute; width: clamp(250px, 30vw, 400px); aspect-ratio: 1; background: var(--ocre); border-radius: 50%; left: 50%; top: 42%; transform: translate(-50%, -50%); z-index: 1; }
 
@@ -464,13 +463,21 @@ body.interne .entete { background: rgba(249, 245, 240, .95); backdrop-filter: bl
 .nav-principale > a.actif::after { width: 100%; }
 
 /* En-tête de page */
-.page-entete { position: relative; overflow: hidden; background: var(--creme); padding-top: clamp(8rem, 5.5rem + 4vw, 10rem); padding-bottom: clamp(2.5rem, 1.5rem + 3vw, 4rem); text-align: center; }
+.page-entete { position: relative; overflow: hidden; background: var(--creme); padding-top: clamp(6.5rem, 5.5rem + 1.5vw, 7.5rem); padding-bottom: clamp(2.5rem, 1.5rem + 3vw, 4rem); text-align: center; }
 .page-entete .conteneur { position: relative; z-index: 1; }
 .page-entete .eyebrow { display: block; margin-bottom: .8rem; }
 @media (min-width: 768px) { .page-entete .eyebrow { white-space: nowrap; letter-spacing: .18em; } }
 .page-entete h1 { font-size: var(--t-h1); color: var(--sauge-fonce); margin-bottom: .9rem; }
 .page-entete h1 .script { color: var(--terra); font-size: 1.25em; }
+/* Titre en Professor pour Épicerie / Boutique / Produits Maison / Épicerie Africaine,
+   demandé par Marie (7 juillet) : la police n'est plus exclusive à la sous-marque Lofts. */
+.page-entete h1.page-entete-titre-script { font-family: var(--f-script); font-weight: 400; }
 .page-entete > .conteneur > p { max-width: 85%; margin: 0 auto; color: var(--texte-corps); }
+
+/* Bons de commande : espace resserré sous l'intro, la section suivante enchaîne tout de suite */
+.page-template-template-bon-pam .page-entete,
+.page-template-template-bon-pm .page-entete,
+.page-template-template-bon-vrac .page-entete { padding-bottom: 1rem; }
 
 /* Fil d'Ariane */
 .fil { margin-bottom: 1.3rem; }
@@ -998,7 +1005,7 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
 
 /* Page Commander : cartes « bon de commande » */
 /* Pleine largeur du conteneur (ancien plafond 880px = vide sur les côtés) */
-.cmd-grille { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(1.2rem, .8rem + 1.5vw, 2rem); }
+.cmd-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.2rem, .8rem + 1.5vw, 2rem); }
 .cmd-carte { background: var(--blanc); border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre-douce); display: flex; flex-direction: column; transition: transform var(--transi), box-shadow var(--transi); }
 .cmd-carte:hover { transform: translateY(-6px); box-shadow: var(--ombre); }
 .cmd-carte-haut { aspect-ratio: 16 / 9; background: var(--sauge-pale); display: grid; place-items: center; position: relative; overflow: hidden; }
@@ -1027,6 +1034,7 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
 .cta-panel .btn-contour { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.5); }
 .cta-panel .btn-contour:hover { background: rgba(255,255,255,.12); border-color: #fff; }
 
+@media (max-width: 1080px) { .cmd-grille { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 860px) { .etapes { grid-template-columns: repeat(2, 1fr); } .cmd-grille { grid-template-columns: 1fr; max-width: 460px; } }
 @media (max-width: 520px) { .etapes { grid-template-columns: 1fr; } }
 
@@ -1740,7 +1748,7 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
 .pam-bloc-coordonnees {
   background: var(--creme);
   border-radius: var(--rayon);
-  padding: clamp(1.5rem, 4vw, 2.8rem);
+  padding: clamp(1.2rem, 1.5vw, 1.6rem);
 }
 @media (min-width: 1000px) {
   .pam-bloc-coordonnees .pam-grille-form { grid-template-columns: repeat(4, 1fr); }
@@ -1894,14 +1902,35 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
   margin: 0;
 }
 .pam-msg-cta {
-  background: rgba(255, 255, 255, .7);
-  border: 1px solid rgba(77, 96, 64, .18);
-  border-radius: 8px;
-  padding: .75rem 1rem;
-  font-size: .86rem;
-  font-weight: 600;
-  color: var(--texte);
-  line-height: 1.75;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem .7rem;
+  background: var(--terra-pale);
+  color: var(--terra-fonce);
+  border: 1.5px dashed var(--terra);
+  border-radius: 10px;
+  padding: .8rem 1.2rem;
+  font-size: .9rem;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  animation: pam-cta-lueur 2.6s ease-in-out infinite;
+}
+.pam-msg-cta svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  stroke: var(--terra-fonce);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@keyframes pam-cta-lueur {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(184, 92, 80, .3); }
+  50%      { box-shadow: 0 0 0 7px rgba(184, 92, 80, 0); }
 }
 .pam-msg-note {
   background: var(--blanc);
@@ -1959,6 +1988,38 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
   color: var(--blanc);
 }
 .pam-cat-tab[hidden] { display: none; }
+
+/* Sous-onglets (2e niveau, sous une catégorie principale ayant des enfants) */
+.pam-filtre-souscats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-bottom: 1.3rem;
+}
+.pam-filtre-souscats[hidden] { display: none; }
+.pam-souscat-tab {
+  min-height: 36px;
+  padding: .3rem .9rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--bordure);
+  background: var(--blanc);
+  font-family: var(--f-titre);
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--texte-corps);
+  cursor: pointer;
+  transition: background var(--transi), border-color var(--transi), color var(--transi);
+}
+.pam-souscat-tab:hover { border-color: var(--sauge); color: var(--sauge); }
+.pam-souscat-tab--actif {
+  background: var(--sauge);
+  border-color: var(--sauge);
+  color: var(--blanc);
+}
+
+/* Filtre visuel de sous-catégorie : masque sans toucher `hidden` (le total
+   et le récapitulatif ne doivent pas être affectés par ce filtre d'affichage) */
+.pam-produit-item.pam-produit-item--filtre-masque { display: none; }
 
 /* Section catégorie */
 .pam-categorie { margin-bottom: 0; }
@@ -2104,13 +2165,28 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
 
 /* Instructions de commande propres au produit */
 .pam-produit-instructions {
-  font-size: .78rem;
+  display: flex;
+  align-items: flex-start;
+  gap: .4rem;
+  font-size: .8rem;
+  font-weight: 600;
   line-height: 1.45;
-  color: var(--texte-doux);
-  background: var(--creme);
-  border-left: 3px solid var(--sauge-pale);
+  color: var(--terra-fonce);
+  background: var(--terra-pale);
+  border-left: 3px solid var(--terra);
   border-radius: 0 8px 8px 0;
-  padding: .4rem .6rem;
+  padding: .5rem .7rem;
+}
+.pam-produit-instructions svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: .1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 /* Contrôle quantité +/- */
@@ -2383,6 +2459,17 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 /* ======================================================
    VRAC — Bon de commande en vrac
 ====================================================== */
+
+/* Fond distinct + formulaire centré en carte (demande de Marie, 7 juillet) */
+.vrac-form-section { background: var(--sable); }
+.vrac-form-carte {
+  max-width: 1040px;
+  margin-inline: auto;
+  background: var(--blanc);
+  border-radius: var(--rayon-l);
+  box-shadow: var(--ombre);
+  padding: clamp(1.8rem, 1.2rem + 2vw, 3rem);
+}
 
 /* Bandeau escompte */
 .vrac-bandeau-escompte { padding-block: clamp(1.5rem, 2vw, 2.5rem); background: var(--sauge-pale); }

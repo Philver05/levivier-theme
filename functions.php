@@ -546,9 +546,16 @@ add_action('acf/init', function () {
             [
                 'key'           => 'field_acc_hero_btn2',
                 'name'          => 'acc_hero_btn2',
-                'label'         => 'Bouton secondaire',
+                'label'         => 'Bouton secondaire (Boutique)',
                 'type'          => 'text',
-                'default_value' => 'Nos producteurs',
+                'default_value' => 'Découvrir la Boutique',
+            ],
+            [
+                'key'           => 'field_acc_hero_btn3',
+                'name'          => 'acc_hero_btn3',
+                'label'         => 'Bouton tertiaire (Produits Maison)',
+                'type'          => 'text',
+                'default_value' => 'Découvrir nos produits maison',
             ],
             [
                 'key'           => 'field_acc_hero_scroll',
@@ -1252,6 +1259,14 @@ add_action('acf/init', function () {
                 'label' => 'Description courte',
                 'type'  => 'textarea',
                 'rows'  => 2,
+            ],
+            [
+                'key'          => 'field_pam_ingredients',
+                'name'         => 'pam_ingredients',
+                'label'        => 'Ingrédients et allergènes',
+                'type'         => 'textarea',
+                'rows'         => 5,
+                'instructions' => 'Liste complète (copiée de l\'étiquette). Affichée dans un menu déroulant séparé sur la carte, sous la description.',
             ],
             [
                 'key'           => 'field_pam_photo2',

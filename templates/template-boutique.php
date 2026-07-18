@@ -11,8 +11,7 @@ get_header();
 <section class="page-entete">
     <div class="conteneur">
         <?php if (have_posts()): the_post(); ?>
-            <p class="eyebrow">Boutique · Le Vivier</p>
-            <h1><?php the_title(); ?></h1>
+            <h1 class="page-entete-titre-script"><?php the_title(); ?></h1>
             <?php if (get_the_content()): the_content(); else: ?>
                 <p>Des objets beaux et utiles pour un quotidien plus durable : zéro déchet, naturels, et fièrement fabriqués au Québec.</p>
             <?php endif; ?>
