@@ -69,38 +69,6 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
 </div>
 
 <!-- ======================================================
-     LES DÉPARTEMENTS
-====================================================== -->
-<section class="section section-compacte">
-    <div class="conteneur">
-
-        <div class="engagements-grille cols-3">
-            <div class="engagement reveal">
-                <span class="ico" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M5 21c0-7 5-13 14-14-1 9-7 14-14 14Z"/><path d="M5 21c2-5 6-8 10-9"/></svg>
-                </span>
-                <h3><?php echo esc_html($ep('ep_dept1_titre', 'Produits frais')); ?></h3>
-                <p><?php echo esc_html($ep('ep_dept1_texte', 'Fruits et légumes, pains spécialisés, fromages régionaux, viandes, poulet bio et œufs bio.')); ?></p>
-            </div>
-            <div class="engagement reveal reveal-delai-1">
-                <span class="ico" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M7 8h10l-1 11a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2L7 8Z"/><path d="M8 8a4 4 0 0 1 8 0"/></svg>
-                </span>
-                <h3><?php echo esc_html($ep('ep_dept2_titre', 'Produits en vrac')); ?></h3>
-                <p><?php echo esc_html($ep('ep_dept2_texte', 'Aliments secs, noix, légumineuses, farines, huiles, produits ménagers et corporels.')); ?></p>
-            </div>
-            <div class="engagement reveal reveal-delai-2">
-                <span class="ico" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M5 10h14M6 10l1 9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-9"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
-                </span>
-                <h3><?php echo esc_html($ep('ep_dept3_titre', 'Produits transformés')); ?></h3>
-                <p><?php echo esc_html($ep('ep_dept3_texte', 'Pâtisseries, mets cuisinés, tartinades, sauces, condiments et douceurs faits par des artisans de la région.')); ?></p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ======================================================
      NOS PRODUITS
 ====================================================== -->
 <section class="section" id="produits">
@@ -143,6 +111,39 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
             <a href="<?php echo esc_url(get_post_type_archive_link('produit')); ?>" class="btn btn-fantome"><?php echo esc_html($ep('ep_prod_btn', 'Voir tous nos produits')); ?></a>
         </div>
 
+    </div>
+</section>
+
+<!-- ======================================================
+     LES DÉPARTEMENTS — trio à icônes, après le contenu et
+     avant la bande de clôture (demande de Philippe)
+====================================================== -->
+<section class="section section-compacte">
+    <div class="conteneur">
+
+        <div class="engagements-grille cols-3">
+            <div class="engagement reveal">
+                <span class="ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M5 21c0-7 5-13 14-14-1 9-7 14-14 14Z"/><path d="M5 21c2-5 6-8 10-9"/></svg>
+                </span>
+                <h3><?php echo esc_html($ep('ep_dept1_titre', 'Produits frais')); ?></h3>
+                <p><?php echo esc_html($ep('ep_dept1_texte', 'Fruits et légumes, pains spécialisés, fromages régionaux, viandes, poulet bio et œufs bio.')); ?></p>
+            </div>
+            <div class="engagement reveal reveal-delai-1">
+                <span class="ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M7 8h10l-1 11a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2L7 8Z"/><path d="M8 8a4 4 0 0 1 8 0"/></svg>
+                </span>
+                <h3><?php echo esc_html($ep('ep_dept2_titre', 'Produits en vrac')); ?></h3>
+                <p><?php echo esc_html($ep('ep_dept2_texte', 'Aliments secs, noix, légumineuses, farines, huiles, produits ménagers et corporels.')); ?></p>
+            </div>
+            <div class="engagement reveal reveal-delai-2">
+                <span class="ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M5 10h14M6 10l1 9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-9"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+                </span>
+                <h3><?php echo esc_html($ep('ep_dept3_titre', 'Produits transformés')); ?></h3>
+                <p><?php echo esc_html($ep('ep_dept3_texte', 'Pâtisseries, mets cuisinés, tartinades, sauces, condiments et douceurs faits par des artisans de la région.')); ?></p>
+            </div>
+        </div>
     </div>
 </section>
 

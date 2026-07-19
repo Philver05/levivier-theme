@@ -26,37 +26,6 @@ $bout = function ($cle, $defaut = '') {
 </section>
 
 <!-- ======================================================
-     VALEURS — 3 atouts au trait
-====================================================== -->
-<section class="section section-compacte engagements">
-    <div class="conteneur">
-        <div class="engagements-grille cols-3">
-            <div class="engagement reveal">
-                <span class="ico" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 13-6l2 2M20 12a8 8 0 0 1-13 6l-2-2"/><path d="M19 4v4h-4M5 20v-4h4"/></svg>
-                </span>
-                <h3><?php echo esc_html($bout('bout_val1_titre', 'Zéro déchet')); ?></h3>
-                <p><?php echo esc_html($bout('bout_val1_texte', 'Des alternatives durables pour réduire l\'empreinte au quotidien.')); ?></p>
-            </div>
-            <div class="engagement reveal reveal-delai-1">
-                <span class="ico" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M5 21c0-7 5-13 14-14-1 9-7 14-14 14Z"/><path d="M5 21c2-5 6-8 10-9"/></svg>
-                </span>
-                <h3><?php echo esc_html($bout('bout_val2_titre', 'Naturel & Éco')); ?></h3>
-                <p><?php echo esc_html($bout('bout_val2_texte', 'Cosmétiques, produits ménagers et corporels respectueux de l\'environnement.')); ?></p>
-            </div>
-            <div class="engagement reveal reveal-delai-2">
-                <span class="ico" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M12 21s7-6.6 7-12a7 7 0 1 0-14 0c0 5.4 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>
-                </span>
-                <h3><?php echo esc_html($bout('bout_val3_titre', 'Fait au Québec')); ?></h3>
-                <p><?php echo esc_html($bout('bout_val3_texte', 'Des artisans locaux et des produits fabriqués ici, pour consommer autrement.')); ?></p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ======================================================
      ARTICLES BOUTIQUE — sans titre de section (l'en-tête de
      page joue déjà ce rôle) ; filtres seulement s'il existe
      des catégories (un « Tout voir » seul n'apporte rien)
@@ -104,6 +73,38 @@ $bout = function ($cle, $defaut = '') {
             <?php endif; ?>
         </div>
 
+    </div>
+</section>
+
+<!-- ======================================================
+     VALEURS — trio à icônes, après le contenu et avant la
+     bande de clôture (demande de Philippe)
+====================================================== -->
+<section class="section section-compacte engagements">
+    <div class="conteneur">
+        <div class="engagements-grille cols-3">
+            <div class="engagement reveal">
+                <span class="ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 13-6l2 2M20 12a8 8 0 0 1-13 6l-2-2"/><path d="M19 4v4h-4M5 20v-4h4"/></svg>
+                </span>
+                <h3><?php echo esc_html($bout('bout_val1_titre', 'Zéro déchet')); ?></h3>
+                <p><?php echo esc_html($bout('bout_val1_texte', 'Des alternatives durables pour réduire l\'empreinte au quotidien.')); ?></p>
+            </div>
+            <div class="engagement reveal reveal-delai-1">
+                <span class="ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M5 21c0-7 5-13 14-14-1 9-7 14-14 14Z"/><path d="M5 21c2-5 6-8 10-9"/></svg>
+                </span>
+                <h3><?php echo esc_html($bout('bout_val2_titre', 'Naturel & Éco')); ?></h3>
+                <p><?php echo esc_html($bout('bout_val2_texte', 'Cosmétiques, produits ménagers et corporels respectueux de l\'environnement.')); ?></p>
+            </div>
+            <div class="engagement reveal reveal-delai-2">
+                <span class="ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M12 21s7-6.6 7-12a7 7 0 1 0-14 0c0 5.4 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                </span>
+                <h3><?php echo esc_html($bout('bout_val3_titre', 'Fait au Québec')); ?></h3>
+                <p><?php echo esc_html($bout('bout_val3_texte', 'Des artisans locaux et des produits fabriqués ici, pour consommer autrement.')); ?></p>
+            </div>
+        </div>
     </div>
 </section>
 

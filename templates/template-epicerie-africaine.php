@@ -53,8 +53,37 @@ $specialites = [
 </section>
 
 <!-- ======================================================
-     TROIS ATOUTS — trio compact à icônes, même structure
-     que les départements de la page Épicerie (charte épices)
+     SPÉCIALITÉS — 3 cartes (équivalent de « Nos produits »)
+====================================================== -->
+<section class="section produits">
+    <div class="conteneur">
+        <?php /* Pas de titre de section : l'en-tête de page joue déjà ce rôle
+                 (demande de Philippe) */ ?>
+
+        <div class="grille-prod">
+            <?php $i = 0; foreach ($specialites as $spec): $delai = $i ? ' reveal-delai-' . $i : ''; $i++; ?>
+            <article class="carte-prod reveal<?php echo $delai; ?>">
+                <div class="photo">
+                    <?php if ($spec['image']): ?>
+                        <img src="<?php echo esc_url($spec['image']['sizes']['medium_large'] ?? $spec['image']['url']); ?>"
+                             alt="<?php echo esc_attr($spec['image']['alt'] ?: $spec['titre']); ?>">
+                    <?php else: ?>
+                        <div class="carte-vide" aria-hidden="true"></div>
+                    <?php endif; ?>
+                </div>
+                <div class="corps">
+                    <h3><?php echo esc_html($spec['titre']); ?></h3>
+                    <p><?php echo esc_html($spec['texte']); ?></p>
+                </div>
+            </article>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<!-- ======================================================
+     TROIS ATOUTS — trio compact à icônes, après le contenu et
+     avant la bande de clôture (demande de Philippe)
 ====================================================== -->
 <section class="section section-compacte">
     <div class="conteneur">
@@ -80,35 +109,6 @@ $specialites = [
                 <h3><?php echo esc_html(get_field('afr_atout3_titre') ?: 'Conseils & recettes'); ?></h3>
                 <p><?php echo esc_html(get_field('afr_atout3_texte') ?: 'Une équipe qui connaît ses produits et partage volontiers idées et techniques de préparation.'); ?></p>
             </div>
-        </div>
-    </div>
-</section>
-
-<!-- ======================================================
-     SPÉCIALITÉS — 3 cartes (équivalent de « Nos produits »)
-====================================================== -->
-<section class="section produits">
-    <div class="conteneur">
-        <?php /* Pas de titre de section : l'en-tête de page joue déjà ce rôle
-                 (demande de Philippe) */ ?>
-
-        <div class="grille-prod">
-            <?php $i = 0; foreach ($specialites as $spec): $delai = $i ? ' reveal-delai-' . $i : ''; $i++; ?>
-            <article class="carte-prod reveal<?php echo $delai; ?>">
-                <div class="photo">
-                    <?php if ($spec['image']): ?>
-                        <img src="<?php echo esc_url($spec['image']['sizes']['medium_large'] ?? $spec['image']['url']); ?>"
-                             alt="<?php echo esc_attr($spec['image']['alt'] ?: $spec['titre']); ?>">
-                    <?php else: ?>
-                        <div class="carte-vide" aria-hidden="true"></div>
-                    <?php endif; ?>
-                </div>
-                <div class="corps">
-                    <h3><?php echo esc_html($spec['titre']); ?></h3>
-                    <p><?php echo esc_html($spec['texte']); ?></p>
-                </div>
-            </article>
-            <?php endforeach; ?>
         </div>
     </div>
 </section>
