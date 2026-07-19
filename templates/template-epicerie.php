@@ -169,11 +169,13 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
             'order'      => 'ASC',
         ]);
 
-        if ($types_producteur && !is_wp_error($types_producteur)): ?>
-
-        <div class="prod-groupes">
-            <?php foreach ($types_producteur as $type):
-
+        /* Échantillon équilibré plutôt que l'annuaire complet (demande de
+           Philippe) : les 3 familles les plus fournies, max 4 noms chacune,
+           une rangée de cartes égales. Le bouton « Voir tous nos
+           producteurs » donne accès au reste. */
+        $groupes_prod = [];
+        if ($types_producteur && !is_wp_error($types_producteur)) {
+            foreach ($types_producteur as $type) {
                 $producteurs_type = new WP_Query([
                     'post_type'      => 'producteur',
                     'post_status'    => 'publish',
@@ -186,13 +188,27 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
                         'terms'    => $type->term_id,
                     ]],
                 ]);
-
                 if (!$producteurs_type->have_posts()) continue;
-            ?>
+                $groupes_prod[] = [
+                    'type'  => $type,
+                    'query' => $producteurs_type,
+                    'total' => (int) $producteurs_type->post_count,
+                ];
+            }
+            usort($groupes_prod, function ($a, $b) {
+                return $b['total'] <=> $a['total'];
+            });
+            $groupes_prod = array_slice($groupes_prod, 0, 3);
+        }
+
+        if ($groupes_prod): ?>
+
+        <div class="prod-groupes">
+            <?php foreach ($groupes_prod as $groupe): $affiches = 0; ?>
                 <div class="prod-groupe reveal">
-                    <h3 class="prod-groupe-titre"><?php echo esc_html($type->name); ?></h3>
+                    <h3 class="prod-groupe-titre"><?php echo esc_html($groupe['type']->name); ?></h3>
                     <ul class="prod-liste">
-                        <?php while ($producteurs_type->have_posts()): $producteurs_type->the_post();
+                        <?php while ($groupe['query']->have_posts() && $affiches < 4): $groupe['query']->the_post(); $affiches++;
                             $region = get_field('producteur_region');
                         ?>
                             <li>
@@ -205,8 +221,12 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
                             </li>
                         <?php endwhile; wp_reset_postdata(); ?>
                     </ul>
+                    <?php if ($groupe['total'] > 4): $reste = (int) ($groupe['total'] - 4); ?>
+                        <a class="prod-groupe-plus" href="<?php echo esc_url(get_post_type_archive_link('producteur')); ?>">
+                            + <?php echo $reste; ?> <?php echo $reste > 1 ? 'autres' : 'autre'; ?> à découvrir
+                        </a>
+                    <?php endif; ?>
                 </div>
-
             <?php endforeach; ?>
         </div>
 

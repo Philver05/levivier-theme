@@ -1140,9 +1140,12 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
 /* Carte boutique : marque sous le titre */
 .carte-marque { font-size: .82rem; color: var(--texte-doux); margin-top: .15rem; }
 
-/* Producteurs groupés par type (page Épicerie) */
-.prod-groupes { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 2rem); }
-.prod-groupe { background: var(--blanc); border-radius: var(--rayon); padding: 1.5rem 1.6rem; box-shadow: var(--ombre-douce); }
+/* Producteurs groupés par type (page Épicerie) — échantillon : 3 cartes
+   égales, max 4 noms, lien « + N autres » ancré au bas de la carte */
+.prod-groupes { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 2rem); align-items: stretch; }
+.prod-groupe { background: var(--blanc); border-radius: var(--rayon); padding: 1.5rem 1.6rem; box-shadow: var(--ombre-douce); display: flex; flex-direction: column; }
+.prod-groupe-plus { margin-top: auto; padding-top: .9rem; font-size: .85rem; font-weight: 600; color: var(--sauge); transition: color var(--transi); }
+.prod-groupe-plus:hover { color: var(--terra-fonce); text-decoration: underline; text-underline-offset: 3px; }
 .prod-groupe-titre { color: var(--sauge); font-size: 1.05rem; letter-spacing: .02em; margin-bottom: 1rem; padding-bottom: .7rem; border-bottom: 1px solid var(--bordure); }
 .prod-liste li { padding: .4rem 0; }
 .prod-liste li + li { border-top: 1px solid var(--sable); }
