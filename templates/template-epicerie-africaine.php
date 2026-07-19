@@ -52,6 +52,77 @@ $specialites = [
     </div>
 </section>
 
+<?php
+/* ----------------------------------------------------------
+   PRODUITS AFRICAINS (dormant) : dès qu'une catégorie parente
+   « Épicerie africaine » (slug epicerie-africaine) existe dans
+   les catégories de produits et contient des produits, la page
+   gagne la même bande de filtres que Produits Maison + une
+   grille de produits filtrable. Rien à recoder ce jour-là :
+   Marie crée la catégorie, ses sous-catégories et les produits.
+---------------------------------------------------------- */
+$afr_parent = get_term_by('slug', 'epicerie-africaine', 'categorie_produit');
+if (!$afr_parent || is_wp_error($afr_parent)) {
+    $afr_parent = get_term_by('name', 'Épicerie africaine', 'categorie_produit');
+}
+$afr_produits = null;
+$afr_cats     = [];
+if ($afr_parent && !is_wp_error($afr_parent)) {
+    $afr_produits = new WP_Query([
+        'post_type'      => 'produit',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+        'tax_query'      => [[
+            'taxonomy'         => 'categorie_produit',
+            'field'            => 'term_id',
+            'terms'            => $afr_parent->term_id,
+            'include_children' => true,
+        ]],
+    ]);
+    if ($afr_produits->have_posts()) {
+        $afr_cats = get_terms([
+            'taxonomy'   => 'categorie_produit',
+            'parent'     => $afr_parent->term_id,
+            'hide_empty' => true,
+            'orderby'    => 'name',
+            'order'      => 'ASC',
+        ]);
+        if (is_wp_error($afr_cats)) $afr_cats = [];
+    }
+}
+?>
+<?php if ($afr_produits && $afr_produits->have_posts()): ?>
+
+<!-- Bande de filtres (même gabarit que Produits Maison, charte épices via CSS) -->
+<?php if ($afr_cats): ?>
+<div class="pm-filtres-wrap">
+    <div class="conteneur">
+        <nav class="pm-filtres" aria-label="Filtrer par catégorie">
+            <a href="#produits-afr" class="pm-filtre filtre-lien actif" data-cat="tout">Tout voir</a>
+            <?php foreach ($afr_cats as $cat): ?>
+                <a href="#produits-afr" class="pm-filtre filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
+                    <?php echo esc_html($cat->name); ?>
+                </a>
+            <?php endforeach; ?>
+        </nav>
+    </div>
+</div>
+<?php endif; ?>
+
+<!-- Grille des produits africains (id grille-produits = filtre main.js) -->
+<section class="section produits" id="produits-afr">
+    <div class="conteneur">
+        <div class="grille-cartes" id="grille-produits">
+            <?php while ($afr_produits->have_posts()): $afr_produits->the_post();
+                get_template_part('parts/produit', 'card');
+            endwhile; wp_reset_postdata(); ?>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
 <!-- ======================================================
      SPÉCIALITÉS — 3 cartes (équivalent de « Nos produits »)
 ====================================================== -->

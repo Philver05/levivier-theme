@@ -1003,6 +1003,12 @@ body.univers-africaine .engagement h3 { color: var(--afr-rouille); }
 body.univers-africaine .engagement p { color: var(--afr-texte); }
 body.univers-africaine .bande-blanche { background: var(--blanc); border-top: 1px solid #ecdfc8; }
 body.univers-africaine .apropos-split h2 { color: var(--afr-nuit); }
+/* Bande de filtres (dormante tant qu'aucune catégorie « Épicerie africaine »
+   n'existe) : même gabarit que Produits Maison, accents rouille au lieu du
+   vert (aucun vert sur cette page, règle du 7 juillet) */
+body.univers-africaine .pm-filtres-wrap { border-color: #ecdfc8; }
+body.univers-africaine .pm-filtre:hover,
+body.univers-africaine .pm-filtre.actif { background: var(--afr-rouille); border-color: var(--afr-rouille); color: var(--blanc); }
 
 /* ======================================================
    PAGES INTERNES — compléments de migration

@@ -26,31 +26,38 @@ $bout = function ($cle, $defaut = '') {
 </section>
 
 <!-- ======================================================
-     ARTICLES BOUTIQUE — sans titre de section (l'en-tête de
-     page joue déjà ce rôle) ; filtres seulement s'il existe
-     des catégories (un « Tout voir » seul n'apporte rien)
+     FILTRE PAR CATÉGORIE — même bande que Produits Maison,
+     visible seulement s'il existe des catégories boutique
 ====================================================== -->
-<section class="section produits" id="articles">
+<?php
+$categories_boutique = get_terms([
+    'taxonomy'   => 'categorie_boutique',
+    'hide_empty' => false,
+    'orderby'    => 'name',
+    'order'      => 'ASC',
+]);
+?>
+<?php if ($categories_boutique && !is_wp_error($categories_boutique)): ?>
+<div class="pm-filtres-wrap">
     <div class="conteneur">
-
-        <?php
-        $categories_boutique = get_terms([
-            'taxonomy'   => 'categorie_boutique',
-            'hide_empty' => false,
-            'orderby'    => 'name',
-            'order'      => 'ASC',
-        ]);
-        ?>
-        <?php if ($categories_boutique && !is_wp_error($categories_boutique)): ?>
-        <nav class="filtres" aria-label="Filtrer par catégorie">
-            <a href="#" class="filtre filtre-lien actif" data-cat="tout">Tout voir</a>
+        <nav class="pm-filtres" aria-label="Filtrer par catégorie">
+            <a href="#articles" class="pm-filtre filtre-lien actif" data-cat="tout">Tout voir</a>
             <?php foreach ($categories_boutique as $cat): ?>
-                <a href="#" class="filtre filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
+                <a href="#articles" class="pm-filtre filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
                     <?php echo esc_html($cat->name); ?>
                 </a>
             <?php endforeach; ?>
         </nav>
-        <?php endif; ?>
+    </div>
+</div>
+<?php endif; ?>
+
+<!-- ======================================================
+     ARTICLES BOUTIQUE — sans titre de section (l'en-tête de
+     page joue déjà ce rôle)
+====================================================== -->
+<section class="section produits" id="articles">
+    <div class="conteneur">
 
         <!-- Grille articles -->
         <?php
