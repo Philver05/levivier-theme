@@ -980,21 +980,6 @@ add_action('acf/init', function () {
             ['key' => 'field_afr_atout2_texte', 'name' => 'afr_atout2_texte', 'label' => '②b Atout 2 — Texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Des produits secs et frais renouvelés au fil des arrivages, pour cuisiner sans compromis.'],
             ['key' => 'field_afr_atout3_titre', 'name' => 'afr_atout3_titre', 'label' => '②b Atout 3 — Titre', 'type' => 'text', 'default_value' => 'Conseils & recettes'],
             ['key' => 'field_afr_atout3_texte', 'name' => 'afr_atout3_texte', 'label' => '②b Atout 3 — Texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Une équipe qui connaît ses produits et partage volontiers idées et techniques de préparation.'],
-            /* Titre de la section spécialités */
-            [
-                'key'           => 'field_afr_spec_titre_section',
-                'name'          => 'afr_spec_titre_section',
-                'label'         => '③ Spécialités — Titre de la section',
-                'type'          => 'text',
-                'default_value' => 'Nos spécialités',
-            ],
-            [
-                'key'           => 'field_afr_spec_soustitre',
-                'name'          => 'afr_spec_soustitre',
-                'label'         => '③ Spécialités — Sous-titre',
-                'type'          => 'text',
-                'default_value' => 'Un aperçu des trésors culinaires à découvrir en boutique',
-            ],
             /* Spécialité 1 */
             [
                 'key'   => 'field_afr_spec1_titre',
@@ -1859,7 +1844,6 @@ add_action('acf/init', function () {
             ['key' => 'field_bout_pres_titre', 'name' => 'bout_pres_titre', 'label' => 'Titre', 'type' => 'text', 'default_value' => 'La boutique du Vivier'],
             ['key' => 'field_bout_pres_texte', 'name' => 'bout_pres_texte', 'label' => 'Texte de présentation', 'type' => 'textarea', 'rows' => 4, 'instructions' => 'Un paragraphe par ligne vide. Laissez vide pour afficher seulement les photos.'],
             ['key' => 'field_bout_photos', 'name' => 'bout_photos', 'label' => 'Photos de la boutique', 'type' => 'gallery', 'return_format' => 'array', 'preview_size' => 'medium', 'instructions' => 'Téléversez 1 à 5 photos de la boutique (la première devient la grande photo de la mosaïque). La section n\'apparaît que si au moins une photo est présente.'],
-            ['key' => 'field_bout_articles_titre', 'name' => 'bout_articles_titre', 'label' => 'Titre de la section articles', 'type' => 'text', 'default_value' => 'Nos articles'],
             ['key' => 'field_bout_vide_texte', 'name' => 'bout_vide_texte', 'label' => 'Texte quand aucun article', 'type' => 'text', 'default_value' => 'Les articles arrivent bientôt, revenez nous voir !'],
         ],
         'location' => [[['param' => 'page_template', 'operator' => '==', 'value' => 'templates/template-boutique.php']]],
@@ -1879,7 +1863,6 @@ add_action('acf/init', function () {
             ['key' => 'field_ep_dept3_titre', 'name' => 'ep_dept3_titre', 'label' => 'Département 3 — titre', 'type' => 'text', 'default_value' => 'Produits transformés'],
             ['key' => 'field_ep_dept3_texte', 'name' => 'ep_dept3_texte', 'label' => 'Département 3 — texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Pâtisseries, mets cuisinés, tartinades, sauces, condiments et douceurs faits par des artisans de la région.'],
             ['key' => 'field_ep_tab_sections', 'type' => 'tab', 'label' => 'Titres de sections'],
-            ['key' => 'field_ep_prod_titre', 'name' => 'ep_prod_titre', 'label' => 'Titre de la section produits', 'type' => 'text', 'default_value' => 'Nos produits'],
             ['key' => 'field_ep_part_surtitre', 'name' => 'ep_part_surtitre', 'label' => 'Surtitre partenaires (script)', 'type' => 'text', 'default_value' => 'Nos partenaires'],
             ['key' => 'field_ep_part_titre', 'name' => 'ep_part_titre', 'label' => 'Titre partenaires', 'type' => 'text', 'default_value' => 'Nos Producteurs & Transformateurs'],
             ['key' => 'field_ep_part_texte', 'name' => 'ep_part_texte', 'label' => 'Texte partenaires', 'type' => 'textarea', 'rows' => 3, 'default_value' => 'Chaque produit est choisi avec soin pour soutenir les producteurs d\'ici et encourager une consommation consciente et respectueuse de l\'environnement. Ensemble, soutenons les producteurs et transformateurs de la région !'],

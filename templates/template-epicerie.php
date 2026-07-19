@@ -106,9 +106,8 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
 <section class="section" id="produits">
     <div class="conteneur">
 
-        <div class="section-titre">
-            <h2><?php echo esc_html($ep('ep_prod_titre', 'Nos produits')); ?></h2>
-        </div>
+        <?php /* Pas de titre de section : l'en-tête de page et la bande de
+                 filtres disent déjà où on est (demande de Philippe) */ ?>
 
         <!-- Grille produits (les produits maison sont présentés sur leur page dédiée) -->
         <?php

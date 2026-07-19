@@ -57,9 +57,60 @@ $bout = function ($cle, $defaut = '') {
 </section>
 
 <!-- ======================================================
-     LA BOUTIQUE EN PHOTOS — présentation + mosaïque
-     (photos téléversées par Marie dans la page Boutique;
-      la section n'apparaît que si photos ou texte présents)
+     ARTICLES BOUTIQUE — sans titre de section (l'en-tête de
+     page joue déjà ce rôle) ; filtres seulement s'il existe
+     des catégories (un « Tout voir » seul n'apporte rien)
+====================================================== -->
+<section class="section produits" id="articles">
+    <div class="conteneur">
+
+        <?php
+        $categories_boutique = get_terms([
+            'taxonomy'   => 'categorie_boutique',
+            'hide_empty' => false,
+            'orderby'    => 'name',
+            'order'      => 'ASC',
+        ]);
+        ?>
+        <?php if ($categories_boutique && !is_wp_error($categories_boutique)): ?>
+        <nav class="filtres" aria-label="Filtrer par catégorie">
+            <a href="#" class="filtre filtre-lien actif" data-cat="tout">Tout voir</a>
+            <?php foreach ($categories_boutique as $cat): ?>
+                <a href="#" class="filtre filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
+                    <?php echo esc_html($cat->name); ?>
+                </a>
+            <?php endforeach; ?>
+        </nav>
+        <?php endif; ?>
+
+        <!-- Grille articles -->
+        <?php
+        $articles = new WP_Query([
+            'post_type'      => 'article_boutique',
+            'post_status'    => 'publish',
+            'posts_per_page' => -1,
+            'orderby'        => 'title',
+            'order'          => 'ASC',
+        ]);
+        ?>
+        <div class="grille-cartes" id="grille-boutique">
+            <?php if ($articles->have_posts()):
+                while ($articles->have_posts()): $articles->the_post();
+                    get_template_part('parts/boutique', 'card');
+                endwhile;
+                wp_reset_postdata();
+            else: ?>
+                <p class="grille-vide"><?php echo esc_html($bout('bout_vide_texte', 'Les articles arrivent bientôt, revenez nous voir !')); ?></p>
+            <?php endif; ?>
+        </div>
+
+    </div>
+</section>
+
+<!-- ======================================================
+     LA BOUTIQUE EN PHOTOS — bande de présentation juste
+     avant le pied de page (demande de Philippe) ; n'apparaît
+     que si photos ou texte présents
 ====================================================== -->
 <?php
 $pres_photos = $bout('bout_photos', []);
@@ -103,58 +154,5 @@ if ($pres_photos || $pres_texte !== ''):
     </div>
 </section>
 <?php endif; ?>
-
-<!-- ======================================================
-     ARTICLES BOUTIQUE
-====================================================== -->
-<section class="section produits" id="articles">
-    <div class="conteneur">
-
-        <div class="section-titre">
-            <h2><?php echo esc_html($bout('bout_articles_titre', 'Nos articles')); ?></h2>
-        </div>
-
-        <!-- Filtres par catégorie boutique -->
-        <?php
-        $categories_boutique = get_terms([
-            'taxonomy'   => 'categorie_boutique',
-            'hide_empty' => false,
-            'orderby'    => 'name',
-            'order'      => 'ASC',
-        ]);
-        ?>
-        <nav class="filtres" aria-label="Filtrer par catégorie">
-            <a href="#" class="filtre filtre-lien actif" data-cat="tout">Tout voir</a>
-            <?php if ($categories_boutique && !is_wp_error($categories_boutique)):
-                foreach ($categories_boutique as $cat): ?>
-                    <a href="#" class="filtre filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
-                        <?php echo esc_html($cat->name); ?>
-                    </a>
-            <?php endforeach; endif; ?>
-        </nav>
-
-        <!-- Grille articles -->
-        <?php
-        $articles = new WP_Query([
-            'post_type'      => 'article_boutique',
-            'post_status'    => 'publish',
-            'posts_per_page' => -1,
-            'orderby'        => 'title',
-            'order'          => 'ASC',
-        ]);
-        ?>
-        <div class="grille-cartes" id="grille-boutique">
-            <?php if ($articles->have_posts()):
-                while ($articles->have_posts()): $articles->the_post();
-                    get_template_part('parts/boutique', 'card');
-                endwhile;
-                wp_reset_postdata();
-            else: ?>
-                <p class="grille-vide"><?php echo esc_html($bout('bout_vide_texte', 'Les articles arrivent bientôt, revenez nous voir !')); ?></p>
-            <?php endif; ?>
-        </div>
-
-    </div>
-</section>
 
 <?php get_footer(); ?>

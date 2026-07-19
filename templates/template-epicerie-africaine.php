@@ -89,10 +89,8 @@ $specialites = [
 ====================================================== -->
 <section class="section produits">
     <div class="conteneur">
-        <div class="section-titre">
-            <h2><?php echo esc_html(get_field('afr_spec_titre_section') ?: 'Nos spécialités'); ?></h2>
-            <p><?php echo esc_html(get_field('afr_spec_soustitre') ?: 'Un aperçu des trésors culinaires à découvrir en boutique'); ?></p>
-        </div>
+        <?php /* Pas de titre de section : l'en-tête de page joue déjà ce rôle
+                 (demande de Philippe) */ ?>
 
         <div class="grille-prod">
             <?php $i = 0; foreach ($specialites as $spec): $delai = $i ? ' reveal-delai-' . $i : ''; $i++; ?>
