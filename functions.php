@@ -7,6 +7,7 @@ require_once 'includes/image-optim.php';
 require_once 'includes/pam-ajax.php';
 require_once 'includes/vrac-ajax.php';
 require_once 'includes/pm-ajax.php';
+require_once 'includes/contact-ajax.php';
 
 /* Avertit dans l'admin si ACF n'est pas actif (sinon aucun champ éditable n'apparaît) */
 add_action('admin_notices', function () {
@@ -100,6 +101,35 @@ add_action('wp_enqueue_scripts', function () {
             'escomptes' => lv_vrac_escomptes_globaux(),
         ]);
     }
+
+    /* Formulaire de contact : sur le gabarit Contact OU sur la page
+       contactez-nous (couverte par l'aiguillage lv_gabarit_contact). */
+    if (is_page_template('templates/template-contact.php') || is_page('contactez-nous')) {
+        $path = get_stylesheet_directory() . '/assets/scripts/contact-form.js';
+        wp_enqueue_script(
+            'contact-form',
+            get_stylesheet_directory_uri() . '/assets/scripts/contact-form.js',
+            [],
+            file_exists($path) ? filemtime($path) : null,
+            ['strategy' => 'defer', 'in_footer' => true]
+        );
+        wp_localize_script('contact-form', 'CT', [
+            'ajax'  => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('ct_contact'),
+        ]);
+    }
+});
+
+/* La page Contactez-nous utilise encore le gabarit « À propos » dans WP.
+   Tant que Philippe/Marie n'a pas assigné le gabarit « Contact » dans
+   l'éditeur, on l'applique ici : la page bascule immédiatement sur le
+   nouveau design sans action dans wp-admin. */
+add_filter('template_include', function ($template) {
+    if (is_page('contactez-nous') && !is_page_template('templates/template-contact.php')) {
+        $contact = locate_template('templates/template-contact.php');
+        if ($contact) return $contact;
+    }
+    return $template;
 });
 
 /* Suggestions de recherche en direct (AJAX) */
@@ -1675,12 +1705,142 @@ add_action('acf/init', function () {
                 'default_value' => '(418) 562-5230',
                 'instructions'  => 'Numéro affiché sur le site (boutons d\'appel, bandes CTA...).',
             ],
+            [
+                'key'           => 'field_opt_courriel',
+                'name'          => 'opt_courriel',
+                'label'         => 'Courriel',
+                'type'          => 'email',
+                'default_value' => 'epicerie@levivier.net',
+                'instructions'  => 'Adresse affichée sur le site ET destinataire du formulaire Contactez-nous.',
+            ],
+            [
+                'key'           => 'field_opt_adresse',
+                'name'          => 'opt_adresse',
+                'label'         => 'Adresse',
+                'type'          => 'textarea',
+                'rows'          => 2,
+                'default_value' => "14 Avenue D'Amours\nMatane, QC G4W 2X4",
+                'instructions'  => 'Une ligne par ligne d\'adresse (pied de page + page Contactez-nous).',
+            ],
+            [
+                'key'           => 'field_opt_horaire_semaine',
+                'name'          => 'opt_horaire_semaine',
+                'label'         => 'Horaire lundi-vendredi',
+                'type'          => 'text',
+                'default_value' => '8 h 30 - 18 h',
+            ],
+            [
+                'key'           => 'field_opt_horaire_samedi',
+                'name'          => 'opt_horaire_samedi',
+                'label'         => 'Horaire samedi',
+                'type'          => 'text',
+                'default_value' => '9 h - 17 h',
+            ],
+            [
+                'key'           => 'field_opt_horaire_dimanche',
+                'name'          => 'opt_horaire_dimanche',
+                'label'         => 'Horaire dimanche',
+                'type'          => 'text',
+                'default_value' => '10 h - 17 h',
+            ],
+            [
+                'key'           => 'field_opt_facebook',
+                'name'          => 'opt_facebook',
+                'label'         => 'Lien Facebook',
+                'type'          => 'url',
+                'default_value' => 'https://facebook.com/epicerielevivier/',
+            ],
+            [
+                'key'           => 'field_opt_pied_slogan',
+                'name'          => 'opt_pied_slogan',
+                'label'         => 'Phrase du pied de page',
+                'type'          => 'text',
+                'default_value' => 'Produits locaux, frais et durables, à Matane.',
+                'instructions'  => 'Courte phrase sous le logo dans le pied de page.',
+            ],
         ],
         'location' => [[[
             'param'    => 'options_page',
             'operator' => '==',
             'value'    => 'lv-reglages',
         ]]],
+    ]);
+
+    /* Page Contactez-nous : textes éditables du gabarit Contact */
+    acf_add_local_field_group([
+        'key'    => 'group_page_contact',
+        'title'  => 'Contenu de la page Contact',
+        'fields' => [
+            ['key' => 'field_ct_surtitre', 'name' => 'ct_surtitre', 'label' => 'Surtitre (au-dessus du titre)', 'type' => 'text', 'default_value' => 'On vous écoute · Le Vivier'],
+            ['key' => 'field_ct_intro', 'name' => 'ct_intro', 'label' => 'Texte d\'introduction', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Une question, une commande spéciale ou simplement l\'envie de nous dire bonjour ? Écrivez-nous ou passez nous voir, on vous répond rapidement.', 'instructions' => 'Utilisé si le contenu de la page est vide.'],
+            ['key' => 'field_ct_coord_titre', 'name' => 'ct_coord_titre', 'label' => 'Titre du bloc coordonnées', 'type' => 'text', 'default_value' => 'Venez nous voir'],
+            ['key' => 'field_ct_form_titre', 'name' => 'ct_form_titre', 'label' => 'Titre du formulaire', 'type' => 'text', 'default_value' => 'Écrivez-nous'],
+            ['key' => 'field_ct_form_texte', 'name' => 'ct_form_texte', 'label' => 'Texte sous le titre du formulaire', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Remplissez le formulaire et nous vous répondrons dans les plus brefs délais.'],
+        ],
+        'location' => [
+            [['param' => 'page_template', 'operator' => '==', 'value' => 'templates/template-contact.php']],
+            [['param' => 'page', 'operator' => '==', 'value' => 432]], /* page Contactez-nous actuelle (gabarit pas encore réassigné dans WP) */
+        ],
+        'menu_order' => 0,
+    ]);
+
+    /* Page Boutique : valeurs + section présentation/photos éditables */
+    acf_add_local_field_group([
+        'key'    => 'group_page_boutique',
+        'title'  => 'Contenu de la page Boutique',
+        'fields' => [
+            ['key' => 'field_bout_tab_valeurs', 'type' => 'tab', 'label' => 'Trois valeurs'],
+            ['key' => 'field_bout_val1_titre', 'name' => 'bout_val1_titre', 'label' => 'Valeur 1 — titre', 'type' => 'text', 'default_value' => 'Zéro déchet'],
+            ['key' => 'field_bout_val1_texte', 'name' => 'bout_val1_texte', 'label' => 'Valeur 1 — texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Des alternatives durables pour réduire l\'empreinte au quotidien.'],
+            ['key' => 'field_bout_val2_titre', 'name' => 'bout_val2_titre', 'label' => 'Valeur 2 — titre', 'type' => 'text', 'default_value' => 'Naturel & Éco'],
+            ['key' => 'field_bout_val2_texte', 'name' => 'bout_val2_texte', 'label' => 'Valeur 2 — texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Cosmétiques, produits ménagers et corporels respectueux de l\'environnement.'],
+            ['key' => 'field_bout_val3_titre', 'name' => 'bout_val3_titre', 'label' => 'Valeur 3 — titre', 'type' => 'text', 'default_value' => 'Fait au Québec'],
+            ['key' => 'field_bout_val3_texte', 'name' => 'bout_val3_texte', 'label' => 'Valeur 3 — texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Des artisans locaux et des produits fabriqués ici, pour consommer autrement.'],
+            ['key' => 'field_bout_tab_photos', 'type' => 'tab', 'label' => 'La boutique en photos'],
+            ['key' => 'field_bout_pres_surtitre', 'name' => 'bout_pres_surtitre', 'label' => 'Surtitre', 'type' => 'text', 'default_value' => 'Sur place à Matane'],
+            ['key' => 'field_bout_pres_titre', 'name' => 'bout_pres_titre', 'label' => 'Titre', 'type' => 'text', 'default_value' => 'La boutique du Vivier'],
+            ['key' => 'field_bout_pres_texte', 'name' => 'bout_pres_texte', 'label' => 'Texte de présentation', 'type' => 'textarea', 'rows' => 4, 'instructions' => 'Un paragraphe par ligne vide. Laissez vide pour afficher seulement les photos.'],
+            ['key' => 'field_bout_photos', 'name' => 'bout_photos', 'label' => 'Photos de la boutique', 'type' => 'gallery', 'return_format' => 'array', 'preview_size' => 'medium', 'instructions' => 'Téléversez 1 à 5 photos de la boutique (la première devient la grande photo de la mosaïque). La section n\'apparaît que si au moins une photo est présente.'],
+            ['key' => 'field_bout_articles_titre', 'name' => 'bout_articles_titre', 'label' => 'Titre de la section articles', 'type' => 'text', 'default_value' => 'Nos articles'],
+        ],
+        'location' => [[['param' => 'page_template', 'operator' => '==', 'value' => 'templates/template-boutique.php']]],
+        'menu_order' => 0,
+    ]);
+
+    /* Page Épicerie : départements + section partenaires éditables */
+    acf_add_local_field_group([
+        'key'    => 'group_page_epicerie',
+        'title'  => 'Contenu de la page Épicerie',
+        'fields' => [
+            ['key' => 'field_ep_tab_depts', 'type' => 'tab', 'label' => 'Trois départements'],
+            ['key' => 'field_ep_dept1_titre', 'name' => 'ep_dept1_titre', 'label' => 'Département 1 — titre', 'type' => 'text', 'default_value' => 'Produits frais'],
+            ['key' => 'field_ep_dept1_texte', 'name' => 'ep_dept1_texte', 'label' => 'Département 1 — texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Fruits et légumes, pains spécialisés, fromages régionaux, viandes, poulet bio et œufs bio.'],
+            ['key' => 'field_ep_dept2_titre', 'name' => 'ep_dept2_titre', 'label' => 'Département 2 — titre', 'type' => 'text', 'default_value' => 'Produits en vrac'],
+            ['key' => 'field_ep_dept2_texte', 'name' => 'ep_dept2_texte', 'label' => 'Département 2 — texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Aliments secs, noix, légumineuses, farines, huiles, produits ménagers et corporels.'],
+            ['key' => 'field_ep_dept3_titre', 'name' => 'ep_dept3_titre', 'label' => 'Département 3 — titre', 'type' => 'text', 'default_value' => 'Produits transformés'],
+            ['key' => 'field_ep_dept3_texte', 'name' => 'ep_dept3_texte', 'label' => 'Département 3 — texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Pâtisseries, mets cuisinés, tartinades, sauces, condiments et douceurs faits par des artisans de la région.'],
+            ['key' => 'field_ep_tab_sections', 'type' => 'tab', 'label' => 'Titres de sections'],
+            ['key' => 'field_ep_prod_titre', 'name' => 'ep_prod_titre', 'label' => 'Titre de la section produits', 'type' => 'text', 'default_value' => 'Nos produits'],
+            ['key' => 'field_ep_part_surtitre', 'name' => 'ep_part_surtitre', 'label' => 'Surtitre partenaires (script)', 'type' => 'text', 'default_value' => 'Nos partenaires'],
+            ['key' => 'field_ep_part_titre', 'name' => 'ep_part_titre', 'label' => 'Titre partenaires', 'type' => 'text', 'default_value' => 'Nos Producteurs & Transformateurs'],
+            ['key' => 'field_ep_part_texte', 'name' => 'ep_part_texte', 'label' => 'Texte partenaires', 'type' => 'textarea', 'rows' => 3, 'default_value' => 'Chaque produit est choisi avec soin pour soutenir les producteurs d\'ici et encourager une consommation consciente et respectueuse de l\'environnement. Ensemble, soutenons les producteurs et transformateurs de la région !'],
+        ],
+        'location' => [[['param' => 'page_template', 'operator' => '==', 'value' => 'templates/template-epicerie.php']]],
+        'menu_order' => 0,
+    ]);
+
+    /* Pages À propos / Contactez-nous (gabarit À propos) : surtitre éditable */
+    acf_add_local_field_group([
+        'key'    => 'group_page_apropos',
+        'title'  => 'Contenu de la page (gabarit À propos)',
+        'fields' => [
+            ['key' => 'field_apr_surtitre', 'name' => 'apr_surtitre', 'label' => 'Surtitre (au-dessus du titre)', 'type' => 'text', 'default_value' => 'Notre histoire · Le Vivier'],
+            ['key' => 'field_apr_visite_titre', 'name' => 'apr_visite_titre', 'label' => 'Titre du bloc coordonnées', 'type' => 'text', 'default_value' => 'Venez nous voir'],
+            ['key' => 'field_apr_form_titre', 'name' => 'apr_form_titre', 'label' => 'Titre du formulaire', 'type' => 'text', 'default_value' => 'Écrivez-nous'],
+            ['key' => 'field_apr_form_texte', 'name' => 'apr_form_texte', 'label' => 'Texte sous le titre du formulaire', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Une question, une commande spéciale ou l\'envie de nous dire bonjour ? On vous répond rapidement.'],
+        ],
+        'location' => [[['param' => 'page_template', 'operator' => '==', 'value' => 'templates/template-apropos.php']]],
+        'menu_order' => 0,
     ]);
 });
 

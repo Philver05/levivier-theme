@@ -108,12 +108,20 @@ h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 
 
 /* ----------------------------------------------------------------- LAYOUT */
 .conteneur { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: var(--gouttiere); }
-.section { padding-block: clamp(3.5rem, 2rem + 6vw, 7rem); }
-.section-titre { text-align: center; max-width: 640px; margin: 0 auto clamp(2rem, 1rem + 3vw, 3.5rem); }
+/* Rythme vertical resserré (18 juillet) : l'ancien clamp montait à 7rem par
+   section, soit jusqu'à 14rem de vide entre deux contenus. Aligné sur la
+   densité du bon Prêt à manger : on accède au contenu sans scroller pour rien. */
+.section { padding-block: clamp(2.25rem, 1.5rem + 2.2vw, 4rem); }
+.section-titre { text-align: center; max-width: 640px; margin: 0 auto clamp(1.5rem, 1rem + 1.5vw, 2.25rem); }
 .section-titre--large { max-width: 900px; }
 .section-titre--large h2 { text-wrap: balance; }
 .section-titre h2 { font-size: var(--t-h2); margin-bottom: .6rem; }
-.section-titre p { color: var(--texte-doux); }
+/* texte-corps plutôt que texte-doux : le gris doux ne passait pas le
+   contraste WCAG AA (3.1:1) sur fond crème pour du texte courant */
+.section-titre p { color: var(--texte-corps); }
+/* La règle ci-dessus (plus spécifique que .eyebrow) écrasait aussi le
+   terracotta des surtitres placés dans un titre de section */
+.section-titre .eyebrow { color: var(--terra-fonce); }
 
 /* ---------------------------------------------------------------- BOUTONS */
 .btn {
@@ -137,13 +145,16 @@ h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 
 .entete {
   position: fixed; inset: 0 0 auto 0; z-index: 50;
   transition: background var(--transi), box-shadow var(--transi), padding var(--transi);
-  padding-block: 1rem;
+  padding-block: .75rem;
 }
 .entete.colle { background: rgba(249, 245, 240, .96); box-shadow: 0 1px 0 var(--bordure); padding-block: .55rem; }
 .entete-barre { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
 .logo { font-family: var(--f-script); font-size: 2rem; color: var(--sauge); line-height: 1; }
 .logo-img { line-height: 0; }
-.logo-img img.custom-logo { height: clamp(56px, 8.5vw, 124px); width: auto; display: block; transition: height var(--transi); }
+/* Logo compact : l'ancien plafond de 124px gonflait la barre fixe jusqu'à
+   ~156px sur grand écran (espace perdu + recouvrait l'eyebrow des en-têtes
+   de page, ex. Épicerie Africaine). */
+.logo-img img.custom-logo { height: clamp(52px, 6vw, 84px); width: auto; display: block; transition: height var(--transi); }
 /* Le logo rétrécit quand l'en-tête devient collant au scroll → header compact */
 .entete.colle .logo-img img.custom-logo { height: clamp(46px, 4.5vw, 66px); }
 .nav-principale { display: flex; align-items: center; gap: 2rem; }
@@ -203,7 +214,10 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 .sugg-type { font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; color: var(--terra-fonce); font-weight: 600; flex: none; }
 
 /* ------------------------------------------------------------------- HERO */
-.hero { position: relative; overflow: hidden; background: linear-gradient(180deg, var(--blanc) 0%, var(--creme) 100%); min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; padding-top: clamp(6.5rem, 12vh, 9.5rem); padding-bottom: clamp(2.5rem, 6vh, 4rem); }
+/* Hero plafonné (18 juillet) : le plein écran systématique repoussait tout le
+   contenu sous le pli pour trois boutons; on garde l'ampleur sans imposer un
+   écran entier de vide. */
+.hero { position: relative; overflow: hidden; background: linear-gradient(180deg, var(--blanc) 0%, var(--creme) 100%); min-height: min(88vh, 820px); min-height: min(88dvh, 820px); display: flex; flex-direction: column; justify-content: center; padding-top: clamp(6rem, 11vh, 8.5rem); padding-bottom: clamp(2.5rem, 6vh, 4rem); }
 /* La barre d'admin WP (32px) decale la page : sans ca, le bas du hero (indicateur de scroll anime) passe sous le pli */
 .admin-bar .hero { min-height: calc(100vh - 32px); }
 .hero-grille { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 2rem; min-height: 0; width: 100%; }
@@ -246,7 +260,7 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 .petale { transform-box: fill-box; transform-origin: bottom center; transition: transform .5s var(--transi); }
 .hero-fleur:hover .petale { transform: scale(1.08); }
 
-.hero-scroll { position: absolute; left: 50%; bottom: 3rem; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: .5rem; color: var(--texte-doux); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; }
+.hero-scroll { position: absolute; left: 50%; bottom: 1.6rem; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: .5rem; color: var(--texte-doux); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; }
 .hero-scroll .souris { width: 22px; height: 34px; border: 2px solid var(--texte-doux); border-radius: 12px; position: relative; }
 .hero-scroll .souris::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; background: var(--texte-doux); border-radius: 2px; transform: translateX(-50%); animation: molette 1.5s ease infinite; }
 @keyframes molette { 0% { opacity: 0; transform: translate(-50%, 0); } 40% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, 10px); } }
@@ -271,8 +285,10 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 .intro-liste { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.6rem; }
 .intro-liste li { display: inline-flex; align-items: center; gap: .5rem; background: var(--sauge-pale); color: var(--sauge-fonce); font-size: .85rem; font-weight: 600; padding: .5rem 1rem; border-radius: 50px; }
 .intro-liste svg { width: 18px; height: 18px; }
-.intro-media { position: relative; }
-.intro-media .cadre { border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre); aspect-ratio: 4 / 5; background: var(--sauge-pale); }
+/* Photo d'intro contenue : à pleine colonne elle dépassait 900px de haut
+   (presque un écran entier), on la plafonne pour laisser voir la suite. */
+.intro-media { position: relative; width: 100%; max-width: 520px; margin-inline: auto; }
+.intro-media .cadre { border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre); aspect-ratio: 4 / 5; max-height: 640px; background: var(--sauge-pale); }
 .intro-media .cadre img { width: 100%; height: 100%; object-fit: cover; }
 .intro-media .tache-deco { position: absolute; width: 58%; right: -8%; bottom: -10%; z-index: -1; opacity: .9; }
 .intro-badge { position: absolute; top: 1.2rem; left: -1rem; background: var(--ocre); color: var(--encre); font-weight: 700; font-size: .8rem; padding: .7rem 1.1rem; border-radius: 50px; box-shadow: var(--ombre-douce); transform: rotate(-4deg); }
@@ -347,7 +363,7 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 .newsletter-form button:hover { background: var(--terra-fonce); transform: translateY(-2px); }
 
 /* ----------------------------------------------------------------- FOOTER */
-.pied { position: relative; overflow: hidden; background: var(--pied-fond); color: #b6c0a4; padding-block: clamp(3.5rem, 2.5rem + 3vw, 5rem) 0; }
+.pied { position: relative; overflow: hidden; background: var(--pied-fond); color: #b6c0a4; padding-block: clamp(2.5rem, 2rem + 1.8vw, 3.5rem) 0; }
 .pied .conteneur { position: relative; z-index: 1; }
 .pied::after { content: ""; position: absolute; z-index: 0; right: -2%; bottom: -2%; width: clamp(220px, 24vw, 360px); aspect-ratio: .72; background: url("assets/images/illustrations/fleur 01.svg") no-repeat center / contain; filter: brightness(0) invert(1); opacity: .07; pointer-events: none; }
 .pied::before { content: ""; position: absolute; z-index: 0; left: -3%; top: -2%; width: clamp(160px, 16vw, 240px); aspect-ratio: .7; background: url("assets/images/illustrations/fleur 06.svg") no-repeat center / contain; filter: brightness(0) invert(1); opacity: .05; pointer-events: none; }
@@ -361,7 +377,7 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 .pied-nav { columns: 2; column-gap: 2rem; }
 .pied-nav li { break-inside: avoid; }
 .pied-marque p { font-size: .92rem; margin-bottom: .85rem; max-width: 34ch; color: #a4ad92; }
-.pied-bas { margin-top: clamp(2.5rem, 1.5rem + 3vw, 3.5rem); border-top: 1px solid rgba(255,255,255,.09); padding-block: 1.5rem; text-align: center; font-size: .8rem; color: #889378; letter-spacing: .02em; }
+.pied-bas { margin-top: clamp(1.8rem, 1.2rem + 1.5vw, 2.5rem); border-top: 1px solid rgba(255,255,255,.09); padding-block: 1.2rem; text-align: center; font-size: .8rem; color: #889378; letter-spacing: .02em; }
 
 /* --------------------------------------------------------------- REVEAL */
 .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s cubic-bezier(.22,.61,.36,1); }
@@ -376,9 +392,12 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
   .hero-texte { max-width: none; margin-inline: auto; }
   .hero-texte p { margin-inline: auto; }
   .hero-actions { justify-content: center; }
-  .hero-fleur { grid-row: 1; margin-bottom: 1rem; height: auto; width: clamp(260px, 74vw, 360px); }
-  .cercle-ocre { left: 50%; top: 42%; width: clamp(200px, 52vw, 320px); transform: translate(-50%, -50%); }
-  .hero { min-height: 100vh; min-height: 100dvh; }
+  /* Fleur animée réservée au desktop (demande du 18 juillet) : en tablette et
+     mobile elle mangeait un écran sans rien apporter. */
+  .hero-fleur { display: none; }
+  .cercle-ocre { display: none; }
+  .hero { min-height: auto; padding-bottom: clamp(4rem, 9vh, 5.5rem); }
+  .hero-scroll { display: none; }
   .intro-grille { grid-template-columns: 1fr; }
   .intro-media { max-width: 440px; margin-inline: auto; order: -1; }
   .engagements-grille { grid-template-columns: repeat(2, 1fr); gap: 2rem 1rem; }
@@ -422,6 +441,11 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
   .nav-principale ul a { display: block; width: 100%; font-size: 1.05rem; padding: 1rem .2rem; }
   .nav-principale ul a::after { display: none; }
 
+  /* Lien Contactez-nous (ajouté par header.php hors du menu WP) : même
+     traitement que les liens de la liste dans le panneau mobile */
+  .nav-principale > a.nav-contact { display: block; width: 100%; font-size: 1.05rem; padding: 1rem .2rem; border-bottom: 1px solid var(--bordure); }
+  .nav-principale > a.nav-contact::after { display: none; }
+
   /* CTA en bas, pleine largeur */
   .nav-principale .nav-cta { margin-top: 1.6rem; width: 100%; justify-content: center; padding: .95rem 1rem; font-size: 1rem; }
 
@@ -431,8 +455,6 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 
 @media (max-width: 720px) {
   .grille-prod { grid-template-columns: 1fr; }
-  /* Mobile : on retire la fleur + le cercle ocre du hero d'accueil (allège l'écran) */
-  .hero-fleur { display: none; }
 }
 
 /* Mobile : on retire les décors botaniques du footer (encombrants / débordent). */
@@ -463,7 +485,7 @@ body.interne .entete { background: rgba(249, 245, 240, .95); backdrop-filter: bl
 .nav-principale > a.actif::after { width: 100%; }
 
 /* En-tête de page */
-.page-entete { position: relative; overflow: hidden; background: var(--creme); padding-top: clamp(6.5rem, 5.5rem + 1.5vw, 7.5rem); padding-bottom: clamp(2.5rem, 1.5rem + 3vw, 4rem); text-align: center; }
+.page-entete { position: relative; overflow: hidden; background: var(--creme); padding-top: clamp(6.5rem, 5.5rem + 1.5vw, 7.5rem); padding-bottom: clamp(1.5rem, 1rem + 1.5vw, 2.25rem); text-align: center; }
 .page-entete .conteneur { position: relative; z-index: 1; }
 .page-entete .eyebrow { display: block; margin-bottom: .8rem; }
 @media (min-width: 768px) { .page-entete .eyebrow { white-space: nowrap; letter-spacing: .18em; } }
@@ -976,7 +998,7 @@ body.univers-africaine .carte-prod .corps p { color: var(--afr-texte); }
 @media (max-width: 720px) { .engagements-grille.cols-3 { grid-template-columns: 1fr; max-width: 420px; } }
 
 /* Section au rythme resserré (départements, valeurs) */
-.section-compacte { padding-block: clamp(2.4rem, 1.6rem + 2.5vw, 3.6rem); }
+.section-compacte { padding-block: clamp(1.6rem, 1.2rem + 1.2vw, 2.4rem); }
 
 /* Épicerie : bande blanche pleine largeur — donne le rythme de la page
    sans bloc crème/sable (les cartes y prennent un liseré, l'ombre seule
@@ -2697,7 +2719,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   grid-template-columns: 1fr 1fr;
   gap: clamp(2rem, 5vw, 5rem);
   align-items: center;
-  padding: clamp(3rem, 4vw, 5rem) 0;
+  padding: clamp(2rem, 2.6vw, 3.25rem) 0;
 }
 .pm-article-inverse { direction: rtl; }
 .pm-article-inverse > * { direction: ltr; }
@@ -2728,7 +2750,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   font-weight: 700;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: var(--terracotta-texte);
+  color: var(--terra-fonce); /* --terracotta-texte n'existe pas dans ce fichier */
 }
 .pm-article-titre {
   font-size: clamp(1.6rem, 1.2rem + 2vw, 2.6rem);
@@ -2740,7 +2762,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 }
 .pm-article-texte {
   font-size: .95rem;
-  color: var(--texte-moyen);
+  color: var(--texte-corps); /* --texte-moyen n'existe pas dans ce fichier */
   line-height: 1.7;
 }
 .pm-article-texte p { margin: 0 0 .6rem; }
@@ -2770,7 +2792,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   max-width: 60ch;
   margin: .8rem auto 0;
   font-size: clamp(.88rem, .8rem + .3vw, 1rem);
-  color: var(--texte-moyen);
+  color: var(--texte-corps); /* --texte-moyen n'existe pas dans ce fichier */
   line-height: 1.65;
 }
 .page-entete-intro p { margin: 0 0 .5rem; }
@@ -2782,4 +2804,132 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 }
 .cmd-carte--bientot .cmd-carte-haut {
   filter: grayscale(1);
+}
+
+/* ======================================================
+   PAGE CONTACTEZ-NOUS (gabarit dédié, 18 juillet 2026)
+   Carte coordonnées en sauge profond (ancre visuelle de la
+   page, même grammaire que la bande CTA Lofts) + formulaire
+   blanc branché en AJAX.
+====================================================== */
+.ct-grille {
+  display: grid;
+  grid-template-columns: minmax(0, 400px) 1fr;
+  gap: clamp(1.5rem, 1rem + 2vw, 2.8rem);
+  align-items: start;
+}
+
+/* Colonne gauche : coordonnées (carte sombre) + carte Google dessous */
+.ct-coordonnees {
+  background: linear-gradient(165deg, var(--sauge), var(--sauge-fonce));
+  color: #e7eee0;
+  border-radius: var(--rayon-l);
+  padding: clamp(1.6rem, 1.2rem + 1.5vw, 2.2rem);
+  box-shadow: var(--ombre);
+  position: relative;
+  overflow: hidden;
+}
+.ct-coordonnees::after {
+  content: "";
+  position: absolute; right: -14%; bottom: -18%;
+  width: clamp(170px, 40%, 260px); aspect-ratio: .72;
+  background: url("assets/images/illustrations/fleur 01.svg") no-repeat center / contain;
+  filter: brightness(0) invert(1); opacity: .08; pointer-events: none;
+}
+.ct-coordonnees > * { position: relative; z-index: 1; }
+.ct-coordonnees h2 {
+  color: #fff;
+  font-size: 1.35rem;
+  margin-bottom: 1.2rem;
+}
+.ct-liste { display: grid; gap: 1.05rem; }
+.ct-liste li { display: flex; gap: .85rem; align-items: flex-start; }
+.ct-liste .ico {
+  width: 40px; height: 40px; flex: none;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .12);
+  display: grid; place-items: center;
+}
+.ct-liste .ico svg { width: 19px; height: 19px; fill: none; stroke: var(--ocre-pale); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.ct-liste h4 { color: var(--ocre-pale); font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: .15rem; }
+.ct-liste p { font-size: .93rem; margin: 0; color: #e7eee0; line-height: 1.55; }
+.ct-liste a { color: #fff; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,.35); transition: color var(--transi); }
+.ct-liste a:hover { color: var(--ocre-pale); }
+
+.ct-map { margin-top: clamp(1.2rem, 1rem + 1vw, 1.8rem); aspect-ratio: 4 / 3; border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre-douce); border: 1px solid var(--bordure); background: var(--sauge-pale); }
+.ct-map iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+/* Colonne droite : formulaire (carte blanche) */
+.ct-form-carte {
+  background: var(--blanc);
+  border-radius: var(--rayon-l);
+  padding: clamp(1.6rem, 1.2rem + 1.8vw, 2.6rem);
+  box-shadow: var(--ombre);
+}
+.ct-form-carte h2 { color: var(--sauge); font-size: 1.35rem; margin-bottom: .4rem; }
+.ct-form-carte > p { color: var(--texte-corps); font-size: .95rem; margin-bottom: 1.4rem; }
+
+/* Anti-pourriel : champ leurre invisible pour les humains */
+.ct-champ-leurre { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
+
+/* Retour d'envoi (succès / erreur) */
+.ct-retour {
+  margin-top: 1rem;
+  padding: .9rem 1.2rem;
+  border-radius: 12px;
+  font-size: .92rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.ct-retour[hidden] { display: none; }
+.ct-retour--succes { background: var(--sauge-pale); color: var(--sauge-fonce); border-left: 3px solid var(--sauge); }
+.ct-retour--erreur { background: var(--terra-pale); color: var(--terra-fonce); border-left: 3px solid var(--terra); }
+
+/* Bouton en cours d'envoi */
+.ct-form-carte .btn[disabled] { opacity: .6; pointer-events: none; }
+
+@media (max-width: 900px) {
+  .ct-grille { grid-template-columns: 1fr; }
+  .ct-form-carte { order: -1; } /* mobile : le formulaire d'abord, l'info ensuite */
+}
+
+/* ======================================================
+   PAGE BOUTIQUE — présentation + mosaïque de photos
+   (galerie ACF téléversée par Marie, replis élégants si vide)
+====================================================== */
+.bout-pres { background: var(--blanc); border-top: 1px solid var(--bordure); }
+.bout-pres-grille {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(1.8rem, 1rem + 3vw, 4rem);
+  align-items: center;
+}
+.bout-pres-texte .eyebrow { display: block; margin-bottom: .7rem; }
+.bout-pres-texte h2 { font-size: var(--t-h2); color: var(--sauge-fonce); margin-bottom: .9rem; }
+.bout-pres-texte p { color: var(--texte-corps); line-height: 1.75; margin-bottom: .8rem; }
+
+/* Mosaïque : 1 grande photo + vignettes, s'adapte au nombre d'images */
+.bout-galerie {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(120px, 1fr);
+  gap: 10px;
+  border-radius: var(--rayon-l);
+  overflow: hidden;
+}
+.bout-galerie--pleine { margin-top: .5rem; }
+.bout-galerie figure { margin: 0; position: relative; overflow: hidden; background: var(--sauge-pale); min-height: 120px; }
+.bout-galerie img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--transi); }
+.bout-galerie figure:hover img { transform: scale(1.05); }
+.bout-galerie figure:first-child { grid-column: span 2; grid-row: span 2; }
+/* 2 photos seulement : deux moitiés égales */
+.bout-galerie[data-nb="1"] { grid-template-columns: 1fr; }
+.bout-galerie[data-nb="1"] figure:first-child { grid-column: auto; grid-row: auto; aspect-ratio: 16/9; }
+.bout-galerie[data-nb="2"] { grid-template-columns: 1fr 1fr; }
+.bout-galerie[data-nb="2"] figure:first-child { grid-column: auto; grid-row: auto; }
+.bout-galerie[data-nb="2"] figure { aspect-ratio: 4/3; }
+
+@media (max-width: 900px) {
+  .bout-pres-grille { grid-template-columns: 1fr; }
+  .bout-galerie { grid-template-columns: repeat(2, 1fr); grid-auto-rows: minmax(110px, 1fr); }
 }

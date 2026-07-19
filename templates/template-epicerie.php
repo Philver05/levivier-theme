@@ -4,6 +4,12 @@ Template Name: L'Épicerie
 */
 get_header();
 
+/* Champs ACF avec repli (textes actuels) — tout éditable dans WP */
+$ep = function ($cle, $defaut = '') {
+    $valeur = function_exists('get_field') ? get_field($cle) : '';
+    return $valeur ?: $defaut;
+};
+
 /* Catégories produit (bande de filtres sous l'en-tête, comme Produits Maison) */
 $categories_produit = get_terms([
     'taxonomy'   => 'categorie_produit',
@@ -73,22 +79,22 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
                 <span class="ico" aria-hidden="true">
                     <svg viewBox="0 0 24 24"><path d="M5 21c0-7 5-13 14-14-1 9-7 14-14 14Z"/><path d="M5 21c2-5 6-8 10-9"/></svg>
                 </span>
-                <h3>Produits frais</h3>
-                <p>Fruits et légumes, pains spécialisés, fromages régionaux, viandes, poulet bio et œufs bio.</p>
+                <h3><?php echo esc_html($ep('ep_dept1_titre', 'Produits frais')); ?></h3>
+                <p><?php echo esc_html($ep('ep_dept1_texte', 'Fruits et légumes, pains spécialisés, fromages régionaux, viandes, poulet bio et œufs bio.')); ?></p>
             </div>
             <div class="engagement reveal reveal-delai-1">
                 <span class="ico" aria-hidden="true">
                     <svg viewBox="0 0 24 24"><path d="M7 8h10l-1 11a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2L7 8Z"/><path d="M8 8a4 4 0 0 1 8 0"/></svg>
                 </span>
-                <h3>Produits en vrac</h3>
-                <p>Aliments secs, noix, légumineuses, farines, huiles, produits ménagers et corporels.</p>
+                <h3><?php echo esc_html($ep('ep_dept2_titre', 'Produits en vrac')); ?></h3>
+                <p><?php echo esc_html($ep('ep_dept2_texte', 'Aliments secs, noix, légumineuses, farines, huiles, produits ménagers et corporels.')); ?></p>
             </div>
             <div class="engagement reveal reveal-delai-2">
                 <span class="ico" aria-hidden="true">
                     <svg viewBox="0 0 24 24"><path d="M5 10h14M6 10l1 9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-9"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
                 </span>
-                <h3>Produits transformés</h3>
-                <p>Pâtisseries, mets cuisinés, tartinades, sauces, condiments et douceurs faits par des artisans de la région.</p>
+                <h3><?php echo esc_html($ep('ep_dept3_titre', 'Produits transformés')); ?></h3>
+                <p><?php echo esc_html($ep('ep_dept3_texte', 'Pâtisseries, mets cuisinés, tartinades, sauces, condiments et douceurs faits par des artisans de la région.')); ?></p>
             </div>
         </div>
     </div>
@@ -101,7 +107,7 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
     <div class="conteneur">
 
         <div class="section-titre">
-            <h2>Nos produits</h2>
+            <h2><?php echo esc_html($ep('ep_prod_titre', 'Nos produits')); ?></h2>
         </div>
 
         <!-- Grille produits (les produits maison sont présentés sur leur page dédiée) -->
@@ -149,10 +155,10 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
 
         <div class="producteurs-entete">
             <div>
-                <span class="script-accent">Nos partenaires</span>
-                <h2>Nos Producteurs &amp; Transformateurs</h2>
+                <span class="script-accent"><?php echo esc_html($ep('ep_part_surtitre', 'Nos partenaires')); ?></span>
+                <h2><?php echo esc_html($ep('ep_part_titre', 'Nos Producteurs & Transformateurs')); ?></h2>
             </div>
-            <p>Chaque produit est choisi avec soin pour soutenir les producteurs d'ici et encourager une consommation consciente et respectueuse de l'environnement. Ensemble, soutenons les producteurs et transformateurs de la région&nbsp;!</p>
+            <p><?php echo esc_html($ep('ep_part_texte', 'Chaque produit est choisi avec soin pour soutenir les producteurs d\'ici et encourager une consommation consciente et respectueuse de l\'environnement. Ensemble, soutenons les producteurs et transformateurs de la région !')); ?></p>
         </div>
 
         <?php

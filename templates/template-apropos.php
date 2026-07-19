@@ -4,14 +4,18 @@ Template Name: À propos
 */
 get_header();
 
-/* Champs ACF */
-$telephone        = get_field('telephone');
-$courriel         = get_field('courriel');
-$adresse          = get_field('adresse');
-$facebook_url     = get_field('facebook');
-$horaire_semaine  = get_field('horaire_semaine');
-$horaire_samedi   = get_field('horaire_samedi');
-$horaire_dimanche = get_field('horaire_dimanche');
+/* Champs ACF (page) avec repli — tout éditable dans WP */
+$apr = function ($cle, $defaut = '') {
+    $valeur = function_exists('get_field') ? get_field($cle) : '';
+    return $valeur ?: $defaut;
+};
+$telephone        = $apr('telephone');
+$courriel         = $apr('courriel');
+$adresse          = $apr('adresse');
+$facebook_url     = $apr('facebook');
+$horaire_semaine  = $apr('horaire_semaine');
+$horaire_samedi   = $apr('horaire_samedi');
+$horaire_dimanche = $apr('horaire_dimanche');
 ?>
 
 <!-- ======================================================
@@ -19,7 +23,7 @@ $horaire_dimanche = get_field('horaire_dimanche');
 ====================================================== -->
 <section class="page-entete">
     <div class="conteneur">
-        <p class="eyebrow">Notre histoire · Le Vivier</p>
+        <p class="eyebrow"><?php echo esc_html($apr('apr_surtitre', 'Notre histoire · Le Vivier')); ?></p>
         <h1><?php the_title(); ?></h1>
     </div>
 </section>
@@ -58,7 +62,7 @@ endwhile; endif; ?>
 <section class="section producteurs">
     <div class="conteneur">
         <div class="section-titre">
-            <h2>Venez nous voir</h2>
+            <h2><?php echo esc_html($apr('apr_visite_titre', 'Venez nous voir')); ?></h2>
         </div>
 
         <div class="contact-grille contact-grille--carte">
@@ -121,8 +125,8 @@ endwhile; endif; ?>
 <section class="section">
     <div class="conteneur">
         <div class="section-titre">
-            <h2>Écrivez-nous</h2>
-            <p>Une question, une commande spéciale ou l'envie de nous dire bonjour&nbsp;? On vous répond rapidement.</p>
+            <h2><?php echo esc_html($apr('apr_form_titre', 'Écrivez-nous')); ?></h2>
+            <p><?php echo esc_html($apr('apr_form_texte', 'Une question, une commande spéciale ou l\'envie de nous dire bonjour ? On vous répond rapidement.')); ?></p>
         </div>
 
         <form class="contact-form reveal" action="#" method="post" novalidate style="max-width:680px;margin-inline:auto">

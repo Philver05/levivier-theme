@@ -4,15 +4,31 @@
              la bande sarcelle en bas de page joue déjà ce rôle, un pied en
              sauge tout de suite après casserait l'identité de l'univers. */ ?>
     <?php if (!is_page_template('templates/template-lofts.php') && !is_singular('loft')): ?>
+    <?php
+    /* Textes du pied éditables dans Réglages du site (ACF options), avec
+       filet function_exists + replis = valeurs actuelles (déploiement sûr). */
+    $pied_opt = function ($cle, $defaut) {
+        return function_exists('lv_opt') ? lv_opt($cle, $defaut) : $defaut;
+    };
+    $pied_slogan   = $pied_opt('opt_pied_slogan', 'Produits locaux, frais et durables, à Matane.');
+    $pied_adresse  = $pied_opt('opt_adresse', "14 Avenue D'Amours\nMatane, QC G4W 2X4");
+    $pied_tel      = $pied_opt('opt_telephone', '(418) 562-5230');
+    $pied_tel_lien = function_exists('lv_opt_tel_lien') ? lv_opt_tel_lien() : 'tel:+14185625230';
+    $pied_courriel = $pied_opt('opt_courriel', 'epicerie@levivier.net');
+    $pied_facebook = $pied_opt('opt_facebook', 'https://facebook.com/epicerielevivier/');
+    $pied_h_sem    = $pied_opt('opt_horaire_semaine', '8 h 30 - 18 h');
+    $pied_h_sam    = $pied_opt('opt_horaire_samedi', '9 h - 17 h');
+    $pied_h_dim    = $pied_opt('opt_horaire_dimanche', '10 h - 17 h');
+    ?>
     <footer class="pied">
         <div class="conteneur pied-grille">
             <div class="pied-marque">
                 <div class="logo"><?php bloginfo('name'); ?></div>
-                <p>Produits locaux, frais et durables, à Matane.</p>
-                <p>14 Avenue D'Amours<br>Matane, QC G4W 2X4</p>
+                <p><?php echo esc_html($pied_slogan); ?></p>
+                <p><?php echo nl2br(esc_html($pied_adresse)); ?></p>
                 <p>
-                    <a href="tel:+14185625230">(418) 562-5230</a><br>
-                    <a href="mailto:epicerie@levivier.net">epicerie@levivier.net</a>
+                    <a href="<?php echo esc_attr($pied_tel_lien); ?>"><?php echo esc_html($pied_tel); ?></a><br>
+                    <a href="mailto:<?php echo esc_attr($pied_courriel); ?>"><?php echo esc_html($pied_courriel); ?></a>
                 </p>
             </div>
             <div>
@@ -39,13 +55,13 @@
             <div>
                 <h4>Horaires</h4>
                 <ul>
-                    <li>Lun - Ven : 8 h 30 - 18 h</li>
-                    <li>Samedi : 9 h - 17 h</li>
-                    <li>Dimanche : 10 h - 17 h</li>
+                    <li>Lun - Ven : <?php echo esc_html($pied_h_sem); ?></li>
+                    <li>Samedi : <?php echo esc_html($pied_h_sam); ?></li>
+                    <li>Dimanche : <?php echo esc_html($pied_h_dim); ?></li>
                 </ul>
                 <h4 style="margin-top:1.4rem">Suivez-nous</h4>
                 <ul>
-                    <li><a href="https://facebook.com/epicerielevivier/" target="_blank" rel="noopener">Facebook</a></li>
+                    <li><a href="<?php echo esc_url($pied_facebook); ?>" target="_blank" rel="noopener">Facebook</a></li>
                 </ul>
             </div>
         </div>

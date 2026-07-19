@@ -30,6 +30,30 @@
                         'container'   => false,
                         'fallback_cb' => false,
                     ]);
+
+                    /* Contactez-nous : le menu « principal » est géré dans
+                       Apparence > Menus; tant que la page n'y est pas remise,
+                       on affiche le lien ici. Garde anti-doublon : s'il est
+                       un jour ré-ajouté au menu WP, ce repli disparaît seul. */
+                    $page_contact = get_page_by_path('contactez-nous');
+                    if ($page_contact && $page_contact->post_status === 'publish') {
+                        $contact_au_menu = false;
+                        $items_menu = wp_get_nav_menu_items('principal');
+                        if ($items_menu) {
+                            foreach ($items_menu as $item_menu) {
+                                if ((int) $item_menu->object_id === (int) $page_contact->ID) {
+                                    $contact_au_menu = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!$contact_au_menu) {
+                            $actif_contact = is_page($page_contact->ID) ? ' actif' : '';
+                            echo '<a href="' . esc_url(get_permalink($page_contact)) . '" class="nav-contact' . $actif_contact . '">'
+                                . esc_html(get_the_title($page_contact)) . '</a>';
+                        }
+                    }
+
                     $page_commande = get_page_by_path('commandez');
                     $url_commande  = $page_commande ? get_permalink($page_commande) : home_url('/');
                     ?>
