@@ -986,8 +986,17 @@ body.univers-africaine .carte-prod .corps p { color: var(--afr-texte); }
    seulement quand la grille est à 3 colonnes) */
 @media (min-width: 961px) {
   body.univers-africaine .grille-prod .carte-prod:nth-child(2) { margin-top: 2.2rem; }
-  body.univers-africaine .produits { padding-bottom: clamp(4.5rem, 3.5rem + 3vw, 6.5rem); }
+  body.univers-africaine .produits { padding-bottom: clamp(3rem, 2.5rem + 1.5vw, 4rem); }
 }
+
+/* Mise en page alignée sur la page Épicerie (retours Philippe, 19 juillet) :
+   trio d'atouts à icônes + bande blanche de présentation, charte épices. */
+body.univers-africaine .engagement .ico { background: var(--afr-or-pale); }
+body.univers-africaine .engagement .ico svg { stroke: var(--afr-rouille); }
+body.univers-africaine .engagement h3 { color: var(--afr-rouille); }
+body.univers-africaine .engagement p { color: var(--afr-texte); }
+body.univers-africaine .bande-blanche { background: var(--blanc); border-top: 1px solid #ecdfc8; }
+body.univers-africaine .apropos-split h2 { color: var(--afr-nuit); }
 
 /* ======================================================
    PAGES INTERNES — compléments de migration
@@ -2807,67 +2816,56 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 }
 
 /* ======================================================
-   PAGE CONTACTEZ-NOUS (gabarit dédié, 18 juillet 2026)
-   Carte coordonnées en sauge profond (ancre visuelle de la
-   page, même grammaire que la bande CTA Lofts) + formulaire
-   blanc branché en AJAX.
+   PAGE CONTACTEZ-NOUS v2 (retours Philippe, 19 juillet)
+   Une seule carte blanche : formulaire + volet coordonnées
+   crème, puis la carte Google en bande pleine largeur.
 ====================================================== */
-.ct-grille {
+.ct2-carte {
   display: grid;
-  grid-template-columns: minmax(0, 400px) 1fr;
-  gap: clamp(1.5rem, 1rem + 2vw, 2.8rem);
-  align-items: start;
-}
-
-/* Colonne gauche : coordonnées (carte sombre) + carte Google dessous */
-.ct-coordonnees {
-  background: linear-gradient(165deg, var(--sauge), var(--sauge-fonce));
-  color: #e7eee0;
-  border-radius: var(--rayon-l);
-  padding: clamp(1.6rem, 1.2rem + 1.5vw, 2.2rem);
-  box-shadow: var(--ombre);
-  position: relative;
-  overflow: hidden;
-}
-.ct-coordonnees::after {
-  content: "";
-  position: absolute; right: -14%; bottom: -18%;
-  width: clamp(170px, 40%, 260px); aspect-ratio: .72;
-  background: url("assets/images/illustrations/fleur 01.svg") no-repeat center / contain;
-  filter: brightness(0) invert(1); opacity: .08; pointer-events: none;
-}
-.ct-coordonnees > * { position: relative; z-index: 1; }
-.ct-coordonnees h2 {
-  color: #fff;
-  font-size: 1.35rem;
-  margin-bottom: 1.2rem;
-}
-.ct-liste { display: grid; gap: 1.05rem; }
-.ct-liste li { display: flex; gap: .85rem; align-items: flex-start; }
-.ct-liste .ico {
-  width: 40px; height: 40px; flex: none;
-  border-radius: 11px;
-  background: rgba(255, 255, 255, .12);
-  display: grid; place-items: center;
-}
-.ct-liste .ico svg { width: 19px; height: 19px; fill: none; stroke: var(--ocre-pale); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.ct-liste h4 { color: var(--ocre-pale); font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: .15rem; }
-.ct-liste p { font-size: .93rem; margin: 0; color: #e7eee0; line-height: 1.55; }
-.ct-liste a { color: #fff; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,.35); transition: color var(--transi); }
-.ct-liste a:hover { color: var(--ocre-pale); }
-
-.ct-map { margin-top: clamp(1.2rem, 1rem + 1vw, 1.8rem); aspect-ratio: 4 / 3; border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre-douce); border: 1px solid var(--bordure); background: var(--sauge-pale); }
-.ct-map iframe { width: 100%; height: 100%; border: 0; display: block; }
-
-/* Colonne droite : formulaire (carte blanche) */
-.ct-form-carte {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
   background: var(--blanc);
   border-radius: var(--rayon-l);
-  padding: clamp(1.6rem, 1.2rem + 1.8vw, 2.6rem);
   box-shadow: var(--ombre);
+  overflow: hidden;
 }
-.ct-form-carte h2 { color: var(--sauge); font-size: 1.35rem; margin-bottom: .4rem; }
-.ct-form-carte > p { color: var(--texte-corps); font-size: .95rem; margin-bottom: 1.4rem; }
+.ct2-form { padding: clamp(1.8rem, 1.2rem + 2vw, 3rem); }
+.ct2-form h2 { color: var(--sauge-fonce); font-size: 1.45rem; margin-bottom: .35rem; }
+.ct2-form > p { color: var(--texte-corps); font-size: .95rem; margin-bottom: 1.5rem; }
+.ct2-form .btn { margin-top: .4rem; }
+
+/* Volet coordonnées : crème, liseré, icônes sauge (grammaire bouquet) */
+.ct2-aside {
+  background: var(--creme);
+  border-left: 1px solid var(--bordure);
+  padding: clamp(1.8rem, 1.2rem + 2vw, 2.6rem) clamp(1.4rem, 1rem + 1.5vw, 2.2rem);
+}
+.ct2-aside h2 { color: var(--sauge-fonce); font-size: 1.2rem; margin-bottom: 1.1rem; }
+.ct2-aside ul { display: grid; gap: 1.1rem; }
+.ct2-aside li { display: flex; gap: .85rem; align-items: flex-start; }
+.ct2-aside .ico {
+  width: 42px; height: 42px; flex: none;
+  border-radius: 12px;
+  background: var(--sauge-pale);
+  display: grid; place-items: center;
+}
+.ct2-aside .ico svg { width: 20px; height: 20px; fill: none; stroke: var(--sauge); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.ct2-aside h4 { color: var(--texte); font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: .15rem; }
+.ct2-aside p { font-size: .92rem; color: var(--texte-corps); margin: 0; line-height: 1.55; }
+.ct2-aside a { color: var(--terra-fonce); font-weight: 600; transition: color var(--transi); }
+.ct2-aside a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Carte Google : bande large sous la carte principale */
+.ct2-map {
+  margin-top: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
+  border-radius: var(--rayon-l);
+  overflow: hidden;
+  border: 1px solid var(--bordure);
+  box-shadow: var(--ombre-douce);
+  aspect-ratio: 21 / 8;
+  min-height: 280px;
+  background: var(--sauge-pale);
+}
+.ct2-map iframe { width: 100%; height: 100%; border: 0; display: block; }
 
 /* Anti-pourriel : champ leurre invisible pour les humains */
 .ct-champ-leurre { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
@@ -2886,11 +2884,13 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 .ct-retour--erreur { background: var(--terra-pale); color: var(--terra-fonce); border-left: 3px solid var(--terra); }
 
 /* Bouton en cours d'envoi */
-.ct-form-carte .btn[disabled] { opacity: .6; pointer-events: none; }
+.ct2-form .btn[disabled] { opacity: .6; pointer-events: none; }
 
 @media (max-width: 900px) {
-  .ct-grille { grid-template-columns: 1fr; }
-  .ct-form-carte { order: -1; } /* mobile : le formulaire d'abord, l'info ensuite */
+  .ct2-carte { grid-template-columns: 1fr; }
+  .ct2-aside { border-left: 0; border-top: 1px solid var(--bordure); }
+  .ct2-map { aspect-ratio: 4 / 3; }
+  .ct2-form .btn { width: 100%; justify-content: center; }
 }
 
 /* ======================================================

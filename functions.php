@@ -957,7 +957,7 @@ add_action('acf/init', function () {
                 'type'  => 'textarea',
                 'rows'  => 3,
             ],
-            /* Présentation */
+            /* Présentation (bande blanche en bas de page) */
             [
                 'key'           => 'field_afr_presentation_image',
                 'name'          => 'afr_presentation_image',
@@ -966,6 +966,20 @@ add_action('acf/init', function () {
                 'return_format' => 'array',
                 'preview_size'  => 'medium',
             ],
+            [
+                'key'           => 'field_afr_pres_titre',
+                'name'          => 'afr_pres_titre',
+                'label'         => '② Présentation — Titre de la bande',
+                'type'          => 'text',
+                'default_value' => 'La boutique africaine au Vivier',
+            ],
+            /* Trio d'atouts sous l'en-tête (même structure que les départements de l'Épicerie) */
+            ['key' => 'field_afr_atout1_titre', 'name' => 'afr_atout1_titre', 'label' => '②b Atout 1 — Titre', 'type' => 'text', 'default_value' => 'Produits authentiques'],
+            ['key' => 'field_afr_atout1_texte', 'name' => 'afr_atout1_texte', 'label' => '②b Atout 1 — Texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Épices, sauces et féculents choisis auprès de fournisseurs de confiance, fidèles aux saveurs du continent.'],
+            ['key' => 'field_afr_atout2_titre', 'name' => 'afr_atout2_titre', 'label' => '②b Atout 2 — Titre', 'type' => 'text', 'default_value' => 'Arrivages réguliers'],
+            ['key' => 'field_afr_atout2_texte', 'name' => 'afr_atout2_texte', 'label' => '②b Atout 2 — Texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Des produits secs et frais renouvelés au fil des arrivages, pour cuisiner sans compromis.'],
+            ['key' => 'field_afr_atout3_titre', 'name' => 'afr_atout3_titre', 'label' => '②b Atout 3 — Titre', 'type' => 'text', 'default_value' => 'Conseils & recettes'],
+            ['key' => 'field_afr_atout3_texte', 'name' => 'afr_atout3_texte', 'label' => '②b Atout 3 — Texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Une équipe qui connaît ses produits et partage volontiers idées et techniques de préparation.'],
             /* Titre de la section spécialités */
             [
                 'key'           => 'field_afr_spec_titre_section',
@@ -1816,7 +1830,7 @@ add_action('acf/init', function () {
         'title'  => 'Contenu de la page Contact',
         'fields' => [
             ['key' => 'field_ct_surtitre', 'name' => 'ct_surtitre', 'label' => 'Surtitre (au-dessus du titre)', 'type' => 'text', 'default_value' => 'On vous écoute · Le Vivier'],
-            ['key' => 'field_ct_intro', 'name' => 'ct_intro', 'label' => 'Texte d\'introduction', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Une question, une commande spéciale ou simplement l\'envie de nous dire bonjour ? Écrivez-nous ou passez nous voir, on vous répond rapidement.', 'instructions' => 'Utilisé si le contenu de la page est vide.'],
+            ['key' => 'field_ct_intro', 'name' => 'ct_intro', 'label' => 'Texte d\'introduction', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Une question, une commande spéciale ou l\'envie de nous dire bonjour ? On vous répond rapidement.', 'instructions' => 'Phrase courte sous le titre. Le contenu long de l\'éditeur principal n\'est pas affiché sur cette page.'],
             ['key' => 'field_ct_coord_titre', 'name' => 'ct_coord_titre', 'label' => 'Titre du bloc coordonnées', 'type' => 'text', 'default_value' => 'Venez nous voir'],
             ['key' => 'field_ct_form_titre', 'name' => 'ct_form_titre', 'label' => 'Titre du formulaire', 'type' => 'text', 'default_value' => 'Écrivez-nous'],
             ['key' => 'field_ct_form_texte', 'name' => 'ct_form_texte', 'label' => 'Texte sous le titre du formulaire', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Remplissez le formulaire et nous vous répondrons dans les plus brefs délais.'],

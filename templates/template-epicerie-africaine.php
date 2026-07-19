@@ -53,33 +53,41 @@ $specialites = [
 </section>
 
 <!-- ======================================================
-     PRÉSENTATION (texte = éditeur WP) + image
+     TROIS ATOUTS — trio compact à icônes, même structure
+     que les départements de la page Épicerie (charte épices)
 ====================================================== -->
-<?php if ($pres_presente): ?>
-<section class="section" style="padding-top:clamp(1rem,.75rem+1vw,1.5rem)">
+<section class="section section-compacte">
     <div class="conteneur">
-        <?php if ($pres_texte !== '' && $pres_image): ?>
-        <div class="apropos-split">
-            <div class="page-prose reveal" style="margin:0"><?php the_content(); ?></div>
-            <div class="apropos-media reveal">
-                <div class="cadre"><img src="<?php echo esc_url($pres_image['sizes']['large'] ?? $pres_image['url']); ?>" alt="<?php echo esc_attr($pres_image['alt'] ?: 'Épicerie Africaine'); ?>"></div>
+        <div class="engagements-grille cols-3">
+            <div class="engagement reveal">
+                <span class="ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1-2-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.3 1-3a2.5 2.5 0 0 0 2.5 2.5Z"/></svg>
+                </span>
+                <h3><?php echo esc_html(get_field('afr_atout1_titre') ?: 'Produits authentiques'); ?></h3>
+                <p><?php echo esc_html(get_field('afr_atout1_texte') ?: 'Épices, sauces et féculents choisis auprès de fournisseurs de confiance, fidèles aux saveurs du continent.'); ?></p>
+            </div>
+            <div class="engagement reveal reveal-delai-1">
+                <span class="ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16a8 8 0 0 1-16 0Z"/><path d="M8 12V9a4 4 0 0 1 8 0v3"/></svg>
+                </span>
+                <h3><?php echo esc_html(get_field('afr_atout2_titre') ?: 'Arrivages réguliers'); ?></h3>
+                <p><?php echo esc_html(get_field('afr_atout2_texte') ?: 'Des produits secs et frais renouvelés au fil des arrivages, pour cuisiner sans compromis.'); ?></p>
+            </div>
+            <div class="engagement reveal reveal-delai-2">
+                <span class="ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V10"/><path d="M12 13c0-4-3-6-7-6 0 4 3 6 7 6Z"/><path d="M12 11c0-4 3-7 7-7 0 4-3 7-7 7Z"/></svg>
+                </span>
+                <h3><?php echo esc_html(get_field('afr_atout3_titre') ?: 'Conseils & recettes'); ?></h3>
+                <p><?php echo esc_html(get_field('afr_atout3_texte') ?: 'Une équipe qui connaît ses produits et partage volontiers idées et techniques de préparation.'); ?></p>
             </div>
         </div>
-        <?php elseif ($pres_texte !== ''): ?>
-            <div class="page-prose reveal"><?php the_content(); ?></div>
-        <?php elseif ($pres_image): ?>
-            <div class="apropos-media reveal" style="max-width:640px;margin-inline:auto">
-                <div class="cadre"><img src="<?php echo esc_url($pres_image['sizes']['large'] ?? $pres_image['url']); ?>" alt="<?php echo esc_attr($pres_image['alt'] ?: 'Épicerie Africaine'); ?>"></div>
-            </div>
-        <?php endif; ?>
     </div>
 </section>
-<?php endif; ?>
 
 <!-- ======================================================
-     SPÉCIALITÉS — 3 cartes
+     SPÉCIALITÉS — 3 cartes (équivalent de « Nos produits »)
 ====================================================== -->
-<section class="section produits"<?php echo $pres_presente ? '' : ' style="padding-top:clamp(1rem,.75rem+1vw,1.5rem)"'; ?>>
+<section class="section produits">
     <div class="conteneur">
         <div class="section-titre">
             <h2><?php echo esc_html(get_field('afr_spec_titre_section') ?: 'Nos spécialités'); ?></h2>
@@ -106,5 +114,33 @@ $specialites = [
         </div>
     </div>
 </section>
+
+<!-- ======================================================
+     PRÉSENTATION — bande blanche finale (équivalent de la
+     bande Producteurs de la page Épicerie), texte = éditeur WP
+====================================================== -->
+<?php if ($pres_presente): ?>
+<section class="section bande-blanche">
+    <div class="conteneur">
+        <div class="section-titre">
+            <h2><?php echo esc_html(get_field('afr_pres_titre') ?: 'La boutique africaine au Vivier'); ?></h2>
+        </div>
+        <?php if ($pres_texte !== '' && $pres_image): ?>
+        <div class="apropos-split">
+            <div class="page-prose reveal" style="margin:0"><?php the_content(); ?></div>
+            <div class="apropos-media reveal">
+                <div class="cadre"><img src="<?php echo esc_url($pres_image['sizes']['large'] ?? $pres_image['url']); ?>" alt="<?php echo esc_attr($pres_image['alt'] ?: 'Épicerie Africaine'); ?>"></div>
+            </div>
+        </div>
+        <?php elseif ($pres_texte !== ''): ?>
+            <div class="page-prose reveal"><?php the_content(); ?></div>
+        <?php else: ?>
+            <div class="apropos-media reveal" style="max-width:640px;margin-inline:auto">
+                <div class="cadre"><img src="<?php echo esc_url($pres_image['sizes']['large'] ?? $pres_image['url']); ?>" alt="<?php echo esc_attr($pres_image['alt'] ?: 'Épicerie Africaine'); ?>"></div>
+            </div>
+        <?php endif; ?>
+    </div>
+</section>
+<?php endif; ?>
 
 <?php get_footer(); ?>

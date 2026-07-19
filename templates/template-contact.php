@@ -26,73 +26,30 @@ $h_dim     = $ct_opt('opt_horaire_dimanche', '10 h - 17 h');
 ?>
 
 <!-- ======================================================
-     EN-TÊTE
+     EN-TÊTE — titre en Professor comme les autres sections,
+     intro courte seulement (le contenu long de l'éditeur
+     n'est volontairement pas affiché sur cette page)
 ====================================================== -->
 <section class="page-entete">
     <div class="conteneur">
         <p class="eyebrow"><?php echo esc_html($surtitre); ?></p>
-        <h1><?php the_title(); ?></h1>
-        <?php if (trim(wp_strip_all_tags(get_the_content())) !== ''): the_content(); else: ?>
-            <p><?php echo esc_html($ct_champ('ct_intro', 'Une question, une commande spéciale ou simplement l\'envie de nous dire bonjour ? Écrivez-nous ou passez nous voir, on vous répond rapidement.')); ?></p>
-        <?php endif; ?>
+        <h1 class="page-entete-titre-script"><?php the_title(); ?></h1>
+        <p><?php echo esc_html($ct_champ('ct_intro', 'Une question, une commande spéciale ou l\'envie de nous dire bonjour ? On vous répond rapidement.')); ?></p>
     </div>
 </section>
 
 <!-- ======================================================
-     COORDONNÉES + FORMULAIRE
+     CARTE UNIFIÉE : FORMULAIRE + COORDONNÉES, PUIS CARTE
 ====================================================== -->
 <section class="section" style="padding-top:clamp(1rem,.75rem+1vw,1.5rem)">
     <div class="conteneur">
-        <div class="ct-grille">
 
-            <!-- Colonne coordonnées (carte sauge) + carte Google -->
-            <div class="reveal">
-                <div class="ct-coordonnees">
-                    <h2><?php echo esc_html($ct_champ('ct_coord_titre', 'Venez nous voir')); ?></h2>
-                    <ul class="ct-liste">
-                        <li>
-                            <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.6 7-12a7 7 0 1 0-14 0c0 5.4 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg></span>
-                            <div><h4>Adresse</h4><p><?php echo nl2br(esc_html($adresse)); ?></p></div>
-                        </li>
-                        <li>
-                            <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h3l2 5-2.5 1.5a12 12 0 0 0 5 5L17 14l5 2v3a2 2 0 0 1-2 2A17 17 0 0 1 4 5a2 2 0 0 1 2-2Z"/></svg></span>
-                            <div><h4>Téléphone</h4><p><a href="<?php echo esc_attr($tel_lien); ?>"><?php echo esc_html($telephone); ?></a></p></div>
-                        </li>
-                        <li>
-                            <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
-                            <div><h4>Courriel</h4><p><a href="mailto:<?php echo esc_attr($courriel); ?>"><?php echo esc_html($courriel); ?></a></p></div>
-                        </li>
-                        <li>
-                            <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-                            <div>
-                                <h4>Horaires</h4>
-                                <p>Lun - Ven : <?php echo esc_html($h_sem); ?><br>
-                                   Samedi : <?php echo esc_html($h_sam); ?><br>
-                                   Dimanche : <?php echo esc_html($h_dim); ?></p>
-                            </div>
-                        </li>
-                        <li>
-                            <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 8h-2a2 2 0 0 0-2 2v10M8 12h6"/></svg></span>
-                            <div><h4>Suivez-nous</h4><p><a href="<?php echo esc_url($facebook); ?>" target="_blank" rel="noopener">Facebook</a></p></div>
-                        </li>
-                    </ul>
-                </div>
+        <div class="ct2-carte reveal">
 
-                <div class="ct-map">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2776.3!2d-67.5282195!3d48.8447292!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4c96c1fddfc0165f%3A0x6e352ffd0909e5d8!2sLe%20Vivier%2C%20%C3%A9picerie%20boutique!5e0!3m2!1sfr!2sca!4v1"
-                        allowfullscreen=""
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade"
-                        title="Le Vivier — 14 Avenue D'Amours, Matane, QC">
-                    </iframe>
-                </div>
-            </div>
-
-            <!-- Colonne formulaire -->
-            <div class="ct-form-carte reveal reveal-delai-1">
+            <!-- Formulaire -->
+            <div class="ct2-form">
                 <h2><?php echo esc_html($ct_champ('ct_form_titre', 'Écrivez-nous')); ?></h2>
-                <p><?php echo esc_html($ct_champ('ct_form_texte', 'Remplissez le formulaire et nous vous répondrons dans les plus brefs délais.')); ?></p>
+                <p><?php echo esc_html($ct_champ('ct_form_texte', 'On vous répond dans les plus brefs délais.')); ?></p>
 
                 <form id="ct-formulaire" novalidate>
                     <div class="champ-duo">
@@ -139,7 +96,50 @@ $h_dim     = $ct_opt('opt_horaire_dimanche', '10 h - 17 h');
                 </form>
             </div>
 
+            <!-- Coordonnées -->
+            <aside class="ct2-aside">
+                <h2><?php echo esc_html($ct_champ('ct_coord_titre', 'Venez nous voir')); ?></h2>
+                <ul>
+                    <li>
+                        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.6 7-12a7 7 0 1 0-14 0c0 5.4 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg></span>
+                        <div><h4>Adresse</h4><p><?php echo nl2br(esc_html($adresse)); ?></p></div>
+                    </li>
+                    <li>
+                        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h3l2 5-2.5 1.5a12 12 0 0 0 5 5L17 14l5 2v3a2 2 0 0 1-2 2A17 17 0 0 1 4 5a2 2 0 0 1 2-2Z"/></svg></span>
+                        <div><h4>Téléphone</h4><p><a href="<?php echo esc_attr($tel_lien); ?>"><?php echo esc_html($telephone); ?></a></p></div>
+                    </li>
+                    <li>
+                        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+                        <div><h4>Courriel</h4><p><a href="mailto:<?php echo esc_attr($courriel); ?>"><?php echo esc_html($courriel); ?></a></p></div>
+                    </li>
+                    <li>
+                        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                        <div>
+                            <h4>Horaires</h4>
+                            <p>Lun - Ven : <?php echo esc_html($h_sem); ?><br>
+                               Samedi : <?php echo esc_html($h_sam); ?><br>
+                               Dimanche : <?php echo esc_html($h_dim); ?></p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 8h-2a2 2 0 0 0-2 2v10M8 12h6"/></svg></span>
+                        <div><h4>Suivez-nous</h4><p><a href="<?php echo esc_url($facebook); ?>" target="_blank" rel="noopener">Facebook</a></p></div>
+                    </li>
+                </ul>
+            </aside>
+
         </div>
+
+        <div class="ct2-map reveal">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2776.3!2d-67.5282195!3d48.8447292!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4c96c1fddfc0165f%3A0x6e352ffd0909e5d8!2sLe%20Vivier%2C%20%C3%A9picerie%20boutique!5e0!3m2!1sfr!2sca!4v1"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Le Vivier — 14 Avenue D'Amours, Matane, QC">
+            </iframe>
+        </div>
+
     </div>
 </section>
 
