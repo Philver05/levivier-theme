@@ -102,7 +102,8 @@ $h_dim     = $ct_opt('opt_horaire_dimanche', '10 h - 17 h');
                 <ul>
                     <li>
                         <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.6 7-12a7 7 0 1 0-14 0c0 5.4 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg></span>
-                        <div><h4>Adresse</h4><p><?php echo nl2br(esc_html($adresse)); ?></p></div>
+                        <?php /* Adresse sur une seule ligne (retour Philippe) */ ?>
+                        <div><h4>Adresse</h4><p><?php echo esc_html(preg_replace('/\s*\R\s*/', ', ', trim($adresse))); ?></p></div>
                     </li>
                     <li>
                         <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h3l2 5-2.5 1.5a12 12 0 0 0 5 5L17 14l5 2v3a2 2 0 0 1-2 2A17 17 0 0 1 4 5a2 2 0 0 1 2-2Z"/></svg></span>
@@ -113,6 +114,11 @@ $h_dim     = $ct_opt('opt_horaire_dimanche', '10 h - 17 h');
                         <div><h4>Courriel</h4><p><a href="mailto:<?php echo esc_attr($courriel); ?>"><?php echo esc_html($courriel); ?></a></p></div>
                     </li>
                     <li>
+                        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 8h-2a2 2 0 0 0-2 2v10M8 12h6"/></svg></span>
+                        <div><h4>Suivez-nous</h4><p><a href="<?php echo esc_url($facebook); ?>" target="_blank" rel="noopener">Facebook</a></p></div>
+                    </li>
+                    <?php /* Horaires en dernier, après Facebook (retour Philippe) */ ?>
+                    <li>
                         <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
                         <div>
                             <h4>Horaires</h4>
@@ -120,10 +126,6 @@ $h_dim     = $ct_opt('opt_horaire_dimanche', '10 h - 17 h');
                                Samedi : <?php echo esc_html($h_sam); ?><br>
                                Dimanche : <?php echo esc_html($h_dim); ?></p>
                         </div>
-                    </li>
-                    <li>
-                        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 8h-2a2 2 0 0 0-2 2v10M8 12h6"/></svg></span>
-                        <div><h4>Suivez-nous</h4><p><a href="<?php echo esc_url($facebook); ?>" target="_blank" rel="noopener">Facebook</a></p></div>
                     </li>
                 </ul>
             </aside>

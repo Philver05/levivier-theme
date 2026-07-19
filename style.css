@@ -393,10 +393,14 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
   .hero-texte p { margin-inline: auto; }
   .hero-actions { justify-content: center; }
   /* Fleur animée réservée au desktop (demande du 18 juillet) : en tablette et
-     mobile elle mangeait un écran sans rien apporter. */
+     mobile elle mangeait un écran sans rien apporter. Les arches de couleur
+     n'accompagnent que la composition fleur : sans elle, deux ronds coupés
+     flottaient derrière les boutons — retirées aussi. */
   .hero-fleur { display: none; }
   .cercle-ocre { display: none; }
+  .arche { display: none; }
   .hero { min-height: auto; padding-bottom: clamp(4rem, 9vh, 5.5rem); }
+  .hero h1 { text-wrap: balance; }
   .hero-scroll { display: none; }
   .intro-grille { grid-template-columns: 1fr; }
   .intro-media { max-width: 440px; margin-inline: auto; order: -1; }
@@ -717,7 +721,7 @@ body.univers-lofts .page-entete .eyebrow { color: #e7c9a0; }
 .lofts-entete-meta svg { width: 17px; height: 17px; fill: none; stroke: #6a8a86; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
 /* Grille des lofts */
-.lofts-liste-section { padding-block: clamp(.4rem, .2rem + 1vw, 1.1rem) clamp(3rem, 2rem + 4vw, 5rem); }
+.lofts-liste-section { padding-block: clamp(.4rem, .2rem + 1vw, 1.1rem) clamp(2rem, 1.5rem + 1.5vw, 3rem); }
 /* Les cartes s'étirent sur toute la largeur du conteneur (avec 2 lofts,
    l'ancien plafond de 440px laissait ~40% de vide de chaque côté) */
 .lofts-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(1.4rem, 1rem + 1.5vw, 2.2rem); justify-content: center; }
@@ -755,8 +759,8 @@ body.univers-lofts .page-entete .eyebrow { color: #e7c9a0; }
    seule masse sombre sans rythme. Cette section repasse au clair (nacre
    Lofts) : elle respire entre la grille de lofts et le crescendo sombre de
    la CTA + du pied, au lieu de l'alourdir encore. */
-.lofts-reassurance { background: var(--lofts-perle); color: var(--texte-corps); padding-block: clamp(3rem, 2rem + 4vw, 5rem); }
-.lofts-section-titre { text-align: center; font-family: var(--f-script); font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem); margin-bottom: clamp(2rem, 1.2rem + 2vw, 3rem); color: #1d5055; }
+.lofts-reassurance { background: var(--lofts-perle); color: var(--texte-corps); padding-block: clamp(2.25rem, 1.5rem + 2vw, 3.5rem); }
+.lofts-section-titre { text-align: center; font-family: var(--f-script); font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem); margin-bottom: clamp(1.5rem, 1rem + 1.5vw, 2.25rem); color: #1d5055; }
 .lofts-section-titre-clair { color: #fff; }
 .lofts-reassurance-grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(1.5rem, 1rem + 2vw, 2.5rem); }
 .lofts-atout { text-align: center; }
@@ -766,7 +770,9 @@ body.univers-lofts .page-entete .eyebrow { color: #e7c9a0; }
 .lofts-atout p { font-size: .92rem; color: var(--texte-corps); }
 
 /* CTA finale — bande pleine largeur (pas une carte flottante dans le vide) */
-.lofts-cta-finale { position: relative; overflow: hidden; background: linear-gradient(160deg, #1d5055, #16403f); padding-block: clamp(3.4rem, 2.4rem + 4vw, 6.2rem); }
+/* Bas de bande resserré : le padding-bottom géant laissait un grand vide
+   sarcelle sous la ligne de copyright (retour Philippe, 19 juillet) */
+.lofts-cta-finale { position: relative; overflow: hidden; background: linear-gradient(160deg, #1d5055, #16403f); padding-block: clamp(2.5rem, 2rem + 2vw, 4rem) 0; }
 .lofts-cta-finale::after {
   content: ""; position: absolute; z-index: 0; pointer-events: none;
   right: -6%; top: 50%; transform: translateY(-50%);
@@ -785,7 +791,7 @@ body.univers-lofts .page-entete .eyebrow { color: #e7c9a0; }
 /* Barre de copyright : cette bande tient lieu de pied de page sur /lofts/,
    même traitement que .pied-bas (liseré + petit texte discret) mais dans
    les tons sarcelle/or de l'univers Lofts. */
-.lofts-cta-bas { position: relative; z-index: 1; margin-top: clamp(3.5rem, 2.5rem + 3vw, 5rem); border-top: 1px solid rgba(231,201,160,.2); padding-block: 1.3rem; text-align: center; font-size: .8rem; color: #8aa6a2; letter-spacing: .02em; }
+.lofts-cta-bas { position: relative; z-index: 1; margin-top: clamp(2rem, 1.5rem + 1.5vw, 3rem); border-top: 1px solid rgba(231,201,160,.2); padding-block: 1.2rem; text-align: center; font-size: .8rem; color: #8aa6a2; letter-spacing: .02em; }
 @media (max-width: 720px) {
   .lofts-cta-finale::after { width: clamp(260px, 68vw, 420px); opacity: .08; }
 }
@@ -1173,8 +1179,8 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
 }
 
 .loft-d-conteneur {
-  padding-top: clamp(7rem, 5rem + 4vw, 10rem);
-  padding-bottom: 4rem;
+  padding-top: clamp(6.5rem, 5.5rem + 1.5vw, 7.5rem);
+  padding-bottom: 2.5rem;
 }
 
 .loft-d-retour {
@@ -2700,6 +2706,31 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   gap: .5rem;
   padding: 1rem 0;
 }
+/* Mobile : la bande de catégories (jusqu'à 16 pilules sur l'Épicerie) devenait
+   un mur de 4-5 rangées. Une seule rangée défilable au doigt, pilules plus
+   hautes (cible tactile), la pilule coupée au bord invite à faire défiler. */
+@media (max-width: 720px) {
+  .pm-filtres-wrap .conteneur { padding-inline: 0; }
+  .pm-filtres {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    padding: .7rem var(--gouttiere);
+  }
+  .pm-filtres::-webkit-scrollbar { display: none; }
+  .pm-filtres .pm-filtre {
+    flex: none;
+    scroll-snap-align: start;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    padding: .45rem 1.05rem;
+    font-size: .82rem;
+    white-space: nowrap;
+  }
+}
 .pm-filtre {
   background: none;
   border: 1px solid var(--bordure);
@@ -2707,7 +2738,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   padding: .35rem 1rem;
   font-size: .78rem;
   font-weight: 600;
-  color: var(--texte-moyen);
+  color: var(--texte-corps); /* --texte-moyen n'existe pas dans ce fichier */
   cursor: pointer;
   transition: background var(--transi), color var(--transi), border-color var(--transi);
 }
