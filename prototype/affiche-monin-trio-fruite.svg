@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="850.4" height="113.4" viewBox="0 0 850.4 113.4">
+  <!-- Affiche reglette de rayon · Sirops Monin · Trio fruite -->
+  <!-- 850.4 x 113.4 pt = 300 x 40 mm exactement (export PDF Figma = taille reelle) -->
+  <!-- Police : Bricolage Grotesque (disponible dans Figma via Google Fonts) -->
+
+  <!-- Fond -->
+  <rect id="fond" width="850.4" height="113.4" fill="#fbf7ef"/>
+
+  <!-- Panneau 1 · grenadine -->
+  <path id="panneau-1" d="M208.5,113.4 L218.9,39.9 L349.4,39.9 L339,113.4 Z" fill="#d64550"/>
+  <!-- Panneau 2 · menthe -->
+  <path id="panneau-2" d="M353.3,113.4 L366.1,22.6 L507.9,22.6 L495.1,113.4 Z" fill="#3f8f6b"/>
+  <!-- Panneau 3 · caramel -->
+  <path id="panneau-3" d="M509.3,113.4 L524.5,5.4 L683.5,5.4 L668.3,113.4 Z" fill="#c98a3d"/>
+
+  <!-- Gouttes -->
+  <g id="goutte-grenadine" transform="translate(265.5,10.5) scale(0.675)" fill="#d64550">
+    <path d="M6 0 C8.5 5 12 7.5 12 11.5 A6 6 0 1 1 0 11.5 C0 7.5 3.5 5 6 0 Z"/>
+  </g>
+  <g id="goutte-menthe" transform="translate(422,6) scale(0.525)" fill="#3f8f6b">
+    <path d="M6 0 C8.5 5 12 7.5 12 11.5 A6 6 0 1 1 0 11.5 C0 7.5 3.5 5 6 0 Z"/>
+  </g>
+  <g id="goutte-caramel" transform="translate(701,13.5) scale(0.6)" fill="#c98a3d">
+    <path d="M6 0 C8.5 5 12 7.5 12 11.5 A6 6 0 1 1 0 11.5 C0 7.5 3.5 5 6 0 Z"/>
+  </g>
+
+  <!-- Marque -->
+  <text x="26" y="45" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="23" fill="#221d18">SIROPS</text>
+  <text x="26" y="68" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="23" fill="#221d18">MONIN</text>
+  <text x="26" y="80" font-family="Bricolage Grotesque, sans-serif" font-weight="600" font-size="7.5" letter-spacing="2.2" fill="#b3402e">L'ÉCHELLE DES SAVEURS</text>
+
+  <!-- Panneau 1 : textes -->
+  <text x="280" y="78" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="24" fill="#ffffff">-10%</text>
+  <text x="280" y="94" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="600" font-size="7" letter-spacing="1" fill="#ffffff" opacity="0.92">2E BOUTEILLE</text>
+
+  <!-- Panneau 2 : textes -->
+  <text x="430.5" y="72" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="30" fill="#ffffff">-20%</text>
+  <text x="430.5" y="90" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="600" font-size="7" letter-spacing="1" fill="#ffffff" opacity="0.92">3E BOUTEILLE</text>
+
+  <!-- Panneau 3 : textes -->
+  <text x="596.3" y="64" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="37" fill="#ffffff">-30%</text>
+  <text x="596.3" y="85" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="600" font-size="7" letter-spacing="1" fill="#ffffff" opacity="0.92">4E BOUTEILLE</text>
+
+  <!-- Note droite -->
+  <text x="828" y="51" text-anchor="end" font-family="Bricolage Grotesque, sans-serif" font-weight="600" font-size="8.6" fill="#4b4640">à l'achat d'un 1er sirop</text>
+  <text x="828" y="63" text-anchor="end" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="8.6" fill="#b3402e">collectionnez-les!</text>
+
+  <!-- Mention legale -->
+  <text x="26" y="107" font-family="Bricolage Grotesque, sans-serif" font-weight="400" font-size="6" fill="#4b4640" opacity="0.55">Détails en caisse</text>
+</svg>

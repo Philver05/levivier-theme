@@ -56,11 +56,21 @@ Affiche Facebook 1080x1080 : `prototype/affiche-facebook-monin.html` (source) �
 Story 1080x1920 : `prototype/affiche-facebook-monin-story.html` → `.png`. Titre 1 ligne, sous-titre "Viens goûter gratuitement", pied 2 lignes.
 Versions SVG éditables Figma (demande de Philippe) : `prototype/affiche-facebook-monin.svg` + `-story.svg`. Générées par script `scratchpad/build_svg.py` (Python) : vrais <text> Bricolage Grotesque + Montserrat, panneaux = <polygon> parallélogrammes (skewX 8° calculé), photo recadrée par ffmpeg (scale+crop reproduisant object-fit cover/object-position) puis INTÉGRÉE en base64 (indispensable pour coller dans Figma). XML validé, rendus vérifiés via Chrome headless. Panneaux à coins vifs (le CSS avait border-radius, Philippe peut arrondir dans Figma). Non commité.
 
+## 2e PDF « Priorités » de Philippe (18 juillet) — codé et déployé
+Deuxième liste de priorités (après celle du 17 juillet, section "priorités de Marie" ci-dessus) : retrait de l'eyebrow Produits Maison, nouvel ordre de catégories Épicerie, renommage PAM Prêt-à-manger→Mets préparés. Tout codé, déployé par FTP le 18 juillet, vérifié en direct (HTTP 200, pas d'erreur PHP) :
+- `templates/template-produits-maison.php` : eyebrow (`<p class="eyebrow">`) retiré, `$surtitre`/`pm_surtitre` plus utilisé côté affichage (le champ ACF existe toujours, juste plus lu par ce template).
+- `templates/template-epicerie.php` : `usort()` des catégories selon l'ordre demandé : Produits en vrac, Produits locaux, Produits transformés, Produits végétaliens, Produits sans gluten, Produits fins, Légumes, Viandes, Fromages, Thés et infusion, Café, Bières vins et spiritueux, Sirop Monin, Confiseries, Grignotines (toute catégorie non listée tombe à la fin). Nom exact confirmé en direct : le terme existant est "Thés et infusion" (pas "Thés & Infusions" comme documenté à l'origine) : `$ordre_categories_epicerie` corrigé en conséquence.
+- `templates/template-bon-pam.php` : `$ordre_pam_categories` mis à jour, `'Prêt-à-manger'` remplacé par `'Mets préparés'`, entrée `'Mets préparé'` (singulier, terme autonome) retirée du tableau.
+- `includes/seed-data.php` : 2 nouveaux scripts admin_init ajoutés (idempotents, gardés par option, jamais destructifs) :
+  - `?lv_ajuster_epicerie_categories=1` : renomme le terme "Produits frais" en "Produits locaux" (garde les produits déjà tagués), crée les termes vides "Produits fins", "Café", "Bières, vins et spiritueux", "Sirop Monin", "Confiseries", "Grignotines".
+  - `?lv_ajuster_pam_mets_prepares=1` : renomme "Prêt-à-manger" en "Mets préparés", ajoute "Pizzas" et "Mets cuisinés" comme sous-catégories (garde Sandwichs/Salades existantes), déplace les produits de l'ancien terme autonome "Mets préparé" (singulier) vers "Mets préparés" puis laisse ce terme vide sans le supprimer (suppression manuelle à faire par Philippe une fois vérifié vide).
+- **PAS ENCORE FAIT (nécessite une session wp-admin connectée, je n'ai que le FTP)** : visiter les 2 URLs ci-dessus. Vérifié en direct AVANT migration : aucune régression, page Épicerie affiche encore l'ancien "Produits frais" (attendu, pas encore renommé), PAM affiche encore "Prêt-à-manger" en dernier dans l'ordre (attendu : ne matche plus le tableau tant que le terme n'est pas renommé, tombe à la fin sans casser l'affichage).
+
 ## Next step
-1. Déployer ENSEMBLE sur levivier.net : templates/template-bon-pam.php, assets/scripts/pam-commande.js, includes/pam-ajax.php, includes/seed-data.php, functions.php, style.css.
-2. Visiter /wp-admin/?lv_seed_pam=1 (connecté admin).
-3. Vérifier : cartes denses, accordéons, tri par prix, date+heure requis, courriel test, onglet Amaretti du bon PM.
-4. Commiter une fois validé par Philippe (php -l impossible ici, pas de PHP CLI : relu à la main).
+1. Philippe (connecté wp-admin) : visiter `/wp-admin/?lv_ajuster_epicerie_categories=1` puis `/wp-admin/?lv_ajuster_pam_mets_prepares=1`.
+2. Vérifier ensuite en direct : ordre des catégories Épicerie, onglet "Mets préparés" du PAM avec Pizzas/Mets cuisinés/Sandwichs/Salades en sous-onglets.
+3. Contenu à faire par Philippe (pas du code) : champ ACF Lofts "Surtitre" → "Hébergement touristique" ; photos Boutique depuis Dropbox "Marketing/photo/boutique/site web (à venir)" (pas d'accès Dropbox ici) ; supprimer les termes vidés une fois vérifiés ("Amarettis", "Mets préparé" singulier) ; taguer des produits dans les nouvelles catégories Épicerie vides (Produits fins, Café, etc.) si souhaité.
+4. Commiter le lot (seed-data.php, template-epicerie.php, template-produits-maison.php, template-bon-pam.php) une fois validé par Philippe.
 
 ## Blockers
 [aucun]

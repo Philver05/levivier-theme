@@ -592,3 +592,157 @@ add_action('admin_init', function () {
     echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#b85c50;">← Retour au tableau de bord</a></p>';
     exit;
 });
+
+/**
+ * Ajustements catégories Épicerie (demande de Philippe/Marie, priorités
+ * du 17 juillet) : renomme « Produits frais » en « Produits locaux »
+ * (garde les produits déjà tagués) et crée les nouvelles catégories
+ * pour l'ordre d'affichage demandé. Ces catégories sont visibles sur la
+ * page Épicerie même vides (hide_empty=false) : elles resteront des
+ * onglets sans produit tant que Marie n'y aura pas tagué d'articles.
+ * Déclencher UNE SEULE FOIS : /wp-admin/?lv_ajuster_epicerie_categories=1
+ */
+add_action('admin_init', function () {
+
+    if (!isset($_GET['lv_ajuster_epicerie_categories']) || $_GET['lv_ajuster_epicerie_categories'] !== '1') return;
+    if (!current_user_can('manage_options')) wp_die('Accès refusé.');
+    if (get_option('lv_ajuster_epicerie_categories_done')) {
+        wp_die('✅ Cet ajustement a déjà été exécuté.');
+    }
+
+    $log = [];
+
+    /* Renommer « Produits frais » en « Produits locaux » (même terme, juste le nom) */
+    $frais = term_exists('Produits frais', 'categorie_produit');
+    if ($frais) {
+        $frais_id = is_array($frais) ? (int) $frais['term_id'] : (int) $frais;
+        wp_update_term($frais_id, 'categorie_produit', ['name' => 'Produits locaux']);
+        $log[] = "✔ « Produits frais » renommée en « Produits locaux »";
+    } elseif (term_exists('Produits locaux', 'categorie_produit')) {
+        $log[] = "« Produits locaux » déjà existante, inchangée";
+    } else {
+        wp_insert_term('Produits locaux', 'categorie_produit');
+        $log[] = "✔ « Produits locaux » créée (aucune ancienne « Produits frais » trouvée)";
+    }
+
+    /* Nouvelles catégories principales */
+    $nouvelles = ['Produits fins', 'Café', 'Bières, vins et spiritueux', 'Sirop Monin', 'Confiseries', 'Grignotines'];
+    foreach ($nouvelles as $nom) {
+        if (term_exists($nom, 'categorie_produit')) {
+            $log[] = "« $nom » déjà existante, inchangée";
+            continue;
+        }
+        $res = wp_insert_term($nom, 'categorie_produit');
+        if (is_wp_error($res)) {
+            $log[] = "❌ Erreur catégorie « $nom » : " . $res->get_error_message();
+        } else {
+            $log[] = "✔ « $nom » créée";
+        }
+    }
+
+    update_option('lv_ajuster_epicerie_categories_done', true);
+
+    echo '<style>body{font-family:monospace;padding:2rem;background:#f9f5f0;}
+          h1{color:#4d6040;} li{margin:.3rem 0;} .ok{color:#4d6040;} .err{color:#c00;}</style>';
+    echo '<h1>🥬 Le Vivier — Ajustements catégories Épicerie</h1>';
+    echo '<ul>';
+    foreach ($log as $ligne) {
+        $class = str_contains($ligne, '❌') ? 'err' : 'ok';
+        echo '<li class="' . $class . '">' . esc_html($ligne) . '</li>';
+    }
+    echo '</ul>';
+    echo '<p><strong>Note :</strong> les nouvelles catégories apparaissent tout de suite comme onglets sur la page Épicerie, même sans produit dedans (elles resteront vides tant que des produits n\'y seront pas tagués).</p>';
+    echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#4d6040;">← Retour au tableau de bord</a></p>';
+    exit;
+});
+
+/**
+ * PAM : renomme « Prêt-à-manger » en « Mets préparés », ajoute les
+ * sous-catégories Pizzas et Mets cuisinés (garde Sandwichs/Salades déjà
+ * présentes), et fusionne l'ancienne catégorie autonome « Mets préparé »
+ * (singulier) dedans pour éviter deux noms presque identiques.
+ * Déclencher UNE SEULE FOIS : /wp-admin/?lv_ajuster_pam_mets_prepares=1
+ */
+add_action('admin_init', function () {
+
+    if (!isset($_GET['lv_ajuster_pam_mets_prepares']) || $_GET['lv_ajuster_pam_mets_prepares'] !== '1') return;
+    if (!current_user_can('manage_options')) wp_die('Accès refusé.');
+    if (get_option('lv_ajuster_pam_mets_prepares_done')) {
+        wp_die('✅ Cet ajustement a déjà été exécuté.');
+    }
+
+    $log = [];
+
+    /* 1. Renommer « Prêt-à-manger » en « Mets préparés » */
+    $pam_terme = term_exists('Prêt-à-manger', 'pam_categorie');
+    $mets_id = 0;
+    if ($pam_terme) {
+        $mets_id = is_array($pam_terme) ? (int) $pam_terme['term_id'] : (int) $pam_terme;
+        wp_update_term($mets_id, 'pam_categorie', ['name' => 'Mets préparés']);
+        $log[] = "✔ « Prêt-à-manger » renommée en « Mets préparés »";
+    } else {
+        $log[] = "❌ Catégorie « Prêt-à-manger » introuvable, rien renommé.";
+    }
+
+    /* 2. Ajouter Pizzas + Mets cuisinés comme enfants (Sandwichs/Salades restent) */
+    if ($mets_id) {
+        foreach (['Pizzas', 'Mets cuisinés'] as $nom) {
+            $existant = term_exists($nom, 'pam_categorie');
+            if ($existant) {
+                $id = is_array($existant) ? (int) $existant['term_id'] : (int) $existant;
+                $terme = get_term($id, 'pam_categorie');
+                if ((int) $terme->parent !== $mets_id) {
+                    wp_update_term($id, 'pam_categorie', ['parent' => $mets_id]);
+                    $log[] = "↳ « $nom » déplacée sous « Mets préparés »";
+                } else {
+                    $log[] = "« $nom » déjà sous « Mets préparés »";
+                }
+            } else {
+                $res = wp_insert_term($nom, 'pam_categorie', ['parent' => $mets_id]);
+                if (is_wp_error($res)) {
+                    $log[] = "❌ Erreur sous-catégorie « $nom » : " . $res->get_error_message();
+                } else {
+                    $log[] = "✔ « $nom » créée sous « Mets préparés »";
+                }
+            }
+        }
+    }
+
+    /* 3. Fusionner l'ancienne catégorie autonome « Mets préparé » (singulier) dans « Mets préparés » */
+    $ancien = term_exists('Mets préparé', 'pam_categorie');
+    if ($ancien && $mets_id) {
+        $ancien_id = is_array($ancien) ? (int) $ancien['term_id'] : (int) $ancien;
+        if ($ancien_id !== $mets_id) {
+            $produits = get_posts([
+                'post_type'      => 'pam_produit',
+                'posts_per_page' => -1,
+                'post_status'    => 'any',
+                'fields'         => 'ids',
+                'tax_query'      => [['taxonomy' => 'pam_categorie', 'field' => 'term_id', 'terms' => $ancien_id]],
+            ]);
+            foreach ($produits as $pid) {
+                wp_set_object_terms($pid, $mets_id, 'pam_categorie', true);
+                wp_remove_object_terms($pid, $ancien_id, 'pam_categorie');
+                $log[] = "↳ Produit #$pid déplacé de « Mets préparé » vers « Mets préparés »";
+            }
+            if (!$produits) $log[] = "Aucun produit trouvé dans l'ancienne « Mets préparé » (probablement vide)";
+            $log[] = "⚠ L'ancien terme « Mets préparé » (singulier) n'est pas supprimé automatiquement : vérifie qu'il est vide puis supprime-le dans WP → Prêt à manger → Catégories.";
+        }
+    } elseif (!$ancien) {
+        $log[] = "Pas d'ancienne catégorie « Mets préparé » autonome trouvée (rien à fusionner).";
+    }
+
+    update_option('lv_ajuster_pam_mets_prepares_done', true);
+
+    echo '<style>body{font-family:monospace;padding:2rem;background:#f9f5f0;}
+          h1{color:#b85c50;} li{margin:.3rem 0;} .ok{color:#4d6040;} .err{color:#c00;}</style>';
+    echo '<h1>🍽️ Le Vivier — Mets préparés (fusion + sous-catégories)</h1>';
+    echo '<ul>';
+    foreach ($log as $ligne) {
+        $class = (str_contains($ligne, '❌') || str_contains($ligne, '⚠')) ? 'err' : 'ok';
+        echo '<li class="' . $class . '">' . esc_html($ligne) . '</li>';
+    }
+    echo '</ul>';
+    echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#b85c50;">← Retour au tableau de bord</a></p>';
+    exit;
+});

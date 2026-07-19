@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Aperçu SVG · Trio fruité</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&display=swap');
+  body { background:#16120e; margin:0; padding:24px; }
+  #cible svg { width:100%; height:auto; display:block; box-shadow:0 8px 24px rgba(0,0,0,.4); }
+</style>
+</head>
+<body>
+<div id="cible"></div>
+<script>
+  fetch('affiche-monin-trio-fruite.svg')
+    .then(r => r.text())
+    .then(t => { document.getElementById('cible').innerHTML = t; });
+</script>
+</body>
+</html>

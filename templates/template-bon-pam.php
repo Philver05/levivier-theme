@@ -178,8 +178,8 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                    Toute catégorie non listée ici (ex: nouvelle catégorie pas encore ajoutée
                    à cette liste) se retrouve à la fin, par ordre alphabétique. */
                 $ordre_pam_categories = [
-                    'Pains', 'Pâtisseries', 'Pâtés et Quiches', 'Prêt-à-manger',
-                    'Mets préparé', 'Divers prêt-à-manger', 'Sushis',
+                    'Pains', 'Pâtisseries', 'Pâtés et Quiches', 'Mets préparés',
+                    'Divers prêt-à-manger', 'Sushis',
                 ];
                 usort($categories_principales, function ($a, $b) use ($ordre_pam_categories) {
                     $pos_a = array_search($a->name, $ordre_pam_categories, true);

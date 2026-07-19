@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Story 1080x1920 · Promo Sirops Monin</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Montserrat:wght@500;600;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+}
+body {
+  position: relative;
+  background: #fbf7ef;
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+/* ---------- Photo ---------- */
+.photo {
+  position: absolute;
+  top: 0; left: 0;
+  width: 1080px;
+  height: 900px;
+  object-fit: cover;
+  object-position: center 60%;
+}
+.photo-fondu {
+  position: absolute;
+  top: 780px; left: 0;
+  width: 1080px;
+  height: 120px;
+  background: linear-gradient(180deg, rgba(251,247,239,0) 0%, #fbf7ef 100%);
+}
+
+/* ---------- Pastille urgence ---------- */
+.pill {
+  position: absolute;
+  top: 72px;
+  right: 60px;
+  background: #b3402e;
+  color: #fdf6ee;
+  font-weight: 800;
+  font-size: 38px;
+  letter-spacing: 2.5px;
+  padding: 24px 44px;
+  border-radius: 70px;
+  transform: rotate(2.5deg);
+  box-shadow: 0 14px 30px rgba(60,20,10,.3);
+}
+
+/* ---------- Zone texte ---------- */
+.contenu {
+  position: absolute;
+  top: 930px;
+  left: 70px;
+  right: 70px;
+  text-align: center;
+}
+.kicker {
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: 5px;
+  color: #b3402e;
+}
+.titre {
+  margin-top: 14px;
+  font-weight: 800;
+  font-size: 122px;
+  line-height: 1;
+  letter-spacing: -2px;
+  color: #221d18;
+}
+.sous {
+  margin-top: 26px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 37px;
+  line-height: 1.35;
+  color: #4b4640;
+}
+.sous b { color: #3f8f6b; font-weight: 700; }
+
+/* ---------- Panneaux promo ---------- */
+.panneaux {
+  position: absolute;
+  left: 80px;
+  right: 80px;
+  bottom: 210px;
+  height: 320px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.pan {
+  transform: skewX(-8deg);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 16px 34px rgba(60,40,20,.2);
+}
+.pan-in {
+  transform: skewX(8deg);
+  text-align: center;
+  line-height: 1;
+  color: #fff;
+}
+.pan-in b { display: block; font-weight: 800; }
+.pan-in span {
+  display: block;
+  margin-top: 16px;
+  font-weight: 600;
+  font-size: 30px;
+  letter-spacing: 4px;
+  opacity: .95;
+}
+.p1 { width: 288px; height: 224px; background: #d64550; }
+.p2 { width: 300px; height: 272px; background: #3f8f6b; }
+.p3 { width: 316px; height: 320px; background: #c98a3d; }
+.p1 b { font-size: 90px; }
+.p2 b { font-size: 110px; }
+.p3 b { font-size: 130px; }
+
+/* ---------- Gouttes ---------- */
+.goutte {
+  position: absolute;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(45deg);
+}
+.g1 { width: 26px; height: 26px; background: #d64550; left: 964px;  top: 1052px; }
+.g2 { width: 20px; height: 20px; background: #3f8f6b; left: 150px;  top: 1058px; }
+.g3 { width: 22px; height: 22px; background: #c98a3d; left: 176px;  top: 1104px; }
+
+/* ---------- Pied ---------- */
+.pied {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 1080px;
+  height: 132px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-top: 4px solid #4d6040;
+  font-family: 'Montserrat', sans-serif;
+  color: #4d6040;
+}
+.pied .nom {
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: 3px;
+}
+.pied .adr {
+  font-weight: 600;
+  font-size: 26px;
+  letter-spacing: 1.5px;
+  color: #4b4640;
+}
+</style>
+</head>
+<body>
+  <img class="photo" src="sirop monin img.jpg" alt="">
+  <div class="photo-fondu"></div>
+
+  <div class="pill">JUSQU'À DIMANCHE</div>
+
+  <div class="contenu">
+    <div class="kicker">LA SLOCHE EST ARRIVÉE · PLUS DE 20 SAVEURS</div>
+    <div class="titre">Sirops Monin</div>
+    <div class="sous">Viens goûter <b>gratuitement</b><br>et fais ton propre mix!</div>
+  </div>
+
+  <div class="goutte g1"></div>
+  <div class="goutte g2"></div>
+  <div class="goutte g3"></div>
+
+  <div class="panneaux">
+    <div class="pan p1"><div class="pan-in"><b>-10%</b><span>1RE BOUTEILLE</span></div></div>
+    <div class="pan p2"><div class="pan-in"><b>-20%</b><span>2E BOUTEILLE</span></div></div>
+    <div class="pan p3"><div class="pan-in"><b>-30%</b><span>3E ET +</span></div></div>
+  </div>
+
+  <div class="pied">
+    <div class="nom">LE VIVIER · ÉPICERIE-BOUTIQUE</div>
+    <div class="adr">14, av. D'Amours, Matane · (418) 562-5230</div>
+  </div>
+</body>
+</html>

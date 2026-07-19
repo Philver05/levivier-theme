@@ -13,6 +13,23 @@ $categories_produit = get_terms([
 ]);
 // « Produit Maison » + ses sous-categories ont leur propre page → exclus ici
 $maison_ids = function_exists('lv_maison_term_ids') ? lv_maison_term_ids() : [];
+
+// Ordre d'affichage demandé par Philippe (au lieu de l'ordre alphabétique)
+$ordre_categories_epicerie = [
+    'Produits en vrac', 'Produits locaux', 'Produits transformés',
+    'Produits végétaliens', 'Produits sans gluten', 'Produits fins',
+    'Légumes', 'Viandes', 'Fromages', 'Thés et infusion', 'Café',
+    'Bières, vins et spiritueux', 'Sirop Monin', 'Confiseries', 'Grignotines',
+];
+if ($categories_produit && !is_wp_error($categories_produit)) {
+    usort($categories_produit, function ($a, $b) use ($ordre_categories_epicerie) {
+        $pos_a = array_search($a->name, $ordre_categories_epicerie, true);
+        $pos_b = array_search($b->name, $ordre_categories_epicerie, true);
+        if ($pos_a === false) $pos_a = 999;
+        if ($pos_b === false) $pos_b = 999;
+        return $pos_a <=> $pos_b;
+    });
+}
 ?>
 
 <!-- ======================================================
