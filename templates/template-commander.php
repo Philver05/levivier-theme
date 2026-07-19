@@ -11,7 +11,14 @@ if (have_posts()) the_post();
    · La description se rédige dans l'éditeur principal de la page.
    · Les bons de commande sont gérés par le type « Bons de commande ».
 ---------------------------------------------------------- */
-$surtitre = get_field('cmd_surtitre') ?: 'Bon de commande en ligne · Récupérez en magasin';
+/* Champs ACF avec repli (textes actuels) — tout éditable dans WP */
+$cmd = function ($cle, $defaut = '') {
+    $valeur = function_exists('get_field') ? get_field($cle) : '';
+    return $valeur ?: $defaut;
+};
+$surtitre = $cmd('cmd_surtitre', 'Bon de commande en ligne · Récupérez en magasin');
+$cmd_tel      = function_exists('lv_opt') ? lv_opt('opt_telephone', '(418) 562-5230') : '(418) 562-5230';
+$cmd_tel_lien = function_exists('lv_opt_tel_lien') ? lv_opt_tel_lien() : 'tel:+14185625230';
 ?>
 
 <!-- ======================================================
@@ -31,29 +38,29 @@ $surtitre = get_field('cmd_surtitre') ?: 'Bon de commande en ligne · Récupére
 <section class="section section-compacte engagements">
     <div class="conteneur">
         <div class="section-titre section-titre--large">
-            <h2>Quatre étapes, quelques minutes,<br>zéro déplacement inutile</h2>
+            <h2><?php echo esc_html($cmd('cmd_etapes_titre', 'Quatre étapes, quelques minutes, zéro déplacement inutile')); ?></h2>
         </div>
 
         <ol class="etapes">
             <li class="etape reveal">
                 <span class="etape-num">1</span>
-                <h3>Choisissez votre bon de commande</h3>
-                <p>Sélectionnez le bon de commande correspondant à vos besoins.</p>
+                <h3><?php echo esc_html($cmd('cmd_etape1_titre', 'Choisissez votre bon de commande')); ?></h3>
+                <p><?php echo esc_html($cmd('cmd_etape1_texte', 'Sélectionnez le bon de commande correspondant à vos besoins.')); ?></p>
             </li>
             <li class="etape reveal reveal-delai-1">
                 <span class="etape-num">2</span>
-                <h3>Sélectionnez vos produits</h3>
-                <p>Indiquez les quantités et profitez de rabais selon les quantités choisies.</p>
+                <h3><?php echo esc_html($cmd('cmd_etape2_titre', 'Sélectionnez vos produits')); ?></h3>
+                <p><?php echo esc_html($cmd('cmd_etape2_texte', 'Indiquez les quantités et profitez de rabais selon les quantités choisies.')); ?></p>
             </li>
             <li class="etape reveal reveal-delai-2">
                 <span class="etape-num">3</span>
-                <h3>Envoyez votre bon de commande</h3>
-                <p>Gagnez du temps : on s'occupe de rassembler et de préparer soigneusement votre commande.</p>
+                <h3><?php echo esc_html($cmd('cmd_etape3_titre', 'Envoyez votre bon de commande')); ?></h3>
+                <p><?php echo esc_html($cmd('cmd_etape3_texte', 'Gagnez du temps : on s\'occupe de rassembler et de préparer soigneusement votre commande.')); ?></p>
             </li>
             <li class="etape reveal reveal-delai-3">
                 <span class="etape-num">4</span>
-                <h3>Récupérez en magasin</h3>
-                <p>Recevez un message lorsque votre commande est prête, puis passez en magasin pour la payer et la récupérer.</p>
+                <h3><?php echo esc_html($cmd('cmd_etape4_titre', 'Récupérez en magasin')); ?></h3>
+                <p><?php echo esc_html($cmd('cmd_etape4_texte', 'Recevez un message lorsque votre commande est prête, puis passez en magasin pour la payer et la récupérer.')); ?></p>
             </li>
         </ol>
     </div>
@@ -66,8 +73,8 @@ $surtitre = get_field('cmd_surtitre') ?: 'Bon de commande en ligne · Récupére
     <div class="conteneur">
 
         <div class="section-titre">
-            <h2>Choisissez votre bon de commande</h2>
-            <p>Choisissez le bon qu'il vous faut et remplissez-le en ligne</p>
+            <h2><?php echo esc_html($cmd('cmd_bons_titre', 'Choisissez votre bon de commande')); ?></h2>
+            <p><?php echo esc_html($cmd('cmd_bons_texte', 'Choisissez le bon qu\'il vous faut et remplissez-le en ligne')); ?></p>
         </div>
 
         <div class="cmd-grille">
@@ -87,19 +94,19 @@ $surtitre = get_field('cmd_surtitre') ?: 'Bon de commande en ligne · Récupére
                 endwhile; wp_reset_postdata();
             endif;
 
-            /* Cartes auto-générées pour les pages PAM et Vrac */
+            /* Cartes auto-générées pour les pages PAM et Vrac (descriptions éditables ACF) */
             $templates_internes = [
                 'templates/template-bon-pam.php'  => [
                     'icone'       => '🥗',
-                    'description' => 'Focaccias, pizzas, sandwichs, salades, sushis et plus — commandez à l\'avance et récupérez en magasin.',
+                    'description' => $cmd('cmd_desc_pam', 'Focaccias, pizzas, sandwichs, salades, sushis et plus — commandez à l\'avance et récupérez en magasin.'),
                 ],
                 'templates/template-bon-pm.php'   => [
                     'icone'       => '🏡',
-                    'description' => 'Nos préparations maison disponibles à la commande — confitures, biscuits, pâtes fraîches et autres douceurs faites au Vivier.',
+                    'description' => $cmd('cmd_desc_pm', 'Nos préparations maison disponibles à la commande — confitures, biscuits, pâtes fraîches et autres douceurs faites au Vivier.'),
                 ],
                 'templates/template-bon-vrac.php' => [
                     'icone'       => '🌾',
-                    'description' => 'Thés, tisanes, noix, grains, graines, légumineuses — commandez en vrac et profitez d\'escomptes selon la quantité.',
+                    'description' => $cmd('cmd_desc_vrac', 'Thés, tisanes, noix, grains, graines, légumineuses — commandez en vrac et profitez d\'escomptes selon la quantité.'),
                 ],
             ];
 
@@ -146,10 +153,10 @@ $surtitre = get_field('cmd_surtitre') ?: 'Bon de commande en ligne · Récupére
 <section class="section">
     <div class="conteneur">
         <div class="cta-panel reveal">
-            <h2>Prêt à gagner du temps&nbsp;?</h2>
-            <p>Remplissez votre bon de commande dès maintenant. On s'occupe du reste. Une question&nbsp;? Appelez-nous au <a href="tel:+14185625230" class="cta-tel">(418)&nbsp;562-5230</a>.</p>
+            <h2><?php echo esc_html($cmd('cmd_cta_titre', 'Prêt à gagner du temps ?')); ?></h2>
+            <p><?php echo esc_html($cmd('cmd_cta_texte', 'Remplissez votre bon de commande dès maintenant. On s\'occupe du reste.')); ?> Une question&nbsp;? Appelez-nous au <a href="<?php echo esc_attr($cmd_tel_lien); ?>" class="cta-tel"><?php echo esc_html($cmd_tel); ?></a>.</p>
             <div class="cta-panel-actions">
-                <a href="#bons-de-commande" class="btn btn-clair">Voir les bons de commande</a>
+                <a href="#bons-de-commande" class="btn btn-clair"><?php echo esc_html($cmd('cmd_cta_btn', 'Voir les bons de commande')); ?></a>
             </div>
         </div>
     </div>

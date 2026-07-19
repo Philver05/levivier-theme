@@ -150,7 +150,7 @@ if ($pres_photos || $pres_texte !== ''):
                 endwhile;
                 wp_reset_postdata();
             else: ?>
-                <p class="grille-vide">Les articles arrivent bientôt, revenez nous voir !</p>
+                <p class="grille-vide"><?php echo esc_html($bout('bout_vide_texte', 'Les articles arrivent bientôt, revenez nous voir !')); ?></p>
             <?php endif; ?>
         </div>
 

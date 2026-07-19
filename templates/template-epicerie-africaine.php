@@ -82,8 +82,8 @@ $specialites = [
 <section class="section produits"<?php echo $pres_presente ? '' : ' style="padding-top:clamp(1rem,.75rem+1vw,1.5rem)"'; ?>>
     <div class="conteneur">
         <div class="section-titre">
-            <h2>Nos spécialités</h2>
-            <p>Un aperçu des trésors culinaires à découvrir en boutique</p>
+            <h2><?php echo esc_html(get_field('afr_spec_titre_section') ?: 'Nos spécialités'); ?></h2>
+            <p><?php echo esc_html(get_field('afr_spec_soustitre') ?: 'Un aperçu des trésors culinaires à découvrir en boutique'); ?></p>
         </div>
 
         <div class="grille-prod">

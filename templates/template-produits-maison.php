@@ -172,11 +172,18 @@ else:
 ====================================================== -->
 <section class="section">
     <div class="conteneur">
+        <?php
+        /* Textes du panneau CTA éditables (repli = textes actuels) */
+        $pm_champ = function ($cle, $defaut) {
+            $valeur = function_exists('get_field') ? get_field($cle) : '';
+            return $valeur ?: $defaut;
+        };
+        ?>
         <div class="cta-panel reveal">
-            <h2>Prêt à commander&nbsp;?</h2>
-            <p>Remplissez votre bon de commande en ligne, on prépare tout pour vous. Récupérez et payez en magasin. Une question&nbsp;? Appelez-nous au <a href="<?php echo esc_attr(lv_opt_tel_lien()); ?>" class="cta-tel"><?php echo esc_html(lv_opt('opt_telephone', '(418) 562-5230')); ?></a>.</p>
+            <h2><?php echo esc_html($pm_champ('pm_cta_titre', 'Prêt à commander ?')); ?></h2>
+            <p><?php echo esc_html($pm_champ('pm_cta_texte', 'Remplissez votre bon de commande en ligne, on prépare tout pour vous. Récupérez et payez en magasin.')); ?> Une question&nbsp;? Appelez-nous au <a href="<?php echo esc_attr(lv_opt_tel_lien()); ?>" class="cta-tel"><?php echo esc_html(lv_opt('opt_telephone', '(418) 562-5230')); ?></a>.</p>
             <div class="cta-panel-actions">
-                <a href="<?php echo esc_url($url_commander); ?>" class="btn btn-clair">Voir tous les bons de commande</a>
+                <a href="<?php echo esc_url($url_commander); ?>" class="btn btn-clair"><?php echo esc_html($pm_champ('pm_cta_btn', 'Voir tous les bons de commande')); ?></a>
             </div>
         </div>
     </div>

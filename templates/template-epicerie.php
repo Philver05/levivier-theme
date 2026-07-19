@@ -136,12 +136,12 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
                 endwhile;
                 wp_reset_postdata();
             else: ?>
-                <p class="grille-vide">Les produits arrivent bientôt, revenez nous voir !</p>
+                <p class="grille-vide"><?php echo esc_html($ep('ep_vide_texte', 'Les produits arrivent bientôt, revenez nous voir !')); ?></p>
             <?php endif; ?>
         </div>
 
         <div class="section-cta">
-            <a href="<?php echo esc_url(get_post_type_archive_link('produit')); ?>" class="btn btn-fantome">Voir tous nos produits</a>
+            <a href="<?php echo esc_url(get_post_type_archive_link('produit')); ?>" class="btn btn-fantome"><?php echo esc_html($ep('ep_prod_btn', 'Voir tous nos produits')); ?></a>
         </div>
 
     </div>
@@ -211,7 +211,7 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
         </div>
 
         <div class="section-cta">
-            <a href="<?php echo esc_url(get_post_type_archive_link('producteur')); ?>" class="btn btn-fantome">Voir tous nos producteurs</a>
+            <a href="<?php echo esc_url(get_post_type_archive_link('producteur')); ?>" class="btn btn-fantome"><?php echo esc_html($ep('ep_part_btn', 'Voir tous nos producteurs')); ?></a>
         </div>
 
         <?php else: ?>
