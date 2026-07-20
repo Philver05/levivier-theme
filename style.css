@@ -2891,6 +2891,15 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 .ct2-aside .ico svg { width: 20px; height: 20px; fill: none; stroke: var(--sauge); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .ct2-aside h4 { color: var(--texte); font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: .15rem; }
 .ct2-aside p { font-size: .92rem; color: var(--texte-corps); margin: 0; line-height: 1.55; }
+/* Le bloc texte prend toute la largeur restante : nécessaire pour que les
+   lignes d'horaires puissent aligner heures à droite */
+.ct2-aside li > div { flex: 1; min-width: 0; }
+
+/* Horaires en mini-tableau : jour à gauche, heures alignées à droite */
+.ct-horaires { display: grid; gap: .35rem; margin-top: .2rem; }
+.ct-horaires li { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; font-size: .92rem; color: var(--texte-corps); }
+.ct-horaires li span:first-child { font-weight: 600; color: var(--texte); }
+.ct-horaires li span:last-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .ct2-aside a { color: var(--terra-fonce); font-weight: 600; transition: color var(--transi); }
 .ct2-aside a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
