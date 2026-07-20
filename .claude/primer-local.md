@@ -105,6 +105,9 @@ Demande : la même barre de catégories que Produits Maison sur Boutique et Épi
 - parts/produit-card.php et boutique-card.php portent déjà data-cat (vérifié), aucun branchement JS supplémentaire.
 Vérifié en direct : Boutique et Africaine 200 avec 0 bande (dormant, attendu), PM et Épicerie gardent leur bande (1 chacune).
 
+## Retours Philippe 19 juillet (9e passe, photos + horaires) — déployé + committé (b4a65e9 + 551fa62)
+(1) Photos : Marie a rempli les spécialités Africaine (photos avec filigrane Pinterest « Mode-Okavi Viviane », à remplacer par de vraies photos boutique un jour) et 2 photos Boutique. Ajustements : cartes spécialités alignées (align-items stretch au lieu de start, décalage nth-child(2) retiré — l'escalier lisait comme un bug avec de vraies photos, vérifié 3 x 504px) ; galerie Boutique 1-2 photos = cartes arrondies individuelles à hauteur contenue (duo asymétrique 1.35fr/1fr, clamp 300-460px, vérifié 410px, empilées ≤700px) au lieu de 2 photos 4/3 pleine largeur qui mangeaient un écran. (2) Horaires du volet coordonnées Contact : mini-tableau .ct-horaires (jour gauche gras, heures droite tabular-nums, nowrap, une ligne par jour, .ct2-aside li > div flex:1), vérifié desktop + mobile.
+
 ## Next step
 1. Philippe (wp-admin) : visiter `/wp-admin/?lv_ajuster_epicerie_categories=1` puis `/wp-admin/?lv_ajuster_pam_mets_prepares=1` (migrations du 18 juil., toujours PAS exécutées).
 2. Philippe : tester 1 envoi réel du formulaire Contactez-nous (l'endpoint est vérifié, pas l'envoi wp_mail de bout en bout) ; corriger la coquille WP "Produits disponilbes" (champ afr_surtitre, page Épicerie Africaine) ; téléverser les photos Boutique (Dropbox Marketing/photo/boutique) dans la page Boutique → onglet "La boutique en photos" ; assigner le gabarit "Contact" à la page Contactez-nous (optionnel, l'aiguillage code fait déjà le travail).
