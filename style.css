@@ -961,8 +961,10 @@ body.univers-africaine .produits { background: transparent; }
 }
 
 /* Spécialités : cartes numérotées façon comptoir d'épices (vs cartes
-   génériques) — filet or sous le numéro, titres rouille, photo 4/3 */
-body.univers-africaine .grille-prod { counter-reset: spec; align-items: start; }
+   génériques) — filet or sous le numéro, titres rouille, photo 4/3.
+   stretch : avec de vraies photos, les cartes doivent finir à la même
+   hauteur (le start laissait des bas de cartes en escalier). */
+body.univers-africaine .grille-prod { counter-reset: spec; align-items: stretch; }
 body.univers-africaine .carte-prod {
   counter-increment: spec;
   border: 1px solid #ecdfc8;
@@ -987,11 +989,9 @@ body.univers-africaine .carte-prod .corps::before {
 body.univers-africaine .carte-prod h3 { color: var(--afr-rouille); margin: 0 0 .45rem; }
 body.univers-africaine .carte-prod .corps p { color: var(--afr-texte); }
 
-/* Rythme d'étal : la carte centrale descend légèrement sur desktop
-   (margin plutôt que transform : ne se bat pas avec .reveal / :hover ;
-   seulement quand la grille est à 3 colonnes) */
+/* (Décalage de la carte centrale retiré le 19 juillet : avec de vraies
+   photos dans les cartes, l'escalier lisait comme un défaut d'alignement.) */
 @media (min-width: 961px) {
-  body.univers-africaine .grille-prod .carte-prod:nth-child(2) { margin-top: 2.2rem; }
   body.univers-africaine .produits { padding-bottom: clamp(3rem, 2.5rem + 1.5vw, 4rem); }
 }
 
@@ -2962,14 +2962,23 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 .bout-galerie img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--transi); }
 .bout-galerie figure:hover img { transform: scale(1.05); }
 .bout-galerie figure:first-child { grid-column: span 2; grid-row: span 2; }
-/* 2 photos seulement : deux moitiés égales */
-.bout-galerie[data-nb="1"] { grid-template-columns: 1fr; }
-.bout-galerie[data-nb="1"] figure:first-child { grid-column: auto; grid-row: auto; aspect-ratio: 16/9; }
-.bout-galerie[data-nb="2"] { grid-template-columns: 1fr 1fr; }
+/* 1 ou 2 photos : cartes arrondies individuelles à hauteur contenue
+   (en pleine largeur, deux photos 4/3 mangeaient un écran entier) */
+.bout-galerie[data-nb="1"],
+.bout-galerie[data-nb="2"] { border-radius: 0; overflow: visible; gap: clamp(12px, 1.5vw, 20px); }
+.bout-galerie[data-nb="1"] { grid-template-columns: 1fr; max-width: 900px; margin-inline: auto; }
+.bout-galerie[data-nb="2"] { grid-template-columns: 1.35fr 1fr; }
+.bout-galerie[data-nb="1"] figure:first-child,
 .bout-galerie[data-nb="2"] figure:first-child { grid-column: auto; grid-row: auto; }
-.bout-galerie[data-nb="2"] figure { aspect-ratio: 4/3; }
+.bout-galerie[data-nb="1"] figure,
+.bout-galerie[data-nb="2"] figure { aspect-ratio: auto; height: clamp(300px, 32vw, 460px); border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre-douce); }
 
 @media (max-width: 900px) {
   .bout-pres-grille { grid-template-columns: 1fr; }
   .bout-galerie { grid-template-columns: repeat(2, 1fr); grid-auto-rows: minmax(110px, 1fr); }
+}
+@media (max-width: 700px) {
+  .bout-galerie[data-nb="2"] { grid-template-columns: 1fr; }
+  .bout-galerie[data-nb="1"] figure,
+  .bout-galerie[data-nb="2"] figure { height: clamp(220px, 55vw, 320px); }
 }
