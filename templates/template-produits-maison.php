@@ -64,12 +64,15 @@ if ($familles->have_posts()) {
 <div class="pm-filtres-wrap">
     <div class="conteneur">
         <div class="pm-filtres" role="group" aria-label="Filtrer par catégorie">
-            <button class="pm-filtre actif" data-filtre="tout">Tout voir</button>
-            <?php foreach ($cats_utilisees as $cat): ?>
-                <button class="pm-filtre" data-filtre="<?php echo esc_attr($cat->slug); ?>">
+            <?php /* Pas de pilule « Tout voir » (demande de Philippe) : la
+                     première catégorie est active par défaut, et filtre
+                     déjà la page au chargement (voir le script plus bas). */
+            $premiere_cat = true;
+            foreach ($cats_utilisees as $cat): ?>
+                <button class="pm-filtre<?php echo $premiere_cat ? ' actif' : ''; ?>" data-filtre="<?php echo esc_attr($cat->slug); ?>">
                     <?php echo esc_html($cat->name); ?>
                 </button>
-            <?php endforeach; ?>
+            <?php $premiere_cat = false; endforeach; ?>
         </div>
     </div>
 </div>
@@ -194,16 +197,22 @@ else:
     var btns = document.querySelectorAll('.pm-filtre');
     var sections = document.querySelectorAll('.pm-article-section[data-categories]');
     if (!btns.length) return;
+    function appliquerFiltre(filtre) {
+        sections.forEach(function (s) {
+            s.style.display = (filtre === 'tout' || s.dataset.categories.split(' ').includes(filtre)) ? '' : 'none';
+        });
+    }
     btns.forEach(function (btn) {
         btn.addEventListener('click', function () {
-            var filtre = btn.dataset.filtre;
             btns.forEach(function (b) { b.classList.remove('actif'); });
             btn.classList.add('actif');
-            sections.forEach(function (s) {
-                s.style.display = (filtre === 'tout' || s.dataset.categories.split(' ').includes(filtre)) ? '' : 'none';
-            });
+            appliquerFiltre(btn.dataset.filtre);
         });
     });
+    /* Pas de pilule « Tout voir » : au chargement, la page reflète déjà la
+       première catégorie active plutôt que d'afficher toutes les familles. */
+    var actif = document.querySelector('.pm-filtre.actif');
+    if (actif) appliquerFiltre(actif.dataset.filtre);
 })();
 </script>
 

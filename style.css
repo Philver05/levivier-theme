@@ -115,6 +115,10 @@ h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 
 .section-titre { text-align: center; max-width: 640px; margin: 0 auto clamp(1.5rem, 1rem + 1.5vw, 2.25rem); }
 .section-titre--large { max-width: 900px; }
 .section-titre--large h2 { text-wrap: balance; }
+/* Titre seul, en gros (sans eyebrow ni sous-titre) — section Engagements
+   de l'accueil, demande de Philippe : « juste la phrase Nos Engagements en
+   gros » plutôt que le duo eyebrow + h2 générique. */
+.section-titre--grand h2 { font-size: clamp(2.2rem, 1.6rem + 3vw, 3.6rem); }
 .section-titre h2 { font-size: var(--t-h2); margin-bottom: .6rem; }
 /* texte-corps plutôt que texte-doux : le gris doux ne passait pas le
    contraste WCAG AA (3.1:1) sur fond crème pour du texte courant */
@@ -224,41 +228,18 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 .hero-texte { position: relative; z-index: 3; max-width: 30rem; }
 .hero h1 { font-size: var(--t-h1); margin: 1.1rem 0 1.3rem; color: var(--sauge-fonce); }
 .hero h1 .script { color: var(--terra); font-size: 1.32em; display: inline-block; }
+.hero-texte-sub { font-size: 1.1rem; color: var(--texte-corps); max-width: 42ch; line-height: 1.6; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: .9rem; }
 
 /* Arches de couleur (façon mural) */
 .arche { position: absolute; border-radius: 50%; z-index: 1; pointer-events: none; }
 .arche-terra { width: 46vw; max-width: 620px; aspect-ratio: 1; background: var(--terra); left: -16vw; bottom: -22vw; opacity: .3; }
 .arche-olive { width: 30vw; max-width: 420px; aspect-ratio: 1; background: var(--olive); right: -12vw; bottom: -16vw; opacity: .9; }
-.cercle-ocre { position: absolute; width: clamp(250px, 30vw, 400px); aspect-ratio: 1; background: var(--ocre); border-radius: 50%; left: 50%; top: 42%; transform: translate(-50%, -50%); z-index: 1; }
 
-/* Bouquet du hero - plusieurs illustrations réelles, balancées à des rythmes différents */
-.hero-fleur { position: relative; z-index: 2; justify-self: center; aspect-ratio: 1 / 1.28; height: clamp(440px, 80vh, 760px); width: auto; animation: eclore-fleur 1.5s cubic-bezier(.22,.61,.36,1) both; }
-.hero-fleur svg { width: 100%; height: auto; overflow: visible; }
-.bq { position: absolute; transform-origin: bottom center; }
-.bq-rose  { width: 94%; left: 6%; top: -3%; z-index: 3; transform-origin: center; animation: sway-rose 7s ease-in-out infinite; }
-.bq-sprig { width: 44%; left: -3%; top: -10%; z-index: 2; animation: sway-a 8.5s ease-in-out infinite; }
-@keyframes eclore-fleur { from { opacity: 0; transform: translateY(26px) scale(.93); } to { opacity: 1; transform: none; } }
-@keyframes sway-rose { 0%,100% { transform: rotate(92deg); } 50% { transform: rotate(88deg); } }
-@keyframes sway-a { 0%,100% { transform: rotate(-17deg); } 50% { transform: rotate(-11deg); } }
-@keyframes sway-b { 0%,100% { transform: rotate(9deg); } 50% { transform: rotate(14deg); } }
-@keyframes sway-c { 0%,100% { transform: rotate(-9deg); } 50% { transform: rotate(-4deg); } }
-.trait { fill: none; stroke: var(--encre); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.trait-fin { stroke-width: 1; }
-
-/* Animation de tracé (draw-on) */
-.draw { stroke-dasharray: var(--len, 1200); stroke-dashoffset: var(--len, 1200); }
-.fleur-animee .draw { animation: tracer 2.4s ease forwards; }
-@keyframes tracer { to { stroke-dashoffset: 0; } }
-
-/* Balancement (SVG) + parallaxe curseur (calque dédié) + survol (corolle) */
-.fleur-parallax { position: absolute; inset: 0; z-index: 2; transition: transform .3s ease-out; will-change: transform; }
-.fleur-sway { transform-origin: 55% 42%; animation: balancer 7s ease-in-out infinite; }
-@keyframes balancer { 0%,100% { transform: rotate(-2.2deg); } 50% { transform: rotate(2.2deg); } }
-.fleur-corolle { transform-box: fill-box; transform-origin: center; transition: transform .6s var(--transi); }
-.hero-fleur:hover .fleur-corolle { transform: scale(1.06) rotate(-3deg); }
-.petale { transform-box: fill-box; transform-origin: bottom center; transition: transform .5s var(--transi); }
-.hero-fleur:hover .petale { transform: scale(1.08); }
+/* Logo du hero (remplace les fleurs animées, demande de Philippe 21 juillet :
+   reconnaissance immédiate de la marque plutôt qu'une illustration décorative) */
+.hero-logo { position: relative; z-index: 2; justify-self: center; display: flex; align-items: center; justify-content: center; }
+.hero-logo img { width: 100%; max-width: clamp(280px, 32vw, 460px); height: auto; filter: drop-shadow(0 18px 34px rgba(56,73,45,.18)); }
 
 .hero-scroll { position: absolute; left: 50%; bottom: 1.6rem; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: .5rem; color: var(--texte-doux); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; }
 .hero-scroll .souris { width: 22px; height: 34px; border: 2px solid var(--texte-doux); border-radius: 12px; position: relative; }
@@ -282,9 +263,15 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 .intro-grille { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 1rem + 4vw, 5rem); align-items: center; }
 .intro-texte h2 { font-size: var(--t-h2); margin: .8rem 0 1.2rem; }
 .intro-texte .script-accent { font-family: var(--f-script); color: var(--terra); font-size: 1.6rem; }
+/* Boutons Découvrir sous l'intro (déplacés du hero) */
+.intro-actions { display: flex; flex-wrap: wrap; gap: .9rem; justify-content: center; margin-top: clamp(2rem, 1.2rem + 2vw, 3rem); }
+
+/* Pastilles de valeurs réutilisées (ex-accueil) : version centrée pour un
+   en-tête de page (page-entete) plutôt qu'une colonne de texte alignée. */
 .intro-liste { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.6rem; }
 .intro-liste li { display: inline-flex; align-items: center; gap: .5rem; background: var(--sauge-pale); color: var(--sauge-fonce); font-size: .85rem; font-weight: 600; padding: .5rem 1rem; border-radius: 50px; }
 .intro-liste svg { width: 18px; height: 18px; }
+.intro-liste--centree { justify-content: center; }
 /* Photo d'intro contenue : à pleine colonne elle dépassait 900px de haut
    (presque un écran entier), on la plafonne pour laisser voir la suite. */
 .intro-media { position: relative; width: 100%; max-width: 520px; margin-inline: auto; }
@@ -373,11 +360,50 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 .pied a { transition: color var(--transi); }
 .pied a:hover { color: var(--ocre); }
 .pied li { margin-bottom: .55rem; font-size: .92rem; }
-/* Navigation complete du footer sur deux colonnes */
-.pied-nav { columns: 2; column-gap: 2rem; }
-.pied-nav li { break-inside: avoid; }
+/* Navigation complete du footer : deux listes explicites (ordre logique du
+   site en colonne 1, Contact/Politiques/Promotions en colonne 2) plutôt que
+   des colonnes CSS auto-balancées par hauteur, pour un découpage garanti. */
+.pied-nav-cols { display: flex; gap: 2rem; }
+.pied-nav-col { flex: 1; min-width: 0; }
 .pied-marque p { font-size: .92rem; margin-bottom: .85rem; max-width: 34ch; color: #a4ad92; }
 .pied-bas { margin-top: clamp(1.8rem, 1.2rem + 1.5vw, 2.5rem); border-top: 1px solid rgba(255,255,255,.09); padding-block: 1.2rem; text-align: center; font-size: .8rem; color: #889378; letter-spacing: .02em; }
+
+/* ------------------------------------------------- LIGHTBOX BON PM */
+.pm-lightbox-trigger { cursor: zoom-in; }
+.pm-lightbox {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(20, 20, 18, .92);
+  display: flex; align-items: center; justify-content: center;
+  padding: 2rem;
+}
+.pm-lightbox[hidden] { display: none; }
+.pm-lightbox img { max-width: min(90vw, 900px); max-height: 86vh; width: auto; height: auto; border-radius: var(--rayon); box-shadow: 0 20px 60px -20px rgba(0,0,0,.6); }
+.pm-lightbox-fermer {
+  position: fixed; top: 1.25rem; right: 1.5rem;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--blanc); border: 0; cursor: pointer;
+}
+.pm-lightbox-fermer span { position: absolute; top: 50%; left: 50%; width: 20px; height: 2px; background: var(--encre); border-radius: 2px; }
+.pm-lightbox-fermer span:nth-child(1) { transform: translate(-50%, -50%) rotate(45deg); }
+.pm-lightbox-fermer span:nth-child(2) { transform: translate(-50%, -50%) rotate(-45deg); }
+body.pm-lightbox-ouvert { overflow: hidden; }
+
+/* ------------------------------------------------------------ COOKIES */
+.cookie-bandeau {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 200;
+  background: var(--sauge-fonce); color: #e7eee0;
+  padding-block: 1rem;
+  box-shadow: 0 -8px 24px -10px rgba(0,0,0,.25);
+  transform: translateY(100%); opacity: 0;
+  transition: transform var(--transi), opacity var(--transi);
+}
+.cookie-bandeau.visible { transform: translateY(0); opacity: 1; }
+.cookie-bandeau-inner { display: flex; align-items: center; justify-content: center; gap: 1.2rem; flex-wrap: wrap; text-align: center; }
+.cookie-bandeau p { margin: 0; font-size: .88rem; line-height: 1.5; max-width: 60ch; }
+.cookie-bandeau p a { color: var(--ocre-pale); text-decoration: underline; text-underline-offset: 3px; }
+.cookie-bandeau p a:hover { color: #fff; }
+.cookie-bandeau-btn { flex: none; padding: .6rem 1.4rem; font-size: .85rem; }
+@media (max-width: 560px) { .cookie-bandeau-inner { flex-direction: column; gap: .8rem; } }
 
 /* --------------------------------------------------------------- REVEAL */
 .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s cubic-bezier(.22,.61,.36,1); }
@@ -392,13 +418,10 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
   .hero-texte { max-width: none; margin-inline: auto; }
   .hero-texte p { margin-inline: auto; }
   .hero-actions { justify-content: center; }
-  /* Fleur animée réservée au desktop (demande du 18 juillet) : en tablette et
-     mobile elle mangeait un écran sans rien apporter. Les arches de couleur
-     n'accompagnent que la composition fleur : sans elle, deux ronds coupés
-     flottaient derrière les boutons — retirées aussi. */
-  .hero-fleur { display: none; }
-  .cercle-ocre { display: none; }
+  /* Arches de couleur réservées au desktop (mobile : simplement le logo
+     centré sous le titre, pas de décor derrière). */
   .arche { display: none; }
+  .hero-logo img { max-width: clamp(200px, 52vw, 320px); }
   .hero { min-height: auto; padding-bottom: clamp(4rem, 9vh, 5.5rem); }
   .hero h1 { text-wrap: balance; }
   .hero-scroll { display: none; }
@@ -2856,6 +2879,23 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 }
 
 /* ======================================================
+   BANDE HORAIRES — page Contact, visible en premier
+   (demande de Philippe, 21 juillet : « plus visuel »)
+====================================================== */
+.ct-bande-horaires { background: var(--sauge); padding-block: clamp(1rem, .8rem + .8vw, 1.4rem); }
+.ct-bande-horaires-inner { display: flex; align-items: center; justify-content: center; gap: clamp(1rem, .6rem + 1.5vw, 2rem); flex-wrap: wrap; }
+.ct-bande-horaires-ico { flex: none; width: 34px; height: 34px; display: grid; place-items: center; }
+.ct-bande-horaires-ico svg { width: 26px; height: 26px; fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.ct-bande-horaires-liste { display: flex; gap: clamp(1.2rem, .8rem + 1.5vw, 2.5rem); flex-wrap: wrap; justify-content: center; }
+.ct-bande-horaires-liste li { display: flex; align-items: baseline; gap: .5rem; color: #fff; }
+.ct-bande-horaires-liste li span:first-child { font-family: var(--f-titre); font-weight: 700; font-size: 1rem; }
+.ct-bande-horaires-liste li span:last-child { font-size: .95rem; color: var(--sauge-pale); font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 560px) {
+  .ct-bande-horaires-inner { flex-direction: column; gap: .8rem; }
+  .ct-bande-horaires-liste { flex-direction: column; gap: .5rem; align-items: center; }
+}
+
+/* ======================================================
    PAGE CONTACTEZ-NOUS v2 (retours Philippe, 19 juillet)
    Une seule carte blanche : formulaire + volet coordonnées
    crème, puis la carte Google en bande pleine largeur.
@@ -2894,12 +2934,6 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 /* Le bloc texte prend toute la largeur restante : nécessaire pour que les
    lignes d'horaires puissent aligner heures à droite */
 .ct2-aside li > div { flex: 1; min-width: 0; }
-
-/* Horaires en mini-tableau : jour à gauche, heures alignées à droite */
-.ct-horaires { display: grid; gap: .35rem; margin-top: .2rem; }
-.ct-horaires li { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; font-size: .92rem; color: var(--texte-corps); }
-.ct-horaires li span:first-child { font-weight: 600; color: var(--texte); }
-.ct-horaires li span:last-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .ct2-aside a { color: var(--terra-fonce); font-weight: 600; transition: color var(--transi); }
 .ct2-aside a:hover { text-decoration: underline; text-underline-offset: 3px; }
 

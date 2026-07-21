@@ -241,19 +241,28 @@ document.addEventListener("DOMContentLoaded", function () {
   initFiltreGrille("grille-producteurs");
   initFiltreGrille("grille-maison");
 
-  /* ----- Parallaxe du bouquet du hero ----- */
-  var fleur = document.querySelector(".hero-fleur");
-  if (fleur) {
-    var par = fleur.querySelector(".fleur-parallax");
-    var hero = fleur.closest(".hero");
-    if (par && hero && window.matchMedia("(pointer:fine)").matches) {
-      hero.addEventListener("mousemove", function (ev) {
-        var r = hero.getBoundingClientRect();
-        var dx = (ev.clientX - (r.left + r.width / 2)) / r.width;
-        var dy = (ev.clientY - (r.top + r.height / 2)) / r.height;
-        par.style.transform = "translate(" + (dx * 38).toFixed(1) + "px," + (dy * 30).toFixed(1) + "px)";
+  /* ----- Bandeau cookies ----- */
+  var cookieBandeau = document.getElementById("cookie-bandeau");
+  if (cookieBandeau) {
+    var CLE_COOKIE = "lv_cookies_acceptes";
+    try {
+      if (!window.localStorage.getItem(CLE_COOKIE)) {
+        cookieBandeau.hidden = false;
+        // setTimeout plutôt que requestAnimationFrame : laisse le navigateur peindre
+        // l'état initial (translateY + opacity 0) avant de basculer vers l'état visible,
+        // sinon la transition CSS peut être sautée (les deux changements fusionnés
+        // dans la même peinture). rAF est suspendu sur les onglets non focalisés.
+        setTimeout(function () { cookieBandeau.classList.add("visible"); }, 20);
+      }
+    } catch (e) { /* localStorage indisponible (navigation privée stricte) : pas de bandeau */ }
+
+    var btnAccepter = document.getElementById("cookie-bandeau-accepter");
+    if (btnAccepter) {
+      btnAccepter.addEventListener("click", function () {
+        try { window.localStorage.setItem(CLE_COOKIE, "1"); } catch (e) {}
+        cookieBandeau.classList.remove("visible");
+        setTimeout(function () { cookieBandeau.hidden = true; }, 350);
       });
-      hero.addEventListener("mouseleave", function () { par.style.transform = ""; });
     }
   }
 

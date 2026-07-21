@@ -9,7 +9,6 @@ if (have_posts()) the_post();
 /* ----------------------------------------------------------
    Champs ACF + valeurs par défaut — tout éditable dans l'admin
 ---------------------------------------------------------- */
-$surtitre = get_field('afr_surtitre') ?: 'Saveurs d\'Afrique · Le Vivier';
 $intro    = get_field('afr_intro')    ?: "Épices, sauces, féculents et trésors culinaires venus du continent.\nUne invitation au voyage, au cœur de Matane.";
 
 /* Présentation : $pres_texte sert à détecter un contenu réellement visible
@@ -46,7 +45,8 @@ $specialites = [
 ====================================================== -->
 <section class="page-entete">
     <div class="conteneur">
-        <p class="eyebrow"><?php echo esc_html($surtitre); ?></p>
+        <?php /* Eyebrow retiré (demande de Philippe, la petite phrase
+                 "Produits disponibles" n'apportait rien) */ ?>
         <h1 class="page-entete-titre-script"><?php the_title(); ?></h1>
         <p><?php echo nl2br(esc_html($intro)); ?></p>
     </div>

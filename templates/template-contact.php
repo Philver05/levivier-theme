@@ -39,6 +39,23 @@ $h_dim     = $ct_opt('opt_horaire_dimanche', '10 h - 17 h');
 </section>
 
 <!-- ======================================================
+     BANDE HORAIRES — visible en premier, avant le formulaire
+     (demande de Philippe : « plus visuel en premier »)
+====================================================== -->
+<section class="ct-bande-horaires reveal">
+    <div class="conteneur ct-bande-horaires-inner">
+        <span class="ct-bande-horaires-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </span>
+        <ul class="ct-bande-horaires-liste">
+            <li><span>Lun - Ven</span><span><?php echo esc_html($h_sem); ?></span></li>
+            <li><span>Samedi</span><span><?php echo esc_html($h_sam); ?></span></li>
+            <li><span>Dimanche</span><span><?php echo esc_html($h_dim); ?></span></li>
+        </ul>
+    </div>
+</section>
+
+<!-- ======================================================
      CARTE UNIFIÉE : FORMULAIRE + COORDONNÉES, PUIS CARTE
 ====================================================== -->
 <section class="section" style="padding-top:clamp(1rem,.75rem+1vw,1.5rem)">
@@ -117,19 +134,8 @@ $h_dim     = $ct_opt('opt_horaire_dimanche', '10 h - 17 h');
                         <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 8h-2a2 2 0 0 0-2 2v10M8 12h6"/></svg></span>
                         <div><h4>Suivez-nous</h4><p><a href="<?php echo esc_url($facebook); ?>" target="_blank" rel="noopener">Facebook</a></p></div>
                     </li>
-                    <?php /* Horaires en dernier, après Facebook (retour Philippe) ;
-                             mini-tableau aligné jour/heures plutôt que des lignes flottantes */ ?>
-                    <li>
-                        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-                        <div>
-                            <h4>Horaires</h4>
-                            <ul class="ct-horaires">
-                                <li><span>Lun - Ven</span><span><?php echo esc_html($h_sem); ?></span></li>
-                                <li><span>Samedi</span><span><?php echo esc_html($h_sam); ?></span></li>
-                                <li><span>Dimanche</span><span><?php echo esc_html($h_dim); ?></span></li>
-                            </ul>
-                        </div>
-                    </li>
+                    <?php /* Horaires retirées d'ici : affichées en premier dans la
+                             bande sous l'en-tête (demande de Philippe), redondant ici. */ ?>
                 </ul>
             </aside>
 

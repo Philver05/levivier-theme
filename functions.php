@@ -8,6 +8,7 @@ require_once 'includes/pam-ajax.php';
 require_once 'includes/vrac-ajax.php';
 require_once 'includes/pm-ajax.php';
 require_once 'includes/contact-ajax.php';
+require_once 'includes/cookie-banner.php';
 
 /* Avertit dans l'admin si ACF n'est pas actif (sinon aucun champ éditable n'apparaît) */
 add_action('admin_notices', function () {
@@ -84,6 +85,15 @@ add_action('wp_enqueue_scripts', function () {
             'ajax'  => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pm_commande'),
         ]);
+
+        $path_lightbox = get_stylesheet_directory() . '/assets/scripts/pm-lightbox.js';
+        wp_enqueue_script(
+            'pm-lightbox',
+            get_stylesheet_directory_uri() . '/assets/scripts/pm-lightbox.js',
+            [],
+            file_exists($path_lightbox) ? filemtime($path_lightbox) : null,
+            ['strategy' => 'defer', 'in_footer' => true]
+        );
     }
 
     if (is_page_template('templates/template-bon-vrac.php')) {
@@ -514,9 +524,48 @@ add_action('acf/init', function () {
                 'instructions'      => 'Texte affiché sous le nom sur le bon de commande.',
                 'conditional_logic' => [[['field' => 'field_pm_commandable', 'operator' => '==', 'value' => '1']]],
             ],
+            [
+                'key'               => 'field_pm_photo2',
+                'name'              => 'pm_photo2',
+                'label'             => '2e photo (bon PM)',
+                'type'              => 'image',
+                'return_format'     => 'array',
+                'preview_size'      => 'medium',
+                'instructions'      => 'Optionnelle. Si renseignée avec l\'image mise en avant, les deux photos alternent en fondu sur la carte (comme le bon Prêt à manger). Utile pour montrer un angle différent (ex. focaccia entière + tranchée).',
+                'conditional_logic' => [[['field' => 'field_pm_commandable', 'operator' => '==', 'value' => '1']]],
+            ],
+            [
+                'key'               => 'field_pm_instructions',
+                'name'              => 'pm_instructions',
+                'label'             => 'Instructions de commande (bon PM)',
+                'type'              => 'textarea',
+                'rows'              => 2,
+                'instructions'      => 'Affiché en encart rouge sous le prix. Ex : « Commandez avant 10 h la veille et récupérez dès midi le lendemain. »',
+                'conditional_logic' => [[['field' => 'field_pm_commandable', 'operator' => '==', 'value' => '1']]],
+            ],
         ],
         'location'   => [[['param' => 'post_type', 'operator' => '==', 'value' => 'produit']]],
         'menu_order' => 10,
+    ]);
+
+    /* Catégorie de produit : texte d'intro affiché en haut de chaque bloc
+       catégorie sur le bon de commande Produits Maison (ex : présentation
+       des focaccias avant la liste). Groupe de taxonomie standard ACF. */
+    acf_add_local_field_group([
+        'key'    => 'group_categorie_produit_pm',
+        'title'  => 'Bon de commande Produits Maison (catégorie)',
+        'fields' => [
+            [
+                'key'          => 'field_pm_cat_intro',
+                'name'         => 'pm_cat_intro',
+                'label'        => 'Texte de présentation',
+                'type'         => 'textarea',
+                'rows'         => 3,
+                'instructions' => 'Affiché au-dessus des produits de cette catégorie sur le bon de commande Produits Maison. Laissez vide pour ne rien afficher.',
+            ],
+        ],
+        'location' => [[['param' => 'taxonomy', 'operator' => '==', 'value' => 'categorie_produit']]],
+        'menu_order' => 0,
     ]);
 
     /* Famille Maison (CPT famille_maison) */
@@ -563,7 +612,7 @@ add_action('acf/init', function () {
                 'label'         => 'Texte sous le titre',
                 'type'          => 'textarea',
                 'rows'          => 2,
-                'default_value' => 'Produits locaux, vrac et zéro déchet, choisis avec soin auprès de nos producteurs du Bas-Saint-Laurent.',
+                'default_value' => 'Au cœur de Matane, Le Vivier fait de l\'achat responsable un choix simple et inspirant.',
                 'instructions'  => 'Le grand titre est le slogan du site (Réglages > Général).',
             ],
             [
@@ -596,55 +645,21 @@ add_action('acf/init', function () {
             ],
             ['key' => 'field_acc_tab_intro', 'type' => 'tab', 'label' => 'Intro'],
             [
-                'key'           => 'field_acc_intro_puce1',
-                'name'          => 'acc_intro_puce1',
-                'label'         => 'Puce 1',
-                'type'          => 'text',
-                'default_value' => 'Producteurs locaux',
-                'instructions'  => 'Le texte d\'intro se rédige dans l\'éditeur principal de la page, l\'image est l\'image mise en avant.',
-            ],
-            [
-                'key'           => 'field_acc_intro_puce2',
-                'name'          => 'acc_intro_puce2',
-                'label'         => 'Puce 2',
-                'type'          => 'text',
-                'default_value' => 'Bio & naturel',
-            ],
-            [
-                'key'           => 'field_acc_intro_puce3',
-                'name'          => 'acc_intro_puce3',
-                'label'         => 'Puce 3',
-                'type'          => 'text',
-                'default_value' => 'Vrac & zéro déchet',
-            ],
-            [
                 'key'           => 'field_acc_intro_badge',
                 'name'          => 'acc_intro_badge',
                 'label'         => 'Badge sur l\'image',
                 'type'          => 'text',
                 'default_value' => '100 % local',
-            ],
-            [
-                'key'           => 'field_acc_intro_btn',
-                'name'          => 'acc_intro_btn',
-                'label'         => 'Bouton',
-                'type'          => 'text',
-                'default_value' => 'Voir la boutique',
+                'instructions'  => 'Le texte d\'intro se rédige dans l\'éditeur principal de la page, l\'image est l\'image mise en avant.',
             ],
             ['key' => 'field_acc_tab_eng', 'type' => 'tab', 'label' => 'Engagements'],
-            [
-                'key'           => 'field_acc_eng_surtitre',
-                'name'          => 'acc_eng_surtitre',
-                'label'         => 'Surtitre',
-                'type'          => 'text',
-                'default_value' => 'Nos engagements',
-            ],
             [
                 'key'           => 'field_acc_eng_titre',
                 'name'          => 'acc_eng_titre',
                 'label'         => 'Titre',
                 'type'          => 'text',
-                'default_value' => 'Le bon goût, en conscience',
+                'default_value' => 'Nos Engagements',
+                'instructions'  => 'Affiché seul, en gros (demande de Philippe : pas de surtitre séparé).',
             ],
             [
                 'key'           => 'field_acc_eng1_titre',
@@ -659,7 +674,7 @@ add_action('acf/init', function () {
                 'label'         => 'Carte 1 : texte',
                 'type'          => 'textarea',
                 'rows'          => 2,
-                'default_value' => '13 producteurs de la région de Matane, Bas-Saint-Laurent.',
+                'default_value' => 'Une multitude de producteurs et de transformateurs de la Matanie, du Bas-Saint-Laurent, de la Gaspésie et des quatre coins du Québec.',
             ],
             [
                 'key'           => 'field_acc_eng2_titre',
@@ -681,7 +696,7 @@ add_action('acf/init', function () {
                 'name'          => 'acc_eng3_titre',
                 'label'         => 'Carte 3 : titre',
                 'type'          => 'text',
-                'default_value' => 'En vrac',
+                'default_value' => 'Vrac',
             ],
             [
                 'key'           => 'field_acc_eng3_texte',
@@ -689,7 +704,7 @@ add_action('acf/init', function () {
                 'label'         => 'Carte 3 : texte',
                 'type'          => 'textarea',
                 'rows'          => 2,
-                'default_value' => 'Achetez ce dont vous avez besoin, réduisez vos emballages.',
+                'default_value' => 'Une façon simple de réduire les emballages et le gaspillage.',
             ],
             [
                 'key'           => 'field_acc_eng4_titre',
@@ -704,7 +719,7 @@ add_action('acf/init', function () {
                 'label'         => 'Carte 4 : texte',
                 'type'          => 'textarea',
                 'rows'          => 2,
-                'default_value' => 'Soutenir l\'économie locale, un achat à la fois.',
+                'default_value' => 'Valoriser l\'achat local et soutenir notre économie régionale.',
             ],
             ['key' => 'field_acc_tab_prod', 'type' => 'tab', 'label' => 'Produits du moment'],
             [
@@ -943,13 +958,7 @@ add_action('acf/init', function () {
         'key'    => 'group_page_africaine',
         'title'  => 'Contenu — Épicerie Africaine',
         'fields' => [
-            /* Héros */
-            [
-                'key'   => 'field_afr_surtitre',
-                'name'  => 'afr_surtitre',
-                'label' => '① Héros — Surtitre',
-                'type'  => 'text',
-            ],
+            /* Héros (pas de surtitre : retiré, demande de Philippe) */
             [
                 'key'   => 'field_afr_intro',
                 'name'  => 'afr_intro',
@@ -1798,8 +1807,16 @@ add_action('acf/init', function () {
                 'name'          => 'opt_pied_slogan',
                 'label'         => 'Phrase du pied de page',
                 'type'          => 'text',
-                'default_value' => 'Produits locaux, frais et durables, à Matane.',
+                'default_value' => 'Nourrir sa région en cultivant le plaisir de manger sainement',
                 'instructions'  => 'Courte phrase sous le logo dans le pied de page.',
+            ],
+            [
+                'key'           => 'field_opt_cookie_texte',
+                'name'          => 'opt_cookie_texte',
+                'label'         => 'Texte du bandeau cookies',
+                'type'          => 'text',
+                'default_value' => 'Ce site utilise des cookies essentiels à son bon fonctionnement.',
+                'instructions'  => 'Affiché en bas de toutes les pages tant que le visiteur n\'a pas cliqué « J\'accepte ».',
             ],
         ],
         'location' => [[[
@@ -1862,6 +1879,10 @@ add_action('acf/init', function () {
             ['key' => 'field_ep_dept2_texte', 'name' => 'ep_dept2_texte', 'label' => 'Département 2 — texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Aliments secs, noix, légumineuses, farines, huiles, produits ménagers et corporels.'],
             ['key' => 'field_ep_dept3_titre', 'name' => 'ep_dept3_titre', 'label' => 'Département 3 — titre', 'type' => 'text', 'default_value' => 'Produits transformés'],
             ['key' => 'field_ep_dept3_texte', 'name' => 'ep_dept3_texte', 'label' => 'Département 3 — texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Pâtisseries, mets cuisinés, tartinades, sauces, condiments et douceurs faits par des artisans de la région.'],
+            ['key' => 'field_ep_tab_valeurs', 'type' => 'tab', 'label' => 'Pastilles de valeurs'],
+            ['key' => 'field_ep_valeur1_texte', 'name' => 'ep_valeur1_texte', 'label' => 'Pastille 1', 'type' => 'text', 'default_value' => 'Producteurs locaux'],
+            ['key' => 'field_ep_valeur2_texte', 'name' => 'ep_valeur2_texte', 'label' => 'Pastille 2', 'type' => 'text', 'default_value' => 'Bio & naturel'],
+            ['key' => 'field_ep_valeur3_texte', 'name' => 'ep_valeur3_texte', 'label' => 'Pastille 3', 'type' => 'text', 'default_value' => 'Vrac & zéro déchet'],
             ['key' => 'field_ep_tab_sections', 'type' => 'tab', 'label' => 'Titres de sections'],
             ['key' => 'field_ep_part_surtitre', 'name' => 'ep_part_surtitre', 'label' => 'Surtitre partenaires (script)', 'type' => 'text', 'default_value' => 'Nos partenaires'],
             ['key' => 'field_ep_part_titre', 'name' => 'ep_part_titre', 'label' => 'Titre partenaires', 'type' => 'text', 'default_value' => 'Nos Producteurs & Transformateurs'],

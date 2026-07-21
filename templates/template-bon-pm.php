@@ -6,6 +6,60 @@ get_header();
 if (have_posts()) the_post();
 
 $surtitre = get_field('pm_bon_surtitre') ?: 'Produits Maison · Le Vivier';
+
+/* Une carte produit (photo(s) + corps), réutilisée par les deux boucles
+   ci-dessous (avec et sans sous-catégories) pour ne pas dupliquer le markup. */
+$rendre_produit_pm = function () {
+    $pid          = get_the_ID();
+    $prix         = (float) get_field('pm_prix');
+    $desc         = get_field('pm_description');
+    $instructions = get_field('pm_instructions');
+    $thumb        = get_the_post_thumbnail_url($pid, 'large');
+    $photo2       = get_field('pm_photo2');
+    ?>
+    <div class="pam-produit-item"
+         data-id="<?php echo esc_attr($pid); ?>"
+         data-prix="<?php echo esc_attr(number_format($prix, 2, '.', '')); ?>">
+
+        <?php if ($thumb && $photo2): ?>
+        <div class="pam-produit-photos">
+            <img class="pam-produit-photo pam-produit-photo--1 pm-lightbox-trigger" src="<?php echo esc_url($thumb); ?>" alt="<?php echo esc_attr(get_the_title()); ?>" loading="lazy" tabindex="0" role="button" aria-label="Agrandir la photo">
+            <img class="pam-produit-photo pam-produit-photo--2 pm-lightbox-trigger" src="<?php echo esc_url($photo2['sizes']['large'] ?? $photo2['url']); ?>" alt="" loading="lazy" tabindex="0" role="button" aria-label="Agrandir la photo">
+        </div>
+        <?php elseif ($thumb): ?>
+        <img class="pm-lightbox-trigger" src="<?php echo esc_url($thumb); ?>"
+             alt="<?php echo esc_attr(get_the_title()); ?>"
+             loading="lazy" tabindex="0" role="button" aria-label="Agrandir la photo">
+        <?php else: ?>
+        <div class="pam-produit-placeholder" aria-hidden="true"></div>
+        <?php endif; ?>
+
+        <div class="pam-produit-corps">
+            <p class="pam-produit-nom"><?php the_title(); ?></p>
+            <?php if ($desc): ?>
+            <p class="pam-produit-desc"><?php echo esc_html($desc); ?></p>
+            <?php endif; ?>
+            <p class="pam-produit-prix"><?php echo esc_html(number_format($prix, 2, ',', ' ')); ?>&nbsp;$</p>
+            <?php if ($instructions): ?>
+            <p class="pam-produit-instructions">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+                <span><?php echo nl2br(esc_html($instructions)); ?></span>
+            </p>
+            <?php endif; ?>
+
+            <div class="pam-qty-controle">
+                <button type="button" class="pam-qty-moins" aria-label="Retirer un">-</button>
+                <input type="number"
+                       class="pam-qty-input"
+                       name="produits[<?php echo esc_attr($pid); ?>]"
+                       value="0" min="0" max="20"
+                       aria-label="Quantité de <?php echo esc_attr(get_the_title()); ?>">
+                <button type="button" class="pam-qty-plus" aria-label="Ajouter un">+</button>
+            </div>
+        </div>
+    </div>
+    <?php
+};
 ?>
 
 <!-- ======================================================
@@ -80,47 +134,24 @@ $surtitre = get_field('pm_bon_surtitre') ?: 'Produits Maison · Le Vivier';
 
                         if (!$produits->have_posts()) continue;
                         $a_des_produits = true;
+                        $cat_intro = get_field('pm_cat_intro', $cat);
                 ?>
                 <div class="pam-categorie" data-cat="<?php echo esc_attr($cat->slug); ?>">
                     <h3 class="pam-categorie-titre"><?php echo esc_html($cat->name); ?></h3>
+
+                    <?php if ($cat_intro): ?>
+                    <!-- Présentation de la catégorie (ex : description des focaccias avant la liste) -->
+                    <div class="pam-msg-jour" data-jour="" data-categorie="" style="margin-bottom:1.5rem">
+                        <div class="pam-msg-corps">
+                            <p class="pam-msg-desc"><?php echo nl2br(esc_html($cat_intro)); ?></p>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
                     <div class="pam-produits-grille">
                         <?php while ($produits->have_posts()): $produits->the_post();
-                            $pid   = get_the_ID();
-                            $prix  = (float) get_field('pm_prix');
-                            $thumb = get_the_post_thumbnail_url($pid, 'medium');
-                            $desc  = get_field('pm_description');
-                        ?>
-                        <div class="pam-produit-item"
-                             data-id="<?php echo esc_attr($pid); ?>"
-                             data-prix="<?php echo esc_attr(number_format($prix, 2, '.', '')); ?>">
-
-                            <?php if ($thumb): ?>
-                            <img src="<?php echo esc_url($thumb); ?>"
-                                 alt="<?php echo esc_attr(get_the_title()); ?>"
-                                 loading="lazy">
-                            <?php else: ?>
-                            <div class="pam-produit-placeholder" aria-hidden="true"></div>
-                            <?php endif; ?>
-
-                            <div class="pam-produit-corps">
-                                <p class="pam-produit-nom"><?php the_title(); ?></p>
-                                <?php if ($desc): ?>
-                                <p class="pam-produit-desc"><?php echo esc_html($desc); ?></p>
-                                <?php endif; ?>
-                                <p class="pam-produit-prix"><?php echo esc_html(number_format($prix, 2, ',', ' ')); ?>&nbsp;$</p>
-
-                                <div class="pam-qty-controle">
-                                    <button type="button" class="pam-qty-moins" aria-label="Retirer un">-</button>
-                                    <input type="number"
-                                           class="pam-qty-input"
-                                           name="produits[<?php echo esc_attr($pid); ?>]"
-                                           value="0" min="0" max="20"
-                                           aria-label="Quantité de <?php echo esc_attr(get_the_title()); ?>">
-                                    <button type="button" class="pam-qty-plus" aria-label="Ajouter un">+</button>
-                                </div>
-                            </div>
-                        </div>
-                        <?php endwhile; wp_reset_postdata(); ?>
+                            $rendre_produit_pm();
+                        endwhile; wp_reset_postdata(); ?>
                     </div><!-- .pam-produits-grille -->
                 </div><!-- .pam-categorie -->
                 <?php endforeach;
@@ -159,42 +190,8 @@ $surtitre = get_field('pm_bon_surtitre') ?: 'Produits Maison · Le Vivier';
                 <div class="pam-categorie" data-cat="tout">
                     <div class="pam-produits-grille">
                         <?php while ($produits->have_posts()): $produits->the_post();
-                            $pid   = get_the_ID();
-                            $prix  = (float) get_field('pm_prix');
-                            $thumb = get_the_post_thumbnail_url($pid, 'medium');
-                            $desc  = get_field('pm_description');
-                        ?>
-                        <div class="pam-produit-item"
-                             data-id="<?php echo esc_attr($pid); ?>"
-                             data-prix="<?php echo esc_attr(number_format($prix, 2, '.', '')); ?>">
-
-                            <?php if ($thumb): ?>
-                            <img src="<?php echo esc_url($thumb); ?>"
-                                 alt="<?php echo esc_attr(get_the_title()); ?>"
-                                 loading="lazy">
-                            <?php else: ?>
-                            <div class="pam-produit-placeholder" aria-hidden="true"></div>
-                            <?php endif; ?>
-
-                            <div class="pam-produit-corps">
-                                <p class="pam-produit-nom"><?php the_title(); ?></p>
-                                <?php if ($desc): ?>
-                                <p class="pam-produit-desc"><?php echo esc_html($desc); ?></p>
-                                <?php endif; ?>
-                                <p class="pam-produit-prix"><?php echo esc_html(number_format($prix, 2, ',', ' ')); ?>&nbsp;$</p>
-
-                                <div class="pam-qty-controle">
-                                    <button type="button" class="pam-qty-moins" aria-label="Retirer un">-</button>
-                                    <input type="number"
-                                           class="pam-qty-input"
-                                           name="produits[<?php echo esc_attr($pid); ?>]"
-                                           value="0" min="0" max="20"
-                                           aria-label="Quantité de <?php echo esc_attr(get_the_title()); ?>">
-                                    <button type="button" class="pam-qty-plus" aria-label="Ajouter un">+</button>
-                                </div>
-                            </div>
-                        </div>
-                        <?php endwhile; wp_reset_postdata(); ?>
+                            $rendre_produit_pm();
+                        endwhile; wp_reset_postdata(); ?>
                     </div><!-- .pam-produits-grille -->
                 </div><!-- .pam-categorie -->
                 <?php endif;
@@ -261,6 +258,16 @@ $surtitre = get_field('pm_bon_surtitre') ?: 'Produits Maison · Le Vivier';
             Envoyer le bon de commande
         </button>
     </div>
+</div>
+
+<!-- ======================================================
+     LIGHTBOX (zoom photo produit)
+====================================================== -->
+<div class="pm-lightbox" id="pm-lightbox" hidden>
+    <button type="button" class="pm-lightbox-fermer" id="pm-lightbox-fermer" aria-label="Fermer l'aperçu">
+        <span></span><span></span>
+    </button>
+    <img id="pm-lightbox-img" src="" alt="">
 </div>
 
 <?php get_footer(); ?>

@@ -3,7 +3,6 @@
 <?php
 if (have_posts()) the_post();
 
-$illu    = get_stylesheet_directory_uri() . '/assets/images/illustrations/';
 $slogan  = get_bloginfo('description') ?: 'Cultivons un avenir durable';
 $titre   = wp_kses(str_replace('durable', '<span class="script">durable</span>', esc_html($slogan)), ['span' => ['class' => []], 'br' => []]);
 $lien_ep = get_page_by_path('epicerie');
@@ -18,6 +17,10 @@ $acc = function ($cle, $defaut) {
     $valeur = function_exists('get_field') ? get_field($cle) : '';
     return $valeur ?: $defaut;
 };
+
+/* Logo du site (Réglages > Général > Identité du site), pour le hero */
+$logo_id  = get_theme_mod('custom_logo');
+$logo_url = $logo_id ? wp_get_attachment_image_url($logo_id, 'full') : '';
 ?>
 
 <!-- ============================ HERO ============================ -->
@@ -28,19 +31,14 @@ $acc = function ($cle, $defaut) {
 
         <div class="hero-texte reveal">
             <h1><?php echo $titre; ?></h1>
-            <div class="hero-actions">
-                <a href="<?php echo esc_url($url_ep); ?>" class="btn btn-primaire"><?php echo esc_html($acc('acc_hero_btn1', 'Découvrir l\'épicerie')); ?></a>
-                <a href="<?php echo esc_url($url_boutique); ?>" class="btn btn-ligne"><?php echo esc_html($acc('acc_hero_btn2', 'Découvrir la Boutique')); ?></a>
-                <a href="<?php echo esc_url($url_pm); ?>" class="btn btn-ligne"><?php echo esc_html($acc('acc_hero_btn3', 'Découvrir nos produits maison')); ?></a>
-            </div>
+            <p class="hero-texte-sub"><?php echo esc_html($acc('acc_hero_texte', 'Au cœur de Matane, Le Vivier fait de l\'achat responsable un choix simple et inspirant.')); ?></p>
         </div>
 
-        <div class="hero-fleur" aria-hidden="true">
-            <span class="cercle-ocre"></span>
-            <div class="fleur-parallax">
-                <img class="bq bq-rose" src="<?php echo esc_url($illu); ?>fleur%2001.svg" alt="">
-            </div>
+        <?php if ($logo_url): ?>
+        <div class="hero-logo reveal reveal-delai-1">
+            <img src="<?php echo esc_url($logo_url); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?>">
         </div>
+        <?php endif; ?>
 
     </div>
     <div class="hero-scroll" aria-hidden="true">
@@ -53,18 +51,10 @@ $acc = function ($cle, $defaut) {
 <section class="section intro" id="epicerie">
     <div class="conteneur intro-grille">
         <div class="intro-texte reveal">
-            
+
             <?php if (trim(get_the_content())): the_content(); else: ?>
                 <p>Au cœur de Matane, Le Vivier rassemble le meilleur du Bas-Saint-Laurent : fruits et légumes de saison, vrac, thés, produits fins et créations d'artisans d'ici. Chaque tablette raconte une rencontre, un savoir-faire, un terroir.</p>
             <?php endif; ?>
-            <ul class="intro-liste">
-                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21c0-7 4-12 9-14-1 8-4 13-9 14Z"/><path d="M12 21c0-6-3-10-7-12 1 7 3 11 7 12Z"/></svg> <?php echo esc_html($acc('acc_intro_puce1', 'Producteurs locaux')); ?></li>
-                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21V10"/><path d="M12 13c0-4-3-6-7-6 0 4 3 6 7 6Z"/><path d="M12 11c0-4 3-7 7-7 0 4-3 7-7 7Z"/></svg> <?php echo esc_html($acc('acc_intro_puce2', 'Bio & naturel')); ?></li>
-                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 8h10l-1 11a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1Z"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg> <?php echo esc_html($acc('acc_intro_puce3', 'Vrac & zéro déchet')); ?></li>
-            </ul>
-            <div style="margin-top:1.8rem">
-                <a href="<?php echo esc_url($url_ep); ?>" class="btn btn-fantome"><?php echo esc_html($acc('acc_intro_btn', 'Voir la boutique')); ?></a>
-            </div>
         </div>
         <div class="intro-media reveal reveal-delai-1">
             <div class="cadre">
@@ -80,20 +70,28 @@ $acc = function ($cle, $defaut) {
             <?php endif; ?>
         </div>
     </div>
+    <!-- Boutons Découvrir : déplacés du hero, juste après l'intro
+         (à la place du futur carrousel, pas encore prêt) -->
+    <div class="conteneur">
+        <div class="intro-actions reveal reveal-delai-2">
+            <a href="<?php echo esc_url($url_ep); ?>" class="btn btn-primaire"><?php echo esc_html($acc('acc_hero_btn1', 'Découvrir l\'épicerie')); ?></a>
+            <a href="<?php echo esc_url($url_boutique); ?>" class="btn btn-ligne"><?php echo esc_html($acc('acc_hero_btn2', 'Découvrir la Boutique')); ?></a>
+            <a href="<?php echo esc_url($url_pm); ?>" class="btn btn-ligne"><?php echo esc_html($acc('acc_hero_btn3', 'Découvrir nos produits maison')); ?></a>
+        </div>
+    </div>
 </section>
 
 <!-- ========================= ENGAGEMENTS ========================= -->
 <section class="section engagements">
     <div class="conteneur">
-        <div class="section-titre reveal">
-            <p class="eyebrow"><?php echo esc_html($acc('acc_eng_surtitre', 'Nos engagements')); ?></p>
-            <h2><?php echo esc_html($acc('acc_eng_titre', 'Le bon goût, en conscience')); ?></h2>
+        <div class="section-titre section-titre--grand reveal">
+            <h2><?php echo esc_html($acc('acc_eng_titre', 'Nos Engagements')); ?></h2>
         </div>
         <div class="engagements-grille">
             <div class="engagement reveal">
                 <div class="ico"><svg viewBox="0 0 40 40"><path d="M20,34 C20,22 26,12 34,8 C32,20 28,30 20,34 Z"/><path d="M20,34 C20,24 15,16 8,12 C11,22 14,30 20,34 Z"/><path d="M20,34 L20,20"/></svg></div>
                 <h3><?php echo esc_html($acc('acc_eng1_titre', 'Local')); ?></h3>
-                <p><?php echo esc_html($acc('acc_eng1_texte', '13 producteurs de la région de Matane, Bas-Saint-Laurent.')); ?></p>
+                <p><?php echo esc_html($acc('acc_eng1_texte', 'Une multitude de producteurs et de transformateurs de la Matanie, du Bas-Saint-Laurent, de la Gaspésie et des quatre coins du Québec.')); ?></p>
             </div>
             <div class="engagement reveal reveal-delai-1">
                 <div class="ico"><svg viewBox="0 0 40 40"><path d="M20,34 L20,16"/><path d="M20,20 C20,14 15,9 8,9 C8,15 13,20 20,20 Z"/><path d="M20,18 C20,11 25,6 32,6 C32,13 27,18 20,18 Z"/></svg></div>
@@ -102,13 +100,13 @@ $acc = function ($cle, $defaut) {
             </div>
             <div class="engagement reveal reveal-delai-2">
                 <div class="ico"><svg viewBox="0 0 40 40"><path d="M11,14 L29,14 L27,33 C27,34.5 26,35 25,35 L15,35 C14,35 13,34.5 13,33 Z"/><path d="M15,14 L15,10 C15,8 16,7 18,7 L22,7 C24,7 25,8 25,10 L25,14"/><path d="M17,21 L23,21 M17,27 L23,27"/></svg></div>
-                <h3><?php echo esc_html($acc('acc_eng3_titre', 'En vrac')); ?></h3>
-                <p><?php echo esc_html($acc('acc_eng3_texte', 'Achetez ce dont vous avez besoin, réduisez vos emballages.')); ?></p>
+                <h3><?php echo esc_html($acc('acc_eng3_titre', 'Vrac')); ?></h3>
+                <p><?php echo esc_html($acc('acc_eng3_texte', 'Une façon simple de réduire les emballages et le gaspillage.')); ?></p>
             </div>
             <div class="engagement reveal reveal-delai-3">
                 <div class="ico"><svg viewBox="0 0 40 40"><path d="M20,33 C8,24 6,16 11,12 C15,9 19,12 20,16 C21,12 25,9 29,12 C34,16 32,24 20,33 Z"/><path d="M20,16 L20,22"/></svg></div>
                 <h3><?php echo esc_html($acc('acc_eng4_titre', 'Communauté')); ?></h3>
-                <p><?php echo esc_html($acc('acc_eng4_texte', 'Soutenir l\'économie locale, un achat à la fois.')); ?></p>
+                <p><?php echo esc_html($acc('acc_eng4_texte', 'Valoriser l\'achat local et soutenir notre économie régionale.')); ?></p>
             </div>
         </div>
     </div>
