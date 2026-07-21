@@ -44,12 +44,15 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                     'dimanche'       => 'Spécial dimanche',
                 ];
 
-                /* Messages par jour (ACF de la page) : calculé AVANT le filtre de jours
-                   pour qu'un message (ex: partenaire du jeudi) puisse afficher son jour
-                   dans le filtre même si aucun produit n'est encore rattaché à ce jour-là.
+                /* Messages par jour et/ou par catégorie (ACF de la page) : calculé AVANT
+                   le filtre de jours pour qu'un message (ex: partenaire du jeudi) puisse
+                   afficher son jour dans le filtre même si aucun produit n'est encore
+                   rattaché à ce jour-là. Liste simple (pas indexée par jour) : un message
+                   peut n'avoir AUCUN jour (déclenché seulement par sa catégorie), et
+                   plusieurs messages peuvent partager le même jour ou la même catégorie.
                    Repli de démonstration (sushis du jeudi) tant que rien n'est saisi dans
                    WP, pour visualiser le rendu sans avoir à remplir le champ. */
-                $messages_jours = [];
+                $messages = [];
                 $msgs_raw = get_field('pam_messages_jours') ?: [[
                     'msg_jour'        => 'jeudi',
                     'msg_titre'       => 'Les jeudis sushis au Vivier',
@@ -60,29 +63,35 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                     'msg_categorie_slug' => 'sushis',
                 ]];
                 foreach ($msgs_raw as $m) {
-                    if (empty($m['msg_jour'])) continue;
-                    if (!empty($m['msg_titre']) || !empty($m['msg_description'])) {
-                        /* Catégorie associée (optionnel) : soit un terme réel choisi dans
-                           WP (ID), soit le slug de démo ci-dessus tant que rien n'est saisi. */
-                        $cat_slug = $m['msg_categorie_slug'] ?? '';
-                        if (!$cat_slug && !empty($m['msg_categorie'])) {
-                            $terme = get_term($m['msg_categorie'], 'pam_categorie');
-                            if ($terme && !is_wp_error($terme)) $cat_slug = $terme->slug;
-                        }
-                        $messages_jours[$m['msg_jour']] = [
-                            'titre'       => $m['msg_titre']       ?? '',
-                            'description' => $m['msg_description'] ?? '',
-                            'cta'         => $m['msg_cta']         ?? '',
-                            'image'       => $m['msg_image']       ?? null,
-                            'note_titre'  => $m['msg_note_titre']  ?? '',
-                            'note_texte'  => $m['msg_note_texte']  ?? '',
-                            'categorie'   => $cat_slug,
-                        ];
+                    /* Catégorie associée (optionnel) : soit un terme réel choisi dans
+                       WP (ID), soit le slug de démo ci-dessus tant que rien n'est saisi. */
+                    $cat_slug = $m['msg_categorie_slug'] ?? '';
+                    if (!$cat_slug && !empty($m['msg_categorie'])) {
+                        $terme = get_term($m['msg_categorie'], 'pam_categorie');
+                        if ($terme && !is_wp_error($terme)) $cat_slug = $terme->slug;
                     }
+                    $jour = $m['msg_jour'] ?? '';
+                    /* Un message doit avoir au moins un jour OU une catégorie pour
+                       savoir quand s'afficher — sinon rien ne le déclenchera jamais. */
+                    if (empty($jour) && empty($cat_slug)) continue;
+                    if (empty($m['msg_titre']) && empty($m['msg_description'])) continue;
+
+                    $messages[] = [
+                        'jour'        => $jour,
+                        'titre'       => $m['msg_titre']       ?? '',
+                        'description' => $m['msg_description'] ?? '',
+                        'cta'         => $m['msg_cta']         ?? '',
+                        'image'       => $m['msg_image']       ?? null,
+                        'note_titre'  => $m['msg_note_titre']  ?? '',
+                        'note_texte'  => $m['msg_note_texte']  ?? '',
+                        'categorie'   => $cat_slug,
+                    ];
                 }
 
                 $jours_actifs = [];
-                foreach (array_keys($messages_jours) as $slug) $jours_actifs[$slug] = true;
+                foreach ($messages as $msg) {
+                    if ($msg['jour']) $jours_actifs[$msg['jour']] = true;
+                }
                 $tous_pam = new WP_Query([
                     'post_type'      => 'pam_produit',
                     'post_status'    => 'publish',
@@ -111,11 +120,11 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                     <?php endforeach; ?>
                 </div>
 
-                <!-- Messages par jour -->
-                <?php if ($messages_jours): ?>
+                <!-- Messages par jour et/ou par catégorie -->
+                <?php if ($messages): ?>
                 <div class="pam-messages-jours" aria-live="polite">
-                    <?php foreach ($messages_jours as $slug => $data): ?>
-                    <div class="pam-msg-jour<?php echo $data['image'] ? ' pam-msg-jour--avec-image' : ''; ?>" data-jour="<?php echo esc_attr($slug); ?>" data-categorie="<?php echo esc_attr($data['categorie']); ?>" hidden>
+                    <?php foreach ($messages as $data): ?>
+                    <div class="pam-msg-jour<?php echo $data['image'] ? ' pam-msg-jour--avec-image' : ''; ?>" data-jour="<?php echo esc_attr($data['jour']); ?>" data-categorie="<?php echo esc_attr($data['categorie']); ?>" hidden>
                         <?php if ($data['image']): ?>
                         <img class="pam-msg-image" src="<?php echo esc_url($data['image']['sizes']['medium'] ?? $data['image']['url']); ?>" alt="<?php echo esc_attr($data['image']['alt'] ?: $data['titre']); ?>">
                         <?php endif; ?>

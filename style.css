@@ -238,8 +238,11 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 
 /* Logo du hero (remplace les fleurs animées, demande de Philippe 21 juillet :
    reconnaissance immédiate de la marque plutôt qu'une illustration décorative) */
+/* Logo agrandi (22 juillet) : à 460px max il laissait trop de vide autour
+   de lui dans la colonne droite du hero, qui semblait « ne plus remplir
+   l'écran » une fois les fleurs animées retirées. */
 .hero-logo { position: relative; z-index: 2; justify-self: center; display: flex; align-items: center; justify-content: center; }
-.hero-logo img { width: 100%; max-width: clamp(280px, 32vw, 460px); height: auto; filter: drop-shadow(0 18px 34px rgba(56,73,45,.18)); }
+.hero-logo img { width: 100%; max-width: clamp(340px, 40vw, 600px); height: auto; filter: drop-shadow(0 18px 34px rgba(56,73,45,.18)); }
 
 .hero-scroll { position: absolute; left: 50%; bottom: 1.6rem; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: .5rem; color: var(--texte-doux); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; }
 .hero-scroll .souris { width: 22px; height: 34px; border: 2px solid var(--texte-doux); border-radius: 12px; position: relative; }
@@ -363,10 +366,13 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 /* Navigation complete du footer : deux listes explicites (ordre logique du
    site en colonne 1, Contact/Politiques/Promotions en colonne 2) plutôt que
    des colonnes CSS auto-balancées par hauteur, pour un découpage garanti. */
-.pied-nav-cols { display: flex; gap: 2rem; }
-.pied-nav-col { flex: 1; min-width: 0; }
 .pied-marque p { font-size: .92rem; margin-bottom: .85rem; max-width: 34ch; color: #a4ad92; }
-.pied-bas { margin-top: clamp(1.8rem, 1.2rem + 1.5vw, 2.5rem); border-top: 1px solid rgba(255,255,255,.09); padding-block: 1.2rem; text-align: center; font-size: .8rem; color: #889378; letter-spacing: .02em; }
+/* Copyright à gauche, Politique de confidentialité à droite (22 juillet) :
+   séparée des pages du site plutôt que noyée dans la liste Navigation. */
+.pied-bas { margin-top: clamp(1.8rem, 1.2rem + 1.5vw, 2.5rem); border-top: 1px solid rgba(255,255,255,.09); padding-block: 1.2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; font-size: .8rem; color: #889378; letter-spacing: .02em; }
+.pied-bas a { color: #889378; text-decoration: underline; text-underline-offset: 3px; }
+.pied-bas a:hover { color: var(--ocre); }
+@media (max-width: 560px) { .pied-bas { justify-content: center; text-align: center; } }
 
 /* ------------------------------------------------- LIGHTBOX BON PM */
 .pm-lightbox-trigger { cursor: zoom-in; }
@@ -421,7 +427,7 @@ body.pm-lightbox-ouvert { overflow: hidden; }
   /* Arches de couleur réservées au desktop (mobile : simplement le logo
      centré sous le titre, pas de décor derrière). */
   .arche { display: none; }
-  .hero-logo img { max-width: clamp(200px, 52vw, 320px); }
+  .hero-logo img { max-width: clamp(230px, 58vw, 360px); }
   .hero { min-height: auto; padding-bottom: clamp(4rem, 9vh, 5.5rem); }
   .hero h1 { text-wrap: balance; }
   .hero-scroll { display: none; }
@@ -2908,16 +2914,29 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   box-shadow: var(--ombre);
   overflow: hidden;
 }
-.ct2-form { padding: clamp(1.8rem, 1.2rem + 2vw, 3rem); }
-.ct2-form h2 { color: var(--sauge-fonce); font-size: 1.45rem; margin-bottom: .35rem; }
-.ct2-form > p { color: var(--texte-corps); font-size: .95rem; margin-bottom: 1.5rem; }
-.ct2-form .btn { margin-top: .4rem; }
+/* Formulaire resserré (22 juillet) : padding et marges réduits, le bloc
+   « Écrivez-nous » paraissait trop long avec beaucoup d'air entre les
+   champs. Marges de champ propres à cette carte (.champ est une classe
+   partagée par tout le site, ne pas la resserrer globalement). */
+.ct2-form { padding: clamp(1.4rem, 1rem + 1.4vw, 2.2rem); }
+.ct2-form h2 { color: var(--sauge-fonce); font-size: 1.45rem; margin-bottom: .3rem; }
+.ct2-form > p { color: var(--texte-corps); font-size: .95rem; margin-bottom: 1rem; }
+.ct2-form .champ { margin-bottom: .7rem; }
+.ct2-form .champ textarea { min-height: 100px; }
+.ct2-form .btn { margin-top: .2rem; }
 
-/* Volet coordonnées : crème, liseré, icônes sauge (grammaire bouquet) */
+/* Volet coordonnées : crème, liseré, icônes sauge (grammaire bouquet).
+   Contenu centré verticalement (flex) plutôt qu'aligné en haut : la carte
+   garde ses deux colonnes de même hauteur (grid stretch), mais le volet a
+   naturellement moins de contenu que le formulaire — le centrer répartit
+   le vide en haut/bas au lieu de le laisser en bloc au bas de la carte. */
 .ct2-aside {
   background: var(--creme);
   border-left: 1px solid var(--bordure);
-  padding: clamp(1.8rem, 1.2rem + 2vw, 2.6rem) clamp(1.4rem, 1rem + 1.5vw, 2.2rem);
+  padding: clamp(1.4rem, 1rem + 1.4vw, 2.2rem) clamp(1.4rem, 1rem + 1.5vw, 2.2rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .ct2-aside h2 { color: var(--sauge-fonce); font-size: 1.2rem; margin-bottom: 1.1rem; }
 .ct2-aside ul { display: grid; gap: 1.1rem; }
