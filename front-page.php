@@ -18,9 +18,23 @@ $acc = function ($cle, $defaut) {
     return $valeur ?: $defaut;
 };
 
-/* Logo du site (Réglages > Général > Identité du site), pour le hero */
-$logo_id  = get_theme_mod('custom_logo');
-$logo_url = $logo_id ? wp_get_attachment_image_url($logo_id, 'full') : '';
+/* Logo complet du hero (roseau + « Le Vivier » + « Épicerie · Boutique »),
+   distinct du logo compact du header (Réglages > Identité du site) : celui-ci
+   est prévu pour un affichage large. Priorité : champ ACF (si Marie en
+   téléverse un nouveau) > fichier fourni par Philippe le 21 juillet > logo
+   du header en dernier repli, pour ne jamais afficher un hero vide. */
+$logo_hero_champ = function_exists('get_field') ? get_field('acc_hero_logo') : null;
+if ($logo_hero_champ && !empty($logo_hero_champ['url'])) {
+    $logo_url = $logo_hero_champ['url'];
+} else {
+    $logo_fichier = get_stylesheet_directory() . '/assets/images/logo-complet.png';
+    if (file_exists($logo_fichier)) {
+        $logo_url = get_stylesheet_directory_uri() . '/assets/images/logo-complet.png';
+    } else {
+        $logo_id  = get_theme_mod('custom_logo');
+        $logo_url = $logo_id ? wp_get_attachment_image_url($logo_id, 'full') : '';
+    }
+}
 ?>
 
 <!-- ============================ HERO ============================ -->

@@ -607,6 +607,15 @@ add_action('acf/init', function () {
         'fields' => [
             ['key' => 'field_acc_tab_hero', 'type' => 'tab', 'label' => 'Hero'],
             [
+                'key'           => 'field_acc_hero_logo',
+                'name'          => 'acc_hero_logo',
+                'label'         => 'Logo du hero',
+                'type'          => 'image',
+                'return_format' => 'array',
+                'preview_size'  => 'medium',
+                'instructions'  => 'Optionnel. Logo complet (avec le nom) affiché en grand dans le hero. Laissez vide pour garder le logo fourni par défaut.',
+            ],
+            [
                 'key'           => 'field_acc_hero_texte',
                 'name'          => 'acc_hero_texte',
                 'label'         => 'Texte sous le titre',
