@@ -938,7 +938,7 @@ body.univers-africaine .page-entete { background: var(--afr-fond); padding-botto
 body.univers-africaine .page-entete .eyebrow { color: var(--afr-rouille); }
 body.univers-africaine .page-entete h1 { color: var(--afr-nuit); }
 body.univers-africaine .page-entete h1 .script { color: var(--afr-rouille); }
-body.univers-africaine .page-entete > .conteneur > p { color: var(--afr-texte); }
+body.univers-africaine .page-entete .hero-texte p { color: var(--afr-texte); }
 body.univers-africaine .page-entete > .conteneur::after {
   content: "";
   display: block;
@@ -947,6 +947,18 @@ body.univers-africaine .page-entete > .conteneur::after {
   margin: 1.4rem auto 0;
   background: var(--afr-or);
   border-radius: 2px;
+}
+
+/* En-tête : logo Okavi à côté du texte (réutilise .hero-grille/.hero-texte/
+   .hero-logo du hero d'accueil plutôt qu'un système de grille dédié).
+   Le logo Okavi est un emblème carré, pas le lockup large du logo Le
+   Vivier : taille propre à cette page, sans toucher .hero-logo ailleurs.
+   Alignement à gauche réservé au bureau (>960px) : sous ce seuil, la
+   règle générale .hero-grille { text-align:center } du hero d'accueil
+   s'applique déjà (mêmes classes), pas besoin de la dupliquer ici. */
+body.univers-africaine .page-entete .hero-logo img { max-width: clamp(140px, 16vw, 220px); filter: drop-shadow(0 14px 26px rgba(60, 42, 30, .22)); }
+@media (min-width: 961px) {
+  body.univers-africaine .page-entete .hero-texte { text-align: left; }
 }
 
 /* En-tête : fond ivoire épices opaque sur cette page. */
@@ -994,11 +1006,23 @@ body.univers-africaine .produits { background: transparent; }
   }
 }
 
+/* Portrait de Viviane : fond du cadre visible tant qu'aucune photo n'est
+   téléversée (le médaillon "V" script s'affiche alors dedans). */
+body.univers-africaine .apropos-media .cadre { background: var(--afr-or-pale); }
+body.univers-africaine .afr-portrait-lien { color: var(--afr-rouille); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+body.univers-africaine .afr-portrait-lien:hover { color: var(--afr-rouille-f); }
+
 /* Spécialités : cartes numérotées façon comptoir d'épices (vs cartes
    génériques) — filet or sous le numéro, titres rouille, photo 4/3.
    stretch : avec de vraies photos, les cartes doivent finir à la même
-   hauteur (le start laissait des bas de cartes en escalier). */
+   hauteur (le start laissait des bas de cartes en escalier). 4 cartes
+   (Beauté & soins ajoutée le 22 juillet) : 4 colonnes au bureau, les
+   seuils existants de .grille-prod (2 col ≤960px, 1 col ≤720px) donnent
+   déjà un 2x2 puis 1 colonne propres, sans carte orpheline. */
 body.univers-africaine .grille-prod { counter-reset: spec; align-items: stretch; }
+@media (min-width: 961px) {
+  body.univers-africaine .grille-prod { grid-template-columns: repeat(4, 1fr); }
+}
 body.univers-africaine .carte-prod {
   counter-increment: spec;
   border: 1px solid #ecdfc8;

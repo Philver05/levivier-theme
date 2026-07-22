@@ -9,17 +9,31 @@ if (have_posts()) the_post();
 /* ----------------------------------------------------------
    Champs ACF + valeurs par défaut — tout éditable dans l'admin
 ---------------------------------------------------------- */
-$intro    = get_field('afr_intro')    ?: "Épices, sauces, féculents et trésors culinaires venus du continent.\nUne invitation au voyage, au cœur de Matane.";
+$intro = get_field('afr_intro') ?: "Au sous-sol du Vivier, Okavi vous propose épices, sauces et trésors culinaires venus d'Afrique.\nUne épicerie de quartier pensée et animée par Viviane, pour faire voyager Matane.";
 
-/* Présentation : $pres_texte sert à détecter un contenu réellement visible
-   (get_the_content() seul renvoie souvent une chaîne "vide" du point de vue
-   visuel mais non-vide en PHP, ex: <p></p> laissé par l'éditeur WP, ce qui
-   affichait un bloc invisible mais quand même paddé). */
+/* Logo Okavi du héros : même chaîne de priorité que le logo hero de
+   l'accueil (front-page.php) — champ ACF > fichier fourni par Philippe
+   le 22 juillet > rien (pas de repli logo du header, trop petit/inadapté
+   à côté du texte). */
+$logo_afr_champ = get_field('afr_logo');
+if ($logo_afr_champ && !empty($logo_afr_champ['url'])) {
+    $logo_afr_url = $logo_afr_champ['url'];
+} else {
+    $logo_afr_fichier = get_stylesheet_directory() . '/assets/images/logo-okavi.png';
+    $logo_afr_url = file_exists($logo_afr_fichier) ? get_stylesheet_directory_uri() . '/assets/images/logo-okavi.png' : '';
+}
+
+/* Portrait de Viviane (bande blanche en bas de page) : le texte principal
+   vit dans l'éditeur WP de la page (comme le reste du site). Tant que
+   Marie n'y a rien écrit, on affiche un portrait par défaut documenté
+   (recherché en ligne le 22 juillet : Radio-Canada, Le Soir Matanie,
+   bienvenuedansmamatanie.com, SANAM) plutôt que de cacher la section. */
 $pres_image = get_field('afr_presentation_image');
 $pres_texte = trim(wp_strip_all_tags(get_the_content()));
-$pres_presente = ($pres_texte !== '' || $pres_image);
+$pres_defaut = "Derrière l'épicerie africaine du Vivier se trouve Viviane Oueko Kamga, arrivée à Matane en 2010. Passionnée de mode et de cuisine, elle fonde en 2015 le groupe Okavi pour faire découvrir le meilleur de l'Afrique à sa région d'adoption : épices, saveurs, coiffure et créations textiles. Une partie des profits de l'épicerie soutient des orphelinats au Cameroun. Viviane est aussi de celles qui font vivre la communauté à Matane, fidèle à un proverbe qui lui tient à cœur : il faut tout un village pour élever un enfant.";
+$portrait_fb = get_field('afr_portrait_facebook');
 
-/* Spécialités (3 cartes) */
+/* Spécialités (4 cartes, classées par catégorie de produits) */
 $specialites = [
     [
         'titre' => get_field('afr_spec1_titre') ?: 'Épices & condiments',
@@ -36,19 +50,31 @@ $specialites = [
         'texte' => get_field('afr_spec3_texte') ?: 'Farines de manioc, igname, plantain, riz parfumé et féculents au cœur de la cuisine africaine.',
         'image' => get_field('afr_spec3_image'),
     ],
+    [
+        'titre' => get_field('afr_spec4_titre') ?: 'Beauté & soins',
+        'texte' => get_field('afr_spec4_texte') ?: 'Produits capillaires, cosmétiques et soins traditionnels inspirés du continent.',
+        'image' => get_field('afr_spec4_image'),
+    ],
 ];
 
 ?>
 
 <!-- ======================================================
-     EN-TÊTE
+     EN-TÊTE — logo Okavi à côté du texte de présentation
 ====================================================== -->
 <section class="page-entete">
     <div class="conteneur">
-        <?php /* Eyebrow retiré (demande de Philippe, la petite phrase
-                 "Produits disponibles" n'apportait rien) */ ?>
-        <h1 class="page-entete-titre-script"><?php the_title(); ?></h1>
-        <p><?php echo nl2br(esc_html($intro)); ?></p>
+        <div class="hero-grille">
+            <div class="hero-texte reveal">
+                <h1 class="page-entete-titre-script"><?php the_title(); ?></h1>
+                <p><?php echo nl2br(esc_html($intro)); ?></p>
+            </div>
+            <?php if ($logo_afr_url): ?>
+            <div class="hero-logo reveal">
+                <img src="<?php echo esc_url($logo_afr_url); ?>" alt="Les saveurs d'Afrique &amp; d'ailleurs by Okavi">
+            </div>
+            <?php endif; ?>
+        </div>
     </div>
 </section>
 
@@ -124,7 +150,8 @@ if ($afr_parent && !is_wp_error($afr_parent)) {
 <?php endif; ?>
 
 <!-- ======================================================
-     SPÉCIALITÉS — 3 cartes (équivalent de « Nos produits »)
+     SPÉCIALITÉS — 4 cartes classées par catégorie (équivalent
+     de « Nos produits »)
 ====================================================== -->
 <section class="section produits">
     <div class="conteneur">
@@ -185,31 +212,37 @@ if ($afr_parent && !is_wp_error($afr_parent)) {
 </section>
 
 <!-- ======================================================
-     PRÉSENTATION — bande blanche finale (équivalent de la
-     bande Producteurs de la page Épicerie), texte = éditeur WP
+     PORTRAIT — qui est Viviane (bande blanche finale, équivalent
+     de la bande Producteurs de la page Épicerie), texte = éditeur
+     WP en priorité, portrait par défaut documenté sinon
 ====================================================== -->
-<?php if ($pres_presente): ?>
 <section class="section bande-blanche">
     <div class="conteneur">
         <div class="section-titre">
-            <h2><?php echo esc_html(get_field('afr_pres_titre') ?: 'La boutique africaine au Vivier'); ?></h2>
+            <h2><?php echo esc_html(get_field('afr_pres_titre') ?: "Derrière l'épicerie : Viviane"); ?></h2>
         </div>
-        <?php if ($pres_texte !== '' && $pres_image): ?>
         <div class="apropos-split">
-            <div class="page-prose reveal" style="margin:0"><?php the_content(); ?></div>
+            <div class="page-prose reveal" style="margin:0">
+                <?php if ($pres_texte !== ''): the_content(); else: ?>
+                    <p><?php echo esc_html($pres_defaut); ?></p>
+                <?php endif; ?>
+                <?php if ($portrait_fb): ?>
+                    <p><a class="afr-portrait-lien" href="<?php echo esc_url($portrait_fb); ?>" target="_blank" rel="noopener">Suivre Okavi sur Facebook</a></p>
+                <?php endif; ?>
+            </div>
             <div class="apropos-media reveal">
-                <div class="cadre"><img src="<?php echo esc_url($pres_image['sizes']['large'] ?? $pres_image['url']); ?>" alt="<?php echo esc_attr($pres_image['alt'] ?: 'Épicerie Africaine'); ?>"></div>
+                <div class="cadre">
+                    <?php if ($pres_image): ?>
+                        <img src="<?php echo esc_url($pres_image['sizes']['large'] ?? $pres_image['url']); ?>" alt="<?php echo esc_attr($pres_image['alt'] ?: 'Viviane, fondatrice d\'Okavi'); ?>">
+                    <?php else: ?>
+                        <div class="carte-vide" style="height:100%">
+                            <span style="font-family:var(--f-script);font-size:4.5rem;color:var(--afr-rouille)">V</span>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
-        <?php elseif ($pres_texte !== ''): ?>
-            <div class="page-prose reveal"><?php the_content(); ?></div>
-        <?php else: ?>
-            <div class="apropos-media reveal" style="max-width:640px;margin-inline:auto">
-                <div class="cadre"><img src="<?php echo esc_url($pres_image['sizes']['large'] ?? $pres_image['url']); ?>" alt="<?php echo esc_attr($pres_image['alt'] ?: 'Épicerie Africaine'); ?>"></div>
-            </div>
-        <?php endif; ?>
     </div>
 </section>
-<?php endif; ?>
 
 <?php get_footer(); ?>
