@@ -956,7 +956,7 @@ body.univers-africaine .page-entete > .conteneur::after {
    Alignement à gauche réservé au bureau (>960px) : sous ce seuil, la
    règle générale .hero-grille { text-align:center } du hero d'accueil
    s'applique déjà (mêmes classes), pas besoin de la dupliquer ici. */
-body.univers-africaine .page-entete .hero-logo img { max-width: clamp(200px, 22vw, 320px); filter: drop-shadow(0 14px 26px rgba(60, 42, 30, .22)); }
+body.univers-africaine .page-entete .hero-logo img { max-width: clamp(150px, 22vw, 320px); filter: drop-shadow(0 6px 12px rgba(60, 42, 30, .12)); }
 /* Le h1 script partage la rangée avec le logo (au lieu d'occuper toute la
    largeur, centré, comme le reste du site) : taille réduite pour tenir
    sur une seule ligne au bureau plutôt que de se briser en 2 lignes. */
@@ -964,6 +964,7 @@ body.univers-africaine .page-entete h1.page-entete-titre-script { font-size: cla
 @media (min-width: 961px) {
   body.univers-africaine .page-entete .hero-texte { text-align: left; }
   body.univers-africaine .page-entete h1.page-entete-titre-script { white-space: nowrap; }
+  body.univers-africaine .page-entete .hero-logo img { max-width: clamp(200px, 22vw, 320px); }
 }
 
 /* En-tête : fond ivoire épices opaque sur cette page. */
@@ -1012,8 +1013,26 @@ body.univers-africaine .produits { background: transparent; }
 }
 
 /* Portrait de Viviane : fond du cadre visible tant qu'aucune photo n'est
-   téléversée (le médaillon "V" script s'affiche alors dedans). */
-body.univers-africaine .apropos-media .cadre { background: var(--afr-or-pale); }
+   téléversée (le médaillon "V" script s'affiche alors dedans). Le cadre
+   par défaut (.apropos-media, aspect-ratio 4/5) est pensé pour une photo
+   pleine page comme À propos : ici, à côté d'un court paragraphe, il
+   dominait largement le texte (colonne 1fr 1fr + portrait très haut).
+   Colonne image réduite + cadre plus carré pour un équilibre texte/image
+   plus confortable à lire. */
+body.univers-africaine .apropos-media .cadre { background: var(--afr-or-pale); aspect-ratio: 1 / 1; }
+@media (min-width: 861px) {
+  body.univers-africaine .apropos-split { grid-template-columns: 1.3fr 1fr; }
+  /* Plafond de taille indépendant de la largeur de colonne : sans ça, le
+     portrait grandit avec l'écran bien plus vite qu'un court paragraphe,
+     et finit toujours par le dominer. */
+  body.univers-africaine .apropos-media { width: min(320px, 100%); margin-left: auto; }
+}
+@media (max-width: 860px) {
+  /* width (pas max-width) : évite un bug de rétrécissement (l'élément
+     s'effondre à ~28px) quand max-width se combine à margin-inline:auto
+     sur un enfant lui-même en width:auto (.cadre). */
+  body.univers-africaine .apropos-media { width: min(320px, 100%); max-width: none; }
+}
 body.univers-africaine .afr-portrait-lien { color: var(--afr-rouille); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 body.univers-africaine .afr-portrait-lien:hover { color: var(--afr-rouille-f); }
 
