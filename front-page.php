@@ -105,7 +105,7 @@ if ($logo_hero_champ && !empty($logo_hero_champ['url'])) {
             <div class="engagement reveal">
                 <div class="ico"><svg viewBox="0 0 40 40"><path d="M20,34 C20,22 26,12 34,8 C32,20 28,30 20,34 Z"/><path d="M20,34 C20,24 15,16 8,12 C11,22 14,30 20,34 Z"/><path d="M20,34 L20,20"/></svg></div>
                 <h3><?php echo esc_html($acc('acc_eng1_titre', 'Local')); ?></h3>
-                <p><?php echo esc_html($acc('acc_eng1_texte', 'Une multitude de producteurs et de transformateurs de la Matanie, du Bas-Saint-Laurent, de la Gaspésie et des quatre coins du Québec.')); ?></p>
+                <p><?php echo esc_html($acc('acc_eng1_texte', 'Des producteurs locaux, de la Matanie à la Gaspésie et au Bas-Saint-Laurent.')); ?></p>
             </div>
             <div class="engagement reveal reveal-delai-1">
                 <div class="ico"><svg viewBox="0 0 40 40"><path d="M20,34 L20,16"/><path d="M20,20 C20,14 15,9 8,9 C8,15 13,20 20,20 Z"/><path d="M20,18 C20,11 25,6 32,6 C32,13 27,18 20,18 Z"/></svg></div>
