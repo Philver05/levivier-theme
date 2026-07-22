@@ -3052,51 +3052,50 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 }
 
 /* ======================================================
-   PAGE BOUTIQUE — présentation + mosaïque de photos
-   (galerie ACF téléversée par Marie, replis élégants si vide)
+   CARROUSEL PHOTOS — générique (utilisé sur Boutique, réutilisable
+   ailleurs : voir assets/scripts/carrousel.js). Fondu enchaîné +
+   léger zoom (Ken Burns) sur la photo active, autoplay géré en JS.
 ====================================================== */
-.bout-pres { background: var(--blanc); border-top: 1px solid var(--bordure); }
-.bout-pres-grille {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  gap: clamp(1.8rem, 1rem + 3vw, 4rem);
-  align-items: center;
-}
-.bout-pres-texte .eyebrow { display: block; margin-bottom: .7rem; }
-.bout-pres-texte h2 { font-size: var(--t-h2); color: var(--sauge-fonce); margin-bottom: .9rem; }
-.bout-pres-texte p { color: var(--texte-corps); line-height: 1.75; margin-bottom: .8rem; }
-
-/* Mosaïque : 1 grande photo + vignettes, s'adapte au nombre d'images */
-.bout-galerie {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: minmax(120px, 1fr);
-  gap: 10px;
+.carrousel {
+  position: relative;
+  max-width: 1000px;
+  margin-inline: auto;
   border-radius: var(--rayon-l);
   overflow: hidden;
+  box-shadow: var(--ombre);
+  outline: none;
 }
-.bout-galerie--pleine { margin-top: .5rem; }
-.bout-galerie figure { margin: 0; position: relative; overflow: hidden; background: var(--sauge-pale); min-height: 120px; }
-.bout-galerie img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--transi); }
-.bout-galerie figure:hover img { transform: scale(1.05); }
-.bout-galerie figure:first-child { grid-column: span 2; grid-row: span 2; }
-/* 1 ou 2 photos : cartes arrondies individuelles à hauteur contenue
-   (en pleine largeur, deux photos 4/3 mangeaient un écran entier) */
-.bout-galerie[data-nb="1"],
-.bout-galerie[data-nb="2"] { border-radius: 0; overflow: visible; gap: clamp(12px, 1.5vw, 20px); }
-.bout-galerie[data-nb="1"] { grid-template-columns: 1fr; max-width: 900px; margin-inline: auto; }
-.bout-galerie[data-nb="2"] { grid-template-columns: 1.35fr 1fr; }
-.bout-galerie[data-nb="1"] figure:first-child,
-.bout-galerie[data-nb="2"] figure:first-child { grid-column: auto; grid-row: auto; }
-.bout-galerie[data-nb="1"] figure,
-.bout-galerie[data-nb="2"] figure { aspect-ratio: auto; height: clamp(300px, 32vw, 460px); border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre-douce); }
+.carrousel-piste { position: relative; aspect-ratio: 16 / 9; background: var(--sauge-pale); }
+.carrousel-slide { margin: 0; position: absolute; inset: 0; opacity: 0; transition: opacity 1.1s ease; overflow: hidden; }
+.carrousel-slide.actif { opacity: 1; z-index: 1; }
+.carrousel-slide img { width: 100%; height: 100%; object-fit: cover; transform: scale(1); transition: transform 7s ease-out; }
+.carrousel-slide.actif img { transform: scale(1.08); }
 
-@media (max-width: 900px) {
-  .bout-pres-grille { grid-template-columns: 1fr; }
-  .bout-galerie { grid-template-columns: repeat(2, 1fr); grid-auto-rows: minmax(110px, 1fr); }
+.carrousel-fleche {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+  width: 44px; height: 44px; border-radius: 50%; border: none;
+  background: rgba(249, 245, 240, .85); color: var(--sauge-fonce);
+  display: grid; place-items: center; cursor: pointer;
+  transition: background var(--transi), transform var(--transi);
 }
+.carrousel-fleche svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.carrousel-fleche:hover { background: var(--blanc); transform: translateY(-50%) scale(1.06); }
+.carrousel-precedent { left: 1rem; }
+.carrousel-suivant { right: 1rem; }
+
+.carrousel-dots { position: absolute; left: 50%; bottom: 1rem; transform: translateX(-50%); z-index: 2; display: flex; gap: .5rem; }
+.carrousel-dot { width: 9px; height: 9px; border-radius: 50%; border: none; background: rgba(249, 245, 240, .6); cursor: pointer; padding: 0; transition: background var(--transi), transform var(--transi); }
+.carrousel-dot.actif { background: var(--blanc); transform: scale(1.25); }
+
 @media (max-width: 700px) {
-  .bout-galerie[data-nb="2"] { grid-template-columns: 1fr; }
-  .bout-galerie[data-nb="1"] figure,
-  .bout-galerie[data-nb="2"] figure { height: clamp(220px, 55vw, 320px); }
+  .carrousel-piste { aspect-ratio: 4 / 3; }
+  .carrousel-fleche { width: 38px; height: 38px; }
+  .carrousel-precedent { left: .6rem; }
+  .carrousel-suivant { right: .6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carrousel-slide { transition: opacity .3s linear; }
+  .carrousel-slide img { transition: none; }
+  .carrousel-slide.actif img { transform: none; }
 }

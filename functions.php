@@ -128,6 +128,19 @@ add_action('wp_enqueue_scripts', function () {
             'nonce' => wp_create_nonce('ct_contact'),
         ]);
     }
+
+    /* Carrousel photos (générique, voir assets/scripts/carrousel.js) :
+       pour l'instant utilisé sur la page Boutique seulement. */
+    if (is_page_template('templates/template-boutique.php')) {
+        $path = get_stylesheet_directory() . '/assets/scripts/carrousel.js';
+        wp_enqueue_script(
+            'carrousel',
+            get_stylesheet_directory_uri() . '/assets/scripts/carrousel.js',
+            [],
+            file_exists($path) ? filemtime($path) : null,
+            ['strategy' => 'defer', 'in_footer' => true]
+        );
+    }
 });
 
 /* La page Contactez-nous utilise encore le gabarit « À propos » dans WP.
@@ -1912,7 +1925,7 @@ add_action('acf/init', function () {
             ['key' => 'field_bout_pres_surtitre', 'name' => 'bout_pres_surtitre', 'label' => 'Surtitre', 'type' => 'text', 'default_value' => 'Sur place à Matane'],
             ['key' => 'field_bout_pres_titre', 'name' => 'bout_pres_titre', 'label' => 'Titre', 'type' => 'text', 'default_value' => 'La boutique du Vivier'],
             ['key' => 'field_bout_pres_texte', 'name' => 'bout_pres_texte', 'label' => 'Texte de présentation', 'type' => 'textarea', 'rows' => 4, 'instructions' => 'Un paragraphe par ligne vide. Laissez vide pour afficher seulement les photos.'],
-            ['key' => 'field_bout_photos', 'name' => 'bout_photos', 'label' => 'Photos de la boutique', 'type' => 'gallery', 'return_format' => 'array', 'preview_size' => 'medium', 'instructions' => 'Téléversez 1 à 5 photos de la boutique (la première devient la grande photo de la mosaïque). La section n\'apparaît que si au moins une photo est présente.'],
+            ['key' => 'field_bout_photos', 'name' => 'bout_photos', 'label' => 'Photos de la boutique', 'type' => 'gallery', 'return_format' => 'array', 'preview_size' => 'medium', 'instructions' => 'Téléversez les photos de la boutique : elles défilent dans un carrousel animé, dans l\'ordre où vous les ajoutez ici. La section n\'apparaît que si au moins une photo est présente.'],
             ['key' => 'field_bout_vide_texte', 'name' => 'bout_vide_texte', 'label' => 'Texte quand aucun article', 'type' => 'text', 'default_value' => 'Les articles arrivent bientôt, revenez nous voir !'],
         ],
         'location' => [[['param' => 'page_template', 'operator' => '==', 'value' => 'templates/template-boutique.php']]],

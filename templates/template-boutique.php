@@ -84,6 +84,57 @@ $categories_boutique = get_terms([
 </section>
 
 <!-- ======================================================
+     LA BOUTIQUE EN PHOTOS — carrousel animé, avant le trio
+     Valeurs (demande de Philippe) ; n'apparaît que si des
+     photos sont présentes
+====================================================== -->
+<?php
+$carr_photos = $bout('bout_photos', []);
+if (!is_array($carr_photos)) $carr_photos = [];
+$carr_texte  = trim($bout('bout_pres_texte', ''));
+if ($carr_photos):
+?>
+<section class="section">
+    <div class="conteneur">
+        <div class="section-titre reveal">
+            <p class="eyebrow"><?php echo esc_html($bout('bout_pres_surtitre', 'Sur place à Matane')); ?></p>
+            <h2><?php echo esc_html($bout('bout_pres_titre', 'La boutique du Vivier')); ?></h2>
+            <?php if ($carr_texte !== ''): ?>
+                <p><?php echo nl2br(esc_html($carr_texte)); ?></p>
+            <?php endif; ?>
+        </div>
+
+        <div class="carrousel reveal" data-autoplay="5000">
+            <div class="carrousel-piste">
+                <?php foreach ($carr_photos as $i => $photo): ?>
+                    <figure class="carrousel-slide<?php echo $i === 0 ? ' actif' : ''; ?>">
+                        <img src="<?php echo esc_url($photo['sizes']['large'] ?? $photo['url']); ?>"
+                             alt="<?php echo esc_attr($photo['alt'] ?: 'La boutique du Vivier'); ?>"
+                             loading="<?php echo $i === 0 ? 'eager' : 'lazy'; ?>">
+                    </figure>
+                <?php endforeach; ?>
+            </div>
+            <?php if (count($carr_photos) > 1): ?>
+            <button type="button" class="carrousel-fleche carrousel-precedent" aria-label="Photo précédente">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+            </button>
+            <button type="button" class="carrousel-fleche carrousel-suivant" aria-label="Photo suivante">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+            <div class="carrousel-dots" role="tablist" aria-label="Photos de la boutique">
+                <?php foreach ($carr_photos as $i => $photo): ?>
+                    <button type="button" class="carrousel-dot<?php echo $i === 0 ? ' actif' : ''; ?>"
+                            role="tab" aria-label="Photo <?php echo esc_attr($i + 1); ?>"
+                            aria-selected="<?php echo $i === 0 ? 'true' : 'false'; ?>"></button>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
+<!-- ======================================================
      VALEURS — trio à icônes, après le contenu et avant la
      bande de clôture (demande de Philippe)
 ====================================================== -->
@@ -114,53 +165,5 @@ $categories_boutique = get_terms([
         </div>
     </div>
 </section>
-
-<!-- ======================================================
-     LA BOUTIQUE EN PHOTOS — bande de présentation juste
-     avant le pied de page (demande de Philippe) ; n'apparaît
-     que si photos ou texte présents
-====================================================== -->
-<?php
-$pres_photos = $bout('bout_photos', []);
-$pres_texte  = trim($bout('bout_pres_texte', ''));
-if (!is_array($pres_photos)) $pres_photos = [];
-if ($pres_photos || $pres_texte !== ''):
-    $nb_photos = count($pres_photos);
-?>
-<section class="section bout-pres">
-    <div class="conteneur">
-        <?php if ($pres_texte !== ''): ?>
-        <div class="bout-pres-grille">
-            <div class="bout-pres-texte reveal">
-                <span class="eyebrow"><?php echo esc_html($bout('bout_pres_surtitre', 'Sur place à Matane')); ?></span>
-                <h2><?php echo esc_html($bout('bout_pres_titre', 'La boutique du Vivier')); ?></h2>
-                <?php foreach (preg_split('/\n\s*\n/', $pres_texte) as $par): if (trim($par) === '') continue; ?>
-                    <p><?php echo nl2br(esc_html(trim($par))); ?></p>
-                <?php endforeach; ?>
-            </div>
-            <?php if ($pres_photos): ?>
-            <div class="bout-galerie reveal reveal-delai-1" data-nb="<?php echo esc_attr(min($nb_photos, 5)); ?>">
-                <?php foreach ($pres_photos as $photo): ?>
-                    <figure><img src="<?php echo esc_url($photo['sizes']['large'] ?? $photo['url']); ?>"
-                                 alt="<?php echo esc_attr($photo['alt'] ?: 'La boutique du Vivier'); ?>" loading="lazy"></figure>
-                <?php endforeach; ?>
-            </div>
-            <?php endif; ?>
-        </div>
-        <?php else: ?>
-        <div class="section-titre reveal">
-            <p class="eyebrow"><?php echo esc_html($bout('bout_pres_surtitre', 'Sur place à Matane')); ?></p>
-            <h2><?php echo esc_html($bout('bout_pres_titre', 'La boutique du Vivier')); ?></h2>
-        </div>
-        <div class="bout-galerie bout-galerie--pleine reveal" data-nb="<?php echo esc_attr(min($nb_photos, 5)); ?>">
-            <?php foreach ($pres_photos as $photo): ?>
-                <figure><img src="<?php echo esc_url($photo['sizes']['large'] ?? $photo['url']); ?>"
-                             alt="<?php echo esc_attr($photo['alt'] ?: 'La boutique du Vivier'); ?>" loading="lazy"></figure>
-            <?php endforeach; ?>
-        </div>
-        <?php endif; ?>
-    </div>
-</section>
-<?php endif; ?>
 
 <?php get_footer(); ?>
