@@ -86,14 +86,23 @@ if ($familles->have_posts()) {
     while ($familles->have_posts()): $familles->the_post();
         $cta_label = (function_exists('get_field') ? get_field('famille_cta_label') : '') ?: 'Commander';
 
-        /* Cible du bouton : bon PM sur la catégorie choisie > bon PM > page Commander */
-        $cta_cat = function_exists('get_field') ? get_field('famille_cta_categorie') : null;
-        if ($url_bon_pm) {
+        /* Cible du bouton, par ordre de priorité :
+           1. Lien personnalisé saisi par Marie (famille_cta_url) — total contrôle.
+           2. Bon de commande Produits Maison filtré sur la catégorie choisie,
+              si cette page est publiée dans WP (pas encore le cas actuellement).
+           3. Repli par défaut : le bon Prêt à manger, où les focaccias/amarettis
+              et futures familles sont en pratique déjà commandables (demande
+              de Philippe, 22 juillet). */
+        $cta_url_perso = function_exists('get_field') ? get_field('famille_cta_url') : '';
+        $cta_cat       = function_exists('get_field') ? get_field('famille_cta_categorie') : null;
+        if ($cta_url_perso) {
+            $url_cta = $cta_url_perso;
+        } elseif ($url_bon_pm) {
             $url_cta = ($cta_cat && !is_wp_error($cta_cat) && !empty($cta_cat->slug))
                 ? add_query_arg('cat', $cta_cat->slug, $url_bon_pm)
                 : $url_bon_pm;
         } else {
-            $url_cta = $url_commander;
+            $url_cta = home_url('/pret-a-manger/');
         }
         $thumb_id  = get_post_thumbnail_id();
         $thumb     = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'large') : null;
