@@ -956,9 +956,14 @@ body.univers-africaine .page-entete > .conteneur::after {
    Alignement à gauche réservé au bureau (>960px) : sous ce seuil, la
    règle générale .hero-grille { text-align:center } du hero d'accueil
    s'applique déjà (mêmes classes), pas besoin de la dupliquer ici. */
-body.univers-africaine .page-entete .hero-logo img { max-width: clamp(140px, 16vw, 220px); filter: drop-shadow(0 14px 26px rgba(60, 42, 30, .22)); }
+body.univers-africaine .page-entete .hero-logo img { max-width: clamp(200px, 22vw, 320px); filter: drop-shadow(0 14px 26px rgba(60, 42, 30, .22)); }
+/* Le h1 script partage la rangée avec le logo (au lieu d'occuper toute la
+   largeur, centré, comme le reste du site) : taille réduite pour tenir
+   sur une seule ligne au bureau plutôt que de se briser en 2 lignes. */
+body.univers-africaine .page-entete h1.page-entete-titre-script { font-size: clamp(2.2rem, 1.5rem + 2vw, 3.4rem); }
 @media (min-width: 961px) {
   body.univers-africaine .page-entete .hero-texte { text-align: left; }
+  body.univers-africaine .page-entete h1.page-entete-titre-script { white-space: nowrap; }
 }
 
 /* En-tête : fond ivoire épices opaque sur cette page. */
