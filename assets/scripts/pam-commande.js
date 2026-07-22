@@ -453,4 +453,25 @@
         filtrerParJour(jourInit.value);
         majMessagesJour();
     }
+
+    /* Catégorie demandée dans l'URL (?cat=slug&souscat=slug), ex : lien
+       "Commander" depuis une famille de la page Produits Maison */
+    var paramsUrl = new URLSearchParams(window.location.search);
+    var catDemandee = paramsUrl.get('cat');
+    if (catDemandee) {
+        catDemandee = catDemandee.replace(/[^a-z0-9_-]/gi, '');
+        var tabCat = document.querySelector('.pam-cat-tab[data-cat="' + catDemandee + '"]:not([hidden])');
+        if (tabCat) {
+            tabCat.click();
+            var sousCatDemandee = paramsUrl.get('souscat');
+            if (sousCatDemandee) {
+                sousCatDemandee = sousCatDemandee.replace(/[^a-z0-9_-]/gi, '');
+                var blocCat = document.querySelector('.pam-categorie[data-cat="' + catDemandee + '"]');
+                var tabSous = blocCat ? blocCat.querySelector('.pam-souscat-tab[data-souscat="' + sousCatDemandee + '"]') : null;
+                if (tabSous) tabSous.click();
+            }
+            var colProduits = document.querySelector('.pam-produits-col');
+            if (colProduits) colProduits.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
 })();

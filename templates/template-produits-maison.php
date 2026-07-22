@@ -15,15 +15,6 @@ $pages_commander = get_pages([
 ]);
 $url_commander = !empty($pages_commander) ? get_permalink($pages_commander[0]->ID) : '#';
 
-/* URL du bon de commande Produits Maison (cible des boutons par famille) */
-$pages_bon_pm = get_pages([
-    'meta_key'    => '_wp_page_template',
-    'meta_value'  => 'templates/template-bon-pm.php',
-    'post_status' => 'publish',
-    'number'      => 1,
-]);
-$url_bon_pm = !empty($pages_bon_pm) ? get_permalink($pages_bon_pm[0]->ID) : '';
-
 /* Familles de produits maison */
 $familles = new WP_Query([
     'post_type'      => 'famille_maison',
@@ -88,21 +79,30 @@ if ($familles->have_posts()) {
 
         /* Cible du bouton, par ordre de priorité :
            1. Lien personnalisé saisi par Marie (famille_cta_url) — total contrôle.
-           2. Bon de commande Produits Maison filtré sur la catégorie choisie,
-              si cette page est publiée dans WP (pas encore le cas actuellement).
-           3. Repli par défaut : le bon Prêt à manger, où les focaccias/amarettis
-              et futures familles sont en pratique déjà commandables (demande
-              de Philippe, 22 juillet). */
+           2. Repli par défaut : le bon Prêt à manger (où les focaccias/amarettis
+              et futures familles sont en pratique déjà commandables, demande de
+              Philippe, 22 juillet), ouvert directement sur la catégorie choisie
+              (famille_cta_categorie, taxonomie pam_categorie) si elle a été
+              renseignée. Une sous-catégorie (ex: Focaccias sous Pains) ajoute
+              aussi le paramètre de sa catégorie principale pour que le bon
+              s'ouvre directement sur le bon onglet. */
         $cta_url_perso = function_exists('get_field') ? get_field('famille_cta_url') : '';
         $cta_cat       = function_exists('get_field') ? get_field('famille_cta_categorie') : null;
         if ($cta_url_perso) {
             $url_cta = $cta_url_perso;
-        } elseif ($url_bon_pm) {
-            $url_cta = ($cta_cat && !is_wp_error($cta_cat) && !empty($cta_cat->slug))
-                ? add_query_arg('cat', $cta_cat->slug, $url_bon_pm)
-                : $url_bon_pm;
         } else {
             $url_cta = home_url('/pret-a-manger/');
+            if ($cta_cat && !is_wp_error($cta_cat) && !empty($cta_cat->slug)) {
+                if ($cta_cat->parent) {
+                    $cat_parent = get_term($cta_cat->parent, 'pam_categorie');
+                    $url_cta = add_query_arg([
+                        'cat'     => (!is_wp_error($cat_parent) && $cat_parent) ? $cat_parent->slug : $cta_cat->slug,
+                        'souscat' => $cta_cat->slug,
+                    ], $url_cta);
+                } else {
+                    $url_cta = add_query_arg('cat', $cta_cat->slug, $url_cta);
+                }
+            }
         }
         $thumb_id  = get_post_thumbnail_id();
         $thumb     = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'large') : null;
