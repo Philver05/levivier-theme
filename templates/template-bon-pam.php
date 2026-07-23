@@ -53,6 +53,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                    Repli de démonstration (sushis du jeudi) tant que rien n'est saisi dans
                    WP, pour visualiser le rendu sans avoir à remplir le champ. */
                 $messages = [];
+                $messages_par_produit = [];
                 $msgs_raw = get_field('pam_messages_jours') ?: [[
                     'msg_jour'        => ['jeudi'],
                     'msg_titre'       => 'Les jeudis sushis au Vivier',
@@ -81,12 +82,20 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                     }
                     $jours_msg = array_values(array_filter($jours_bruts));
 
-                    /* Un message doit avoir au moins un jour OU une catégorie pour
-                       savoir quand s'afficher — sinon rien ne le déclenchera jamais. */
-                    if (empty($jours_msg) && empty($cat_slug)) continue;
+                    /* Produit spécifique (optionnel) : si rempli, le message se
+                       concentre sur SA carte au lieu d'un bandeau au-dessus de
+                       toute la grille — utile pour un produit particulier au sein
+                       d'une catégorie (ex : "Un shish taouk au poulet" dans
+                       Sandwichs), demande de Philippe le 23 juillet. */
+                    $produit_cible = !empty($m['msg_produit']) ? (int) $m['msg_produit'] : 0;
+
+                    /* Un message doit avoir au moins un jour, une catégorie, OU un
+                       produit spécifique pour savoir quand s'afficher — sinon rien
+                       ne le déclenchera jamais. */
+                    if (empty($jours_msg) && empty($cat_slug) && !$produit_cible) continue;
                     if (empty($m['msg_titre']) && empty($m['msg_description'])) continue;
 
-                    $messages[] = [
+                    $donnees_msg = [
                         'jours'       => $jours_msg,
                         'titre'       => $m['msg_titre']       ?? '',
                         'description' => $m['msg_description'] ?? '',
@@ -96,6 +105,12 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                         'note_texte'  => $m['msg_note_texte']  ?? '',
                         'categorie'   => $cat_slug,
                     ];
+
+                    if ($produit_cible) {
+                        $messages_par_produit[$produit_cible][] = $donnees_msg;
+                    } else {
+                        $messages[] = $donnees_msg;
+                    }
                 }
 
                 $jours_actifs = [];
@@ -313,6 +328,37 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                                 <?php if ($poids): ?>
                                 <p class="pam-produit-poids"><?php echo esc_html($poids); ?></p>
                                 <?php endif; ?>
+                                <?php foreach (($messages_par_produit[$pid] ?? []) as $data): ?>
+                                <div class="pam-msg-jour pam-msg-jour--carte<?php echo $data['image'] ? ' pam-msg-jour--avec-image' : ''; ?>">
+                                    <?php if ($data['image']): ?>
+                                    <img class="pam-msg-image" src="<?php echo esc_url($data['image']['sizes']['medium'] ?? $data['image']['url']); ?>" alt="<?php echo esc_attr($data['image']['alt'] ?: $data['titre']); ?>">
+                                    <?php endif; ?>
+                                    <div class="pam-msg-corps">
+                                        <?php if ($data['titre']): ?>
+                                        <p class="pam-msg-titre"><?php echo esc_html($data['titre']); ?></p>
+                                        <?php endif; ?>
+                                        <?php if ($data['description']): ?>
+                                        <p class="pam-msg-desc"><?php echo nl2br(esc_html($data['description'])); ?></p>
+                                        <?php endif; ?>
+                                        <?php if ($data['cta']): ?>
+                                        <div class="pam-msg-cta">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                                            <span><?php echo esc_html(implode('  ·  ', array_filter(array_map('trim', explode("\n", $data['cta']))))); ?></span>
+                                        </div>
+                                        <?php endif; ?>
+                                        <?php if ($data['note_titre'] || $data['note_texte']): ?>
+                                        <div class="pam-msg-note">
+                                            <?php if ($data['note_titre']): ?>
+                                            <p class="pam-msg-note-titre"><?php echo esc_html($data['note_titre']); ?></p>
+                                            <?php endif; ?>
+                                            <?php if ($data['note_texte']): ?>
+                                            <p class="pam-msg-note-texte"><?php echo nl2br(esc_html($data['note_texte'])); ?></p>
+                                            <?php endif; ?>
+                                        </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
                                 <?php if ($description): ?>
                                 <details class="pam-produit-details">
                                     <summary>Description</summary>

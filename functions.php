@@ -1474,7 +1474,7 @@ add_action('acf/init', function () {
                         'key'   => 'field_pam_msg_declencheur',
                         'label' => '① Quand afficher ce message ?',
                         'type'  => 'message',
-                        'message' => 'Renseignez le(s) jour(s), la catégorie, ou les deux. Un seul des deux suffit à déclencher le message.',
+                        'message' => 'Renseignez le(s) jour(s), la catégorie, ET/OU un produit spécifique. Un seul des trois suffit à déclencher le message. Si un produit spécifique est choisi, le message s\'affiche directement sur SA carte (jour/catégorie ignorés) plutôt qu\'en bandeau au-dessus de la grille — utile pour un produit particulier au sein d\'une catégorie (ex : "Un shish taouk au poulet" dans Sandwichs).',
                         'wrapper' => ['width' => '100'],
                     ],
                     [
@@ -1509,6 +1509,18 @@ add_action('acf/init', function () {
                         'add_term'      => 0,
                         'instructions'  => 'Laissez vide pour un message déclenché uniquement par le jour.',
                         'wrapper'       => ['width' => '50'],
+                    ],
+                    [
+                        'key'           => 'field_pam_msg_produit',
+                        'name'          => 'msg_produit',
+                        'label'         => 'Produit spécifique (optionnel)',
+                        'type'          => 'post_object',
+                        'post_type'     => ['pam_produit'],
+                        'allow_null'    => 1,
+                        'return_format' => 'id',
+                        'ui'            => 1,
+                        'instructions'  => 'Si rempli, ce message s\'affiche uniquement sur la carte de CE produit (jour et catégorie ci-dessus sont alors ignorés).',
+                        'wrapper'       => ['width' => '100'],
                     ],
                     [
                         'key'   => 'field_pam_msg_sep_contenu',

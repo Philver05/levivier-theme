@@ -1997,6 +1997,21 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
   align-items: flex-start;
   gap: 1.2rem;
 }
+/* Message concentré sur un produit précis (ex: "Un shish taouk au
+   poulet" dans Sandwichs) : intégré directement dans sa carte plutôt
+   qu'en bandeau pleine largeur, donc plus compact. Toujours en colonne
+   même avec une image (la carte est trop étroite pour une rangée). */
+.pam-msg-jour--carte {
+  padding: .9rem 1rem;
+  gap: .5rem;
+  margin: .3rem 0 .7rem;
+  font-size: .92rem;
+}
+.pam-msg-jour--carte.pam-msg-jour--avec-image { flex-direction: column; }
+.pam-msg-jour--carte .pam-msg-titre { font-size: 1rem; }
+.pam-msg-jour--carte .pam-msg-desc { font-size: .86rem; }
+.pam-msg-jour--carte .pam-msg-cta { font-size: .82rem; padding: .6rem .9rem; }
+.pam-msg-jour--carte .pam-msg-image { width: clamp(48px, 20%, 64px); }
 .pam-msg-image {
   flex: none;
   width: clamp(64px, 8vw, 84px);
