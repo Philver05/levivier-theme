@@ -280,6 +280,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                         <div class="pam-produit-item"
                              data-id="<?php echo esc_attr($pid); ?>"
                              data-prix="<?php echo esc_attr(number_format($prix, 2, '.', '')); ?>"
+                             data-taxable="<?php echo esc_attr($taxable ? '1' : '0'); ?>"
                              data-jours="<?php echo esc_attr(implode(' ', $jours)); ?>"
                              data-souscat="<?php echo esc_attr($souscat); ?>"
                              data-suggestions="<?php echo esc_attr(implode(' ', $suggestions)); ?>">

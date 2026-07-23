@@ -121,15 +121,23 @@
     }
 
     /* -------------------------------------------------------
-       Calcul du total
+       Calcul du total (TPS 5% + TVQ 9,975 %, non composées —
+       taux standard du Québec, appliqué seulement aux produits
+       marqués "+ taxes" dans WP)
     ------------------------------------------------------- */
+    var TAUX_TAXES = 0.14975;
+
+    function prixUnitaireAvecTaxes(item) {
+        var prix = parseFloat(item.dataset.prix) || 0;
+        return item.dataset.taxable === '1' ? prix * (1 + TAUX_TAXES) : prix;
+    }
+
     function calculerTotal() {
         var total = 0;
         document.querySelectorAll('.pam-produit-item:not([hidden]) .pam-qty-input').forEach(function (input) {
             var item = input.closest('.pam-produit-item');
-            var prix = parseFloat(item.dataset.prix) || 0;
-            var qty  = parseInt(input.value, 10)     || 0;
-            total   += prix * qty;
+            var qty  = parseInt(input.value, 10) || 0;
+            total   += prixUnitaireAvecTaxes(item) * qty;
         });
         totalEl.textContent = formatMontant(total);
         barreEl.classList.toggle('pam-barre-total--active', total > 0);
@@ -245,7 +253,7 @@
                 id:   item.dataset.id,
                 nom:  nomEl ? nomEl.textContent.trim() : 'Produit',
                 qty:  qty,
-                sous: qty * (parseFloat(item.dataset.prix) || 0),
+                sous: qty * prixUnitaireAvecTaxes(item),
             });
         });
 
