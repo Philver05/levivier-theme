@@ -56,19 +56,19 @@ $categories_boutique = get_terms([
      ARTICLES BOUTIQUE — sans titre de section (l'en-tête de
      page joue déjà ce rôle)
 ====================================================== -->
-<section class="section produits" id="articles">
+<?php
+$articles = new WP_Query([
+    'post_type'      => 'article_boutique',
+    'post_status'    => 'publish',
+    'posts_per_page' => -1,
+    'orderby'        => 'title',
+    'order'          => 'ASC',
+]);
+?>
+<section class="section produits<?php echo !$articles->have_posts() ? ' section-compacte' : ''; ?>" id="articles">
     <div class="conteneur">
 
         <!-- Grille articles -->
-        <?php
-        $articles = new WP_Query([
-            'post_type'      => 'article_boutique',
-            'post_status'    => 'publish',
-            'posts_per_page' => -1,
-            'orderby'        => 'title',
-            'order'          => 'ASC',
-        ]);
-        ?>
         <div class="grille-cartes" id="grille-boutique">
             <?php if ($articles->have_posts()):
                 while ($articles->have_posts()): $articles->the_post();
