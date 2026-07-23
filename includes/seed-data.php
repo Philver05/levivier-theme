@@ -857,3 +857,118 @@ add_action('admin_init', function () {
     echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#b85c50;">← Retour au tableau de bord</a></p>';
     exit;
 });
+
+/**
+ * PAM : ajoute un message spécial (brouillon) pour chaque sous-catégorie
+ * qui n'en a pas encore, sur le modèle de celui des Focaccias (demande de
+ * Marie : un message par catégorie). N'AJOUTE QUE des lignes manquantes
+ * au repeater `pam_messages_jours` existant — ne touche jamais aux
+ * messages déjà saisis (Sushis, Focaccias, Amaretti), et peut être relancé
+ * sans risque (ex : après avoir créé la sous-catégorie Pizzas) puisque
+ * chaque catégorie n'est ajoutée qu'une fois.
+ * Déclencher en visitant : /wp-admin/?lv_ajouter_messages_pam=1
+ */
+add_action('admin_init', function () {
+
+    if (!isset($_GET['lv_ajouter_messages_pam']) || $_GET['lv_ajouter_messages_pam'] !== '1') return;
+    if (!current_user_can('manage_options')) wp_die('Accès refusé.');
+    if (!function_exists('get_field') || !function_exists('update_field')) {
+        wp_die('❌ ACF n\'est pas actif.');
+    }
+
+    $pages = get_posts([
+        'post_type'      => 'page',
+        'post_status'    => 'publish',
+        'meta_key'       => '_wp_page_template',
+        'meta_value'     => 'templates/template-bon-pam.php',
+        'posts_per_page' => 1,
+        'fields'         => 'ids',
+    ]);
+    if (!$pages) {
+        wp_die('❌ Page « Bon de commande — Prêt à manger » introuvable ou non publiée.');
+    }
+    $page_id = $pages[0];
+
+    $log = [];
+
+    $trouver_terme = function ($nom, $nom_parent) use (&$log) {
+        $parent_id = 0;
+        if ($nom_parent) {
+            $parent = get_term_by('name', $nom_parent, 'pam_categorie');
+            if (!$parent) {
+                $log[] = "❌ Catégorie parente « $nom_parent » introuvable (pour « $nom »)";
+                return 0;
+            }
+            $parent_id = (int) $parent->term_id;
+        }
+        $terme = get_term_by('name', $nom, 'pam_categorie');
+        if (!$terme) return 0;
+        if ($nom_parent && (int) $terme->parent !== $parent_id) return 0;
+        return (int) $terme->term_id;
+    };
+
+    /* [nom de la sous-catégorie, parent (ou null si autonome), titre, description, encart d'infos pratiques] */
+    $messages = [
+        ['Biscuit',           'Pâtisseries',           'Nos biscuits maison',            "Croustillants à l'extérieur, moelleux à l'intérieur, nos biscuits sont préparés en petites fournées pour une fraîcheur garantie. Parfaits avec un café ou en collation.", 'Commandez avant 10h la veille et récupérez-les frais le lendemain dès midi.'],
+        ['Cake',              'Pâtisseries',           'Nos cakes maison',                'Moelleux et généreux, nos cakes sont cuisinés avec des ingrédients simples et de qualité. Idéals pour le déjeuner ou une pause gourmande.', 'Commandez avant 10h la veille et récupérez votre cake frais le lendemain dès midi.'],
+        ['Tarte',             'Pâtisseries',           'Nos tartes maison',               'Une croûte dorée et une garniture généreuse : nos tartes sont préparées sur place, sucrées ou salées selon la saison.', 'Commandez avant 10h la veille et récupérez votre tarte fraîche le lendemain dès midi.'],
+        ['Pâtés et Quiches',  null,                    'Nos pâtés et quiches maison',      'Une croûte dorée, une garniture généreuse : nos pâtés et quiches sont cuisinés sur place pour un repas réconfortant en un rien de temps.', 'Commandez avant 10h la veille et récupérez-le frais le lendemain dès midi.'],
+        ['Accompagnement',    'Mets préparés',         'Nos accompagnements maison',       'Pour compléter votre repas sans effort, nos accompagnements sont préparés avec des ingrédients frais et prêts à réchauffer.', 'Commandez avant 10h la veille et récupérez-le frais le lendemain dès midi.'],
+        ['Mets cuisinés',     'Mets préparés',         'Nos mets cuisinés maison',         'Des plats complets, mijotés ou cuisinés sur place, pour un repas réconfortant sans avoir à cuisiner.', 'Commandez avant 10h la veille et récupérez votre plat frais le lendemain dès midi.'],
+        ['Salades',           'Mets préparés',         'Nos salades fraîcheur',            'Des salades composées avec des légumes de saison, idéales en accompagnement ou en repas léger.', 'Commandez avant 10h la veille et récupérez votre salade fraîche le lendemain.'],
+        ['Sandwichs',         'Mets préparés',         'Nos sandwichs maison',             'Préparés avec des ingrédients frais, nos sandwichs sont généreux et parfaits pour un dîner rapide ou une envie du midi.', 'Commandez avant 10h la veille et récupérez votre sandwich frais le lendemain.'],
+        ['Pizzas',            'Mets préparés',         'Nos pizzas maison',                'Pâte maison et garnitures généreuses, nos pizzas sont prêtes à réchauffer pour un repas simple et savoureux.', 'Commandez avant 10h la veille et récupérez-la fraîche le lendemain dès midi.'],
+        ['Sauces',            'Divers prêt-à-manger',  'Nos sauces maison',                'Prêtes à réchauffer, nos sauces sont cuisinées en petites quantités pour garder toute leur saveur.', 'Commandez avant 10h la veille et récupérez le lendemain dès midi.'],
+    ];
+
+    $existants = get_field('pam_messages_jours', $page_id);
+    if (!is_array($existants)) $existants = [];
+
+    $ids_existants = [];
+    foreach ($existants as $m) {
+        if (!empty($m['msg_categorie'])) $ids_existants[(int) $m['msg_categorie']] = true;
+    }
+
+    $ajoutes = 0;
+    foreach ($messages as [$nom, $parent, $titre, $description, $cta]) {
+        $terme_id = $trouver_terme($nom, $parent);
+        if (!$terme_id) {
+            $log[] = "❌ Catégorie « $nom » introuvable, message sauté (créez-la d'abord, ex : lancer ?lv_seed_pam_pizzas=1 pour Pizzas)";
+            continue;
+        }
+        if (isset($ids_existants[$terme_id])) {
+            $log[] = "« $nom » a déjà un message, sauté";
+            continue;
+        }
+        $existants[] = [
+            'msg_jour'        => '',
+            'msg_categorie'   => $terme_id,
+            'msg_titre'       => $titre,
+            'msg_image'       => null,
+            'msg_description' => $description,
+            'msg_cta'         => $cta,
+            'msg_note_titre'  => '',
+            'msg_note_texte'  => '',
+        ];
+        $ids_existants[$terme_id] = true;
+        $ajoutes++;
+        $log[] = "✔ Message brouillon ajouté pour « $nom »";
+    }
+
+    if ($ajoutes > 0) {
+        update_field('pam_messages_jours', $existants, $page_id);
+    }
+
+    echo '<style>body{font-family:monospace;padding:2rem;background:#f9f5f0;}
+          h1{color:#4d6040;} li{margin:.3rem 0;} .ok{color:#4d6040;} .err{color:#c00;}</style>';
+    echo '<h1>📋 Le Vivier — Messages spéciaux Prêt à manger</h1>';
+    echo '<ul>';
+    foreach ($log as $ligne) {
+        $class = (str_contains($ligne, '❌')) ? 'err' : 'ok';
+        echo '<li class="' . $class . '">' . esc_html($ligne) . '</li>';
+    }
+    echo '</ul>';
+    echo '<p><strong>' . $ajoutes . '</strong> message(s) brouillon ajouté(s). Ce sont des textes provisoires (temps de préparation, allergènes non vérifiés) : relisez et ajustez chacun dans <strong>Prêt à manger → Modifier → Messages spéciaux</strong>. Aucun message existant (Sushis, Focaccias, Amaretti) n\'a été touché.</p>';
+    echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#4d6040;">← Retour au tableau de bord</a></p>';
+    exit;
+});
