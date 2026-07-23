@@ -70,6 +70,15 @@ add_action('wp_enqueue_scripts', function () {
             'ajax'  => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pam_commande'),
         ]);
+
+        $path_lightbox = get_stylesheet_directory() . '/assets/scripts/pm-lightbox.js';
+        wp_enqueue_script(
+            'pm-lightbox',
+            get_stylesheet_directory_uri() . '/assets/scripts/pm-lightbox.js',
+            [],
+            file_exists($path_lightbox) ? filemtime($path_lightbox) : null,
+            ['strategy' => 'defer', 'in_footer' => true]
+        );
     }
 
     if (is_page_template('templates/template-bon-pm.php')) {

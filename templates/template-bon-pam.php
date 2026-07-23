@@ -284,13 +284,13 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
 
                             <?php if ($thumb && $photo2): ?>
                             <div class="pam-produit-photos">
-                                <img class="pam-produit-photo pam-produit-photo--1" src="<?php echo esc_url($thumb); ?>" alt="<?php echo esc_attr(get_the_title()); ?>" loading="lazy">
-                                <img class="pam-produit-photo pam-produit-photo--2" src="<?php echo esc_url($photo2['sizes']['large'] ?? $photo2['url']); ?>" alt="" loading="lazy">
+                                <img class="pam-produit-photo pam-produit-photo--1 pm-lightbox-trigger" src="<?php echo esc_url($thumb); ?>" alt="<?php echo esc_attr(get_the_title()); ?>" loading="lazy" tabindex="0" role="button" aria-label="Agrandir la photo">
+                                <img class="pam-produit-photo pam-produit-photo--2 pm-lightbox-trigger" src="<?php echo esc_url($photo2['sizes']['large'] ?? $photo2['url']); ?>" alt="" loading="lazy" tabindex="0" role="button" aria-label="Agrandir la photo">
                             </div>
                             <?php elseif ($thumb): ?>
-                            <img src="<?php echo esc_url($thumb); ?>"
+                            <img class="pm-lightbox-trigger" src="<?php echo esc_url($thumb); ?>"
                                  alt="<?php echo esc_attr(get_the_title()); ?>"
-                                 loading="lazy">
+                                 loading="lazy" tabindex="0" role="button" aria-label="Agrandir la photo">
                             <?php else: ?>
                             <div class="pam-produit-placeholder" aria-hidden="true"></div>
                             <?php endif; ?>
@@ -415,6 +415,17 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
             Envoyer le bon de commande
         </button>
     </div>
+</div>
+
+<!-- ======================================================
+     LIGHTBOX (zoom photo produit, demande de Marie) — même
+     composant que le bon Produits Maison, voir pm-lightbox.js
+====================================================== -->
+<div class="pm-lightbox" id="pm-lightbox" hidden>
+    <button type="button" class="pm-lightbox-fermer" id="pm-lightbox-fermer" aria-label="Fermer l'aperçu">
+        <span></span><span></span>
+    </button>
+    <img id="pm-lightbox-img" src="" alt="">
 </div>
 
 <?php get_footer(); ?>
