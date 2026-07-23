@@ -313,7 +313,12 @@
         var jourChecked = form.querySelector('input[name="jour"]:checked');
         var jour = jourChecked ? jourChecked.value : '';
         document.querySelectorAll('.pam-msg-jour').forEach(function (el) {
-            var matchJour = el.dataset.jour && el.dataset.jour === jour;
+            /* Un message peut être associé à plusieurs jours (ex: un produit
+               offert mercredi, jeudi ET vendredi) : data-jour contient les
+               slugs séparés par des espaces, même patron que data-jours
+               sur les produits. */
+            var joursMsg  = el.dataset.jour ? el.dataset.jour.split(' ') : [];
+            var matchJour = joursMsg.indexOf(jour) !== -1;
             /* La catégorie d'un message peut être une catégorie principale
                (ex: "sushis") OU une sous-catégorie (ex: "focaccias" sous
                Pâtisseries) : on vérifie les deux niveaux de sélection. */

@@ -54,7 +54,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                    WP, pour visualiser le rendu sans avoir à remplir le champ. */
                 $messages = [];
                 $msgs_raw = get_field('pam_messages_jours') ?: [[
-                    'msg_jour'        => 'jeudi',
+                    'msg_jour'        => ['jeudi'],
                     'msg_titre'       => 'Les jeudis sushis au Vivier',
                     'msg_description' => "Le Vivier accueille chaque jeudi Le P'tit Béret, un traiteur passionné et authentique qui vous propose de généreux sushis maison préparés avec soin.",
                     'msg_cta'         => "Commandez avant 10h le mercredi\nRécupérez au Vivier à partir de 12h le jeudi",
@@ -70,14 +70,24 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                         $terme = get_term($m['msg_categorie'], 'pam_categorie');
                         if ($terme && !is_wp_error($terme)) $cat_slug = $terme->slug;
                     }
-                    $jour = $m['msg_jour'] ?? '';
+                    /* Un ou plusieurs jours (ex : produit offert mercredi, jeudi ET
+                       vendredi). Cast défensif : le champ était un simple select
+                       (une valeur texte) avant le 23 juillet, maintenant une case à
+                       cocher (tableau) — les deux formats doivent continuer à marcher
+                       pour ne pas casser les messages déjà saisis (Sushis, etc.). */
+                    $jours_bruts = $m['msg_jour'] ?? [];
+                    if (!is_array($jours_bruts)) {
+                        $jours_bruts = $jours_bruts !== '' ? [$jours_bruts] : [];
+                    }
+                    $jours_msg = array_values(array_filter($jours_bruts));
+
                     /* Un message doit avoir au moins un jour OU une catégorie pour
                        savoir quand s'afficher — sinon rien ne le déclenchera jamais. */
-                    if (empty($jour) && empty($cat_slug)) continue;
+                    if (empty($jours_msg) && empty($cat_slug)) continue;
                     if (empty($m['msg_titre']) && empty($m['msg_description'])) continue;
 
                     $messages[] = [
-                        'jour'        => $jour,
+                        'jours'       => $jours_msg,
                         'titre'       => $m['msg_titre']       ?? '',
                         'description' => $m['msg_description'] ?? '',
                         'cta'         => $m['msg_cta']         ?? '',
@@ -90,7 +100,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
 
                 $jours_actifs = [];
                 foreach ($messages as $msg) {
-                    if ($msg['jour']) $jours_actifs[$msg['jour']] = true;
+                    foreach ($msg['jours'] as $j) { $jours_actifs[$j] = true; }
                 }
                 $tous_pam = new WP_Query([
                     'post_type'      => 'pam_produit',
@@ -124,7 +134,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                 <?php if ($messages): ?>
                 <div class="pam-messages-jours" aria-live="polite">
                     <?php foreach ($messages as $data): ?>
-                    <div class="pam-msg-jour<?php echo $data['image'] ? ' pam-msg-jour--avec-image' : ''; ?>" data-jour="<?php echo esc_attr($data['jour']); ?>" data-categorie="<?php echo esc_attr($data['categorie']); ?>" hidden>
+                    <div class="pam-msg-jour<?php echo $data['image'] ? ' pam-msg-jour--avec-image' : ''; ?>" data-jour="<?php echo esc_attr(implode(' ', $data['jours'])); ?>" data-categorie="<?php echo esc_attr($data['categorie']); ?>" hidden>
                         <?php if ($data['image']): ?>
                         <img class="pam-msg-image" src="<?php echo esc_url($data['image']['sizes']['medium'] ?? $data['image']['url']); ?>" alt="<?php echo esc_attr($data['image']['alt'] ?: $data['titre']); ?>">
                         <?php endif; ?>
