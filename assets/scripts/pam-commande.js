@@ -29,6 +29,16 @@
     var categorieActive = '';
     var sousCategorieActive = '';
 
+    /* Plus de sous-onglet "Tout voir" (Marie n'aime pas) : quand on arrive
+       sur une catégorie qui a des sous-catégories, la 1re sous-catégorie
+       devient active par défaut plutôt que "tout afficher". Une catégorie
+       sans enfants (ex: Sushis) n'a pas de barre de sous-onglets : '' dans
+       ce cas, rien à filtrer. */
+    function premierSouscatDe(catSlug) {
+        var premier = document.querySelector('.pam-categorie[data-cat="' + catSlug + '"] .pam-souscat-tab');
+        return premier ? premier.dataset.souscat : '';
+    }
+
     function filtrerParJour(jour) {
         /* 1. Masquer les produits qui ne correspondent pas au jour */
         document.querySelectorAll('.pam-produit-item').forEach(function (item) {
@@ -51,7 +61,7 @@
         /* 3. Si la catégorie active n'a plus de produits, prendre la première dispo */
         if (!categorieActive || catsDispos.indexOf(categorieActive) === -1) {
             categorieActive = catsDispos[0] || '';
-            sousCategorieActive = '';
+            sousCategorieActive = categorieActive ? premierSouscatDe(categorieActive) : '';
         }
 
         /* 4. Mettre à jour les onglets et afficher la bonne catégorie */
@@ -263,7 +273,7 @@
     document.querySelectorAll('.pam-cat-tab').forEach(function (btn) {
         btn.addEventListener('click', function () {
             categorieActive = btn.dataset.cat;
-            sousCategorieActive = '';
+            sousCategorieActive = premierSouscatDe(categorieActive);
             appliquerFiltreCategorie();
             majSousCategorieTabs();
             appliquerFiltreSousCategorie();

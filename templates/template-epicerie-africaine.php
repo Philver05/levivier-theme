@@ -126,12 +126,11 @@ if ($afr_parent && !is_wp_error($afr_parent)) {
 <div class="pm-filtres-wrap">
     <div class="conteneur">
         <nav class="pm-filtres" aria-label="Filtrer par catégorie">
-            <a href="#produits-afr" class="pm-filtre filtre-lien actif" data-cat="tout">Tout voir</a>
-            <?php foreach ($afr_cats as $cat): ?>
-                <a href="#produits-afr" class="pm-filtre filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
+            <?php $premiere_cat = true; foreach ($afr_cats as $cat): ?>
+                <a href="#produits-afr" class="pm-filtre filtre-lien<?php echo $premiere_cat ? ' actif' : ''; ?>" data-cat="<?php echo esc_attr($cat->slug); ?>">
                     <?php echo esc_html($cat->name); ?>
                 </a>
-            <?php endforeach; ?>
+            <?php $premiere_cat = false; endforeach; ?>
         </nav>
     </div>
 </div>

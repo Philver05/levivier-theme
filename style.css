@@ -368,16 +368,16 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 .pied a { transition: color var(--transi); }
 .pied a:hover { color: var(--ocre); }
 .pied li { margin-bottom: .55rem; font-size: .92rem; }
-/* Navigation complete du footer : deux listes explicites (ordre logique du
-   site en colonne 1, Contact/Politiques/Promotions en colonne 2) plutôt que
-   des colonnes CSS auto-balancées par hauteur, pour un découpage garanti. */
+/* Navigation du footer : 2 colonnes explicites (univers boutique/épicerie
+   à gauche, pages utilitaires à droite) plutôt que des colonnes CSS
+   auto-balancées par hauteur, pour un découpage garanti. */
+.pied-nav-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.5rem; }
 .pied-marque p { font-size: .92rem; margin-bottom: .85rem; max-width: 34ch; color: #a4ad92; }
 /* Copyright à gauche, Politique de confidentialité à droite (22 juillet) :
    séparée des pages du site plutôt que noyée dans la liste Navigation. */
-.pied-bas { margin-top: clamp(1.8rem, 1.2rem + 1.5vw, 2.5rem); border-top: 1px solid rgba(255,255,255,.09); padding-block: 1.2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; font-size: .8rem; color: #889378; letter-spacing: .02em; }
+.pied-bas { margin-top: clamp(1.8rem, 1.2rem + 1.5vw, 2.5rem); border-top: 1px solid rgba(255,255,255,.09); padding-block: 1.2rem; display: flex; align-items: center; justify-content: center; gap: .6rem; flex-wrap: wrap; font-size: .8rem; color: #889378; letter-spacing: .02em; text-align: center; }
 .pied-bas a { color: #889378; text-decoration: underline; text-underline-offset: 3px; }
 .pied-bas a:hover { color: var(--ocre); }
-@media (max-width: 560px) { .pied-bas { justify-content: center; text-align: center; } }
 
 /* ------------------------------------------------- LIGHTBOX BON PM */
 .pm-lightbox-trigger { cursor: zoom-in; }
@@ -2110,7 +2110,8 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
   border-color: var(--terra);
   color: var(--terra);
 }
-.pam-cat-tab--active {
+.pam-cat-tab--active,
+.pam-cat-tab--active:hover {
   background: var(--terra);
   border-color: var(--terra);
   color: var(--blanc);
@@ -2139,7 +2140,8 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
   transition: background var(--transi), border-color var(--transi), color var(--transi);
 }
 .pam-souscat-tab:hover { border-color: var(--sauge); color: var(--sauge); }
-.pam-souscat-tab--actif {
+.pam-souscat-tab--actif,
+.pam-souscat-tab--actif:hover {
   background: var(--sauge);
   border-color: var(--sauge);
   color: var(--blanc);
@@ -2962,6 +2964,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 .ct2-carte {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+  align-items: stretch;
   background: var(--blanc);
   border-radius: var(--rayon-l);
   box-shadow: var(--ombre);
@@ -2971,15 +2974,15 @@ body:has(.pam-barre-total--active) .section:last-of-type {
    padding, marges de champ ET hauteur des champs réduits. Règles propres
    à cette carte (.champ est une classe partagée par tout le site, ne pas
    la resserrer globalement). */
-.ct2-form { padding: clamp(1.1rem, .8rem + 1vw, 1.8rem); }
-.ct2-form h2 { color: var(--sauge-fonce); font-size: 1.35rem; margin-bottom: .25rem; }
-.ct2-form > p { color: var(--texte-corps); font-size: .9rem; margin-bottom: .8rem; }
-.ct2-form .champ { margin-bottom: .5rem; }
-.ct2-form .champ label { margin-bottom: .2rem; }
+.ct2-form { padding: clamp(.9rem, .6rem + .9vw, 1.5rem); }
+.ct2-form h2 { color: var(--sauge-fonce); font-size: 1.25rem; margin-bottom: .2rem; }
+.ct2-form > p { color: var(--texte-corps); font-size: .88rem; margin-bottom: .6rem; }
+.ct2-form .champ { margin-bottom: .4rem; }
+.ct2-form .champ label { margin-bottom: .15rem; font-size: .92rem; }
 .ct2-form .champ input,
-.ct2-form .champ textarea { padding: .6rem .85rem; }
-.ct2-form .champ textarea { min-height: 80px; }
-.ct2-form .btn { margin-top: .1rem; }
+.ct2-form .champ textarea { padding: .5rem .8rem; }
+.ct2-form .champ textarea { min-height: 62px; }
+.ct2-form .btn { margin-top: 0; padding-block: .7rem; }
 
 /* Volet coordonnées : crème, liseré, icônes sauge (grammaire bouquet).
    Contenu centré verticalement (flex) plutôt qu'aligné en haut : la carte

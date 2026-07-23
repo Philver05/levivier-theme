@@ -245,12 +245,11 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
 
                     <?php if ($enfants): ?>
                     <div class="pam-filtre-souscats" role="tablist" aria-label="Sous-catégories de <?php echo esc_attr($cat->name); ?>">
-                        <button type="button" class="pam-souscat-tab pam-souscat-tab--actif" data-souscat="">Tout voir</button>
-                        <?php foreach ($enfants as $enfant): ?>
-                        <button type="button" class="pam-souscat-tab" data-souscat="<?php echo esc_attr($enfant->slug); ?>">
+                        <?php $premier_enfant = true; foreach ($enfants as $enfant): ?>
+                        <button type="button" class="pam-souscat-tab<?php echo $premier_enfant ? ' pam-souscat-tab--actif' : ''; ?>" data-souscat="<?php echo esc_attr($enfant->slug); ?>">
                             <?php echo esc_html($enfant->name); ?>
                         </button>
-                        <?php endforeach; ?>
+                        <?php $premier_enfant = false; endforeach; ?>
                     </div>
                     <?php endif; ?>
 

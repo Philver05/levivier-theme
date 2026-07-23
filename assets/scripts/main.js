@@ -194,7 +194,10 @@ document.addEventListener("DOMContentLoaded", function () {
     aReveler.forEach(function (el) { el.classList.add("visible"); });
   }
 
-  /* ----- Filtres de grilles (épicerie, boutique, producteurs) ----- */
+  /* ----- Filtres de grilles (épicerie, boutique, producteurs) -----
+     Plus de pilule "Tout voir" (Marie n'aime pas) : la 1re catégorie
+     est marquée active par le PHP, donc on filtre déjà la grille au
+     chargement pour que son état corresponde à la pilule active. */
   function initFiltreGrille(grilleId) {
     var grille = document.getElementById(grilleId);
     if (!grille) return;
@@ -203,38 +206,47 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!filtres || filtres.length === 0) filtres = document.querySelectorAll(".filtre-lien[data-cat]");
     if (!filtres || filtres.length === 0) return;
 
+    function appliquer(categorie, animer) {
+      var cartes = grille.querySelectorAll("[data-cat]");
+      var indexVisible = 0;
+      cartes.forEach(function (carte) {
+        var cats = (carte.getAttribute("data-cat") || "").split(" ");
+        var correspond = (categorie === "tout" || cats.indexOf(categorie) !== -1);
+        if (correspond) {
+          carte.style.display = "";
+          if (!animer) return;
+          carte.style.opacity = "0";
+          carte.style.transform = "translateY(12px) scale(0.97)";
+          var delai = indexVisible * 55;
+          indexVisible++;
+          setTimeout(function (el) {
+            el.style.transition = "opacity .32s ease, transform .32s ease, box-shadow .3s ease";
+            el.style.opacity = "1";
+            el.style.transform = "";
+          }, delai, carte);
+        } else if (animer) {
+          carte.style.transition = "opacity .18s ease, transform .18s ease";
+          carte.style.opacity = "0";
+          carte.style.transform = "scale(0.96)";
+          setTimeout(function (el) { el.style.display = "none"; }, 180, carte);
+        } else {
+          carte.style.display = "none";
+        }
+      });
+    }
+
     filtres.forEach(function (filtre) {
       filtre.addEventListener("click", function (evenement) {
         evenement.preventDefault();
         var categorie = this.getAttribute("data-cat");
         filtres.forEach(function (f) { f.classList.remove("actif"); });
         this.classList.add("actif");
-
-        var cartes = grille.querySelectorAll("[data-cat]");
-        var indexVisible = 0;
-        cartes.forEach(function (carte) {
-          var cats = (carte.getAttribute("data-cat") || "").split(" ");
-          var correspond = (categorie === "tout" || cats.indexOf(categorie) !== -1);
-          if (correspond) {
-            carte.style.display = "";
-            carte.style.opacity = "0";
-            carte.style.transform = "translateY(12px) scale(0.97)";
-            var delai = indexVisible * 55;
-            indexVisible++;
-            setTimeout(function (el) {
-              el.style.transition = "opacity .32s ease, transform .32s ease, box-shadow .3s ease";
-              el.style.opacity = "1";
-              el.style.transform = "";
-            }, delai, carte);
-          } else {
-            carte.style.transition = "opacity .18s ease, transform .18s ease";
-            carte.style.opacity = "0";
-            carte.style.transform = "scale(0.96)";
-            setTimeout(function (el) { el.style.display = "none"; }, 180, carte);
-          }
-        });
+        appliquer(categorie, true);
       });
     });
+
+    var actif = section ? section.querySelector(".filtre-lien.actif[data-cat]") : null;
+    if (actif) appliquer(actif.getAttribute("data-cat"), false);
   }
   initFiltreGrille("grille-produits");
   initFiltreGrille("grille-boutique");

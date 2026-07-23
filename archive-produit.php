@@ -29,13 +29,13 @@ $pr_intro    = get_theme_mod('lv_produits_intro', lv_produits_intro_defaut());
         ]);
         ?>
         <nav class="filtres" aria-label="Filtrer par catégorie">
-            <a href="#" class="filtre filtre-lien actif" data-cat="tout">Tout voir</a>
             <?php if ($categories && !is_wp_error($categories)):
+                $premiere_cat = true;
                 foreach ($categories as $cat): ?>
-                    <a href="#" class="filtre filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
+                    <a href="#" class="filtre filtre-lien<?php echo $premiere_cat ? ' actif' : ''; ?>" data-cat="<?php echo esc_attr($cat->slug); ?>">
                         <?php echo esc_html($cat->name); ?>
                     </a>
-            <?php endforeach; endif; ?>
+            <?php $premiere_cat = false; endforeach; endif; ?>
         </nav>
 
         <?php

@@ -41,12 +41,11 @@ $categories_boutique = get_terms([
 <div class="pm-filtres-wrap">
     <div class="conteneur">
         <nav class="pm-filtres" aria-label="Filtrer par catégorie">
-            <a href="#articles" class="pm-filtre filtre-lien actif" data-cat="tout">Tout voir</a>
-            <?php foreach ($categories_boutique as $cat): ?>
-                <a href="#articles" class="pm-filtre filtre-lien" data-cat="<?php echo esc_attr($cat->slug); ?>">
+            <?php $premiere_cat = true; foreach ($categories_boutique as $cat): ?>
+                <a href="#articles" class="pm-filtre filtre-lien<?php echo $premiere_cat ? ' actif' : ''; ?>" data-cat="<?php echo esc_attr($cat->slug); ?>">
                     <?php echo esc_html($cat->name); ?>
                 </a>
-            <?php endforeach; ?>
+            <?php $premiere_cat = false; endforeach; ?>
         </nav>
     </div>
 </div>

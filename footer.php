@@ -34,34 +34,45 @@
             <div class="pied-nav-wrap">
                 <h4>Navigation</h4>
                 <?php
-                /* Ordre logique (celui du menu header) plutôt qu'alphabétique
-                   (demande de Philippe, 22 juillet) : une seule liste explicite,
-                   Politique de confidentialité déménagée dans la barre du bas
-                   à côté du copyright plutôt que mélangée aux pages du site. */
+                /* Ordre logique (celui du menu header) plutôt qu'alphabétique,
+                   réparti sur 2 colonnes (demande de Philippe, 22 juillet) :
+                   colonne 1 = univers boutique/épicerie, colonne 2 = pages
+                   utilitaires. Politique de confidentialité reste dans la
+                   barre du bas à côté du copyright, pas mélangée ici. */
                 $pied_lien = function ($slug) {
                     $page = get_page_by_path($slug);
                     if (!$page || $page->post_status !== 'publish') return null;
                     return ['url' => get_permalink($page), 'titre' => get_the_title($page)];
                 };
-                $pied_nav_slugs = ['epicerie', 'boutique', 'produits-maison', 'epicerie-africaine', 'pret-a-manger', 'commandez', 'lofts', 'contactez-nous', 'promotions'];
+                $pied_nav_col1 = ['epicerie', 'boutique', 'produits-maison', 'epicerie-africaine', 'pret-a-manger'];
+                $pied_nav_col2 = ['commandez', 'lofts', 'contactez-nous', 'promotions'];
                 ?>
-                <ul class="pied-nav-col">
-                    <?php foreach ($pied_nav_slugs as $slug):
-                        $lien = $pied_lien($slug);
-                        if (!$lien) continue; ?>
-                        <li class="page_item"><a href="<?php echo esc_url($lien['url']); ?>"><?php echo esc_html($lien['titre']); ?></a></li>
-                    <?php endforeach;
-                    // Archives qui ne sont pas des Pages.
-                    $arch_producteur = get_post_type_archive_link('producteur');
-                    if ($arch_producteur) {
-                        echo '<li class="page_item"><a href="' . esc_url($arch_producteur) . '">Producteurs</a></li>';
-                    }
-                    $arch_produit = get_post_type_archive_link('produit');
-                    if ($arch_produit) {
-                        echo '<li class="page_item"><a href="' . esc_url($arch_produit) . '">Produits</a></li>';
-                    }
-                    ?>
-                </ul>
+                <div class="pied-nav-cols">
+                    <ul class="pied-nav-col">
+                        <?php foreach ($pied_nav_col1 as $slug):
+                            $lien = $pied_lien($slug);
+                            if (!$lien) continue; ?>
+                            <li class="page_item"><a href="<?php echo esc_url($lien['url']); ?>"><?php echo esc_html($lien['titre']); ?></a></li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <ul class="pied-nav-col">
+                        <?php foreach ($pied_nav_col2 as $slug):
+                            $lien = $pied_lien($slug);
+                            if (!$lien) continue; ?>
+                            <li class="page_item"><a href="<?php echo esc_url($lien['url']); ?>"><?php echo esc_html($lien['titre']); ?></a></li>
+                        <?php endforeach;
+                        // Archives qui ne sont pas des Pages.
+                        $arch_producteur = get_post_type_archive_link('producteur');
+                        if ($arch_producteur) {
+                            echo '<li class="page_item"><a href="' . esc_url($arch_producteur) . '">Producteurs</a></li>';
+                        }
+                        $arch_produit = get_post_type_archive_link('produit');
+                        if ($arch_produit) {
+                            echo '<li class="page_item"><a href="' . esc_url($arch_produit) . '">Produits</a></li>';
+                        }
+                        ?>
+                    </ul>
+                </div>
             </div>
             <div>
                 <h4>Horaires</h4>
@@ -80,6 +91,7 @@
         <div class="pied-bas">
             <span>&copy; <?php echo wp_date('Y'); ?> Le Vivier · Matane, Québec</span>
             <?php if ($lien_politiques): ?>
+                <span aria-hidden="true">·</span>
                 <a href="<?php echo esc_url($lien_politiques['url']); ?>"><?php echo esc_html($lien_politiques['titre']); ?></a>
             <?php endif; ?>
         </div>
