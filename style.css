@@ -360,9 +360,13 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 /* ----------------------------------------------------------------- FOOTER */
 .pied { position: relative; overflow: hidden; background: var(--pied-fond); color: #b6c0a4; padding-block: clamp(2.5rem, 2rem + 1.8vw, 3.5rem) 0; }
 .pied .conteneur { position: relative; z-index: 1; }
-.pied::after { content: ""; position: absolute; z-index: 0; right: -2%; bottom: -2%; width: clamp(220px, 24vw, 360px); aspect-ratio: .72; background: url("assets/images/illustrations/fleur 01.svg") no-repeat center / contain; filter: brightness(0) invert(1); opacity: .07; pointer-events: none; }
-.pied::before { content: ""; position: absolute; z-index: 0; left: -3%; top: -2%; width: clamp(160px, 16vw, 240px); aspect-ratio: .7; background: url("assets/images/illustrations/fleur 06.svg") no-repeat center / contain; filter: brightness(0) invert(1); opacity: .05; pointer-events: none; }
-.pied-grille { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 2.5rem; }
+.pied::after { content: ""; position: absolute; z-index: 0; right: -2%; bottom: -2%; width: clamp(160px, 17vw, 260px); aspect-ratio: .72; background: url("assets/images/illustrations/fleur 01.svg") no-repeat center / contain; filter: brightness(0) invert(1); opacity: .07; pointer-events: none; }
+.pied::before { content: ""; position: absolute; z-index: 0; left: -3%; top: -2%; width: clamp(120px, 12vw, 180px); aspect-ratio: .7; background: url("assets/images/illustrations/fleur 06.svg") no-repeat center / contain; filter: brightness(0) invert(1); opacity: .05; pointer-events: none; }
+/* Répartition plus équitable des 3 blocs de texte (marque / navigation /
+   horaires) : le ratio 1.6/1/1 laissait la marque trop large et la
+   navigation (qui contient pourtant 2 sous-colonnes de liens, le double
+   de contenu) relativement à l'étroit. */
+.pied-grille { display: grid; grid-template-columns: 1.3fr 1.9fr 1fr; gap: 2.5rem; }
 .pied .logo { color: #f4efe4; margin-bottom: 1.1rem; font-size: 2.3rem; }
 .pied h4 { color: #e6dcc7; font-size: .76rem; font-weight: 600; letter-spacing: .18em; margin-bottom: 1.1rem; text-transform: uppercase; }
 .pied a { transition: color var(--transi); }

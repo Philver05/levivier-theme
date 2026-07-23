@@ -10,7 +10,7 @@
     $pied_opt = function ($cle, $defaut) {
         return function_exists('lv_opt') ? lv_opt($cle, $defaut) : $defaut;
     };
-    $pied_slogan   = $pied_opt('opt_pied_slogan', 'Produits locaux, frais et durables, à Matane.');
+    $pied_slogan   = $pied_opt('opt_pied_slogan', 'Nourrir sa région en cultivant le plaisir de manger sainement');
     $pied_adresse  = $pied_opt('opt_adresse', "14 Avenue D'Amours\nMatane, QC G4W 2X4");
     $pied_tel      = $pied_opt('opt_telephone', '(418) 562-5230');
     $pied_tel_lien = function_exists('lv_opt_tel_lien') ? lv_opt_tel_lien() : 'tel:+14185625230';
