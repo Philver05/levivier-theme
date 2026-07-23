@@ -372,6 +372,7 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
    à gauche, pages utilitaires à droite) plutôt que des colonnes CSS
    auto-balancées par hauteur, pour un découpage garanti. */
 .pied-nav-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.5rem; }
+.pied-nav-cols li { white-space: nowrap; }
 .pied-marque p { font-size: .92rem; margin-bottom: .85rem; max-width: 34ch; color: #a4ad92; }
 /* Copyright à gauche, Politique de confidentialité à droite (22 juillet) :
    séparée des pages du site plutôt que noyée dans la liste Navigation. */
