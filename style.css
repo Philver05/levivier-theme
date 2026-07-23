@@ -2384,6 +2384,58 @@ body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
 }
 .pam-total-label strong { color: var(--sauge); font-size: 1.15rem; }
 
+/* Suggestion automatique (accompagnement proposé à l'ajout d'un produit) */
+.pam-suggestion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .8rem;
+  flex-wrap: wrap;
+  padding: .7rem 1rem;
+  margin-bottom: .6rem;
+  background: var(--sauge-pale);
+  border-radius: 10px;
+  font-size: .9rem;
+  color: var(--sauge-fonce);
+  animation: pam-suggestion-in .3s ease;
+}
+.pam-suggestion[hidden] { display: none; }
+.pam-suggestion-texte strong { color: var(--sauge-fonce); }
+.pam-suggestion-ajouter {
+  border: none;
+  background: var(--sauge);
+  color: var(--blanc);
+  font-weight: 600;
+  font-size: .85rem;
+  padding: .4rem .9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--transi);
+}
+.pam-suggestion-ajouter:hover { background: var(--sauge-fonce); }
+.pam-suggestion-fermer {
+  border: none;
+  background: none;
+  color: var(--sauge-fonce);
+  opacity: .6;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: .2rem .4rem;
+  cursor: pointer;
+  transition: opacity var(--transi);
+}
+.pam-suggestion-fermer:hover { opacity: 1; }
+@keyframes pam-suggestion-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 480px) {
+  .pam-suggestion { font-size: .82rem; padding: .6rem .8rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pam-suggestion { animation: none; }
+}
+
 /* Bouton compteur d'articles (ouvre le récapitulatif) */
 .pam-recap-toggle {
   display: inline-flex;

@@ -15,6 +15,13 @@
     var recapToggle = document.getElementById('pam-recap-toggle');
     var recapCount  = document.getElementById('pam-recap-count');
 
+    var suggestionEl      = document.getElementById('pam-suggestion');
+    var suggestionNomEl   = document.getElementById('pam-suggestion-nom');
+    var suggestionPrixEl  = document.getElementById('pam-suggestion-prix');
+    var suggestionAjouter = document.getElementById('pam-suggestion-ajouter');
+    var suggestionFermer  = document.getElementById('pam-suggestion-fermer');
+    var suggestionTimer   = null;
+
     /* -------------------------------------------------------
        Filtrage par jour + catégorie (2 niveaux : catégorie
        principale + sous-catégorie optionnelle).
@@ -132,6 +139,52 @@
     function formatMontant(n) {
         return n.toFixed(2).replace('.', ',') + ' $';
     }
+
+    /* -------------------------------------------------------
+       Suggestion automatique (accompagnement) : quand un produit
+       est ajouté pour la première fois (quantité 0 -> 1), propose
+       le premier produit de sa liste "pam_suggestions" qui n'est
+       ni déjà ajouté ni masqué (filtre du jour).
+    ------------------------------------------------------- */
+    function masquerSuggestion() {
+        if (!suggestionEl) return;
+        clearTimeout(suggestionTimer);
+        suggestionEl.hidden = true;
+        suggestionAjouter.onclick = null;
+    }
+
+    function suggererApres(item) {
+        if (!suggestionEl || !item.dataset.suggestions) return;
+        var ids = item.dataset.suggestions.split(' ').filter(Boolean);
+        var cible = null;
+        for (var i = 0; i < ids.length; i++) {
+            var candidat = form.querySelector('.pam-produit-item[data-id="' + ids[i] + '"]');
+            if (!candidat || candidat.hidden) continue;
+            var input = candidat.querySelector('.pam-qty-input');
+            if (input && (parseInt(input.value, 10) || 0) > 0) continue;
+            cible = candidat;
+            break;
+        }
+        if (!cible) return;
+
+        var nom  = cible.querySelector('.pam-produit-nom');
+        suggestionNomEl.textContent  = nom ? nom.textContent.trim() : '';
+        suggestionPrixEl.textContent = formatMontant(parseFloat(cible.dataset.prix) || 0);
+        suggestionAjouter.onclick = function () {
+            var input = cible.querySelector('.pam-qty-input');
+            if (input) {
+                input.value = (parseInt(input.value, 10) || 0) + 1;
+                calculerTotal();
+            }
+            masquerSuggestion();
+        };
+
+        suggestionEl.hidden = false;
+        clearTimeout(suggestionTimer);
+        suggestionTimer = setTimeout(masquerSuggestion, 6000);
+    }
+
+    if (suggestionFermer) suggestionFermer.addEventListener('click', masquerSuggestion);
 
     /* -------------------------------------------------------
        Récapitulatif de la sélection (dans la barre de total)
@@ -304,10 +357,14 @@
         var controle = btn.closest('.pam-qty-controle');
         var input    = controle ? controle.querySelector('.pam-qty-input') : null;
         if (!input) return;
-        var val = parseInt(input.value, 10) || 0;
-        val = btn.classList.contains('pam-qty-moins') ? Math.max(0, val - 1) : Math.min(20, val + 1);
+        var valAvant = parseInt(input.value, 10) || 0;
+        var val = btn.classList.contains('pam-qty-moins') ? Math.max(0, valAvant - 1) : Math.min(20, valAvant + 1);
         input.value = val;
         calculerTotal();
+        if (valAvant === 0 && val === 1) {
+            var item = controle.closest('.pam-produit-item');
+            if (item) suggererApres(item);
+        }
     });
 
     function nettoyerErreurChamp(e) {
