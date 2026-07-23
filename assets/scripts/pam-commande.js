@@ -159,6 +159,7 @@
         clearTimeout(suggestionTimer);
         suggestionEl.hidden = true;
         suggestionAjouter.onclick = null;
+        suggestionNomEl.onclick = null;
     }
 
     function suggererApres(item) {
@@ -186,6 +187,10 @@
             }
             masquerSuggestion();
         };
+        /* Cliquer le nom fait défiler jusqu'à la fiche produit (photo,
+           description) sans l'ajouter, pour que le client voie ce qu'il
+           s'apprête à commander. */
+        suggestionNomEl.onclick = function () { allerAuProduit(cible.dataset.id); };
 
         suggestionEl.hidden = false;
         clearTimeout(suggestionTimer);
@@ -225,13 +230,15 @@
             var tab = document.querySelector('.pam-cat-tab[data-cat="' + cat.dataset.cat + '"]');
             if (tab) tab.click();
         }
-        /* Si un filtre de sous-catégorie le masque encore, revenir à "Tout voir" */
+        /* Si un filtre de sous-catégorie le masque encore, activer SA sous-catégorie
+           (plus de pilule "Tout voir" à cliquer, retirée le 22 juillet) */
         if (item.classList.contains('pam-produit-item--filtre-masque')) {
             var barreSous = cat ? cat.querySelector('.pam-filtre-souscats') : null;
-            var toutBtn = barreSous ? barreSous.querySelector('.pam-souscat-tab[data-souscat=""]') : null;
-            if (toutBtn) toutBtn.click();
+            var tabSous = barreSous ? barreSous.querySelector('.pam-souscat-tab[data-souscat="' + item.dataset.souscat + '"]') : null;
+            if (tabSous) tabSous.click();
         }
         fermerRecap();
+        masquerSuggestion();
         item.scrollIntoView({ behavior: 'smooth', block: 'center' });
         item.classList.add('pam-produit-item--focus');
         clearTimeout(item._focusTimer);

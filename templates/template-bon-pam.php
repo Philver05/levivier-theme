@@ -405,7 +405,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
 <div class="pam-barre-total" id="pam-barre-total" aria-live="polite">
     <!-- Suggestion automatique (accompagnement suggéré à l'ajout d'un produit) -->
     <div class="pam-suggestion conteneur" id="pam-suggestion" hidden>
-        <span class="pam-suggestion-texte">Avec ceci, essayez : <strong id="pam-suggestion-nom"></strong> — <span id="pam-suggestion-prix"></span></span>
+        <span class="pam-suggestion-texte">Avec ceci, essayez : <button type="button" class="pam-suggestion-nom" id="pam-suggestion-nom"></button> — <span id="pam-suggestion-prix"></span></span>
         <button type="button" class="pam-suggestion-ajouter" id="pam-suggestion-ajouter">+ Ajouter</button>
         <button type="button" class="pam-suggestion-fermer" id="pam-suggestion-fermer" aria-label="Fermer la suggestion">×</button>
     </div>
