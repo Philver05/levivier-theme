@@ -746,3 +746,114 @@ add_action('admin_init', function () {
     echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#b85c50;">← Retour au tableau de bord</a></p>';
     exit;
 });
+
+/**
+ * PAM : crée la sous-catégorie « Pizzas » (sous Mets préparés) si elle
+ * n'existe pas déjà, puis 5 pizzas avec des prix TEMPORAIRES PLAUSIBLES
+ * (Philippe complète le reste manuellement dans WP → Prêt à manger).
+ * Autonome : fonctionne que ?lv_ajuster_pam_mets_prepares=1 ait déjà été
+ * visité ou non (cherche « Mets préparés », sinon « Prêt-à-manger », sinon
+ * crée « Mets préparés » directement).
+ * Déclencher UNE SEULE FOIS en visitant : /wp-admin/?lv_seed_pam_pizzas=1
+ */
+add_action('admin_init', function () {
+
+    if (!isset($_GET['lv_seed_pam_pizzas']) || $_GET['lv_seed_pam_pizzas'] !== '1') return;
+    if (!current_user_can('manage_options')) wp_die('Accès refusé.');
+    if (get_option('lv_seed_pam_pizzas_done')) {
+        wp_die('✅ Les pizzas ont déjà été créées. Modifiez-les dans le menu « Prêt à manger ».');
+    }
+
+    $log = [];
+
+    /* 1. Catégorie parente : Mets préparés (ou Prêt-à-manger si pas encore
+       renommée, ou création directe si aucune des deux n'existe). */
+    $parent_id = 0;
+    foreach (['Mets préparés', 'Prêt-à-manger'] as $nom_parent) {
+        $existant = term_exists($nom_parent, 'pam_categorie');
+        if ($existant) {
+            $parent_id = is_array($existant) ? (int) $existant['term_id'] : (int) $existant;
+            $log[] = "Catégorie parente trouvée : « $nom_parent »";
+            break;
+        }
+    }
+    if (!$parent_id) {
+        $cree = wp_insert_term('Mets préparés', 'pam_categorie');
+        if (is_wp_error($cree)) {
+            wp_die('❌ Impossible de créer « Mets préparés » : ' . $cree->get_error_message());
+        }
+        $parent_id = (int) $cree['term_id'];
+        $log[] = "✔ pam_categorie « Mets préparés » créée (aucune catégorie parente trouvée)";
+    }
+
+    /* 2. Sous-catégorie Pizzas */
+    $pizzas_terme = term_exists('Pizzas', 'pam_categorie', $parent_id);
+    if (!$pizzas_terme) {
+        $pizzas_terme = wp_insert_term('Pizzas', 'pam_categorie', ['parent' => $parent_id]);
+        if (is_wp_error($pizzas_terme)) {
+            wp_die('❌ Impossible de créer « Pizzas » : ' . $pizzas_terme->get_error_message());
+        }
+        $log[] = "✔ Sous-catégorie « Pizzas » créée";
+    } else {
+        $log[] = "Sous-catégorie « Pizzas » déjà existante";
+    }
+    $pizzas_id = is_array($pizzas_terme) ? (int) $pizzas_terme['term_id'] : (int) $pizzas_terme;
+
+    /* 3. Les 5 pizzas (prix temporaires plausibles, Philippe corrige) */
+    $titre_existe = function ($titre) {
+        $q = new WP_Query([
+            'post_type'      => 'pam_produit',
+            'post_status'    => 'any',
+            'title'          => $titre,
+            'posts_per_page' => 1,
+            'no_found_rows'  => true,
+            'fields'         => 'ids',
+        ]);
+        return !empty($q->posts);
+    };
+
+    $pizzas = [
+        ['Pizza au saumon et crevettes',                        12.95],
+        ['Pizza Tex-Mex au chili',                               11.95],
+        ['Pizza Grecque (végé)',                                 10.95],
+        ['Pizza sauce pomodoro et fromage italien',               9.95],
+        ['Pizza sauce pomodoro, salami fin et fromage italien',  11.50],
+    ];
+
+    foreach ($pizzas as [$titre, $prix]) {
+        if ($titre_existe($titre)) {
+            $log[] = "« $titre » existe déjà, sauté";
+            continue;
+        }
+        $post_id = wp_insert_post([
+            'post_type'   => 'pam_produit',
+            'post_title'  => $titre,
+            'post_status' => 'publish',
+        ]);
+        if (is_wp_error($post_id)) {
+            $log[] = "❌ Erreur produit « $titre » : " . $post_id->get_error_message();
+            continue;
+        }
+        wp_set_object_terms($post_id, $pizzas_id, 'pam_categorie');
+        if (function_exists('update_field')) {
+            update_field('field_pam_prix', $prix, $post_id);
+            update_field('field_pam_jours', ['tous_les_jours'], $post_id);
+        }
+        $log[] = "✔ Pizza « $titre » créée (" . number_format($prix, 2, ',', ' ') . " $, prix temporaire à ajuster)";
+    }
+
+    update_option('lv_seed_pam_pizzas_done', true);
+
+    echo '<style>body{font-family:monospace;padding:2rem;background:#f9f5f0;}
+          h1{color:#b85c50;} li{margin:.3rem 0;} .ok{color:#4d6040;} .err{color:#c00;}</style>';
+    echo '<h1>🍕 Le Vivier — Pizzas Prêt à manger</h1>';
+    echo '<ul>';
+    foreach ($log as $ligne) {
+        $class = (str_contains($ligne, '❌')) ? 'err' : 'ok';
+        echo '<li class="' . $class . '">' . esc_html($ligne) . '</li>';
+    }
+    echo '</ul>';
+    echo '<p>Prix temporaires plausibles : ajustez-les dans <strong>Prêt à manger</strong>, ainsi que description/ingrédients/photo pour chaque pizza.</p>';
+    echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#b85c50;">← Retour au tableau de bord</a></p>';
+    exit;
+});
