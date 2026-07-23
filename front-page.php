@@ -11,12 +11,30 @@ $lien_boutique = get_page_by_path('boutique');
 $url_boutique  = $lien_boutique ? get_permalink($lien_boutique) : home_url('/boutique/');
 $lien_pm = get_page_by_path('produits-maison');
 $url_pm  = $lien_pm ? get_permalink($lien_pm) : home_url('/produits-maison/');
+$lien_afr = get_page_by_path('epicerie-africaine');
+$url_afr  = $lien_afr ? get_permalink($lien_afr) : home_url('/epicerie-africaine/');
+$lien_pam = get_page_by_path('pret-a-manger');
+$url_pam  = $lien_pam ? get_permalink($lien_pam) : home_url('/pret-a-manger/');
+$lien_lofts = get_page_by_path('lofts');
+$url_lofts  = $lien_lofts ? get_permalink($lien_lofts) : home_url('/lofts/');
 
 /* Champ ACF de la page d'accueil, avec repli si vide ou ACF inactif */
 $acc = function ($cle, $defaut) {
     $valeur = function_exists('get_field') ? get_field($cle) : '';
     return $valeur ?: $defaut;
 };
+
+/* Carrousel "Découvrir Le Vivier" : une diapo par section du site.
+   Chaque diapo est un [titre ACF, url, image ACF] — l'image est
+   optionnelle (bloc de remplacement tant qu'elle n'est pas fournie). */
+$carrousel_slides = [
+    ['titre' => $acc('acc_carr1_titre', 'Épicerie'),                'url' => $url_ep,       'image' => function_exists('get_field') ? get_field('acc_carr1_image') : null],
+    ['titre' => $acc('acc_carr2_titre', 'Boutique'),                'url' => $url_boutique, 'image' => function_exists('get_field') ? get_field('acc_carr2_image') : null],
+    ['titre' => $acc('acc_carr3_titre', 'Produits Maison'),         'url' => $url_pm,       'image' => function_exists('get_field') ? get_field('acc_carr3_image') : null],
+    ['titre' => $acc('acc_carr4_titre', 'Épicerie Africaine'),      'url' => $url_afr,      'image' => function_exists('get_field') ? get_field('acc_carr4_image') : null],
+    ['titre' => $acc('acc_carr5_titre', 'Prêt à manger'),           'url' => $url_pam,      'image' => function_exists('get_field') ? get_field('acc_carr5_image') : null],
+    ['titre' => $acc('acc_carr6_titre', 'Les lofts de la rivière'), 'url' => $url_lofts,    'image' => function_exists('get_field') ? get_field('acc_carr6_image') : null],
+];
 
 /* Logo complet du hero (roseau + « Le Vivier » + « Épicerie · Boutique »),
    distinct du logo compact du header (Réglages > Identité du site) : celui-ci
@@ -61,31 +79,42 @@ if ($logo_hero_champ && !empty($logo_hero_champ['url'])) {
     </div>
 </section>
 
-<!-- ============================ INTRO ============================ -->
+<!-- ===================== DÉCOUVRIR LE VIVIER ===================== -->
 <section class="section intro" id="epicerie">
-    <div class="conteneur intro-grille">
-        <div class="intro-texte reveal">
-
-            <?php if (trim(get_the_content())): the_content(); else: ?>
-                <p>Au cœur de Matane, Le Vivier rassemble le meilleur du Bas-Saint-Laurent : fruits et légumes de saison, vrac, thés, produits fins et créations d'artisans d'ici. Chaque tablette raconte une rencontre, un savoir-faire, un terroir.</p>
-            <?php endif; ?>
-        </div>
-        <div class="intro-media reveal reveal-delai-1">
-            <div class="cadre">
-                <?php if (has_post_thumbnail()):
-                    the_post_thumbnail('large', ['alt' => get_bloginfo('name')]);
-                else: ?>
-                    <div aria-hidden="true" style="width:100%;height:100%;min-height:320px;background:var(--sauge-pale)"></div>
-                <?php endif; ?>
+    <div class="conteneur">
+        <div class="carrousel carrousel--sobre reveal" data-autoplay="5000">
+            <div class="carrousel-piste">
+                <?php foreach ($carrousel_slides as $i => $slide): ?>
+                    <figure class="carrousel-slide<?php echo $i === 0 ? ' actif' : ''; ?>">
+                        <a href="<?php echo esc_url($slide['url']); ?>">
+                            <?php if ($slide['image']): ?>
+                                <img src="<?php echo esc_url($slide['image']['sizes']['large'] ?? $slide['image']['url']); ?>"
+                                     alt="<?php echo esc_attr($slide['image']['alt'] ?: $slide['titre']); ?>"
+                                     loading="<?php echo $i === 0 ? 'eager' : 'lazy'; ?>">
+                            <?php else: ?>
+                                <div class="carrousel-vide" aria-hidden="true"></div>
+                            <?php endif; ?>
+                            <span class="carrousel-legende"><?php echo esc_html($slide['titre']); ?></span>
+                        </a>
+                    </figure>
+                <?php endforeach; ?>
             </div>
-            <?php $badge_intro = $acc('acc_intro_badge', ''); ?>
-            <?php if ($badge_intro): ?>
-            <span class="intro-badge"><?php echo esc_html($badge_intro); ?></span>
-            <?php endif; ?>
+            <button type="button" class="carrousel-fleche carrousel-precedent" aria-label="Section précédente">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+            </button>
+            <button type="button" class="carrousel-fleche carrousel-suivant" aria-label="Section suivante">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+            <div class="carrousel-dots" role="tablist" aria-label="Sections du Vivier">
+                <?php foreach ($carrousel_slides as $i => $slide): ?>
+                    <button type="button" class="carrousel-dot<?php echo $i === 0 ? ' actif' : ''; ?>"
+                            role="tab" aria-label="<?php echo esc_attr($slide['titre']); ?>"
+                            aria-selected="<?php echo $i === 0 ? 'true' : 'false'; ?>"></button>
+                <?php endforeach; ?>
+            </div>
         </div>
     </div>
-    <!-- Boutons Découvrir : déplacés du hero, juste après l'intro
-         (à la place du futur carrousel, pas encore prêt) -->
+    <!-- Boutons Découvrir : déplacés du hero, juste après le carrousel -->
     <div class="conteneur">
         <div class="intro-actions reveal reveal-delai-2">
             <a href="<?php echo esc_url($url_ep); ?>" class="btn btn-primaire"><?php echo esc_html($acc('acc_hero_btn1', 'Découvrir l\'épicerie')); ?></a>

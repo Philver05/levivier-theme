@@ -139,8 +139,9 @@ add_action('wp_enqueue_scripts', function () {
     }
 
     /* Carrousel photos (générique, voir assets/scripts/carrousel.js) :
-       pour l'instant utilisé sur la page Boutique seulement. */
-    if (is_page_template('templates/template-boutique.php')) {
+       utilisé sur la page Boutique et sur l'accueil (carrousel "Découvrir
+       Le Vivier", 22 juillet). */
+    if (is_page_template('templates/template-boutique.php') || is_front_page()) {
         $path = get_stylesheet_directory() . '/assets/scripts/carrousel.js';
         wp_enqueue_script(
             'carrousel',
@@ -682,15 +683,25 @@ add_action('acf/init', function () {
                 'type'          => 'text',
                 'default_value' => 'Découvrir',
             ],
-            ['key' => 'field_acc_tab_intro', 'type' => 'tab', 'label' => 'Intro'],
+            ['key' => 'field_acc_tab_intro', 'type' => 'tab', 'label' => 'Carrousel'],
             [
-                'key'           => 'field_acc_intro_badge',
-                'name'          => 'acc_intro_badge',
-                'label'         => 'Badge sur l\'image',
-                'type'          => 'text',
-                'default_value' => '100 % local',
-                'instructions'  => 'Le texte d\'intro se rédige dans l\'éditeur principal de la page, l\'image est l\'image mise en avant.',
+                'key'   => 'field_acc_carr_message',
+                'type'  => 'message',
+                'label' => 'Carrousel "Découvrir Le Vivier"',
+                'message' => 'Une photo par section du site, juste après le hero. Laissez une image vide pour afficher un bloc de remplacement en attendant.',
             ],
+            ['key' => 'field_acc_carr1_titre', 'name' => 'acc_carr1_titre', 'label' => 'Diapo 1 — Titre',  'type' => 'text',  'default_value' => 'Épicerie',           'wrapper' => ['width' => '50']],
+            ['key' => 'field_acc_carr1_image', 'name' => 'acc_carr1_image', 'label' => 'Diapo 1 — Photo', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium', 'wrapper' => ['width' => '50']],
+            ['key' => 'field_acc_carr2_titre', 'name' => 'acc_carr2_titre', 'label' => 'Diapo 2 — Titre',  'type' => 'text',  'default_value' => 'Boutique',           'wrapper' => ['width' => '50']],
+            ['key' => 'field_acc_carr2_image', 'name' => 'acc_carr2_image', 'label' => 'Diapo 2 — Photo', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium', 'wrapper' => ['width' => '50']],
+            ['key' => 'field_acc_carr3_titre', 'name' => 'acc_carr3_titre', 'label' => 'Diapo 3 — Titre',  'type' => 'text',  'default_value' => 'Produits Maison',    'wrapper' => ['width' => '50']],
+            ['key' => 'field_acc_carr3_image', 'name' => 'acc_carr3_image', 'label' => 'Diapo 3 — Photo', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium', 'wrapper' => ['width' => '50']],
+            ['key' => 'field_acc_carr4_titre', 'name' => 'acc_carr4_titre', 'label' => 'Diapo 4 — Titre',  'type' => 'text',  'default_value' => 'Épicerie Africaine', 'wrapper' => ['width' => '50']],
+            ['key' => 'field_acc_carr4_image', 'name' => 'acc_carr4_image', 'label' => 'Diapo 4 — Photo', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium', 'wrapper' => ['width' => '50']],
+            ['key' => 'field_acc_carr5_titre', 'name' => 'acc_carr5_titre', 'label' => 'Diapo 5 — Titre',  'type' => 'text',  'default_value' => 'Prêt à manger',      'wrapper' => ['width' => '50']],
+            ['key' => 'field_acc_carr5_image', 'name' => 'acc_carr5_image', 'label' => 'Diapo 5 — Photo', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium', 'wrapper' => ['width' => '50']],
+            ['key' => 'field_acc_carr6_titre', 'name' => 'acc_carr6_titre', 'label' => 'Diapo 6 — Titre',  'type' => 'text',  'default_value' => 'Les lofts de la rivière', 'wrapper' => ['width' => '50']],
+            ['key' => 'field_acc_carr6_image', 'name' => 'acc_carr6_image', 'label' => 'Diapo 6 — Photo', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium', 'wrapper' => ['width' => '50']],
             ['key' => 'field_acc_tab_eng', 'type' => 'tab', 'label' => 'Engagements'],
             [
                 'key'           => 'field_acc_eng_titre',

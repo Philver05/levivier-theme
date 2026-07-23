@@ -268,10 +268,7 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 
 /* -------------------------------------------------------------- INTRO SPLIT */
 .intro { background: var(--creme); }
-.intro-grille { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 1rem + 4vw, 5rem); align-items: center; }
-.intro-texte h2 { font-size: var(--t-h2); margin: .8rem 0 1.2rem; }
-.intro-texte .script-accent { font-family: var(--f-script); color: var(--terra); font-size: 1.6rem; }
-/* Boutons Découvrir sous l'intro (déplacés du hero) */
+/* Boutons Découvrir sous le carrousel (déplacés du hero) */
 .intro-actions { display: flex; flex-wrap: wrap; gap: .9rem; justify-content: center; margin-top: clamp(2rem, 1.2rem + 2vw, 3rem); }
 
 /* Pastilles de valeurs réutilisées (ex-accueil) : version centrée pour un
@@ -280,13 +277,6 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 .intro-liste li { display: inline-flex; align-items: center; gap: .5rem; background: var(--sauge-pale); color: var(--sauge-fonce); font-size: .85rem; font-weight: 600; padding: .5rem 1rem; border-radius: 50px; }
 .intro-liste svg { width: 18px; height: 18px; }
 .intro-liste--centree { justify-content: center; }
-/* Photo d'intro contenue : à pleine colonne elle dépassait 900px de haut
-   (presque un écran entier), on la plafonne pour laisser voir la suite. */
-.intro-media { position: relative; width: 100%; max-width: 520px; margin-inline: auto; }
-.intro-media .cadre { border-radius: var(--rayon-l); overflow: hidden; box-shadow: var(--ombre); aspect-ratio: 4 / 5; max-height: 640px; background: var(--sauge-pale); }
-.intro-media .cadre img { width: 100%; height: 100%; object-fit: cover; }
-.intro-media .tache-deco { position: absolute; width: 58%; right: -8%; bottom: -10%; z-index: -1; opacity: .9; }
-.intro-badge { position: absolute; top: 1.2rem; left: -1rem; background: var(--ocre); color: var(--encre); font-weight: 700; font-size: .8rem; padding: .7rem 1.1rem; border-radius: 50px; box-shadow: var(--ombre-douce); transform: rotate(-4deg); }
 
 /* ----------------------------------------------------------- ENGAGEMENTS */
 .engagements { background: var(--blanc); }
@@ -441,8 +431,6 @@ body.pm-lightbox-ouvert { overflow: hidden; }
   .hero { min-height: auto; padding-bottom: clamp(4rem, 9vh, 5.5rem); }
   .hero h1 { text-wrap: balance; }
   .hero-scroll { display: none; }
-  .intro-grille { grid-template-columns: 1fr; }
-  .intro-media { max-width: 440px; margin-inline: auto; order: -1; }
   .engagements-grille { grid-template-columns: repeat(2, 1fr); gap: 2rem 1rem; }
   .grille-cartes { grid-template-columns: repeat(2, 1fr); }
   .grille-prod { grid-template-columns: 1fr 1fr; }
@@ -3117,6 +3105,31 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   .carrousel-fleche { width: 38px; height: 38px; }
   .carrousel-precedent { left: .6rem; }
   .carrousel-suivant { right: .6rem; }
+}
+
+/* Diapo cliquable (accueil : chaque photo mène à sa section) + légende
+   en bas à gauche, façon étiquette discrète plutôt qu'un bandeau plein. */
+.carrousel-slide a { display: block; width: 100%; height: 100%; }
+.carrousel-vide { width: 100%; height: 100%; background: var(--sauge-pale); }
+.carrousel-legende {
+  position: absolute; left: 1.1rem; bottom: 1.1rem; z-index: 2;
+  background: rgba(31, 41, 34, .55);
+  color: #fff;
+  font-family: var(--f-titre);
+  font-weight: 600;
+  font-size: .92rem;
+  letter-spacing: .02em;
+  padding: .5rem 1rem;
+  border-radius: 8px;
+  backdrop-filter: blur(2px);
+}
+/* Moins arrondi que le carrousel de la Boutique (demande de Philippe) */
+.carrousel--sobre { border-radius: 10px; }
+.carrousel--sobre .carrousel-vide,
+.carrousel--sobre .carrousel-slide img { border-radius: 0; }
+
+@media (max-width: 700px) {
+  .carrousel-legende { left: .7rem; bottom: .7rem; font-size: .85rem; padding: .4rem .8rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
