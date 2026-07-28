@@ -19,11 +19,65 @@ $bout = function ($cle, $defaut = '') {
         <?php if (have_posts()): the_post(); ?>
             <h1 class="page-entete-titre-script"><?php the_title(); ?></h1>
             <?php if (get_the_content()): the_content(); else: ?>
-                <p>Des objets beaux et utiles pour un quotidien plus durable : zéro déchet, naturels, et fièrement fabriqués au Québec.</p>
+                <p>Des trouvailles locales, des cadeaux uniques et des objets durables, avec un service d'emballage et de confection de boîtes cadeaux sur mesure.</p>
             <?php endif; ?>
         <?php endif; ?>
     </div>
 </section>
+
+<!-- ======================================================
+     NOS RAYONS : blocs photo+texte en alternance (CPT
+     rayon_boutique), purement descriptifs, sur le modèle des
+     familles Produits Maison. Sert d'aperçu des rayons de la
+     boutique avant la grille d'articles.
+====================================================== -->
+<?php
+$rayons = new WP_Query([
+    'post_type'      => 'rayon_boutique',
+    'post_status'    => 'publish',
+    'posts_per_page' => -1,
+    'orderby'        => 'menu_order title',
+    'order'          => 'ASC',
+]);
+?>
+<?php if ($rayons->have_posts()):
+    $i = 0;
+    while ($rayons->have_posts()): $rayons->the_post();
+        $thumb_id = get_post_thumbnail_id();
+        $thumb    = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'large') : null;
+        $inverse  = ($i % 2 === 1) ? 'pm-article-inverse' : '';
+        $fond     = ($i % 2 === 1) ? 'pm-section-pair' : '';
+        $i++;
+?>
+<section class="section pm-article-section <?php echo esc_attr($fond); ?>">
+    <div class="conteneur">
+        <div class="pm-article <?php echo esc_attr($inverse); ?> reveal">
+
+            <div class="pm-article-visuel">
+                <?php if ($thumb): ?>
+                    <img src="<?php echo esc_url($thumb[0]); ?>"
+                         alt="<?php echo esc_attr(get_the_title()); ?>"
+                         loading="lazy">
+                <?php else: ?>
+                    <div class="pm-article-placeholder" aria-hidden="true"></div>
+                <?php endif; ?>
+            </div>
+
+            <div class="pm-article-corps">
+                <h2 class="pm-article-titre"><?php the_title(); ?></h2>
+                <?php if (get_the_content()): ?>
+                    <div class="pm-article-texte">
+                        <?php the_content(); ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+        </div>
+    </div>
+</section>
+<?php endwhile;
+    wp_reset_postdata();
+endif; ?>
 
 <!-- ======================================================
      FILTRE PAR CATÉGORIE — même bande que Produits Maison,

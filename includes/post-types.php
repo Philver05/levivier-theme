@@ -465,6 +465,31 @@ function lv_register_famille_maison()
     ]);
 }
 
+function lv_register_rayon_boutique()
+{
+    register_post_type('rayon_boutique', [
+        'labels' => [
+            'name'               => 'Rayons boutique',
+            'singular_name'      => 'Rayon boutique',
+            'add_new_item'       => 'Ajouter un rayon',
+            'edit_item'          => 'Modifier le rayon',
+            'new_item'           => 'Nouveau rayon',
+            'view_item'          => 'Voir le rayon',
+            'search_items'       => 'Rechercher',
+            'not_found'          => 'Aucun rayon trouvé',
+            'not_found_in_trash' => 'Aucun rayon dans la corbeille',
+        ],
+        'public'            => false,
+        'show_ui'           => true,
+        'show_in_menu'      => true,
+        'menu_icon'         => 'dashicons-art',
+        'menu_position'     => 6,
+        'supports'          => ['title', 'editor', 'thumbnail'],
+        'has_archive'       => false,
+        'show_in_rest'      => true,
+    ]);
+}
+
 function lv_register_post_types()
 {
     lv_register_produit();
@@ -477,6 +502,7 @@ function lv_register_post_types()
     lv_register_pam_produit();
     lv_register_vrac_produit();
     lv_register_famille_maison();
+    lv_register_rayon_boutique();
     lv_register_categorie_produit();
     lv_register_type_producteur();
     lv_register_categorie_boutique();

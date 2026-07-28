@@ -972,3 +972,76 @@ add_action('admin_init', function () {
     echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#4d6040;">← Retour au tableau de bord</a></p>';
     exit;
 });
+
+/**
+ * Boutique : 7 rayons (blocs photo+texte en alternance, sur le modèle des
+ * familles Produits Maison, demande de Philippe 28 juillet). Purement
+ * descriptif, aucun bouton. Textes = brouillons provisoires, à relire par
+ * Marie. Idempotent (ignore les titres déjà présents, relançable sans risque).
+ * Déclencher UNE SEULE FOIS en visitant : /wp-admin/?lv_seed_rayons_boutique=1
+ */
+add_action('admin_init', function () {
+
+    if (!isset($_GET['lv_seed_rayons_boutique']) || $_GET['lv_seed_rayons_boutique'] !== '1') return;
+    if (!current_user_can('manage_options')) wp_die('Accès refusé.');
+    if (get_option('lv_seed_rayons_boutique_done')) {
+        wp_die('✅ Le script Rayons boutique a déjà été exécuté. Modifiez les rayons dans le menu « Rayons boutique ».');
+    }
+
+    $log = [];
+
+    $rayons = [
+        ['titre' => 'Nos boîtes cadeaux',        'contenu' => "Besoin d'un cadeau qui sort de l'ordinaire ? On compose pour vous une boîte cadeau sur mesure avec des produits d'ici : thés, confitures, chocolats, savons... Dites-nous l'occasion et le budget, on s'occupe du reste, joliment emballé."],
+        ['titre' => 'Les produits zéro déchets', 'contenu' => "Brosses à dents en bambou, pains de savon solides, sacs à vrac réutilisables : nos produits zéro déchet vous aident à réduire ce qui finit à la poubelle, sans sacrifier la qualité."],
+        ['titre' => "L'Art de la Table",         'contenu' => "Vaisselle, linge de table, planches de bois et petits accessoires : de quoi dresser une table qui a du caractère, entre pièces artisanales et classiques indémodables."],
+        ['titre' => 'Les artisans',              'contenu' => "On aime mettre en valeur le travail des mains : poterie, bijoux, savons et autres créations d'artisans d'ici trouvent une place de choix sur nos tablettes."],
+        ['titre' => 'Le coin des plantes',       'contenu' => "Petites plantes, cache-pots et accessoires pour les pouces verts : notre coin des plantes est parfait pour verdir un intérieur ou offrir un brin de nature."],
+        ['titre' => 'Les beaux objets',          'contenu' => "Des trouvailles qui n'ont pas besoin d'être utiles pour être aimées : objets décoratifs, curiosités et jolies pièces qui ont attiré notre oeil."],
+        ['titre' => 'Les chandelles et cie',     'contenu' => "Chandelles de cire naturelle, brume d'oreiller, encens : de quoi parfumer la maison et se créer une ambiance douce, à petit prix ou en cadeau."],
+    ];
+
+    foreach ($rayons as $ordre => $r) {
+        $existe = new WP_Query([
+            'post_type'      => 'rayon_boutique',
+            'post_status'    => 'any',
+            'title'          => $r['titre'],
+            'posts_per_page' => 1,
+            'no_found_rows'  => true,
+            'fields'         => 'ids',
+        ]);
+        if (!empty($existe->posts)) {
+            $log[] = "« {$r['titre']} » existe déjà, sauté";
+            continue;
+        }
+
+        $post_id = wp_insert_post([
+            'post_type'    => 'rayon_boutique',
+            'post_title'   => $r['titre'],
+            'post_content' => $r['contenu'],
+            'post_status'  => 'publish',
+            'menu_order'   => $ordre,
+        ]);
+
+        if (is_wp_error($post_id)) {
+            $log[] = "❌ Erreur création « {$r['titre']} » : " . $post_id->get_error_message();
+            continue;
+        }
+
+        $log[] = "✔ Rayon « {$r['titre']} » créé (ID $post_id)";
+    }
+
+    update_option('lv_seed_rayons_boutique_done', true);
+
+    echo '<style>body{font-family:monospace;padding:2rem;background:#f9f5f0;}
+          h1{color:#b85c50;} li{margin:.3rem 0;} .ok{color:#4d6040;} .err{color:#c00;}</style>';
+    echo '<h1>🎁 Le Vivier : Seed Rayons boutique</h1>';
+    echo '<ul>';
+    foreach ($log as $ligne) {
+        $class = str_contains($ligne, '❌') ? 'err' : 'ok';
+        echo '<li class="' . $class . '">' . esc_html($ligne) . '</li>';
+    }
+    echo '</ul>';
+    echo '<p>Textes provisoires : à relire par Marie. N\'oubliez pas d\'ajouter une <strong>image mise en avant</strong> à chaque rayon dans le menu <strong>Rayons boutique</strong>.</p>';
+    echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#b85c50;">← Retour au tableau de bord</a></p>';
+    exit;
+});
