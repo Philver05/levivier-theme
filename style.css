@@ -218,15 +218,12 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 .sugg-type { font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; color: var(--terra-fonce); font-weight: 600; flex: none; }
 
 /* ------------------------------------------------------------------- HERO */
-/* Hero plafonné (18 juillet) : le plein écran systématique repoussait tout le
-   contenu sous le pli pour trois boutons; on garde l'ampleur sans imposer un
-   écran entier de vide. */
-/* Plafond 820px trop bas sur les écrans plus hauts que ~930px (portables
-   larges, moniteurs 1080p+) : 88vh y était toujours coupé net avant
-   d'atteindre son propre plafond, laissant un vide visible sous le hero
-   (retour Philippe 22 juillet). Relevé à 960px : ne s'active que sur les
-   écrans vraiment très hauts. */
-.hero { position: relative; overflow: hidden; background: linear-gradient(180deg, var(--blanc) 0%, var(--creme) 100%); min-height: min(88vh, 960px); min-height: min(88dvh, 960px); display: flex; flex-direction: column; justify-content: center; padding-top: clamp(6rem, 11vh, 8.5rem); padding-bottom: clamp(2.5rem, 6vh, 4rem); }
+/* Plein écran desktop (28 juillet, retour Philippe) : le plafond à 88vh
+   (choisi le 18 juillet pour éviter un écran entier de vide) laissait la
+   section suivante apparaître en filet au bas du premier écran, ce qui se
+   lisait comme un espace vide mal coupé plutôt qu'une vraie transition.
+   Mobile reste en hauteur auto (voir media query plus bas). */
+.hero { position: relative; overflow: hidden; background: linear-gradient(180deg, var(--blanc) 0%, var(--creme) 100%); min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; padding-top: clamp(6rem, 11vh, 8.5rem); padding-bottom: clamp(2.5rem, 6vh, 4rem); }
 /* La barre d'admin WP (32px) decale la page : sans ca, le bas du hero (indicateur de scroll anime) passe sous le pli */
 .admin-bar .hero { min-height: calc(100vh - 32px); }
 .hero-grille { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 2rem; min-height: 0; width: 100%; }
