@@ -29,34 +29,62 @@ $bout = function ($cle, $defaut = '') {
      NOS RAYONS : blocs photo+texte en alternance (CPT
      rayon_boutique), purement descriptifs, sur le modèle des
      familles Produits Maison. Sert d'aperçu des rayons de la
-     boutique avant la grille d'articles.
+     boutique avant la grille d'articles. Onglets pour naviguer
+     d'un rayon à l'autre (un seul visible à la fois), même
+     patron que les onglets de la page Produits Maison.
 ====================================================== -->
 <?php
-$rayons = new WP_Query([
+$rayons_query = new WP_Query([
     'post_type'      => 'rayon_boutique',
     'post_status'    => 'publish',
     'posts_per_page' => -1,
     'orderby'        => 'menu_order title',
     'order'          => 'ASC',
 ]);
+$rayons = [];
+if ($rayons_query->have_posts()) {
+    while ($rayons_query->have_posts()): $rayons_query->the_post();
+        $thumb_id  = get_post_thumbnail_id();
+        $thumb     = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'large') : null;
+        $rayons[] = [
+            'slug'    => get_post_field('post_name'),
+            'titre'   => get_the_title(),
+            'contenu' => get_the_content(),
+            'thumb'   => $thumb,
+        ];
+    endwhile;
+    wp_reset_postdata();
+}
 ?>
-<?php if ($rayons->have_posts()):
-    $i = 0;
-    while ($rayons->have_posts()): $rayons->the_post();
-        $thumb_id = get_post_thumbnail_id();
-        $thumb    = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'large') : null;
-        $inverse  = ($i % 2 === 1) ? 'pm-article-inverse' : '';
-        $fond     = ($i % 2 === 1) ? 'pm-section-pair' : '';
-        $i++;
+<?php if (!empty($rayons)): ?>
+
+<?php if (count($rayons) > 1): ?>
+<div class="pm-filtres-wrap" id="rayons-filtres">
+    <div class="conteneur">
+        <div class="pm-filtres" role="group" aria-label="Naviguer entre les rayons">
+            <?php $premier_rayon = true; foreach ($rayons as $r): ?>
+                <button class="pm-filtre<?php echo $premier_rayon ? ' actif' : ''; ?>" data-filtre="<?php echo esc_attr($r['slug']); ?>">
+                    <?php echo esc_html($r['titre']); ?>
+                </button>
+            <?php $premier_rayon = false; endforeach; ?>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
+<?php $i = 0; foreach ($rayons as $r):
+    $inverse = ($i % 2 === 1) ? 'pm-article-inverse' : '';
+    $fond    = ($i % 2 === 1) ? 'pm-section-pair' : '';
+    $i++;
 ?>
-<section class="section pm-article-section <?php echo esc_attr($fond); ?>">
+<section class="section pm-article-section <?php echo esc_attr($fond); ?>" data-rayon="<?php echo esc_attr($r['slug']); ?>">
     <div class="conteneur">
         <div class="pm-article <?php echo esc_attr($inverse); ?> reveal">
 
             <div class="pm-article-visuel">
-                <?php if ($thumb): ?>
-                    <img src="<?php echo esc_url($thumb[0]); ?>"
-                         alt="<?php echo esc_attr(get_the_title()); ?>"
+                <?php if ($r['thumb']): ?>
+                    <img src="<?php echo esc_url($r['thumb'][0]); ?>"
+                         alt="<?php echo esc_attr($r['titre']); ?>"
                          loading="lazy">
                 <?php else: ?>
                     <div class="pm-article-placeholder" aria-hidden="true"></div>
@@ -64,10 +92,10 @@ $rayons = new WP_Query([
             </div>
 
             <div class="pm-article-corps">
-                <h2 class="pm-article-titre"><?php the_title(); ?></h2>
-                <?php if (get_the_content()): ?>
+                <h2 class="pm-article-titre"><?php echo esc_html($r['titre']); ?></h2>
+                <?php if ($r['contenu']): ?>
                     <div class="pm-article-texte">
-                        <?php the_content(); ?>
+                        <?php echo apply_filters('the_content', $r['contenu']); ?>
                     </div>
                 <?php endif; ?>
             </div>
@@ -75,9 +103,34 @@ $rayons = new WP_Query([
         </div>
     </div>
 </section>
-<?php endwhile;
-    wp_reset_postdata();
-endif; ?>
+<?php endforeach; ?>
+
+<?php if (count($rayons) > 1): ?>
+<script>
+(function () {
+    var wrap = document.getElementById('rayons-filtres');
+    if (!wrap) return;
+    var btns = wrap.querySelectorAll('.pm-filtre');
+    var sections = document.querySelectorAll('.pm-article-section[data-rayon]');
+    function appliquerFiltre(filtre) {
+        sections.forEach(function (s) {
+            s.style.display = (s.dataset.rayon === filtre) ? '' : 'none';
+        });
+    }
+    btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            btns.forEach(function (b) { b.classList.remove('actif'); });
+            btn.classList.add('actif');
+            appliquerFiltre(btn.dataset.filtre);
+        });
+    });
+    var actif = wrap.querySelector('.pm-filtre.actif');
+    if (actif) appliquerFiltre(actif.dataset.filtre);
+})();
+</script>
+<?php endif; ?>
+
+<?php endif; ?>
 
 <!-- ======================================================
      FILTRE PAR CATÉGORIE — même bande que Produits Maison,
