@@ -100,11 +100,19 @@
         });
     }
 
-    /* Affiche la barre de sous-onglets de la catégorie active (si elle en a une) */
+    /* Affiche la barre de sous-onglets de la catégorie active (si elle en a une)
+       et resynchronise l'onglet visuellement actif avec sousCategorieActive.
+       Sans ça, changer de catégorie principale gardait le surlignage sur le
+       dernier sous-onglet cliqué manuellement (ex: Tarte) même si les produits
+       affichés étaient ceux d'une autre sous-catégorie (ex: Amaretti). */
     function majSousCategorieTabs() {
         document.querySelectorAll('.pam-filtre-souscats').forEach(function (barre) {
             var cat = barre.closest('.pam-categorie');
-            barre.hidden = !cat || cat.dataset.cat !== categorieActive;
+            var estActive = !!cat && cat.dataset.cat === categorieActive;
+            barre.hidden = !estActive;
+            barre.querySelectorAll('.pam-souscat-tab').forEach(function (b) {
+                b.classList.toggle('pam-souscat-tab--actif', estActive && b.dataset.souscat === sousCategorieActive);
+            });
         });
     }
 
