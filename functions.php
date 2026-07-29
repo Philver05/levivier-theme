@@ -914,7 +914,6 @@ add_action('acf/init', function () {
         'fields' => [
             ['key' => 'field_lofts_surtitre', 'name' => 'lofts_surtitre', 'label' => 'Surtitre', 'type' => 'text'],
             ['key' => 'field_lofts_intro', 'name' => 'lofts_intro', 'label' => 'Introduction (ou utilisez l\'éditeur principal)', 'type' => 'textarea', 'rows' => 3],
-            ['key' => 'field_lofts_tagline', 'name' => 'lofts_tagline', 'label' => 'Slogan (ex: L\'art de vivre en ville)', 'type' => 'text'],
 
             /* ---- SECTION « POURQUOI VOUS ALLEZ ADORER » ---- */
             ['key' => 'field_lofts_msg_atouts', 'label' => '', 'type' => 'message', 'message' => '<strong>💚 Section « Pourquoi vous allez adorer »</strong>'],
@@ -971,7 +970,6 @@ add_action('acf/init', function () {
             ['key' => 'field_loft_msg_prix', 'label' => '💲 Prix', 'type' => 'message', 'message' => ''],
             ['key' => 'field_loft_prix', 'name' => 'loft_prix', 'label' => 'Prix par nuit (ex: 145 $)', 'type' => 'text'],
             ['key' => 'field_loft_prix_sub', 'name' => 'loft_prix_sub', 'label' => 'Sous-texte prix', 'type' => 'text', 'default_value' => 'Tout inclus'],
-            ['key' => 'field_loft_prix_label', 'name' => 'loft_prix_label', 'label' => 'Étiquette prix (cartes liste, ex: À partir de)', 'type' => 'text', 'default_value' => 'À partir de'],
             ['key' => 'field_loft_badge', 'name' => 'loft_badge', 'label' => 'Badge (ex: Disponible / Nouveauté)', 'type' => 'text'],
 
             /* ---- POINTS FORTS ---- */
@@ -997,7 +995,6 @@ add_action('acf/init', function () {
             ['key' => 'field_loft_adresse', 'name' => 'loft_adresse', 'label' => 'Adresse', 'type' => 'text', 'default_value' => '14, avenue D\'Amours'],
             ['key' => 'field_loft_ville', 'name' => 'loft_ville', 'label' => 'Ville / secteur', 'type' => 'text', 'default_value' => 'Matane, Québec · Centre-ville'],
             ['key' => 'field_loft_map_embed', 'name' => 'loft_map_embed', 'label' => 'Carte Google Maps (code d\'intégration — optionnel)', 'type' => 'textarea', 'rows' => 4, 'instructions' => 'Optionnel. Sur Google Maps : Partager → Intégrer une carte → « COPIER LE HTML », puis collez ici tout le code (il commence par &lt;iframe et finit par &lt;/iframe&gt;). Laissez vide pour générer automatiquement la carte depuis l\'adresse.'],
-            ['key' => 'field_loft_facebook', 'name' => 'loft_facebook', 'label' => 'Lien Facebook', 'type' => 'url'],
         ],
         'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => 'loft']]],
         'menu_order' => 0,
@@ -1160,84 +1157,10 @@ add_action('acf/init', function () {
         'key'    => 'group_page_maison',
         'title'  => 'Contenu — Produits Maison',
         'fields' => [
-            /* Héros */
-            [
-                'key'   => 'field_pm_surtitre',
-                'name'  => 'pm_surtitre',
-                'label' => '① Héros — Surtitre',
-                'type'  => 'text',
-            ],
-            [
-                'key'          => 'field_pm_intro',
-                'name'         => 'pm_intro',
-                'label'        => '① Héros — Texte d\'introduction',
-                'type'         => 'textarea',
-                'rows'         => 2,
-                'instructions' => 'Gardez 2 à 3 lignes courtes pour la lisibilité.',
-            ],
             /* Panneau CTA final de la page */
             ['key' => 'field_pm_cta_titre', 'name' => 'pm_cta_titre', 'label' => 'CTA final — Titre', 'type' => 'text', 'default_value' => 'Prêt à commander ?'],
             ['key' => 'field_pm_cta_texte', 'name' => 'pm_cta_texte', 'label' => 'CTA final — Texte (le téléphone des Réglages du site est ajouté automatiquement)', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Remplissez votre bon de commande en ligne, on prépare tout pour vous. Récupérez et payez en magasin.'],
             ['key' => 'field_pm_cta_btn', 'name' => 'pm_cta_btn', 'label' => 'CTA final — Texte du bouton', 'type' => 'text', 'default_value' => 'Voir tous les bons de commande'],
-            /* Présentation */
-            [
-                'key'           => 'field_pm_presentation_image',
-                'name'          => 'pm_presentation_image',
-                'label'         => '② Présentation — Image (le texte = éditeur principal ci-dessus)',
-                'type'          => 'image',
-                'return_format' => 'array',
-                'preview_size'  => 'medium',
-            ],
-            /* Bon de commande / réservation */
-            [
-                'key'          => 'field_pm_bon_url',
-                'name'         => 'pm_bon_url',
-                'label'        => '③ Bon de commande — Lien du formulaire (JotForm)',
-                'type'         => 'url',
-                'instructions' => 'URL du bon de commande en ligne. Laissez vide pour masquer le bloc de réservation.',
-            ],
-            [
-                'key'   => 'field_pm_bon_label',
-                'name'  => 'pm_bon_label',
-                'label' => '③ Bon de commande — Texte du bouton',
-                'type'  => 'text',
-            ],
-            [
-                'key'          => 'field_pm_bon_note',
-                'name'         => 'pm_bon_note',
-                'label'        => '③ Bon de commande — Texte d\'accompagnement',
-                'type'         => 'textarea',
-                'rows'         => 2,
-                'instructions' => 'Gardez 2 à 3 lignes courtes.',
-            ],
-            /* Bande finale */
-            [
-                'key'   => 'field_pm_cta_titre',
-                'name'  => 'pm_cta_titre',
-                'label' => '④ Bande finale — Titre',
-                'type'  => 'text',
-            ],
-            [
-                'key'          => 'field_pm_cta_texte',
-                'name'         => 'pm_cta_texte',
-                'label'        => '④ Bande finale — Texte',
-                'type'         => 'textarea',
-                'rows'         => 2,
-                'instructions' => 'Gardez 2 à 3 lignes courtes.',
-            ],
-            [
-                'key'   => 'field_pm_cta_label',
-                'name'  => 'pm_cta_label',
-                'label' => '④ Bande finale — Texte du bouton',
-                'type'  => 'text',
-            ],
-            [
-                'key'          => 'field_pm_cta_lien',
-                'name'         => 'pm_cta_lien',
-                'label'        => '④ Bande finale — Lien du bouton',
-                'type'         => 'url',
-                'instructions' => 'Laissez vide pour masquer le bouton.',
-            ],
         ],
         'location' => [[[
             'param'    => 'page_template',

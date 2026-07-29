@@ -2,7 +2,7 @@
 $badge      = get_field('loft_badge');
 $prix       = get_field('loft_prix');
 $reservit   = get_field('loft_reservit_url');
-$airbnb     = get_field('loft_airbnb_url') ?: get_field('loft_booking_url');
+$airbnb     = get_field('loft_airbnb_url');
 $telephone  = get_field('loft_telephone') ?: '418 562-5230';
 $cta_label  = get_field('loft_cta_label') ?: 'Réserver';
 

@@ -32,7 +32,7 @@ foreach ($categories_def as $nom => $slug) {
     if ($imgs) $galerie_cats[$nom] = $imgs;
 }
 
-$airbnb_url   = get_field('loft_airbnb_url')   ?: get_field('loft_booking_url');
+$airbnb_url   = get_field('loft_airbnb_url');
 $reservit_url = get_field('loft_reservit_url');
 $adresse   = get_field('loft_adresse')   ?: '14, avenue D\'Amours';
 $ville     = get_field('loft_ville')     ?: 'Matane, Québec · Centre-ville';
