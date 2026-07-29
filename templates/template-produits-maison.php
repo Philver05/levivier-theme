@@ -14,6 +14,7 @@ $pages_commander = get_pages([
     'number'      => 1,
 ]);
 $url_commander = !empty($pages_commander) ? get_permalink($pages_commander[0]->ID) : '#';
+$pm_eyebrow_defaut = get_field('pm_eyebrow_defaut') ?: 'Produits maison';
 
 /* Familles de produits maison */
 $familles = new WP_Query([
@@ -137,7 +138,7 @@ if ($familles->have_posts()) {
                 <?php if ($post_cats && !is_wp_error($post_cats)): ?>
                     <span class="pm-article-eyebrow"><?php echo esc_html($post_cats[0]->name); ?></span>
                 <?php else: ?>
-                    <span class="pm-article-eyebrow">Produits maison</span>
+                    <span class="pm-article-eyebrow"><?php echo esc_html($pm_eyebrow_defaut); ?></span>
                 <?php endif; ?>
                 <h2 class="pm-article-titre"><?php the_title(); ?></h2>
 
@@ -166,7 +167,7 @@ else:
         <div class="pm-article reveal">
             <div class="pm-article-placeholder pm-article-visuel" aria-hidden="true"></div>
             <div class="pm-article-corps">
-                <span class="pm-article-eyebrow">Produits maison</span>
+                <span class="pm-article-eyebrow"><?php echo esc_html($pm_eyebrow_defaut); ?></span>
                 <h2 class="pm-article-titre">Nos produits maison</h2>
                 <div class="pm-article-texte">
                     <p>Focaccias, amaretti, confitures et autres douceurs préparées sur place au Vivier.</p>
@@ -193,7 +194,7 @@ else:
         ?>
         <div class="cta-panel reveal">
             <h2><?php echo esc_html($pm_champ('pm_cta_titre', 'Prêt à commander ?')); ?></h2>
-            <p><?php echo esc_html($pm_champ('pm_cta_texte', 'Remplissez votre bon de commande en ligne, on prépare tout pour vous. Récupérez et payez en magasin.')); ?> Une question&nbsp;? Appelez-nous au <a href="<?php echo esc_attr(lv_opt_tel_lien()); ?>" class="cta-tel"><?php echo esc_html(lv_opt('opt_telephone', '(418) 562-5230')); ?></a>.</p>
+            <p><?php echo esc_html($pm_champ('pm_cta_texte', 'Remplissez votre bon de commande en ligne, on prépare tout pour vous. Récupérez et payez en magasin.')); ?> <?php echo esc_html($pm_champ('pm_cta_question_texte', 'Une question ? Appelez-nous au')); ?> <a href="<?php echo esc_attr(lv_opt_tel_lien()); ?>" class="cta-tel"><?php echo esc_html(lv_opt('opt_telephone', '(418) 562-5230')); ?></a>.</p>
             <div class="cta-panel-actions">
                 <a href="<?php echo esc_url($url_commander); ?>" class="btn btn-clair"><?php echo esc_html($pm_champ('pm_cta_btn', 'Voir tous les bons de commande')); ?></a>
             </div>

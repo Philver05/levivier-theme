@@ -7,6 +7,7 @@ get_header();
 $prod_surtitre = get_theme_mod('lv_prod_surtitre', 'Nos partenaires · Le Vivier');
 $prod_titre    = get_theme_mod('lv_prod_titre', 'Nos Producteurs & Transformateurs');
 $prod_intro    = get_theme_mod('lv_prod_intro', lv_prod_intro_defaut());
+$prod_vide     = get_theme_mod('lv_prod_vide', 'Nos producteurs seront présentés ici très bientôt.');
 ?>
 
 <section class="page-entete">
@@ -53,7 +54,7 @@ $prod_intro    = get_theme_mod('lv_prod_intro', lv_prod_intro_defaut());
                     get_template_part('parts/producteur', 'card');
                 endwhile; wp_reset_postdata();
             else: ?>
-                <p class="grille-vide">Nos producteurs seront présentés ici très bientôt.</p>
+                <p class="grille-vide"><?php echo esc_html($prod_vide); ?></p>
             <?php endif; ?>
         </div>
 

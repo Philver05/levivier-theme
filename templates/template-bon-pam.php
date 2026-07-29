@@ -399,7 +399,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                 <?php endforeach; ?>
 
                 <?php if (!$a_des_produits): ?>
-                <p class="grille-vide">Les produits Prêt à manger seront disponibles ici très bientôt.</p>
+                <p class="grille-vide"><?php echo esc_html(get_field('pam_vide_texte') ?: 'Les produits Prêt à manger seront disponibles ici très bientôt.'); ?></p>
                 <?php endif; ?>
             </div><!-- .pam-produits-col -->
 

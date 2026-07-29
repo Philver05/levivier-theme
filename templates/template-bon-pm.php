@@ -198,7 +198,7 @@ $rendre_produit_pm = function () {
                 endif; ?>
 
                 <?php if (!$a_des_produits): ?>
-                <p class="grille-vide">Les produits maison disponibles à la commande seront affichés ici.</p>
+                <p class="grille-vide"><?php echo esc_html(get_field('pm_bon_vide_texte') ?: 'Les produits maison disponibles à la commande seront affichés ici.'); ?></p>
                 <?php endif; ?>
 
             </div><!-- .pam-produits-col -->

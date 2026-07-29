@@ -16,6 +16,7 @@ $prix      = get_field('produit_prix');
 $badge     = get_field('produit_badge');
 $bon_url   = get_field('produit_bon_url');
 $bon_label = get_field('produit_bon_label') ?: 'Réserver ce produit';
+$bon_note  = get_field('produit_bon_note')  ?: 'Réservation en ligne, à récupérer et payer en magasin.';
 
 /* Catégorie */
 $terms_cat      = get_the_terms(get_the_ID(), 'categorie_produit');
@@ -81,7 +82,7 @@ $retour_label = ($is_maison && $url_maison) ? 'Retour aux produits maison' : 'Re
                 <?php if ($bon_url): ?>
                     <div class="produit-resa">
                         <a href="<?php echo esc_url($bon_url); ?>" target="_blank" rel="noopener" class="btn btn-primaire"><?php echo esc_html($bon_label); ?></a>
-                        <p class="produit-resa-note">Réservation en ligne, à récupérer et payer en magasin.</p>
+                        <p class="produit-resa-note"><?php echo esc_html($bon_note); ?></p>
                     </div>
                 <?php endif; ?>
 

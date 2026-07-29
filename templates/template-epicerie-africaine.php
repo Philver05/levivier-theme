@@ -32,6 +32,7 @@ $pres_image = get_field('afr_presentation_image');
 $pres_texte = trim(wp_strip_all_tags(get_the_content()));
 $pres_defaut = "Derrière l'épicerie africaine du Vivier se trouve Viviane Oueko Kamga, arrivée à Matane en 2010. Passionnée de mode et de cuisine, elle fonde en 2015 le groupe Okavi pour faire découvrir le meilleur de l'Afrique à sa région d'adoption : épices, saveurs, coiffure et créations textiles. Une partie des profits de l'épicerie soutient des orphelinats au Cameroun. Viviane est aussi de celles qui font vivre la communauté à Matane, fidèle à un proverbe qui lui tient à cœur : il faut tout un village pour élever un enfant.";
 $portrait_fb = get_field('afr_portrait_facebook');
+$portrait_fb_label = get_field('afr_portrait_facebook_label') ?: 'Suivre Okavi sur Facebook';
 
 /* Spécialités (4 cartes, classées par catégorie de produits) */
 $specialites = [
@@ -226,7 +227,7 @@ if ($afr_parent && !is_wp_error($afr_parent)) {
                     <p><?php echo esc_html($pres_defaut); ?></p>
                 <?php endif; ?>
                 <?php if ($portrait_fb): ?>
-                    <p><a class="afr-portrait-lien" href="<?php echo esc_url($portrait_fb); ?>" target="_blank" rel="noopener">Suivre Okavi sur Facebook</a></p>
+                    <p><a class="afr-portrait-lien" href="<?php echo esc_url($portrait_fb); ?>" target="_blank" rel="noopener"><?php echo esc_html($portrait_fb_label); ?></a></p>
                 <?php endif; ?>
             </div>
             <div class="apropos-media reveal">

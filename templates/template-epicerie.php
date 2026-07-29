@@ -241,7 +241,7 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
         </div>
 
         <?php else: ?>
-            <p class="grille-vide">Les producteurs partenaires seront présentés ici bientôt.</p>
+            <p class="grille-vide"><?php echo esc_html($ep('ep_prod_vide_texte', 'Les producteurs partenaires seront présentés ici bientôt.')); ?></p>
         <?php endif; ?>
 
     </div>

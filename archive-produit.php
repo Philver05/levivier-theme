@@ -7,6 +7,7 @@ get_header();
 $pr_surtitre = get_theme_mod('lv_produits_surtitre', 'Épicerie boutique · Le Vivier');
 $pr_titre    = get_theme_mod('lv_produits_titre', 'Tous nos produits');
 $pr_intro    = get_theme_mod('lv_produits_intro', lv_produits_intro_defaut());
+$pr_vide     = get_theme_mod('lv_produits_vide', 'Les produits arrivent bientôt, revenez nous voir !');
 ?>
 
 <section class="page-entete">
@@ -53,7 +54,7 @@ $pr_intro    = get_theme_mod('lv_produits_intro', lv_produits_intro_defaut());
                     get_template_part('parts/produit', 'card');
                 endwhile; wp_reset_postdata();
             else: ?>
-                <p class="grille-vide">Les produits arrivent bientôt, revenez nous voir&nbsp;!</p>
+                <p class="grille-vide"><?php echo esc_html($pr_vide); ?></p>
             <?php endif; ?>
         </div>
 

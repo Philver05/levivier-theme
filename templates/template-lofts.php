@@ -24,6 +24,13 @@ $cta_texte  = get_field('lofts_cta_texte')  ?: "Deux lofts seulement, un calendr
 $cta_bouton = get_field('lofts_cta_bouton') ?: 'Voir les lofts et réserver';
 $cta_lien   = get_field('lofts_cta_lien')   ?: '#nos-lofts';
 
+/* Coordonnées depuis les Réglages du site (mêmes helpers que Contact/À propos/footer),
+   adresse remise sur une seule ligne comme dans template-contact.php (retour Philippe). */
+$lofts_adresse    = function_exists('lv_opt') ? preg_replace('/\s*\R\s*/', ', ', trim(lv_opt('opt_adresse', "14 Avenue D'Amours\nMatane, QC G4W 2X4"))) : "14 Avenue D'Amours, Matane, QC G4W 2X4";
+$lofts_tel        = function_exists('lv_opt') ? lv_opt('opt_telephone', '(418) 562-5230') : '(418) 562-5230';
+$lofts_tel_lien   = function_exists('lv_opt_tel_lien') ? lv_opt_tel_lien() : 'tel:+14185625230';
+$lofts_citq       = get_field('lofts_citq') ?: '323422';
+
 /* Filet de sécurité si functions.php n'est pas encore à jour sur le serveur
    (même logique que dans single-loft.php) : icône cœur générique. */
 if (!function_exists('lv_lofts_atout_icone')) {
@@ -46,15 +53,15 @@ if (!function_exists('lv_lofts_atout_icone')) {
             <p class="lofts-entete-meta">
                 <span>
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.6 7-12a7 7 0 1 0-14 0c0 5.4 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>
-                    14, av. D'Amours, Matane
+                    <?php echo esc_html($lofts_adresse); ?>
                 </span>
                 <span>
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v6c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
-                    CITQ&nbsp;323422
+                    CITQ&nbsp;<?php echo esc_html($lofts_citq); ?>
                 </span>
-                <a href="tel:+14185625230">
+                <a href="<?php echo esc_attr($lofts_tel_lien); ?>">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h3l2 5-2.5 1.5a12 12 0 0 0 5 5L17 14l5 2v3a2 2 0 0 1-2 2A17 17 0 0 1 4 5a2 2 0 0 1 2-2Z"/></svg>
-                    418&nbsp;562-5230
+                    <?php echo esc_html($lofts_tel); ?>
                 </a>
             </p>
         </div>
@@ -83,7 +90,7 @@ if (!function_exists('lv_lofts_atout_icone')) {
                     endwhile; wp_reset_postdata(); ?>
                 </div>
             <?php else: ?>
-                <p class="lofts-vide">Nos deux lofts (Rivière Douce et Rivière Vive) seront présentés ici très bientôt. Réservez dès maintenant au <a href="tel:+14185625230">418 562-5230</a>.</p>
+                <p class="lofts-vide">Nos deux lofts (Rivière Douce et Rivière Vive) seront présentés ici très bientôt. Réservez dès maintenant au <a href="<?php echo esc_attr($lofts_tel_lien); ?>"><?php echo esc_html($lofts_tel); ?></a>.</p>
             <?php endif; ?>
 
         </div>
@@ -117,8 +124,8 @@ if (!function_exists('lv_lofts_atout_icone')) {
                 <p><?php echo esc_html($cta_texte); ?></p>
                 <a href="<?php echo esc_url($cta_lien); ?>" class="lofts-cta"><?php echo esc_html($cta_bouton); ?></a>
                 <p class="lofts-contact-ligne">
-                    14, avenue D'Amours, Matane (QC) &nbsp;·&nbsp;
-                    <a href="tel:+14185625230">418&nbsp;562-5230</a> &nbsp;·&nbsp; CITQ&nbsp;323422
+                    <?php echo esc_html($lofts_adresse); ?> &nbsp;·&nbsp;
+                    <a href="<?php echo esc_attr($lofts_tel_lien); ?>"><?php echo esc_html($lofts_tel); ?></a> &nbsp;·&nbsp; CITQ&nbsp;<?php echo esc_html($lofts_citq); ?>
                 </p>
             </div>
         </div>

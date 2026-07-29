@@ -57,7 +57,7 @@
                     $page_commande = get_page_by_path('commandez');
                     $url_commande  = $page_commande ? get_permalink($page_commande) : home_url('/');
                     ?>
-                    <a href="<?php echo esc_url($url_commande); ?>" class="btn btn-primaire nav-cta">Commandez</a>
+                    <a href="<?php echo esc_url($url_commande); ?>" class="btn btn-primaire nav-cta"><?php echo esc_html(lv_opt('opt_nav_cta_texte', 'Commandez')); ?></a>
                 </nav>
 
                 <button type="button" class="recherche-toggle" aria-label="Rechercher" aria-expanded="false" aria-controls="recherche-panneau">

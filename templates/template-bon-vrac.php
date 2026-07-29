@@ -186,7 +186,7 @@ $bandeau  = get_field('vrac_bandeau_escompte');
                 <?php endforeach; endif; ?>
 
                 <?php if (!$a_des_produits): ?>
-                <p class="grille-vide">Les produits en vrac seront disponibles ici très bientôt.</p>
+                <p class="grille-vide"><?php echo esc_html(get_field('vrac_vide_texte') ?: 'Les produits en vrac seront disponibles ici très bientôt.'); ?></p>
                 <?php endif; ?>
             </div><!-- .vrac-produits-section -->
 

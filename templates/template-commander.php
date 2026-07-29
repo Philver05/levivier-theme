@@ -135,13 +135,13 @@ $cmd_tel_lien = function_exists('lv_opt_tel_lien') ? lv_opt_tel_lien() : 'tel:+1
                     <h3><?php echo esc_html($page->post_title); ?></h3>
                     <p><?php echo esc_html($meta['description']); ?></p>
                     <a href="<?php echo esc_url(get_permalink($page->ID)); ?>"
-                       class="btn btn-primaire">Remplir ce bon de commande</a>
+                       class="btn btn-primaire"><?php echo esc_html($cmd('cmd_bons_cta_texte', 'Remplir ce bon de commande')); ?></a>
                 </div>
             </div>
             <?php endforeach; ?>
 
             <?php if (!$bons->post_count && !get_pages(['meta_key' => '_wp_page_template', 'meta_value' => 'templates/template-bon-pam.php', 'post_status' => 'publish', 'number' => 1]) && !get_pages(['meta_key' => '_wp_page_template', 'meta_value' => 'templates/template-bon-vrac.php', 'post_status' => 'publish', 'number' => 1])): ?>
-                <p class="grille-vide">Les bons de commande seront disponibles ici très bientôt.</p>
+                <p class="grille-vide"><?php echo esc_html($cmd('cmd_bons_vide_texte', 'Les bons de commande seront disponibles ici très bientôt.')); ?></p>
             <?php endif; ?>
         </div>
     </div>
@@ -154,7 +154,7 @@ $cmd_tel_lien = function_exists('lv_opt_tel_lien') ? lv_opt_tel_lien() : 'tel:+1
     <div class="conteneur">
         <div class="cta-panel reveal">
             <h2><?php echo esc_html($cmd('cmd_cta_titre', 'Prêt à gagner du temps ?')); ?></h2>
-            <p><?php echo esc_html($cmd('cmd_cta_texte', 'Remplissez votre bon de commande dès maintenant. On s\'occupe du reste.')); ?> Une question&nbsp;? Appelez-nous au <a href="<?php echo esc_attr($cmd_tel_lien); ?>" class="cta-tel"><?php echo esc_html($cmd_tel); ?></a>.</p>
+            <p><?php echo esc_html($cmd('cmd_cta_texte', 'Remplissez votre bon de commande dès maintenant. On s\'occupe du reste.')); ?> <?php echo esc_html($cmd('cmd_cta_question_texte', 'Une question ? Appelez-nous au')); ?> <a href="<?php echo esc_attr($cmd_tel_lien); ?>" class="cta-tel"><?php echo esc_html($cmd_tel); ?></a>.</p>
             <div class="cta-panel-actions">
                 <a href="#bons-de-commande" class="btn btn-clair"><?php echo esc_html($cmd('cmd_cta_btn', 'Voir les bons de commande')); ?></a>
             </div>
