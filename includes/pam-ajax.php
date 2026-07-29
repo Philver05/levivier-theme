@@ -72,7 +72,7 @@ function lv_pam_soumettre()
 
     $lignes_client = [
         'Nom'                       => $prenom . ' ' . $nom,
-        'Téléphone'                 => $telephone ?: '—',
+        'Téléphone'                 => $telephone ?: 'Non fourni',
         'Courriel'                  => $email,
         'Jour choisi dans le bon'   => $jour_label,
         'Date de récupération'     => $date_recup_label,
@@ -97,7 +97,7 @@ function lv_pam_soumettre()
         // Bandeau
         . '<tr><td style="background:#4d6040;padding:24px 32px;">'
         . '<span style="color:#ffffff;font-size:20px;font-weight:700;letter-spacing:.02em;">Le Vivier</span><br>'
-        . '<span style="color:#dde8d9;font-size:14px;">Nouvelle commande — Prêt à manger</span>'
+        . '<span style="color:#dde8d9;font-size:14px;">Nouvelle commande, Prêt à manger</span>'
         . '</td></tr>'
 
         // Coordonnées client
@@ -157,6 +157,64 @@ function lv_pam_soumettre()
     ];
 
     $envoye = wp_mail($destinataires, $sujet, $message, $headers);
+
+    /* Courriel de confirmation au client, automatique (n'affecte pas la
+       réponse envoyée au client : sa commande est déjà bien reçue par
+       Le Vivier même si cette confirmation échoue). */
+    $adresse_site = function_exists('lv_opt') ? preg_replace('/\s*\R\s*/', ', ', trim(lv_opt('opt_adresse', "14 Avenue D'Amours\nMatane, QC G4W 2X4"))) : "14 Avenue D'Amours, Matane, QC G4W 2X4";
+
+    $message_client = '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"></head>'
+        . '<body style="margin:0;padding:0;background:#f9f5f0;font-family:Arial,Helvetica,sans-serif;color:#1f2937;">'
+        . '<table role="presentation" width="100%" style="background:#f9f5f0;padding:24px 0;">'
+        . '<tr><td align="center">'
+        . '<table role="presentation" width="600" style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #d1d5db;">'
+
+        . '<tr><td style="background:#4d6040;padding:24px 32px;">'
+        . '<span style="color:#ffffff;font-size:20px;font-weight:700;letter-spacing:.02em;">Le Vivier</span><br>'
+        . '<span style="color:#dde8d9;font-size:14px;">Merci pour votre commande !</span>'
+        . '</td></tr>'
+
+        . '<tr><td style="padding:28px 32px 8px;">'
+        . '<p style="margin:0 0 16px;font-size:15px;">Bonjour ' . esc_html($prenom) . ',<br>Nous avons bien reçu votre commande Prêt à manger. Voici un résumé.</p>'
+        . '<h2 style="margin:24px 0 16px;color:#4d6040;font-size:16px;text-transform:uppercase;letter-spacing:.04em;">Récupération</h2>'
+        . '<table role="presentation" width="100%" style="border-collapse:collapse;">'
+        . '<tr><td style="padding:5px 0;color:#4b5563;font-size:13px;width:180px;">Date</td><td style="padding:5px 0;color:#1f2937;font-weight:600;">' . esc_html($date_recup_label) . '</td></tr>'
+        . '<tr><td style="padding:5px 0;color:#4b5563;font-size:13px;width:180px;">Heure</td><td style="padding:5px 0;color:#1f2937;font-weight:600;">' . esc_html($heure_recup) . '</td></tr>'
+        . '<tr><td style="padding:5px 0;color:#4b5563;font-size:13px;width:180px;">Lieu</td><td style="padding:5px 0;color:#1f2937;font-weight:600;">' . esc_html($adresse_site) . '</td></tr>'
+        . '</table>'
+        . '</td></tr>'
+
+        . '<tr><td style="padding:24px 32px 8px;">'
+        . '<h2 style="margin:0 0 16px;color:#4d6040;font-size:16px;text-transform:uppercase;letter-spacing:.04em;">Votre commande</h2>'
+        . '<table role="presentation" width="100%" style="border-collapse:collapse;">'
+        . '<thead><tr style="background:#dde8d9;">'
+        . '<th style="padding:10px 14px;text-align:left;color:#1f2937;font-size:13px;">Produit</th>'
+        . '<th style="padding:10px 14px;text-align:center;color:#1f2937;font-size:13px;">Qté</th>'
+        . '<th style="padding:10px 14px;text-align:right;color:#1f2937;font-size:13px;">Prix unit.</th>'
+        . '<th style="padding:10px 14px;text-align:right;color:#1f2937;font-size:13px;">Sous-total</th>'
+        . '</tr></thead>'
+        . '<tbody>' . $lignes_html . '</tbody>'
+        . '</table>'
+        . '<table role="presentation" width="100%" style="border-collapse:collapse;margin-top:8px;">'
+        . '<tr><td style="padding:12px 14px;text-align:right;color:#1f2937;font-size:15px;font-weight:700;">Total&nbsp;: <span style="color:#b85c50;font-size:18px;">' . esc_html(number_format($total, 2, ',', ' ')) . '&nbsp;$</span></td></tr>'
+        . '</table>'
+        . '</td></tr>'
+
+        . '<tr><td style="padding:8px 32px 28px;border-top:1px solid #d1d5db;">'
+        . '<p style="margin:16px 0 0;color:#4b5563;font-size:13px;">Nous vous contacterons seulement s\'il y a un pépin avec votre commande. Sinon, on vous attend à la date et l\'heure choisies. Une question&nbsp;? Répondez directement à ce courriel ou appelez-nous au ' . esc_html($tel_site) . '.</p>'
+        . '</td></tr>'
+
+        . '</table>'
+        . '</td></tr>'
+        . '</table>'
+        . '</body></html>';
+
+    $sujet_client   = 'Votre commande Prêt à manger, Le Vivier';
+    $headers_client = [
+        'Content-Type: text/html; charset=UTF-8',
+        'Reply-To: ' . $destinataire_principal,
+    ];
+    wp_mail($email, $sujet_client, $message_client, $headers_client);
 
     if ($envoye) {
         wp_send_json_success(['message' => 'Votre commande a bien été envoyée ! Nous vous contacterons pour confirmer la date de récupération.']);
