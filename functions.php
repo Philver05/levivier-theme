@@ -331,6 +331,7 @@ add_action('customize_register', function ($wp_customize) {
                 'lv_prod_surtitre' => ['label' => 'Surtitre', 'default' => 'Nos partenaires · Le Vivier', 'type' => 'text'],
                 'lv_prod_titre'    => ['label' => 'Titre', 'default' => 'Nos Producteurs & Transformateurs', 'type' => 'text'],
                 'lv_prod_intro'    => ['label' => 'Texte d\'introduction', 'default' => lv_prod_intro_defaut(), 'type' => 'textarea'],
+                'lv_prod_vide'     => ['label' => 'Texte quand aucun producteur', 'default' => 'Nos producteurs seront présentés ici très bientôt.', 'type' => 'text'],
             ],
         ],
         'lv_produits' => [
@@ -340,6 +341,7 @@ add_action('customize_register', function ($wp_customize) {
                 'lv_produits_surtitre' => ['label' => 'Surtitre', 'default' => 'Épicerie boutique · Le Vivier', 'type' => 'text'],
                 'lv_produits_titre'    => ['label' => 'Titre', 'default' => 'Tous nos produits', 'type' => 'text'],
                 'lv_produits_intro'    => ['label' => 'Texte d\'introduction', 'default' => lv_produits_intro_defaut(), 'type' => 'textarea'],
+                'lv_produits_vide'     => ['label' => 'Texte quand aucun produit', 'default' => 'Les produits arrivent bientôt, revenez nous voir !', 'type' => 'text'],
             ],
         ],
     ];
@@ -507,6 +509,13 @@ add_action('acf/init', function () {
                 'type'          => 'text',
                 'default_value' => 'Réserver ce produit',
                 'instructions'  => 'Affiché seulement si un lien de bon de commande est renseigné.',
+            ],
+            [
+                'key'           => 'field_produit_bon_note',
+                'name'          => 'produit_bon_note',
+                'label'         => 'Texte sous le bouton de réservation',
+                'type'          => 'text',
+                'default_value' => 'Réservation en ligne, à récupérer et payer en magasin.',
             ],
         ],
         'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => 'produit']]],
@@ -844,6 +853,7 @@ add_action('acf/init', function () {
             /* ---- HÉROS ----
                La description s'écrit dans l'éditeur principal de la page.
                Les bons de commande sont gérés par « Bons de commande ». */
+            ['key' => 'field_cmd_tab_hero', 'type' => 'tab', 'label' => '① Héros'],
             [
                 'key'   => 'field_cmd_surtitre',
                 'name'  => 'cmd_surtitre',
@@ -867,9 +877,12 @@ add_action('acf/init', function () {
             ['key' => 'field_cmd_desc_pam', 'name' => 'cmd_desc_pam', 'label' => 'Description carte Prêt à manger', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Focaccias, pizzas, sandwichs, salades, sushis et plus — commandez à l\'avance et récupérez en magasin.'],
             ['key' => 'field_cmd_desc_pm', 'name' => 'cmd_desc_pm', 'label' => 'Description carte Produits Maison', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Nos préparations maison disponibles à la commande — confitures, biscuits, pâtes fraîches et autres douceurs faites au Vivier.'],
             ['key' => 'field_cmd_desc_vrac', 'name' => 'cmd_desc_vrac', 'label' => 'Description carte Vrac', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Thés, tisanes, noix, grains, graines, légumineuses — commandez en vrac et profitez d\'escomptes selon la quantité.'],
+            ['key' => 'field_cmd_bons_cta_texte', 'name' => 'cmd_bons_cta_texte', 'label' => 'Texte du bouton sur chaque carte', 'type' => 'text', 'default_value' => 'Remplir ce bon de commande'],
+            ['key' => 'field_cmd_bons_vide_texte', 'name' => 'cmd_bons_vide_texte', 'label' => 'Texte quand aucun bon disponible', 'type' => 'text', 'default_value' => 'Les bons de commande seront disponibles ici très bientôt.'],
             ['key' => 'field_cmd_tab_cta', 'type' => 'tab', 'label' => '④ Relance finale'],
             ['key' => 'field_cmd_cta_titre', 'name' => 'cmd_cta_titre', 'label' => 'Titre', 'type' => 'text', 'default_value' => 'Prêt à gagner du temps ?'],
             ['key' => 'field_cmd_cta_texte', 'name' => 'cmd_cta_texte', 'label' => 'Texte (le téléphone des Réglages du site est ajouté automatiquement)', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Remplissez votre bon de commande dès maintenant. On s\'occupe du reste.'],
+            ['key' => 'field_cmd_cta_question_texte', 'name' => 'cmd_cta_question_texte', 'label' => 'Phrase avant le numéro de téléphone', 'type' => 'text', 'default_value' => 'Une question ? Appelez-nous au'],
             ['key' => 'field_cmd_cta_btn', 'name' => 'cmd_cta_btn', 'label' => 'Texte du bouton', 'type' => 'text', 'default_value' => 'Voir les bons de commande'],
         ],
         'location' => [[[
@@ -885,6 +898,7 @@ add_action('acf/init', function () {
         'key'    => 'group_page_promotions',
         'title'  => 'Contenu de la page Promotions',
         'fields' => [
+            ['key' => 'field_promo_tab_intro', 'type' => 'tab', 'label' => 'Introduction'],
             [
                 'key'          => 'field_promo_page_intro',
                 'name'         => 'promo_page_intro',
@@ -894,8 +908,10 @@ add_action('acf/init', function () {
                 'instructions' => 'Paragraphe d\'accroche en haut de la page.',
             ],
             ['key' => 'field_promo_surtitre', 'name' => 'promo_surtitre', 'label' => 'Surtitre (au-dessus du titre)', 'type' => 'text', 'default_value' => 'Offres de la semaine'],
+            ['key' => 'field_promo_tab_section', 'type' => 'tab', 'label' => 'Section promotions'],
             ['key' => 'field_promo_sect_titre', 'name' => 'promo_sect_titre', 'label' => 'Titre de la section promos', 'type' => 'text', 'default_value' => 'En promotion cette semaine'],
             ['key' => 'field_promo_sect_texte', 'name' => 'promo_sect_texte', 'label' => 'Sous-titre de la section promos', 'type' => 'text', 'default_value' => 'Des rabais qui changent au fil des arrivages'],
+            ['key' => 'field_promo_tab_vide', 'type' => 'tab', 'label' => 'État vide'],
             ['key' => 'field_promo_vide_titre', 'name' => 'promo_vide_titre', 'label' => 'Titre quand aucune promo', 'type' => 'text', 'default_value' => 'Aucune promotion en cours pour le moment'],
             ['key' => 'field_promo_vide_texte', 'name' => 'promo_vide_texte', 'label' => 'Texte quand aucune promo', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Nos prochaines offres arrivent bientôt. Revenez nous voir ou suivez-nous sur Facebook pour ne rien manquer !'],
         ],
@@ -912,10 +928,13 @@ add_action('acf/init', function () {
         'key'    => 'group_page_lofts',
         'title'  => 'Contenu — Page Lofts (présentation)',
         'fields' => [
+            ['key' => 'field_lofts_tab_hero', 'type' => 'tab', 'label' => 'Héros'],
             ['key' => 'field_lofts_surtitre', 'name' => 'lofts_surtitre', 'label' => 'Surtitre', 'type' => 'text'],
             ['key' => 'field_lofts_intro', 'name' => 'lofts_intro', 'label' => 'Introduction (ou utilisez l\'éditeur principal)', 'type' => 'textarea', 'rows' => 3],
+            ['key' => 'field_lofts_citq', 'name' => 'lofts_citq', 'label' => 'Numéro d\'enregistrement CITQ', 'type' => 'text', 'default_value' => '323422', 'instructions' => 'Affiché dans l\'en-tête et le pied de cette page.'],
 
             /* ---- SECTION « POURQUOI VOUS ALLEZ ADORER » ---- */
+            ['key' => 'field_lofts_tab_atouts', 'type' => 'tab', 'label' => 'Pourquoi vous allez adorer'],
             ['key' => 'field_lofts_msg_atouts', 'label' => '', 'type' => 'message', 'message' => '<strong>💚 Section « Pourquoi vous allez adorer »</strong>'],
             ['key' => 'field_lofts_atouts_titre', 'name' => 'lofts_atouts_titre', 'label' => 'Titre de la section', 'type' => 'text', 'default_value' => 'Pourquoi vous allez adorer'],
             [
@@ -929,6 +948,7 @@ add_action('acf/init', function () {
             ],
 
             /* ---- CTA FINALE (fait aussi office de pied de page sur cette page) ---- */
+            ['key' => 'field_lofts_tab_cta', 'type' => 'tab', 'label' => 'CTA finale'],
             ['key' => 'field_lofts_msg_cta', 'label' => '', 'type' => 'message', 'message' => '<strong>📣 Bande finale</strong> (cette bande remplace le pied de page habituel sur /lofts/)'],
             ['key' => 'field_lofts_cta_titre', 'name' => 'lofts_cta_titre', 'label' => 'Titre', 'type' => 'text', 'default_value' => 'Vos dates partent vite'],
             ['key' => 'field_lofts_cta_texte', 'name' => 'lofts_cta_texte', 'label' => 'Texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Deux lofts seulement, un calendrier qui se remplit. Réservez les vôtres pendant qu\'ils sont libres.'],
@@ -1005,6 +1025,7 @@ add_action('acf/init', function () {
         'key'    => 'group_page_africaine',
         'title'  => 'Contenu — Épicerie Africaine',
         'fields' => [
+            ['key' => 'field_afr_tab_hero', 'type' => 'tab', 'label' => '① Héros'],
             /* Héros (pas de surtitre : retiré, demande de Philippe) */
             [
                 'key'   => 'field_afr_intro',
@@ -1022,6 +1043,7 @@ add_action('acf/init', function () {
                 'preview_size'  => 'medium',
                 'instructions'  => 'Laissez vide pour garder le logo Okavi fourni par défaut.',
             ],
+            ['key' => 'field_afr_tab_atouts', 'type' => 'tab', 'label' => '② Atouts'],
             /* Trio d'atouts sous l'en-tête (même structure que les départements de l'Épicerie) */
             ['key' => 'field_afr_atout1_titre', 'name' => 'afr_atout1_titre', 'label' => '② Atout 1 — Titre', 'type' => 'text', 'default_value' => 'Produits authentiques'],
             ['key' => 'field_afr_atout1_texte', 'name' => 'afr_atout1_texte', 'label' => '② Atout 1 — Texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Épices, sauces et féculents choisis auprès de fournisseurs de confiance, fidèles aux saveurs du continent.'],
@@ -1029,6 +1051,7 @@ add_action('acf/init', function () {
             ['key' => 'field_afr_atout2_texte', 'name' => 'afr_atout2_texte', 'label' => '② Atout 2 — Texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Des produits secs et frais renouvelés au fil des arrivages, pour cuisiner sans compromis.'],
             ['key' => 'field_afr_atout3_titre', 'name' => 'afr_atout3_titre', 'label' => '② Atout 3 — Titre', 'type' => 'text', 'default_value' => 'Conseils & recettes'],
             ['key' => 'field_afr_atout3_texte', 'name' => 'afr_atout3_texte', 'label' => '② Atout 3 — Texte', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Une équipe qui connaît ses produits et partage volontiers idées et techniques de préparation.'],
+            ['key' => 'field_afr_tab_specialites', 'type' => 'tab', 'label' => '③-⑥ Spécialités'],
             /* Spécialité 1 */
             [
                 'key'   => 'field_afr_spec1_titre',
@@ -1119,6 +1142,7 @@ add_action('acf/init', function () {
                 'return_format' => 'array',
                 'preview_size'  => 'medium',
             ],
+            ['key' => 'field_afr_tab_portrait', 'type' => 'tab', 'label' => '⑦ Portrait'],
             /* Portrait (bande blanche en bas de page) */
             [
                 'key'           => 'field_afr_presentation_image',
@@ -1143,6 +1167,7 @@ add_action('acf/init', function () {
                 'type'         => 'url',
                 'instructions' => 'Affiche un lien "Suivre Okavi sur Facebook" sous le texte. Laissez vide tant que le bon lien n\'est pas confirmé avec Viviane.',
             ],
+            ['key' => 'field_afr_portrait_facebook_label', 'name' => 'afr_portrait_facebook_label', 'label' => '⑦ Portrait — Texte du lien Facebook', 'type' => 'text', 'default_value' => 'Suivre Okavi sur Facebook'],
         ],
         'location' => [[[
             'param'    => 'page_template',
@@ -1157,9 +1182,11 @@ add_action('acf/init', function () {
         'key'    => 'group_page_maison',
         'title'  => 'Contenu — Produits Maison',
         'fields' => [
+            ['key' => 'field_pm_eyebrow_defaut', 'name' => 'pm_eyebrow_defaut', 'label' => 'Étiquette par défaut (famille sans catégorie)', 'type' => 'text', 'default_value' => 'Produits maison'],
             /* Panneau CTA final de la page */
             ['key' => 'field_pm_cta_titre', 'name' => 'pm_cta_titre', 'label' => 'CTA final — Titre', 'type' => 'text', 'default_value' => 'Prêt à commander ?'],
             ['key' => 'field_pm_cta_texte', 'name' => 'pm_cta_texte', 'label' => 'CTA final — Texte (le téléphone des Réglages du site est ajouté automatiquement)', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Remplissez votre bon de commande en ligne, on prépare tout pour vous. Récupérez et payez en magasin.'],
+            ['key' => 'field_pm_cta_question_texte', 'name' => 'pm_cta_question_texte', 'label' => 'CTA final — Phrase avant le numéro de téléphone', 'type' => 'text', 'default_value' => 'Une question ? Appelez-nous au'],
             ['key' => 'field_pm_cta_btn', 'name' => 'pm_cta_btn', 'label' => 'CTA final — Texte du bouton', 'type' => 'text', 'default_value' => 'Voir tous les bons de commande'],
         ],
         'location' => [[[
@@ -1376,6 +1403,7 @@ add_action('acf/init', function () {
         'key'    => 'group_page_bon_pam',
         'title'  => 'Contenu — Bon de commande PAM',
         'fields' => [
+            ['key' => 'field_pam_tab_general', 'type' => 'tab', 'label' => 'Général'],
             [
                 'key'          => 'field_pam_surtitre',
                 'name'         => 'pam_surtitre',
@@ -1383,6 +1411,8 @@ add_action('acf/init', function () {
                 'type'         => 'text',
                 'instructions' => 'Petit texte au-dessus du titre, ex : Prêt à manger · Le Vivier',
             ],
+            ['key' => 'field_pam_vide_texte', 'name' => 'pam_vide_texte', 'label' => 'Texte quand aucun produit', 'type' => 'text', 'default_value' => 'Les produits Prêt à manger seront disponibles ici très bientôt.'],
+            ['key' => 'field_pam_tab_messages', 'type' => 'tab', 'label' => 'Messages spéciaux'],
             [
                 'key'          => 'field_pam_messages_jours',
                 'name'         => 'pam_messages_jours',
@@ -1640,6 +1670,7 @@ add_action('acf/init', function () {
                 'media_upload' => 0,
                 'instructions' => 'Bloc d\'information sur les escomptes vrac (ex: Opte pour le vrac écono & écolo).',
             ],
+            ['key' => 'field_vrac_vide_texte', 'name' => 'vrac_vide_texte', 'label' => 'Texte quand aucun produit', 'type' => 'text', 'default_value' => 'Les produits en vrac seront disponibles ici très bientôt.'],
         ],
         'location' => [[[
             'param'    => 'page_template',
@@ -1662,6 +1693,7 @@ add_action('acf/init', function () {
                 'default_value' => 'Produits Maison · Le Vivier',
                 'instructions'  => 'Petit texte au-dessus du titre, ex : Produits Maison · Le Vivier',
             ],
+            ['key' => 'field_pm_bon_vide_texte', 'name' => 'pm_bon_vide_texte', 'label' => 'Texte quand aucun produit', 'type' => 'text', 'default_value' => 'Les produits maison disponibles à la commande seront affichés ici.'],
         ],
         'location' => [[[
             'param'    => 'page_template',
@@ -1781,6 +1813,16 @@ add_action('acf/init', function () {
         'key'    => 'group_reglages_site',
         'title'  => 'Réglages du site',
         'fields' => [
+            ['key' => 'field_opt_tab_nav', 'type' => 'tab', 'label' => 'Navigation'],
+            [
+                'key'           => 'field_opt_nav_cta_texte',
+                'name'          => 'opt_nav_cta_texte',
+                'label'         => 'Texte du bouton "Commandez" (menu du haut)',
+                'type'          => 'text',
+                'default_value' => 'Commandez',
+                'instructions'  => 'Affiché dans le menu, sur toutes les pages.',
+            ],
+            ['key' => 'field_opt_tab_coord', 'type' => 'tab', 'label' => 'Coordonnées'],
             [
                 'key'           => 'field_opt_telephone',
                 'name'          => 'opt_telephone',
@@ -1806,6 +1848,7 @@ add_action('acf/init', function () {
                 'default_value' => "14 Avenue D'Amours\nMatane, QC G4W 2X4",
                 'instructions'  => 'Une ligne par ligne d\'adresse (pied de page + page Contactez-nous).',
             ],
+            ['key' => 'field_opt_tab_horaires', 'type' => 'tab', 'label' => 'Horaires'],
             [
                 'key'           => 'field_opt_horaire_semaine',
                 'name'          => 'opt_horaire_semaine',
@@ -1827,6 +1870,7 @@ add_action('acf/init', function () {
                 'type'          => 'text',
                 'default_value' => '10 h - 17 h',
             ],
+            ['key' => 'field_opt_tab_reseaux', 'type' => 'tab', 'label' => 'Réseaux sociaux & pied de page'],
             [
                 'key'           => 'field_opt_facebook',
                 'name'          => 'opt_facebook',
@@ -1863,8 +1907,10 @@ add_action('acf/init', function () {
         'key'    => 'group_page_contact',
         'title'  => 'Contenu de la page Contact',
         'fields' => [
+            ['key' => 'field_ct_tab_intro', 'type' => 'tab', 'label' => 'Introduction'],
             ['key' => 'field_ct_surtitre', 'name' => 'ct_surtitre', 'label' => 'Surtitre (au-dessus du titre)', 'type' => 'text', 'default_value' => 'On vous écoute · Le Vivier'],
             ['key' => 'field_ct_intro', 'name' => 'ct_intro', 'label' => 'Texte d\'introduction', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Une question, une commande spéciale ou l\'envie de nous dire bonjour ? On vous répond rapidement.', 'instructions' => 'Phrase courte sous le titre. Le contenu long de l\'éditeur principal n\'est pas affiché sur cette page.'],
+            ['key' => 'field_ct_tab_coord', 'type' => 'tab', 'label' => 'Coordonnées & Formulaire'],
             ['key' => 'field_ct_coord_titre', 'name' => 'ct_coord_titre', 'label' => 'Titre du bloc coordonnées', 'type' => 'text', 'default_value' => 'Venez nous voir'],
             ['key' => 'field_ct_form_titre', 'name' => 'ct_form_titre', 'label' => 'Titre du formulaire', 'type' => 'text', 'default_value' => 'Écrivez-nous'],
             ['key' => 'field_ct_form_texte', 'name' => 'ct_form_texte', 'label' => 'Texte sous le titre du formulaire', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Remplissez le formulaire et nous vous répondrons dans les plus brefs délais.'],
@@ -1921,6 +1967,7 @@ add_action('acf/init', function () {
             ['key' => 'field_ep_part_texte', 'name' => 'ep_part_texte', 'label' => 'Texte partenaires', 'type' => 'textarea', 'rows' => 3, 'default_value' => 'Chaque produit est choisi avec soin pour soutenir les producteurs d\'ici et encourager une consommation consciente et respectueuse de l\'environnement. Ensemble, soutenons les producteurs et transformateurs de la région !'],
             ['key' => 'field_ep_prod_btn', 'name' => 'ep_prod_btn', 'label' => 'Texte du bouton sous les produits', 'type' => 'text', 'default_value' => 'Voir tous nos produits'],
             ['key' => 'field_ep_part_btn', 'name' => 'ep_part_btn', 'label' => 'Texte du bouton sous les producteurs', 'type' => 'text', 'default_value' => 'Voir tous nos producteurs'],
+            ['key' => 'field_ep_prod_vide_texte', 'name' => 'ep_prod_vide_texte', 'label' => 'Texte quand aucun producteur', 'type' => 'text', 'default_value' => 'Les producteurs partenaires seront présentés ici bientôt.'],
             ['key' => 'field_ep_vide_texte', 'name' => 'ep_vide_texte', 'label' => 'Texte quand aucun produit', 'type' => 'text', 'default_value' => 'Les produits arrivent bientôt, revenez nous voir !'],
         ],
         'location' => [[['param' => 'page_template', 'operator' => '==', 'value' => 'templates/template-epicerie.php']]],
@@ -1932,7 +1979,9 @@ add_action('acf/init', function () {
         'key'    => 'group_page_apropos',
         'title'  => 'Contenu de la page (gabarit À propos)',
         'fields' => [
+            ['key' => 'field_apr_tab_intro', 'type' => 'tab', 'label' => 'Introduction'],
             ['key' => 'field_apr_surtitre', 'name' => 'apr_surtitre', 'label' => 'Surtitre (au-dessus du titre)', 'type' => 'text', 'default_value' => 'Notre histoire · Le Vivier'],
+            ['key' => 'field_apr_tab_coord', 'type' => 'tab', 'label' => 'Coordonnées & Formulaire'],
             ['key' => 'field_apr_visite_titre', 'name' => 'apr_visite_titre', 'label' => 'Titre du bloc coordonnées', 'type' => 'text', 'default_value' => 'Venez nous voir'],
             ['key' => 'field_apr_form_titre', 'name' => 'apr_form_titre', 'label' => 'Titre du formulaire', 'type' => 'text', 'default_value' => 'Écrivez-nous'],
             ['key' => 'field_apr_form_texte', 'name' => 'apr_form_texte', 'label' => 'Texte sous le titre du formulaire', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Une question, une commande spéciale ou l\'envie de nous dire bonjour ? On vous répond rapidement.'],
