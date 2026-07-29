@@ -251,7 +251,6 @@ document.addEventListener("DOMContentLoaded", function () {
   initFiltreGrille("grille-produits");
   initFiltreGrille("grille-boutique");
   initFiltreGrille("grille-producteurs");
-  initFiltreGrille("grille-maison");
 
   /* ----- Bandeau cookies ----- */
   var cookieBandeau = document.getElementById("cookie-bandeau");

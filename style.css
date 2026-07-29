@@ -22,7 +22,6 @@ Description: Theme personnalise pour l'epicerie fine locale Le Vivier, Matane, Q
   /* Blanc chic / neutres — un seul blanc cassé, chaud mais discret,
      pour que les sections s'enchaînent sans coupure crème/blanc visible */
   --creme:        #f8f6f2;
-  --creme-2:      #f2ede5;
   --sable:        #f0eadf;
   --blanc:        #ffffff;
 
@@ -140,8 +139,6 @@ h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 
 .btn-primaire:hover { background: var(--sauge-fonce); box-shadow: var(--ombre); }
 .btn-ligne { background: transparent; color: var(--terra-fonce); border: 1.5px solid #d8a99f; }
 .btn-ligne:hover { background: var(--terra); color: var(--blanc); border-color: var(--terra); }
-.btn-accent { background: var(--terra); color: var(--blanc); }
-.btn-accent:hover { background: var(--terra-fonce); }
 .btn-fantome { color: var(--sauge); border: 1.5px solid var(--bordure); }
 .btn-fantome:hover { border-color: var(--sauge); background: var(--sauge-pale); }
 
@@ -566,15 +563,11 @@ body.interne .entete { background: rgba(249, 245, 240, .95); backdrop-filter: bl
   .apropos-split--histoire .apropos-media { min-height: 0; }
   .apropos-split--histoire .apropos-media .cadre { position: static; aspect-ratio: 4 / 3; }
 }
-.valeurs-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 2rem); }
 .valeur { background: var(--blanc); border-radius: var(--rayon); padding: 1.8rem; box-shadow: var(--ombre-douce); }
 .valeur .ico { width: 52px; height: 52px; border-radius: 50%; background: var(--sauge-pale); display: grid; place-items: center; margin-bottom: 1rem; }
 .valeur .ico svg { width: 26px; height: 26px; fill: none; stroke: var(--sauge); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .valeur h3 { color: var(--sauge); margin-bottom: .4rem; font-size: 1.15rem; }
 .valeur p { font-size: .92rem; }
-.citation { text-align: center; max-width: 780px; margin: 0 auto; }
-.citation p { font-family: var(--f-script); font-size: clamp(1.7rem, 1.2rem + 2.4vw, 2.8rem); color: var(--terra); line-height: 1.3; }
-.citation .auteur { font-family: var(--f-titre); font-size: .9rem; color: var(--texte-doux); letter-spacing: .05em; margin-top: 1.2rem; }
 
 /* Contact */
 .contact-grille { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 1rem + 3vw, 4rem); }
@@ -609,8 +602,6 @@ body.interne .entete { background: rgba(249, 245, 240, .95); backdrop-filter: bl
 .produit-resa { margin-top: 1.6rem; padding: 1.1rem 1.3rem; background: var(--sauge-pale); border-radius: var(--rayon); }
 .produit-resa .btn { margin-bottom: .55rem; }
 .produit-resa-note { margin: 0; font-size: .82rem; color: var(--sauge-fonce); }
-.single-meta { border-top: 1px solid var(--bordure); margin-top: 1.6rem; padding-top: 1.2rem; display: grid; gap: .5rem; font-size: .9rem; }
-.single-meta div span { color: var(--texte-doux); display: inline-block; min-width: 130px; }
 
 /* Fiche producteur */
 /* === Fiche producteur : hero unifie (une carte sobre et pro) === */
@@ -704,7 +695,6 @@ body.univers-lofts .page-entete h1 { color: #fff; }
 body.univers-lofts .page-entete h1 .script { color: #e7c9a0; }
 body.univers-lofts .page-entete > .conteneur > p { color: #cdddd9; }
 body.univers-lofts .page-entete .eyebrow { color: #e7c9a0; }
-.loft-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 1.8rem); }
 .loft-carte { background: var(--blanc); border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre-douce); transition: transform var(--transi), box-shadow var(--transi); }
 .loft-carte:hover { transform: translateY(-6px); box-shadow: var(--ombre); }
 .loft-carte .photo { aspect-ratio: 4/3; overflow: hidden; background: #cfe0dc; }
@@ -715,20 +705,6 @@ body.univers-lofts .page-entete .eyebrow { color: #e7c9a0; }
 .loft-carte .meta { font-size: .85rem; color: var(--texte-doux); margin-bottom: .7rem; }
 .loft-carte .prix { font-weight: 700; color: #1d5055; }
 .loft-carte .prix span { font-weight: 400; color: var(--texte-doux); font-size: .85rem; }
-.btn-sarcelle { background: #1d5055; color: #fff; }
-.btn-sarcelle:hover { background: #16403f; }
-
-/* Loft : fiche (galerie + résa) */
-.loft-galerie { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; border-radius: var(--rayon-l); overflow: hidden; aspect-ratio: 2.4/1; }
-.loft-galerie img { width: 100%; height: 100%; object-fit: cover; }
-.loft-galerie img:first-child { grid-row: 1 / 3; }
-.loft-single { display: grid; grid-template-columns: 1.5fr 1fr; gap: clamp(2rem, 1rem + 3vw, 3.5rem); align-items: start; margin-top: clamp(2rem,1rem+3vw,3rem); }
-.loft-resa { background: var(--blanc); border: 1px solid var(--bordure); border-radius: var(--rayon-l); padding: 1.6rem; box-shadow: var(--ombre); position: sticky; top: 100px; }
-.loft-resa .prix { font-size: 1.5rem; font-weight: 700; color: #1d5055; margin-bottom: 1rem; }
-.loft-resa .prix span { font-size: .9rem; font-weight: 400; color: var(--texte-doux); }
-.loft-equip { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem 1.4rem; margin-top: 1rem; }
-.loft-equip li { display: flex; gap: .6rem; align-items: center; font-size: .92rem; }
-.loft-equip svg { width: 20px; height: 20px; fill: none; stroke: #1d5055; stroke-width: 1.6; flex: none; }
 
 /* ======================================================
    PAGE LOFTS (listing /lofts/) — charte sarcelle, premium
@@ -785,7 +761,6 @@ body.univers-lofts .page-entete .eyebrow { color: #e7c9a0; }
    la CTA + du pied, au lieu de l'alourdir encore. */
 .lofts-reassurance { background: var(--lofts-perle); color: var(--texte-corps); padding-block: clamp(2.25rem, 1.5rem + 2vw, 3.5rem); }
 .lofts-section-titre { text-align: center; font-family: var(--f-script); font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem); margin-bottom: clamp(1.5rem, 1rem + 1.5vw, 2.25rem); color: #1d5055; }
-.lofts-section-titre-clair { color: #fff; }
 .lofts-reassurance-grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(1.5rem, 1rem + 2vw, 2.5rem); }
 .lofts-atout { text-align: center; }
 .lofts-atout-icone { display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; margin-bottom: 1rem; border-radius: 50%; background: rgba(29, 80, 85, .08); }
@@ -832,18 +807,15 @@ body.univers-lofts .page-entete .eyebrow { color: #e7c9a0; }
 
 /* Responsive pages internes */
 @media (max-width: 860px) {
-  .apropos-split, .contact-grille, .single-grille, .prod-hero, .loft-single { grid-template-columns: 1fr; }
+  .apropos-split, .contact-grille, .single-grille, .prod-hero { grid-template-columns: 1fr; }
   .apropos-media, .single-media { max-width: 460px; margin-inline: auto; }
-  .valeurs-grille, .promo-grille, .loft-grille { grid-template-columns: 1fr 1fr; }
+  .promo-grille { grid-template-columns: 1fr 1fr; }
   .prod-hero { text-align: center; }
   .prod-hero .prod-logo, .prod-hero .prod-photo { margin-inline: auto; }
   .prod-hero .lieu { letter-spacing: .07em; }
-  .loft-resa { position: static; }
-  .loft-galerie { grid-template-columns: 1fr 1fr; aspect-ratio: 3/2; }
-  .loft-galerie img:first-child { grid-column: 1 / 3; grid-row: auto; aspect-ratio: 2/1; }
 }
 @media (max-width: 560px) {
-  .valeurs-grille, .promo-grille, .loft-grille { grid-template-columns: 1fr; }
+  .promo-grille { grid-template-columns: 1fr; }
 }
 
 /* ======================================================
@@ -973,9 +945,6 @@ body.univers-africaine .btn-fantome:hover { background: #f3ddd2; border-color: v
    plutôt qu'un brun choisi indépendamment du reste de la charte. */
 body.univers-africaine .pied { background: var(--afr-nuit); }
 body.univers-africaine .pied a:hover { color: var(--afr-or-pale); }
-
-/* Accents internes : panneau CTA aux tons épices */
-body.univers-africaine .cta-panel--terra { background: linear-gradient(160deg, var(--afr-rouille), var(--afr-rouille-f)); }
 
 /* Corps de page : plus aucun vert — titres et prose en cacao/rouille */
 body.univers-africaine .section-titre h2 { color: var(--afr-nuit); }
@@ -1146,8 +1115,6 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
 .cta-panel-actions { display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap; }
 .cta-panel .btn-clair { background: #fff; color: var(--sauge); }
 .cta-panel .btn-clair:hover { background: var(--ocre-pale); }
-.cta-panel .btn-contour { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.5); }
-.cta-panel .btn-contour:hover { background: rgba(255,255,255,.12); border-color: #fff; }
 
 @media (max-width: 1080px) { .cmd-grille { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 860px) { .etapes { grid-template-columns: repeat(2, 1fr); } .cmd-grille { grid-template-columns: 1fr; max-width: 460px; } }
@@ -1161,45 +1128,6 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
 .prod-region-ligne { display: inline-flex; align-items: center; gap: .45rem; color: var(--terra-fonce); font-weight: 600; font-size: .9rem; margin-top: .6rem; }
 .prod-region-ligne svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .prod-reseaux { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: 1.4rem; }
-
-/* CTA panneau — variante terracotta (épicerie africaine) */
-.cta-panel--terra { background: linear-gradient(160deg, var(--terra), var(--terra-fonce)); color: #fbe6df; }
-.cta-panel--terra p { color: #f3d3c9; max-width: 58ch; }
-.cta-panel--terra .btn-clair { color: var(--terra-fonce); }
-.cta-panel--terra .btn-clair:hover { background: #fff; }
-
-/* ======================================================
-   BANDE CTA FINALE — pleine largeur, asymétrique
-   (Produits Maison + Épicerie Africaine ; remplace le
-   panneau flottant générique isolé dans le vide)
-====================================================== */
-.cta-finale { position: relative; overflow: hidden; background: linear-gradient(155deg, var(--terra), var(--terra-fonce)); color: #fbe6df; padding-block: clamp(3.2rem, 2.2rem + 4vw, 5.5rem); }
-.cta-finale-inner { position: relative; z-index: 1; max-width: 620px; margin-inline: 0; }
-.cta-finale h2 { color: #fff; font-size: var(--t-h2); margin-bottom: .8rem; text-wrap: balance; }
-.cta-finale p { color: #f3d3c9; max-width: 46ch; line-height: 1.7; margin-bottom: 1.7rem; text-wrap: balance; }
-.cta-finale-actions { display: flex; gap: .9rem; flex-wrap: wrap; }
-.cta-finale .btn-clair { background: #fff; color: var(--terra-fonce); }
-.cta-finale .btn-clair:hover { background: var(--ocre-pale); }
-.cta-finale-deco {
-  position: absolute; z-index: 0; pointer-events: none;
-  right: -4%; top: 50%; transform: translateY(-50%);
-  width: clamp(280px, 30vw, 460px); aspect-ratio: 1;
-  background: url("assets/images/illustrations/branche 02.svg") no-repeat center / contain;
-  filter: brightness(0) invert(1); opacity: .16;
-}
-@media (max-width: 720px) { .cta-finale-deco { width: clamp(200px, 60vw, 320px); right: -10%; opacity: .12; } }
-
-/* Variante Épicerie Africaine : même grammaire décorative que le reste du
-   site (tache douce), recolorée en or épices plutôt qu'un motif de rayures
-   qui ne parlait à aucune autre page */
-body.univers-africaine .cta-finale { background: linear-gradient(155deg, var(--afr-rouille), var(--afr-rouille-f)); }
-body.univers-africaine .cta-finale-deco {
-  background: radial-gradient(circle at 40% 40%, rgba(241,221,176,.35), transparent 70%);
-  filter: none; border-radius: 50%;
-  right: -8%; top: -22%; bottom: auto; transform: none;
-  width: clamp(260px, 32vw, 420px);
-}
-body.univers-africaine .cta-finale .btn-clair { color: var(--afr-rouille-f); }
 
 /* Page 404 */
 .erreur-404-code { font-family: var(--f-script); font-size: clamp(4rem, 3rem + 6vw, 8rem); color: var(--terra); line-height: 1; margin-bottom: .3rem; }
