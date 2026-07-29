@@ -81,7 +81,12 @@ function lv_pm_soumettre()
         'Reply-To: ' . $email,
     ];
 
-    $envoye = wp_mail(get_option('admin_email'), $sujet, $message, $headers);
+    $destinataire = function_exists('lv_opt') ? lv_opt('opt_courriel', 'epicerie@levivier.net') : 'epicerie@levivier.net';
+    if (!$destinataire || !is_email($destinataire)) {
+        $destinataire = get_option('admin_email');
+    }
+
+    $envoye = wp_mail($destinataire, $sujet, $message, $headers);
 
     if ($envoye) {
         wp_send_json_success(['message' => 'Votre commande a bien été envoyée ! Nous vous contacterons pour confirmer la date de récupération.']);

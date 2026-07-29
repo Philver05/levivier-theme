@@ -141,7 +141,7 @@ function lv_pam_soumettre()
 
     $sujet = 'Nouvelle commande Prêt à manger - ' . $prenom . ' ' . $nom;
 
-    $destinataire_principal = function_exists('lv_opt') ? lv_opt('opt_courriel', '') : '';
+    $destinataire_principal = function_exists('lv_opt') ? lv_opt('opt_courriel', 'epicerie@levivier.net') : 'epicerie@levivier.net';
     if (!$destinataire_principal || !is_email($destinataire_principal)) {
         $destinataire_principal = get_option('admin_email');
     }

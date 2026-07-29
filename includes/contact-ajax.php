@@ -29,7 +29,7 @@ function lv_contact_soumettre()
         wp_send_json_error(['message' => 'Veuillez remplir les champs obligatoires (prénom, nom, courriel valide et message).']);
     }
 
-    $destinataire = function_exists('lv_opt') ? lv_opt('opt_courriel', '') : '';
+    $destinataire = function_exists('lv_opt') ? lv_opt('opt_courriel', 'epicerie@levivier.net') : 'epicerie@levivier.net';
     if (!$destinataire || !is_email($destinataire)) {
         $destinataire = get_option('admin_email');
     }
