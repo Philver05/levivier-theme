@@ -34,8 +34,10 @@ $pres_defaut = "Derrière l'épicerie africaine du Vivier se trouve Viviane Ouek
 $portrait_fb = get_field('afr_portrait_facebook');
 $portrait_fb_label = get_field('afr_portrait_facebook_label') ?: 'Suivre Okavi sur Facebook';
 
-/* Spécialités (4 cartes, classées par catégorie de produits) */
-$specialites = [
+/* Spécialités (4 cartes, classées par catégorie de produits). Une
+   spécialité sans photo n'est pas affichée (demande de Philippe,
+   29 juillet : éviter une carte avec un placeholder vide). */
+$specialites = array_values(array_filter([
     [
         'titre' => get_field('afr_spec1_titre') ?: 'Épices & condiments',
         'texte' => get_field('afr_spec1_texte') ?: 'Mélanges parfumés, piments, gingembre, curcuma et condiments pour relever tous vos plats.',
@@ -56,7 +58,7 @@ $specialites = [
         'texte' => get_field('afr_spec4_texte') ?: 'Produits capillaires, cosmétiques et soins traditionnels inspirés du continent.',
         'image' => get_field('afr_spec4_image'),
     ],
-];
+], function ($spec) { return !empty($spec['image']); }));
 
 ?>
 
@@ -162,12 +164,8 @@ if ($afr_parent && !is_wp_error($afr_parent)) {
             <?php $i = 0; foreach ($specialites as $spec): $delai = $i ? ' reveal-delai-' . $i : ''; $i++; ?>
             <article class="carte-prod reveal<?php echo $delai; ?>">
                 <div class="photo">
-                    <?php if ($spec['image']): ?>
-                        <img src="<?php echo esc_url($spec['image']['sizes']['medium_large'] ?? $spec['image']['url']); ?>"
-                             alt="<?php echo esc_attr($spec['image']['alt'] ?: $spec['titre']); ?>">
-                    <?php else: ?>
-                        <div class="carte-vide" aria-hidden="true"></div>
-                    <?php endif; ?>
+                    <img src="<?php echo esc_url($spec['image']['sizes']['medium_large'] ?? $spec['image']['url']); ?>"
+                         alt="<?php echo esc_attr($spec['image']['alt'] ?: $spec['titre']); ?>">
                 </div>
                 <div class="corps">
                     <h3><?php echo esc_html($spec['titre']); ?></h3>

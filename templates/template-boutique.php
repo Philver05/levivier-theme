@@ -41,11 +41,15 @@ $rayons_query = new WP_Query([
     'orderby'        => 'menu_order title',
     'order'          => 'ASC',
 ]);
+/* Un rayon sans image n'est pas affiché (demande de Philippe, 29 juillet :
+   éviter un bloc avec un placeholder vide tant que Marie n'a pas ajouté
+   de photo). */
 $rayons = [];
 if ($rayons_query->have_posts()) {
     while ($rayons_query->have_posts()): $rayons_query->the_post();
-        $thumb_id  = get_post_thumbnail_id();
-        $thumb     = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'large') : null;
+        $thumb_id = get_post_thumbnail_id();
+        $thumb    = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'large') : null;
+        if (!$thumb) continue;
         $rayons[] = [
             'slug'    => get_post_field('post_name'),
             'titre'   => get_the_title(),
@@ -82,13 +86,9 @@ if ($rayons_query->have_posts()) {
         <div class="pm-article <?php echo esc_attr($inverse); ?> reveal">
 
             <div class="pm-article-visuel">
-                <?php if ($r['thumb']): ?>
-                    <img src="<?php echo esc_url($r['thumb'][0]); ?>"
-                         alt="<?php echo esc_attr($r['titre']); ?>"
-                         loading="lazy">
-                <?php else: ?>
-                    <div class="pm-article-placeholder" aria-hidden="true"></div>
-                <?php endif; ?>
+                <img src="<?php echo esc_url($r['thumb'][0]); ?>"
+                     alt="<?php echo esc_attr($r['titre']); ?>"
+                     loading="lazy">
             </div>
 
             <div class="pm-article-corps">

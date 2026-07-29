@@ -16,24 +16,34 @@ $pages_commander = get_pages([
 $url_commander = !empty($pages_commander) ? get_permalink($pages_commander[0]->ID) : '#';
 $pm_eyebrow_defaut = get_field('pm_eyebrow_defaut') ?: 'Produits maison';
 
-/* Familles de produits maison */
-$familles = new WP_Query([
+/* Familles de produits maison. Une famille sans image mise en avant
+   n'est pas affichée (demande de Philippe, 29 juillet : éviter un
+   placeholder vide tant que Marie n'a pas ajouté de photo). */
+$familles_query = new WP_Query([
     'post_type'      => 'famille_maison',
     'post_status'    => 'publish',
     'posts_per_page' => -1,
     'orderby'        => 'menu_order title',
     'order'          => 'ASC',
 ]);
+$familles = [];
+if ($familles_query->have_posts()) {
+    foreach ($familles_query->posts as $famille) {
+        $thumb_id = get_post_thumbnail_id($famille->ID);
+        $thumb    = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'large') : null;
+        if (!$thumb) continue;
+        $familles[] = ['post' => $famille, 'thumb' => $thumb];
+    }
+}
 
-/* Catégories utilisées (pour les boutons de filtre) */
+/* Catégories utilisées (pour les boutons de filtre), calculées seulement
+   sur les familles visibles ci-dessus. */
 $cats_utilisees = [];
-if ($familles->have_posts()) {
-    foreach ($familles->posts as $famille) {
-        $terms = get_the_terms($famille->ID, 'categorie_famille');
-        if ($terms && !is_wp_error($terms)) {
-            foreach ($terms as $t) {
-                $cats_utilisees[$t->term_id] = $t;
-            }
+foreach ($familles as $f) {
+    $terms = get_the_terms($f['post']->ID, 'categorie_famille');
+    if ($terms && !is_wp_error($terms)) {
+        foreach ($terms as $t) {
+            $cats_utilisees[$t->term_id] = $t;
         }
     }
 }
@@ -73,9 +83,13 @@ if ($familles->have_posts()) {
 <!-- ======================================================
      ARTICLES PAR FAMILLE
 ====================================================== -->
-<?php if ($familles->have_posts()):
+<?php if (!empty($familles)):
     $i = 0;
-    while ($familles->have_posts()): $familles->the_post();
+    foreach ($familles as $f):
+        global $post;
+        $post  = $f['post'];
+        $thumb = $f['thumb'];
+        setup_postdata($post);
         $cta_label = (function_exists('get_field') ? get_field('famille_cta_label') : '') ?: 'Commander';
 
         /* Cible du bouton, par ordre de priorité :
@@ -105,8 +119,6 @@ if ($familles->have_posts()) {
                 }
             }
         }
-        $thumb_id  = get_post_thumbnail_id();
-        $thumb     = $thumb_id ? wp_get_attachment_image_src($thumb_id, 'large') : null;
         $inverse   = ($i % 2 === 1) ? 'pm-article-inverse' : '';
         $fond      = ($i % 2 === 1) ? 'pm-section-pair' : '';
 
@@ -125,13 +137,9 @@ if ($familles->have_posts()) {
         <div class="pm-article <?php echo esc_attr($inverse); ?> reveal">
 
             <div class="pm-article-visuel">
-                <?php if ($thumb): ?>
-                    <img src="<?php echo esc_url($thumb[0]); ?>"
-                         alt="<?php echo esc_attr(get_the_title()); ?>"
-                         loading="lazy">
-                <?php else: ?>
-                    <div class="pm-article-placeholder" aria-hidden="true"></div>
-                <?php endif; ?>
+                <img src="<?php echo esc_url($thumb[0]); ?>"
+                     alt="<?php echo esc_attr(get_the_title()); ?>"
+                     loading="lazy">
             </div>
 
             <div class="pm-article-corps">
@@ -157,7 +165,7 @@ if ($familles->have_posts()) {
         </div>
     </div>
 </section>
-<?php endwhile;
+<?php endforeach;
     wp_reset_postdata();
 
 else:

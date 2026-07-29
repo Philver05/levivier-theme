@@ -3115,7 +3115,6 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 /* Diapo cliquable (accueil : chaque photo mène à sa section) + légende
    en bas à gauche, façon étiquette discrète plutôt qu'un bandeau plein. */
 .carrousel-slide a { display: block; width: 100%; height: 100%; }
-.carrousel-vide { width: 100%; height: 100%; background: var(--sauge-pale); }
 .carrousel-legende {
   position: absolute; left: 1.1rem; bottom: 1.1rem; z-index: 2;
   background: rgba(31, 41, 34, .55);
@@ -3130,7 +3129,6 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 }
 /* Moins arrondi que le carrousel de la Boutique (demande de Philippe) */
 .carrousel--sobre { border-radius: 10px; }
-.carrousel--sobre .carrousel-vide,
 .carrousel--sobre .carrousel-slide img { border-radius: 0; }
 
 @media (max-width: 700px) {

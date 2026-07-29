@@ -25,16 +25,17 @@ $acc = function ($cle, $defaut) {
 };
 
 /* Carrousel "Découvrir Le Vivier" : une diapo par section du site.
-   Chaque diapo est un [titre ACF, url, image ACF] — l'image est
-   optionnelle (bloc de remplacement tant qu'elle n'est pas fournie). */
-$carrousel_slides = [
+   Chaque diapo est un [titre ACF, url, image ACF]. Une diapo sans image
+   n'est pas affichée (demande de Philippe, 29 juillet : éviter un
+   rectangle vide à la place d'une vraie photo). */
+$carrousel_slides = array_values(array_filter([
     ['titre' => $acc('acc_carr1_titre', 'Épicerie'),                'url' => $url_ep,       'image' => function_exists('get_field') ? get_field('acc_carr1_image') : null],
     ['titre' => $acc('acc_carr2_titre', 'Boutique'),                'url' => $url_boutique, 'image' => function_exists('get_field') ? get_field('acc_carr2_image') : null],
     ['titre' => $acc('acc_carr3_titre', 'Produits Maison'),         'url' => $url_pm,       'image' => function_exists('get_field') ? get_field('acc_carr3_image') : null],
     ['titre' => $acc('acc_carr4_titre', 'Épicerie Africaine'),      'url' => $url_afr,      'image' => function_exists('get_field') ? get_field('acc_carr4_image') : null],
     ['titre' => $acc('acc_carr5_titre', 'Prêt à manger'),           'url' => $url_pam,      'image' => function_exists('get_field') ? get_field('acc_carr5_image') : null],
     ['titre' => $acc('acc_carr6_titre', 'Les lofts de la rivière'), 'url' => $url_lofts,    'image' => function_exists('get_field') ? get_field('acc_carr6_image') : null],
-];
+], function ($slide) { return !empty($slide['image']); }));
 
 /* Logo complet du hero (roseau + « Le Vivier » + « Épicerie · Boutique »),
    distinct du logo compact du header (Réglages > Identité du site) : celui-ci
@@ -81,24 +82,22 @@ if ($logo_hero_champ && !empty($logo_hero_champ['url'])) {
 
 <!-- ===================== DÉCOUVRIR LE VIVIER ===================== -->
 <section class="section intro" id="epicerie">
+    <?php if (!empty($carrousel_slides)): ?>
     <div class="conteneur">
         <div class="carrousel carrousel--sobre reveal" data-autoplay="5000">
             <div class="carrousel-piste">
                 <?php foreach ($carrousel_slides as $i => $slide): ?>
                     <figure class="carrousel-slide<?php echo $i === 0 ? ' actif' : ''; ?>">
                         <a href="<?php echo esc_url($slide['url']); ?>">
-                            <?php if ($slide['image']): ?>
-                                <img src="<?php echo esc_url($slide['image']['sizes']['large'] ?? $slide['image']['url']); ?>"
-                                     alt="<?php echo esc_attr($slide['image']['alt'] ?: $slide['titre']); ?>"
-                                     loading="<?php echo $i === 0 ? 'eager' : 'lazy'; ?>">
-                            <?php else: ?>
-                                <div class="carrousel-vide" aria-hidden="true"></div>
-                            <?php endif; ?>
+                            <img src="<?php echo esc_url($slide['image']['sizes']['large'] ?? $slide['image']['url']); ?>"
+                                 alt="<?php echo esc_attr($slide['image']['alt'] ?: $slide['titre']); ?>"
+                                 loading="<?php echo $i === 0 ? 'eager' : 'lazy'; ?>">
                             <span class="carrousel-legende"><?php echo esc_html($slide['titre']); ?></span>
                         </a>
                     </figure>
                 <?php endforeach; ?>
             </div>
+            <?php if (count($carrousel_slides) > 1): ?>
             <button type="button" class="carrousel-fleche carrousel-precedent" aria-label="Section précédente">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
             </button>
@@ -112,8 +111,10 @@ if ($logo_hero_champ && !empty($logo_hero_champ['url'])) {
                             aria-selected="<?php echo $i === 0 ? 'true' : 'false'; ?>"></button>
                 <?php endforeach; ?>
             </div>
+            <?php endif; ?>
         </div>
     </div>
+    <?php endif; ?>
     <!-- Boutons Découvrir : déplacés du hero, juste après le carrousel -->
     <div class="conteneur">
         <div class="intro-actions reveal reveal-delai-2">
