@@ -1837,7 +1837,14 @@ add_action('acf/init', function () {
                 'label'         => 'Courriel',
                 'type'          => 'email',
                 'default_value' => 'epicerie@levivier.net',
-                'instructions'  => 'Adresse affichée sur le site ET destinataire du formulaire Contactez-nous.',
+                'instructions'  => 'Adresse affichée sur le site ET destinataire des formulaires (Contactez-nous, bon Prêt à manger).',
+            ],
+            [
+                'key'           => 'field_opt_courriel_secondaire',
+                'name'          => 'opt_courriel_secondaire',
+                'label'         => 'Deuxième destinataire (optionnel)',
+                'type'          => 'email',
+                'instructions'  => 'Si rempli, reçoit une copie des mêmes courriels que l\'adresse principale (ex: le bon Prêt à manger). Laissez vide pour l\'instant.',
             ],
             [
                 'key'           => 'field_opt_adresse',

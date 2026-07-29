@@ -63,50 +63,100 @@ function lv_pam_soumettre()
         $total     += $sous_total;
 
         $lignes_html .= '<tr>'
-            . '<td style="padding:6px 12px;border:1px solid #e4ddd0;">' . esc_html($titre) . '</td>'
-            . '<td style="padding:6px 12px;border:1px solid #e4ddd0;text-align:center;">' . esc_html($qty) . '</td>'
-            . '<td style="padding:6px 12px;border:1px solid #e4ddd0;text-align:right;">' . esc_html(number_format($prix, 2, ',', ' ')) . '&nbsp;$</td>'
-            . '<td style="padding:6px 12px;border:1px solid #e4ddd0;text-align:right;">' . esc_html(number_format($sous_total, 2, ',', ' ')) . '&nbsp;$</td>'
+            . '<td style="padding:10px 14px;border-bottom:1px solid #e4ddd0;color:#1f2937;">' . esc_html($titre) . '</td>'
+            . '<td style="padding:10px 14px;border-bottom:1px solid #e4ddd0;text-align:center;color:#1f2937;">' . esc_html($qty) . '</td>'
+            . '<td style="padding:10px 14px;border-bottom:1px solid #e4ddd0;text-align:right;color:#1f2937;">' . esc_html(number_format($prix, 2, ',', ' ')) . '&nbsp;$</td>'
+            . '<td style="padding:10px 14px;border-bottom:1px solid #e4ddd0;text-align:right;color:#1f2937;font-weight:600;">' . esc_html(number_format($sous_total, 2, ',', ' ')) . '&nbsp;$</td>'
             . '</tr>';
     }
 
-    $message = '<!DOCTYPE html><html lang="fr"><body style="font-family:Arial,sans-serif;color:#2a2622;line-height:1.6;">'
-        . '<h2 style="color:#4d6040;margin-bottom:1rem;">Nouvelle commande Prêt à manger</h2>'
-        . '<table style="border-collapse:collapse;margin-bottom:2rem;">'
-        . '<tr><th style="text-align:left;padding:4px 16px 4px 0;font-weight:600;">Nom</th><td>' . esc_html($prenom . ' ' . $nom) . '</td></tr>'
-        . '<tr><th style="text-align:left;padding:4px 16px 4px 0;font-weight:600;">Téléphone</th><td>' . esc_html($telephone) . '</td></tr>'
-        . '<tr><th style="text-align:left;padding:4px 16px 4px 0;font-weight:600;">Courriel</th><td>' . esc_html($email) . '</td></tr>'
-        . '<tr><th style="text-align:left;padding:4px 16px 4px 0;font-weight:600;">Jour choisi dans le bon</th><td>' . esc_html($jour_label) . '</td></tr>'
-        . '<tr><th style="text-align:left;padding:4px 16px 4px 0;font-weight:600;">Date de récupération</th><td>' . esc_html($date_recup_label) . '</td></tr>'
-        . '<tr><th style="text-align:left;padding:4px 16px 4px 0;font-weight:600;">Heure de récupération</th><td>' . esc_html($heure_recup) . '</td></tr>'
-        . '</table>'
-        . '<table style="border-collapse:collapse;width:100%;max-width:560px;">'
-        . '<thead><tr style="background:#4d6040;color:#fff;">'
-        . '<th style="padding:8px 12px;text-align:left;">Produit</th>'
-        . '<th style="padding:8px 12px;text-align:center;">Qté</th>'
-        . '<th style="padding:8px 12px;text-align:right;">Prix&nbsp;unit.</th>'
-        . '<th style="padding:8px 12px;text-align:right;">Sous-total</th>'
-        . '</tr></thead>'
-        . '<tbody>' . $lignes_html . '</tbody>'
-        . '<tfoot><tr style="background:#f9f5f0;font-weight:700;">'
-        . '<td colspan="3" style="padding:10px 12px;border:1px solid #e4ddd0;text-align:right;">Total</td>'
-        . '<td style="padding:10px 12px;border:1px solid #e4ddd0;text-align:right;">' . esc_html(number_format($total, 2, ',', ' ')) . '&nbsp;$</td>'
-        . '</tr></tfoot>'
-        . '</table>';
-
-    if ($commentaire) {
-        $message .= '<p style="margin-top:1.5rem;"><strong>Commentaire&nbsp;:</strong> ' . esc_html($commentaire) . '</p>';
+    $lignes_client = [
+        'Nom'                       => $prenom . ' ' . $nom,
+        'Téléphone'                 => $telephone ?: '—',
+        'Courriel'                  => $email,
+        'Jour choisi dans le bon'   => $jour_label,
+        'Date de récupération'     => $date_recup_label,
+        'Heure de récupération'    => $heure_recup,
+    ];
+    $client_html = '';
+    foreach ($lignes_client as $label => $valeur) {
+        $client_html .= '<tr>'
+            . '<td style="padding:5px 0;color:#4b5563;font-size:13px;width:180px;">' . esc_html($label) . '</td>'
+            . '<td style="padding:5px 0;color:#1f2937;font-weight:600;">' . esc_html($valeur) . '</td>'
+            . '</tr>';
     }
 
-    $message .= '</body></html>';
+    $tel_site = function_exists('lv_opt') ? lv_opt('opt_telephone', '(418) 562-5230') : '(418) 562-5230';
 
-    $sujet   = 'Nouvelle commande Prêt à manger - ' . $prenom . ' ' . $nom;
+    $message = '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"></head>'
+        . '<body style="margin:0;padding:0;background:#f9f5f0;font-family:Arial,Helvetica,sans-serif;color:#1f2937;">'
+        . '<table role="presentation" width="100%" style="background:#f9f5f0;padding:24px 0;">'
+        . '<tr><td align="center">'
+        . '<table role="presentation" width="600" style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #d1d5db;">'
+
+        // Bandeau
+        . '<tr><td style="background:#4d6040;padding:24px 32px;">'
+        . '<span style="color:#ffffff;font-size:20px;font-weight:700;letter-spacing:.02em;">Le Vivier</span><br>'
+        . '<span style="color:#dde8d9;font-size:14px;">Nouvelle commande — Prêt à manger</span>'
+        . '</td></tr>'
+
+        // Coordonnées client
+        . '<tr><td style="padding:28px 32px 8px;">'
+        . '<h2 style="margin:0 0 16px;color:#4d6040;font-size:16px;text-transform:uppercase;letter-spacing:.04em;">Coordonnées du client</h2>'
+        . '<table role="presentation" width="100%" style="border-collapse:collapse;">' . $client_html . '</table>'
+        . '</td></tr>'
+
+        // Produits
+        . '<tr><td style="padding:24px 32px 8px;">'
+        . '<h2 style="margin:0 0 16px;color:#4d6040;font-size:16px;text-transform:uppercase;letter-spacing:.04em;">Détail de la commande</h2>'
+        . '<table role="presentation" width="100%" style="border-collapse:collapse;">'
+        . '<thead><tr style="background:#dde8d9;">'
+        . '<th style="padding:10px 14px;text-align:left;color:#1f2937;font-size:13px;">Produit</th>'
+        . '<th style="padding:10px 14px;text-align:center;color:#1f2937;font-size:13px;">Qté</th>'
+        . '<th style="padding:10px 14px;text-align:right;color:#1f2937;font-size:13px;">Prix unit.</th>'
+        . '<th style="padding:10px 14px;text-align:right;color:#1f2937;font-size:13px;">Sous-total</th>'
+        . '</tr></thead>'
+        . '<tbody>' . $lignes_html . '</tbody>'
+        . '</table>'
+        . '<table role="presentation" width="100%" style="border-collapse:collapse;margin-top:8px;">'
+        . '<tr><td style="padding:12px 14px;text-align:right;color:#1f2937;font-size:15px;font-weight:700;">Total&nbsp;: <span style="color:#b85c50;font-size:18px;">' . esc_html(number_format($total, 2, ',', ' ')) . '&nbsp;$</span></td></tr>'
+        . '</table>'
+        . '</td></tr>';
+
+    if ($commentaire) {
+        $message .= '<tr><td style="padding:8px 32px 8px;">'
+            . '<h2 style="margin:0 0 8px;color:#4d6040;font-size:16px;text-transform:uppercase;letter-spacing:.04em;">Commentaire du client</h2>'
+            . '<p style="margin:0;color:#1f2937;background:#f9f5f0;border-radius:8px;padding:12px 16px;">' . esc_html($commentaire) . '</p>'
+            . '</td></tr>';
+    }
+
+    $message .= '<tr><td style="padding:24px 32px 28px;border-top:1px solid #d1d5db;">'
+        . '<p style="margin:0;color:#4b5563;font-size:13px;">Répondez directement à ce courriel pour rejoindre le client, ou appelez-le. Numéro du Vivier&nbsp;: ' . esc_html($tel_site) . '.</p>'
+        . '</td></tr>'
+
+        . '</table>'
+        . '</td></tr>'
+        . '</table>'
+        . '</body></html>';
+
+    $sujet = 'Nouvelle commande Prêt à manger - ' . $prenom . ' ' . $nom;
+
+    $destinataire_principal = function_exists('lv_opt') ? lv_opt('opt_courriel', '') : '';
+    if (!$destinataire_principal || !is_email($destinataire_principal)) {
+        $destinataire_principal = get_option('admin_email');
+    }
+    $destinataires = [$destinataire_principal];
+    $destinataire_secondaire = function_exists('lv_opt') ? lv_opt('opt_courriel_secondaire', '') : '';
+    if ($destinataire_secondaire && is_email($destinataire_secondaire)) {
+        $destinataires[] = $destinataire_secondaire;
+    }
+
     $headers = [
         'Content-Type: text/html; charset=UTF-8',
         'Reply-To: ' . $email,
     ];
 
-    $envoye = wp_mail(get_option('admin_email'), $sujet, $message, $headers);
+    $envoye = wp_mail($destinataires, $sujet, $message, $headers);
 
     if ($envoye) {
         wp_send_json_success(['message' => 'Votre commande a bien été envoyée ! Nous vous contacterons pour confirmer la date de récupération.']);
