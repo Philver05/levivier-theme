@@ -81,6 +81,7 @@ style.css        — CSS global + variables (source de vérité)
 - Ne pas utiliser de tiret cadratin (—) dans le code ni les réponses.
 - Ne pas modifier `style.css` pour changer les variables — modifier directement les valeurs.
 - Les polices Professor (woff2 + otf) sont dans `assets/fonts/`.
+- Tout nouveau groupe de champs ACF de contenu de page doit être organisé en onglets (`'type' => 'tab'` en tout premier élément de `'fields'`, voir `group_page_accueil` dans `functions.php` comme patron), sauf si le groupe compte 3 champs ou moins au total (un onglet unique n'aide pas Marie à s'y retrouver).
 
 ## Sous-marque Lofts de la Rivière
 Identité visuelle distincte: couleur sarcelle (Professor y est utilisé aussi, mais n'est plus exclusif à Lofts, voir Palette & typo). Fichiers: `template-lofts.php`, `single-loft.php`, `parts/loft-card.php`. Ne pas mélanger la charte de couleur sarcelle avec la charte principale.
