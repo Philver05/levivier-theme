@@ -54,7 +54,6 @@ parts/
   promotion-card.php
   commander-card.php
   loft-card.php
-  temoignage-item.php
 
 single-produit.php
 single-producteur.php
@@ -63,7 +62,7 @@ archive-produit.php
 archive-producteur.php
 
 includes/
-  post-types.php   — CPTs: produit, producteur, temoignage, loft
+  post-types.php   — CPTs: produit, producteur, loft
   seed-data.php
 
 functions.php    — enqueue, theme support, menus
@@ -75,7 +74,6 @@ style.css        — CSS global + variables (source de vérité)
 |------|---------|--------|
 | `produit` | `/produits/` | oui |
 | `producteur` | `/producteurs/` | oui |
-| `temoignage` | non | non (show_ui seulement) |
 | `loft` | `/lofts/` | oui |
 
 ## Règles absolues

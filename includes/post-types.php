@@ -76,42 +76,6 @@ function lv_register_producteur()
     register_post_type($slug, $args);
 }
 
-/* CPT : Témoignage */
-function lv_register_temoignage()
-{
-    $slug = 'temoignage';
-
-    $labels = [
-        'name'                  => 'Témoignages',
-        'singular_name'         => 'Témoignage',
-        'add_new'               => 'Ajouter un témoignage',
-        'add_new_item'          => 'Ajouter un nouveau témoignage',
-        'edit_item'             => 'Modifier le témoignage',
-        'new_item'              => 'Nouveau témoignage',
-        'view_item'             => 'Afficher le témoignage',
-        'search_items'          => 'Rechercher un témoignage',
-        'not_found'             => 'Aucun témoignage trouvé',
-        'not_found_in_trash'    => 'Aucun témoignage dans la corbeille',
-        'all_items'             => 'Tous les témoignages',
-        'menu_name'             => 'Témoignages',
-    ];
-
-    $args = [
-        'label'         => 'Témoignages',
-        'labels'        => $labels,
-        'description'   => 'Témoignages clients du Vivier',
-        'public'        => false,
-        'show_ui'       => true,
-        'show_in_rest'  => false,
-        'menu_position' => 7,
-        'menu_icon'     => 'dashicons-format-quote',
-        'supports'      => ['title', 'editor'],
-        'rewrite'       => false,
-    ];
-
-    register_post_type($slug, $args);
-}
-
 /* CPT : Loft */
 function lv_register_loft()
 {
@@ -494,7 +458,6 @@ function lv_register_post_types()
 {
     lv_register_produit();
     lv_register_producteur();
-    lv_register_temoignage();
     lv_register_loft();
     lv_register_bon_commande();
     lv_register_promotion();
