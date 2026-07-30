@@ -276,9 +276,17 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 /* ----------------------------------------------------------- ENGAGEMENTS */
 .engagements { background: var(--blanc); }
 .engagements-grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(1.2rem, .5rem + 2vw, 2.5rem); }
-.engagement { text-align: center; padding: 0 .5rem; }
-.engagement .ico { width: 56px; height: 56px; margin: 0 auto 1rem; display: grid; place-items: center; border-radius: 50%; background: var(--sauge-pale); }
+.engagement { text-align: center; padding: 0 .5rem; display: flex; flex-direction: column; align-items: center; }
+.engagement .ico { width: 56px; height: 56px; margin: 0 auto 1rem; display: grid; place-items: center; border-radius: 50%; background: var(--sauge-pale); flex: none; }
 .engagement .ico svg { width: 30px; height: 30px; fill: none; stroke: var(--sauge); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+/* Plafond de 3 lignes : équilibre visuellement les cartes quand les textes
+   sont de longueurs inégales dans la grille (sinon mur de 4-5 lignes vs 2). */
+.engagement p {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 .engagement h3 { font-size: 1.1rem; color: var(--sauge); margin-bottom: .4rem; }
 .engagement p { font-size: .9rem; color: var(--texte-corps); }
 
@@ -487,6 +495,13 @@ body.pm-lightbox-ouvert { overflow: hidden; }
 @media (max-width: 640px) {
   .pied::before,
   .pied::after { display: none; }
+
+  /* Texte de cartes → gauche sur mobile.
+     Le texte centré sur 3+ lignes crée des "dents de scie" (début de ligne
+     variable) qui fatiguent l'oeil. Titres courts (1-2 lignes) restent centrés. */
+  .engagement { align-items: flex-start; text-align: left; }
+  .engagement .ico { margin-inline: 0; }
+  .section-titre p { text-align: left; }
 }
 
 @media (max-width: 520px) {
@@ -774,6 +789,10 @@ body.univers-lofts .page-entete .eyebrow { color: #e7c9a0; }
 .lofts-atout-icone svg { width: 28px; height: 28px; fill: none; stroke: #1d5055; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .lofts-atout h3 { color: #1d3d3f; font-size: 1.1rem; margin-bottom: .5rem; min-height: 2.6em; display: flex; align-items: flex-end; justify-content: center; }
 .lofts-atout p { font-size: .92rem; color: var(--texte-corps); }
+@media (max-width: 640px) {
+  .lofts-atout { text-align: left; }
+  .lofts-atout h3 { min-height: unset; justify-content: flex-start; }
+}
 
 /* CTA finale — bande pleine largeur (pas une carte flottante dans le vide) */
 /* Bas de bande resserré : le padding-bottom géant laissait un grand vide
@@ -1009,9 +1028,16 @@ body.univers-africaine .afr-portrait-lien:hover { color: var(--afr-rouille-f); }
    (Beauté & soins ajoutée le 22 juillet) : 4 colonnes au bureau, les
    seuils existants de .grille-prod (2 col ≤960px, 1 col ≤720px) donnent
    déjà un 2x2 puis 1 colonne propres, sans carte orpheline. */
-body.univers-africaine .grille-prod { counter-reset: spec; align-items: stretch; }
-@media (min-width: 961px) {
-  body.univers-africaine .grille-prod { grid-template-columns: repeat(4, 1fr); }
+/* auto-fit : s'adapte au nombre réel de cartes (3 ou 4 photos fournies).
+   Avec repeat(4,1fr) et seulement 3 cartes, la 4e colonne vide rétrécissait
+   chaque carte à ~270px, forçant 5-6 lignes de texte. */
+body.univers-africaine .grille-prod { counter-reset: spec; align-items: stretch;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+body.univers-africaine .carte-prod .corps p {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 body.univers-africaine .carte-prod {
   counter-increment: spec;
