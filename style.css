@@ -80,6 +80,7 @@ body {
   font-family: var(--f-corps);
   font-size: var(--t-corps);
   line-height: 1.7;
+  text-wrap: pretty;
   color: var(--texte-corps);
   background: var(--creme);
   overflow-x: clip;
@@ -92,7 +93,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 :focus-visible { outline: 3px solid var(--sauge-moyen); outline-offset: 3px; border-radius: 4px; }
 
-h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 1.12; font-weight: 700; }
+h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 1.12; font-weight: 700; text-wrap: balance; }
 
 /* Accent script (rôle de Professor) */
 .script { font-family: var(--f-script); font-weight: 400; line-height: 1; }
@@ -519,7 +520,13 @@ body.interne .entete { background: rgba(249, 245, 240, .95); backdrop-filter: bl
 /* Titre en Professor pour Épicerie / Boutique / Produits Maison / Épicerie Africaine,
    demandé par Marie (7 juillet) : la police n'est plus exclusive à la sous-marque Lofts. */
 .page-entete h1.page-entete-titre-script { font-family: var(--f-script); font-weight: 400; }
-.page-entete > .conteneur > p { max-width: 85%; margin: 0 auto; color: var(--texte-corps); }
+@media (max-width: 640px) {
+  .page-entete h1.page-entete-titre-script { font-size: clamp(2rem, 1.5rem + 3.5vw, 2.6rem); }
+}
+.page-entete > .conteneur > p { max-width: 85%; margin: 0 auto; color: var(--texte-corps); text-wrap: pretty; }
+@media (max-width: 480px) {
+  .page-entete > .conteneur > p { max-width: 100%; }
+}
 
 /* Bons de commande : espace resserré sous l'intro, la section suivante enchaîne tout de suite */
 .page-template-template-bon-pam .page-entete,
@@ -2821,6 +2828,30 @@ body:has(.pam-barre-total--active) .section:last-of-type {
     font-size: .82rem;
     white-space: nowrap;
   }
+}
+/* PAM : onglets catégorie + sous-catégorie scrollables sur mobile,
+   même comportement que les .pm-filtres ci-dessus. */
+@media (max-width: 720px) {
+  .pam-filtre-cats,
+  .pam-filtre-souscats {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    margin-inline: calc(-1 * var(--gouttiere));
+    padding-inline: var(--gouttiere);
+    padding-bottom: .3rem;
+  }
+  .pam-filtre-cats::-webkit-scrollbar,
+  .pam-filtre-souscats::-webkit-scrollbar { display: none; }
+  .pam-cat-tab,
+  .pam-souscat-tab {
+    flex: none;
+    scroll-snap-align: start;
+    white-space: nowrap;
+  }
+  .pam-souscat-tab { min-height: 40px; }
 }
 .pm-filtre {
   background: none;
