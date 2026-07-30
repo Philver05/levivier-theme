@@ -1,5 +1,17 @@
 <?php
 
+add_action('phpmailer_init', function ($phpmailer) {
+    $phpmailer->isSMTP();
+    $phpmailer->Host       = defined('LV_SMTP_HOST')     ? LV_SMTP_HOST     : 'smtp-relay.brevo.com';
+    $phpmailer->SMTPAuth   = true;
+    $phpmailer->Port       = defined('LV_SMTP_PORT')     ? LV_SMTP_PORT     : 587;
+    $phpmailer->Username   = defined('LV_SMTP_USER')     ? LV_SMTP_USER     : 'b3bcf3001@smtp-brevo.com';
+    $phpmailer->Password   = defined('LV_SMTP_PASSWORD') ? LV_SMTP_PASSWORD : '';
+    $phpmailer->SMTPSecure = 'tls';
+});
+add_filter('wp_mail_from',      fn() => 'epicerie@levivier.net');
+add_filter('wp_mail_from_name', fn() => 'Le Vivier');
+
 require_once 'includes/post-types.php';
 require_once 'includes/seed-data.php';
 require_once 'includes/import-producteurs.php';

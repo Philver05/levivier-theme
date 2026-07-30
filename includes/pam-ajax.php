@@ -153,6 +153,7 @@ function lv_pam_soumettre()
 
     $headers = [
         'Content-Type: text/html; charset=UTF-8',
+        'From: Le Vivier <' . $destinataire_principal . '>',
         'Reply-To: ' . $email,
     ];
 
@@ -212,6 +213,7 @@ function lv_pam_soumettre()
     $sujet_client   = 'Votre commande Prêt à manger, Le Vivier';
     $headers_client = [
         'Content-Type: text/html; charset=UTF-8',
+        'From: Le Vivier <' . $destinataire_principal . '>',
         'Reply-To: ' . $destinataire_principal,
     ];
     wp_mail($email, $sujet_client, $message_client, $headers_client);

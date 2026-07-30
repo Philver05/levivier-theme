@@ -76,17 +76,23 @@ function lv_pm_soumettre()
     $message .= '</body></html>';
 
     $sujet   = 'Nouvelle commande Produits Maison - ' . $prenom . ' ' . $nom;
+    $destinataire_principal = function_exists('lv_opt') ? lv_opt('opt_courriel', 'epicerie@levivier.net') : 'epicerie@levivier.net';
+    if (!$destinataire_principal || !is_email($destinataire_principal)) {
+        $destinataire_principal = get_option('admin_email');
+    }
+    $destinataires = [$destinataire_principal];
+    $destinataire_secondaire = function_exists('lv_opt') ? lv_opt('opt_courriel_secondaire', '') : '';
+    if ($destinataire_secondaire && is_email($destinataire_secondaire)) {
+        $destinataires[] = $destinataire_secondaire;
+    }
+
     $headers = [
         'Content-Type: text/html; charset=UTF-8',
+        'From: Le Vivier <' . $destinataire_principal . '>',
         'Reply-To: ' . $email,
     ];
 
-    $destinataire = function_exists('lv_opt') ? lv_opt('opt_courriel', 'epicerie@levivier.net') : 'epicerie@levivier.net';
-    if (!$destinataire || !is_email($destinataire)) {
-        $destinataire = get_option('admin_email');
-    }
-
-    $envoye = wp_mail($destinataire, $sujet, $message, $headers);
+    $envoye = wp_mail($destinataires, $sujet, $message, $headers);
 
     if ($envoye) {
         wp_send_json_success(['message' => 'Votre commande a bien été envoyée ! Nous vous contacterons pour confirmer la date de récupération.']);
