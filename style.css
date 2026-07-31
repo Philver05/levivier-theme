@@ -266,8 +266,9 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 /* Boutons Découvrir sous le carrousel (déplacés du hero) */
 .intro-actions { display: flex; flex-wrap: wrap; gap: .9rem; justify-content: center; margin-top: clamp(2rem, 1.2rem + 2vw, 3rem); }
 @media (max-width: 720px) {
+  .intro-actions { justify-content: flex-start; }
   .intro-actions .btn,
-  .intro-actions .btn:last-child { flex: 0 0 100%; max-width: none; margin-inline: 0; text-align: center; }
+  .intro-actions .btn:last-child { flex: 0 0 auto; max-width: 100%; margin-inline: 0; }
 }
 
 /* Pastilles de valeurs réutilisées (ex-accueil) : version centrée pour un
