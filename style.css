@@ -3344,10 +3344,11 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   .pied-bas > span[aria-hidden] { display: none; }
 }
 
-/* ------ ≤900px : nav burger — source-order fix touch targets ------ */
-/* Les règles globales "PONT MENU WP" (sans @media, lignes ~163 et ~885)
-   viennent APRÈS le bloc mobile ~475 et écrasent font-size + padding.
+/* ------ ≤900px : nav burger — source-order fix ------ */
+/* Les règles globales "PONT MENU WP" (sans @media, lignes ~883-885)
+   viennent APRÈS le bloc mobile ~473 et écrasent gap + font-size + padding.
    Ces règles placées en dernier rétablissent l'apparence du panneau. */
 @media (max-width: 900px) {
+  .nav-principale ul { gap: 0; }
   .nav-principale ul a { padding: 1rem .2rem; font-size: 1.05rem; }
 }
