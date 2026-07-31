@@ -35,6 +35,23 @@
                        Apparence > Menus; tant que la page n'y est pas remise,
                        on affiche le lien ici. Garde anti-doublon : s'il est
                        un jour ré-ajouté au menu WP, ce repli disparaît seul. */
+                    /* Prêt à manger : même garde anti-doublon que Contactez-nous */
+                    $page_pam_nav = get_page_by_path('pret-a-manger');
+                    if ($page_pam_nav && $page_pam_nav->post_status === 'publish') {
+                        $pam_au_menu = false;
+                        $items_menu_pam = wp_get_nav_menu_items('principal');
+                        if ($items_menu_pam) {
+                            foreach ($items_menu_pam as $im) {
+                                if ((int) $im->object_id === (int) $page_pam_nav->ID) { $pam_au_menu = true; break; }
+                            }
+                        }
+                        if (!$pam_au_menu) {
+                            $actif_pam = is_page($page_pam_nav->ID) ? ' actif' : '';
+                            echo '<a href="' . esc_url(get_permalink($page_pam_nav)) . '" class="nav-pam' . $actif_pam . '">'
+                                . esc_html(get_the_title($page_pam_nav)) . '</a>';
+                        }
+                    }
+
                     $page_contact = get_page_by_path('contactez-nous');
                     if ($page_contact && $page_contact->post_status === 'publish') {
                         $contact_au_menu = false;

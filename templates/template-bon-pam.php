@@ -235,6 +235,14 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                     </button>
                     <?php endforeach; ?>
                 </div>
+                <div class="pam-cat-select-wrap">
+                    <select class="pam-cat-select" aria-label="Filtrer par catégorie">
+                        <?php foreach ($categories_principales as $cat): ?>
+                        <option value="<?php echo esc_attr($cat->slug); ?>"><?php echo esc_html($cat->name); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <svg class="pam-cat-select-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
                 <?php endif; ?>
 
                 <!-- Produits groupés par catégorie principale, avec sous-onglets si elle a des enfants -->

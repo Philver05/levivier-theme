@@ -477,8 +477,10 @@ body.pm-lightbox-ouvert { overflow: hidden; }
 
   /* Lien Contactez-nous (ajouté par header.php hors du menu WP) : même
      traitement que les liens de la liste dans le panneau mobile */
-  .nav-principale > a.nav-contact { display: block; width: 100%; font-size: 1.05rem; padding: 1rem .2rem; border-bottom: 1px solid var(--bordure); }
-  .nav-principale > a.nav-contact::after { display: none; }
+  .nav-principale > a.nav-contact,
+  .nav-principale > a.nav-pam { display: block; width: 100%; font-size: 1.05rem; padding: 1rem .2rem; border-bottom: 1px solid var(--bordure); }
+  .nav-principale > a.nav-contact::after,
+  .nav-principale > a.nav-pam::after { display: none; }
 
   /* CTA en bas, pleine largeur */
   .nav-principale .nav-cta { margin-top: 1.6rem; width: 100%; justify-content: center; padding: .95rem 1rem; font-size: 1rem; }
@@ -2867,27 +2869,28 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 }
 /* PAM : onglets catégorie + sous-catégorie scrollables sur mobile,
    même comportement que les .pm-filtres ci-dessus. */
+/* Dropdown mobile catégories PAM — masqué sur desktop */
+.pam-cat-select-wrap { display: none; position: relative; margin-bottom: 1.5rem; }
+.pam-cat-select {
+  width: 100%; padding: .7rem 3rem .7rem 1.1rem;
+  border: 1.5px solid var(--terra); border-radius: 2rem;
+  background: var(--blanc); color: var(--texte);
+  font-size: 1rem; font-family: inherit;
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+}
+.pam-cat-select:focus { outline: 2px solid var(--terra); outline-offset: 2px; }
+.pam-cat-select-arrow {
+  position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+  width: 1.1rem; height: 1.1rem; stroke: var(--terra); fill: none;
+  stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+  pointer-events: none;
+}
+
 @media (max-width: 720px) {
-  .pam-filtre-cats,
-  .pam-filtre-souscats {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    scroll-snap-type: x proximity;
-    margin-inline: calc(-1 * var(--gouttiere));
-    padding-inline: var(--gouttiere);
-    padding-bottom: .3rem;
-  }
-  .pam-filtre-cats::-webkit-scrollbar,
-  .pam-filtre-souscats::-webkit-scrollbar { display: none; }
-  .pam-cat-tab,
-  .pam-souscat-tab {
-    flex: none;
-    scroll-snap-align: start;
-    white-space: nowrap;
-  }
-  .pam-souscat-tab { min-height: 40px; }
+  .pam-filtre-cats { display: none; }
+  .pam-cat-select-wrap { display: block; }
+  .pam-filtre-souscats { flex-wrap: wrap; gap: .4rem; }
+  .pam-souscat-tab { min-height: 40px; white-space: nowrap; }
 }
 .pm-filtre {
   background: none;
@@ -3222,6 +3225,11 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   .page-entete .conteneur > p:not(.eyebrow) { text-align: left; font-size: .9rem; }
   .page-entete .conteneur > div { text-align: left; }
   .page-entete .conteneur > div p { text-align: left; }
+  /* H1 reste centré même si imbriqué dans un div (ex: .hero-grille Africaine) */
+  .page-entete h1,
+  .page-entete .page-entete-titre-script { text-align: center; }
+  /* Évite les coupures inélégantes sur les titres courts (ex: ": Viviane" seul) */
+  h1, h2, h3 { text-wrap: balance; }
 
   /* Lofts : lead paragraph + atouts → gauche jusqu'à tablette */
   .lofts-entete-lead { text-align: left; }

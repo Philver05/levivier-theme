@@ -351,6 +351,11 @@
     /* -------------------------------------------------------
        Onglets catégorie (principale) et sous-catégorie
     ------------------------------------------------------- */
+    function syncCatSelect() {
+        var sel = document.querySelector('.pam-cat-select');
+        if (sel) sel.value = categorieActive;
+    }
+
     document.querySelectorAll('.pam-cat-tab').forEach(function (btn) {
         btn.addEventListener('click', function () {
             categorieActive = btn.dataset.cat;
@@ -359,8 +364,21 @@
             majSousCategorieTabs();
             appliquerFiltreSousCategorie();
             majMessagesJour();
+            syncCatSelect();
         });
     });
+
+    var catSelect = document.querySelector('.pam-cat-select');
+    if (catSelect) {
+        catSelect.addEventListener('change', function () {
+            categorieActive = catSelect.value;
+            sousCategorieActive = premierSouscatDe(categorieActive);
+            appliquerFiltreCategorie();
+            majSousCategorieTabs();
+            appliquerFiltreSousCategorie();
+            majMessagesJour();
+        });
+    }
 
     document.querySelectorAll('.pam-souscat-tab').forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -548,6 +566,7 @@
         filtrerParJour(jourInit.value);
         majMessagesJour();
     }
+    syncCatSelect();
 
     /* Catégorie demandée dans l'URL (?cat=slug&souscat=slug), ex : lien
        "Commander" depuis une famille de la page Produits Maison */
