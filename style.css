@@ -3276,3 +3276,18 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   .cta-panel p { text-align: left; margin-inline: 0; max-width: 100%; }
   .cta-panel-actions { justify-content: flex-start; }
 }
+
+/* ------ ≤640px : cibles tactiles minimum 44px (iOS HIG) ---------- */
+@media (max-width: 640px) {
+  /* Footer : liens nav mesurés à ~18px → zone de tap pleine ligne.
+     padding-block .85rem = 13.6px × 2 + ~18px texte ≈ 45px ✓ */
+  .pied li a { display: block; padding-block: .85rem; }
+
+  /* Contact : champs resserrés à .42rem padding → trop petits pour le doigt */
+  .ct2-form .champ input { min-height: 44px; }
+
+  /* PAM + PM : boutons +/- explicitement réduits à 32px dans le bloc
+     @media (max-width: 640px) plus haut → agrandis ici (source order gagne) */
+  .pam-qty-moins,
+  .pam-qty-plus { width: 44px; height: 44px; }
+}
