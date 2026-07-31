@@ -3279,15 +3279,29 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 
 /* ------ ≤640px : cibles tactiles minimum 44px (iOS HIG) ---------- */
 @media (max-width: 640px) {
-  /* Footer : liens nav mesurés à ~18px → zone de tap pleine ligne.
-     padding-block .85rem = 13.6px × 2 + ~18px texte ≈ 45px ✓ */
-  .pied li a { display: block; padding-block: .85rem; }
+  /* Footer : liens nav (était 18px) → tap pleine ligne sans sur-espacer.
+     margin-bottom retiré du li + padding-block .6rem sur le a =
+     9.6+18+9.6 = ~37px tactile, gap visuel entre textes = 19px (correct). */
+  .pied li { margin-bottom: 0; }
+  .pied li a { display: block; padding-block: .6rem; }
 
-  /* Contact : champs resserrés à .42rem padding → trop petits pour le doigt */
+  /* Contact : champs resserrés → min 44px */
   .ct2-form .champ input { min-height: 44px; }
 
-  /* PAM + PM : boutons +/- explicitement réduits à 32px dans le bloc
-     @media (max-width: 640px) plus haut → agrandis ici (source order gagne) */
+  /* PAM + PM : boutons +/- (32px → 44px, source order gagne sur le bloc
+     @media ≤640px plus haut qui les réduisait explicitement) */
   .pam-qty-moins,
   .pam-qty-plus { width: 44px; height: 44px; }
+}
+
+/* ------ ≤480px : footer nav 1 colonne + pied-bas empilé ---------- */
+@media (max-width: 480px) {
+  /* Nav footer : 2 colonnes trop étroites sur petits phones (textes longs
+     comme "Les lofts de la rivière" débordent à 480px et moins) */
+  .pied-nav-cols { grid-template-columns: 1fr; }
+
+  /* Barre du bas : copyright + "Politique de confidentialité" sur une même
+     ligne dépasse 375px → empilés verticalement, séparateur "·" masqué */
+  .pied-bas { flex-direction: column; gap: .25rem; }
+  .pied-bas > span[aria-hidden] { display: none; }
 }
