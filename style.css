@@ -3345,9 +3345,9 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 }
 
 /* ------ ≤900px : nav burger — source-order fix touch targets ------ */
-/* La règle globale "PONT MENU WP" (padding-block:.3rem, sans @media)
-   vient APRÈS le bloc mobile ligne ~475, donc elle gagne en cascade.
-   Cette règle placée en dernier rétablit le bon padding sur le panneau. */
+/* Les règles globales "PONT MENU WP" (sans @media, lignes ~163 et ~885)
+   viennent APRÈS le bloc mobile ~475 et écrasent font-size + padding.
+   Ces règles placées en dernier rétablissent l'apparence du panneau. */
 @media (max-width: 900px) {
-  .nav-principale ul a { padding: 1rem .2rem; }
+  .nav-principale ul a { padding: 1rem .2rem; font-size: 1.05rem; }
 }
