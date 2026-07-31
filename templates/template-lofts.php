@@ -52,7 +52,7 @@ if (!function_exists('lv_lofts_atout_icone')) {
                 $t = get_the_title();
                 $p = strrpos($t, ' ');
                 echo $p !== false
-                    ? esc_html(substr($t, 0, $p)) . '<br class="br-mobile">' . esc_html(substr($t, $p + 1))
+                    ? esc_html(substr($t, 0, $p)) . ' <br class="br-mobile">' . esc_html(substr($t, $p + 1))
                     : esc_html($t);
             ?></h1>
             <p class="lofts-entete-lead"><?php echo esc_html($intro); ?></p>
