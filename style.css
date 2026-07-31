@@ -3031,10 +3031,12 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 .ct-bande-horaires-liste li span:first-child { font-family: var(--f-titre); font-weight: 700; font-size: 1rem; }
 .ct-bande-horaires-liste li span:last-child { font-size: .95rem; color: var(--sauge-pale); font-variant-numeric: tabular-nums; white-space: nowrap; }
 @media (max-width: 560px) {
-  .ct-bande-horaires-inner { flex-direction: column; gap: .8rem; }
-  .ct-bande-horaires-liste { display: grid; grid-template-columns: max-content max-content; justify-content: center; row-gap: .45rem; column-gap: 1rem; }
-  .ct-bande-horaires-liste li { display: contents; }
-  .ct-bande-horaires-liste li span:first-child { text-align: right; }
+  .ct-bande-horaires-inner { flex-direction: column; gap: 1rem; }
+  .ct-bande-horaires-liste { display: flex; flex-direction: row; flex-wrap: nowrap; width: 100%; gap: 0; align-items: stretch; }
+  .ct-bande-horaires-liste li { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: .3rem; padding: .4rem .2rem; border-right: 1px solid rgba(255,255,255,.18); }
+  .ct-bande-horaires-liste li:last-child { border-right: none; }
+  .ct-bande-horaires-liste li span:first-child { font-size: .68rem; font-weight: 600; color: rgba(255,255,255,.6); letter-spacing: .05em; text-transform: uppercase; }
+  .ct-bande-horaires-liste li span:last-child { font-size: clamp(.78rem, 2.2vw, .9rem); color: #fff; font-weight: 700; white-space: nowrap; }
 }
 
 /* ======================================================
