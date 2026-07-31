@@ -3349,6 +3349,6 @@ body:has(.pam-barre-total--active) .section:last-of-type {
    viennent APRÈS le bloc mobile ~473 et écrasent gap + font-size + padding.
    Ces règles placées en dernier rétablissent l'apparence du panneau. */
 @media (max-width: 900px) {
-  .nav-principale ul { gap: 0; }
-  .nav-principale ul a { padding: 1rem .2rem; font-size: 1.05rem; }
+  .nav-principale ul { gap: 0; align-items: stretch; width: 100%; }
+  .nav-principale ul a { padding: 1rem .2rem; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
