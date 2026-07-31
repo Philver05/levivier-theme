@@ -235,6 +235,36 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
+    /* Dropdown mobile automatique : > 3 filtres sur ≤720px */
+    var wrap = filtres[0].closest(".pm-filtres-wrap");
+    var toggleBtn = null;
+    if (wrap && filtres.length > 3 && window.innerWidth <= 720) {
+      wrap.classList.add("pm-filtres--dropdown");
+      var actifInit = section ? section.querySelector(".filtre-lien.actif[data-cat]") : null;
+      var labelInit = actifInit ? actifInit.textContent.trim() : filtres[0].textContent.trim();
+      toggleBtn = document.createElement("button");
+      toggleBtn.type = "button";
+      toggleBtn.className = "pm-filtres-toggle";
+      toggleBtn.setAttribute("aria-expanded", "false");
+      toggleBtn.innerHTML = '<span class="pm-filtres-toggle-label">' + labelInit + "</span>"
+        + '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" stroke="currentColor"'
+        + ' stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">'
+        + '<polyline points="6 9 12 15 18 9"/></svg>';
+      var navFiltres = wrap.querySelector(".pm-filtres");
+      navFiltres.parentNode.insertBefore(toggleBtn, navFiltres);
+      toggleBtn.addEventListener("click", function () {
+        var isOpen = wrap.classList.toggle("ouvert");
+        toggleBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      });
+      /* Fermer le dropdown au clic en dehors */
+      document.addEventListener("click", function (e) {
+        if (!wrap.contains(e.target) && wrap.classList.contains("ouvert")) {
+          wrap.classList.remove("ouvert");
+          toggleBtn.setAttribute("aria-expanded", "false");
+        }
+      });
+    }
+
     filtres.forEach(function (filtre) {
       filtre.addEventListener("click", function (evenement) {
         evenement.preventDefault();
@@ -242,6 +272,13 @@ document.addEventListener("DOMContentLoaded", function () {
         filtres.forEach(function (f) { f.classList.remove("actif"); });
         this.classList.add("actif");
         appliquer(categorie, true);
+        /* Si dropdown : fermer + mettre à jour le label du bouton */
+        if (toggleBtn && wrap && wrap.classList.contains("pm-filtres--dropdown")) {
+          var lbl = toggleBtn.querySelector(".pm-filtres-toggle-label");
+          if (lbl) lbl.textContent = this.textContent.trim();
+          wrap.classList.remove("ouvert");
+          toggleBtn.setAttribute("aria-expanded", "false");
+        }
       });
     });
 

@@ -159,8 +159,8 @@ h1, h2, h3, h4 { font-family: var(--f-titre); color: var(--texte); line-height: 
 .logo-img img.custom-logo { height: clamp(52px, 6vw, 84px); width: auto; display: block; transition: height var(--transi); }
 /* Le logo rétrécit quand l'en-tête devient collant au scroll → header compact */
 .entete.colle .logo-img img.custom-logo { height: clamp(46px, 4.5vw, 66px); }
-.nav-principale { display: flex; align-items: center; gap: 2rem; }
-.nav-principale > a { font-size: .92rem; font-weight: 500; color: var(--texte); position: relative; padding-block: .3rem; }
+.nav-principale { display: flex; align-items: center; gap: 1rem; }
+.nav-principale > a { font-size: .88rem; font-weight: 500; color: var(--texte); position: relative; padding-block: .3rem; white-space: nowrap; }
 .nav-principale > a::after {
   content: ""; position: absolute; left: 0; bottom: 0; width: 0; height: 2px;
   background: var(--terra); transition: width var(--transi);
@@ -478,7 +478,7 @@ body.pm-lightbox-ouvert { overflow: hidden; }
   /* Lien Contactez-nous (ajouté par header.php hors du menu WP) : même
      traitement que les liens de la liste dans le panneau mobile */
   .nav-principale > a.nav-contact,
-  .nav-principale > a.nav-pam { display: block; width: 100%; font-size: 1.05rem; padding: 1rem .2rem; border-bottom: 1px solid var(--bordure); }
+  .nav-principale > a.nav-pam { display: block; width: 100%; font-size: 1.05rem; padding: 1rem .2rem; border-bottom: 1px solid var(--bordure); text-align: center; white-space: normal; }
   .nav-principale > a.nav-contact::after,
   .nav-principale > a.nav-pam::after { display: none; }
 
@@ -736,7 +736,7 @@ body.univers-lofts .page-entete .eyebrow { color: #e7c9a0; }
 /* En-tete compact, centre */
 .lofts-entete { background: var(--lofts-perle); text-align: center; padding-top: clamp(5.5rem, 4rem + 4vw, 7rem); padding-bottom: clamp(1.2rem, .8rem + 1.5vw, 2rem); }
 .lofts-eyebrow { color: #b07d3c; font-size: .78rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; margin-bottom: .8rem; }
-.lofts-entete-titre { font-family: var(--f-script); color: #1d5055; font-size: clamp(2.6rem, 1.8rem + 4vw, 4.8rem); line-height: 1.02; margin-bottom: 1.1rem; }
+.lofts-entete-titre { font-family: var(--f-script); color: #1d5055; font-size: clamp(2.6rem, 1.8rem + 4vw, 4.8rem); line-height: 1.02; margin-bottom: 1.1rem; text-align: center; }
 .lofts-entete-lead { max-width: 56ch; margin: 0 auto 1.1rem; color: var(--texte-doux); font-size: 1.08rem; }
 .lofts-entete-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem 1.8rem; font-size: .9rem; color: #41615f; }
 .lofts-entete-meta span, .lofts-entete-meta a { display: inline-flex; align-items: center; gap: .45rem; }
@@ -880,9 +880,9 @@ body.univers-lofts .pied a:hover { color: #e7c9a0; }
 /* ======================================================
    PONT MENU WORDPRESS (structure <ul><li><a> dans la nav)
 ====================================================== */
-.nav-principale ul { display: flex; align-items: center; gap: 2rem; list-style: none; margin: 0; padding: 0; }
+.nav-principale ul { display: flex; align-items: center; gap: 1rem; list-style: none; margin: 0; padding: 0; }
 .nav-principale ul li { margin: 0; }
-.nav-principale ul a { font-size: .92rem; font-weight: 500; color: var(--texte); position: relative; padding-block: .3rem; }
+.nav-principale ul a { font-size: .88rem; font-weight: 500; color: var(--texte); position: relative; padding-block: .3rem; white-space: nowrap; }
 .nav-principale ul a::after { content: ""; position: absolute; left: 0; bottom: 0; width: 0; height: 2px; background: var(--terra); transition: width var(--transi); }
 .nav-principale ul a:hover::after,
 .nav-principale ul .current-menu-item > a::after,
@@ -3345,10 +3345,94 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 }
 
 /* ------ ≤900px : nav burger — source-order fix ------ */
-/* Les règles globales "PONT MENU WP" (sans @media, lignes ~883-885)
-   viennent APRÈS le bloc mobile ~473 et écrasent gap + font-size + padding.
+/* Les règles globales "PONT MENU WP" (sans @media) viennent APRÈS le bloc
+   mobile ~473 et écrasent gap + font-size + padding + white-space.
    Ces règles placées en dernier rétablissent l'apparence du panneau. */
 @media (max-width: 900px) {
   .nav-principale ul { gap: 0; align-items: stretch; width: 100%; }
-  .nav-principale ul a { padding: 1rem .2rem; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .nav-principale ul a { padding: 1rem .2rem; font-size: 1.05rem; text-align: center; white-space: normal; }
+}
+
+/* ----- Filtres : dropdown mobile automatique (> 3 items, ≤720px) ----- */
+@media (max-width: 720px) {
+  /* Restaurer le padding du conteneur en mode dropdown */
+  .pm-filtres-wrap.pm-filtres--dropdown .conteneur { padding-inline: var(--gouttiere); }
+
+  /* Bouton déclencheur */
+  .pm-filtres-toggle {
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    background: var(--sauge);
+    color: #fff;
+    font-family: var(--f-corps);
+    font-size: .9rem;
+    font-weight: 600;
+    padding: .75rem 1.2rem;
+    border: none;
+    border-radius: 99px;
+    cursor: pointer;
+    min-height: 44px;
+    margin-bottom: .4rem;
+  }
+  .pm-filtres-toggle svg { flex-shrink: 0; transition: transform .25s ease; }
+  .pm-filtres-wrap.pm-filtres--dropdown.ouvert .pm-filtres-toggle svg { transform: rotate(180deg); }
+
+  /* Panel en mode dropdown (replié par défaut) */
+  .pm-filtres-wrap.pm-filtres--dropdown .pm-filtres {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    overflow-x: unset;
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: max-height .32s ease, opacity .2s ease;
+    background: var(--blanc);
+    border: 1px solid var(--bordure);
+    border-radius: .75rem;
+    box-shadow: 0 6px 20px rgba(0,0,0,.07);
+    padding: 0;
+    gap: 0;
+    scroll-snap-type: none;
+    scrollbar-width: none;
+  }
+  .pm-filtres-wrap.pm-filtres--dropdown.ouvert .pm-filtres {
+    max-height: 70vh;
+    overflow-y: auto;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Items en mode dropdown */
+  .pm-filtres-wrap.pm-filtres--dropdown .pm-filtre {
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid var(--bordure);
+    background: transparent;
+    color: var(--texte);
+    font-weight: 400;
+    padding: .8rem 1.2rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    white-space: normal;
+    scroll-snap-align: none;
+    flex-shrink: unset;
+    min-width: unset;
+    width: 100%;
+  }
+  .pm-filtres-wrap.pm-filtres--dropdown .pm-filtre:last-child { border-bottom: none; }
+  .pm-filtres-wrap.pm-filtres--dropdown .pm-filtre.actif {
+    background: var(--sauge-pale);
+    color: var(--sauge);
+    font-weight: 600;
+  }
+  /* Africaine : rouille au lieu du sauge */
+  body.univers-africaine .pm-filtres-wrap.pm-filtres--dropdown .pm-filtres-toggle { background: var(--afr-rouille); }
+  body.univers-africaine .pm-filtres-wrap.pm-filtres--dropdown .pm-filtre.actif { color: var(--afr-rouille); background: #f5ede6; }
 }
