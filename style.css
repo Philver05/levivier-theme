@@ -265,6 +265,10 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
 .intro { background: var(--creme); }
 /* Boutons Découvrir sous le carrousel (déplacés du hero) */
 .intro-actions { display: flex; flex-wrap: wrap; gap: .9rem; justify-content: center; margin-top: clamp(2rem, 1.2rem + 2vw, 3rem); }
+@media (max-width: 720px) {
+  .intro-actions { justify-content: flex-start; }
+  .intro-actions .btn { flex: 0 1 calc(50% - .45rem); padding-inline: .9rem; text-align: center; }
+}
 
 /* Pastilles de valeurs réutilisées (ex-accueil) : version centrée pour un
    en-tête de page (page-entete) plutôt qu'une colonne de texte alignée. */
