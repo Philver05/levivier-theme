@@ -3274,8 +3274,9 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   .infolettre h2,
   .infolettre p { text-align: left; }
 
-  /* Lofts : en-tête complète + section-titre → gauche sur mobile */
+  /* Lofts : en-tête complète + section-titre → gauche sur mobile, eyebrow centré */
   .lofts-entete { text-align: left; }
+  .lofts-eyebrow { text-align: center; }
   .lofts-entete-meta { justify-content: flex-start; }
   .lofts-section-titre { text-align: left; }
 
