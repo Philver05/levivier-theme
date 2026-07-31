@@ -217,7 +217,10 @@ if ($afr_parent && !is_wp_error($afr_parent)) {
 <section class="section bande-blanche">
     <div class="conteneur">
         <div class="section-titre">
-            <h2><?php echo esc_html(get_field('afr_pres_titre') ?: "Derrière l'épicerie : Viviane"); ?></h2>
+            <h2><?php
+                $afr_titre_portrait = esc_html(get_field('afr_pres_titre') ?: "Derrière l'épicerie : Viviane");
+                echo str_replace(' :', "\u{00A0}:", $afr_titre_portrait);
+            ?></h2>
         </div>
         <div class="apropos-split">
             <div class="page-prose reveal" style="margin:0">
