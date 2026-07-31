@@ -3294,14 +3294,18 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   .pam-qty-plus { width: 44px; height: 44px; }
 }
 
-/* ------ ≤480px : footer nav 1 colonne + pied-bas empilé ---------- */
+/* ------ ≤480px : pied-bas empilé --------------------------------- */
 @media (max-width: 480px) {
-  /* Nav footer : 2 colonnes trop étroites sur petits phones (textes longs
-     comme "Les lofts de la rivière" débordent à 480px et moins) */
-  .pied-nav-cols { grid-template-columns: 1fr; }
-
   /* Barre du bas : copyright + "Politique de confidentialité" sur une même
      ligne dépasse 375px → empilés verticalement, séparateur "·" masqué */
   .pied-bas { flex-direction: column; gap: .25rem; }
   .pied-bas > span[aria-hidden] { display: none; }
+}
+
+/* ------ ≤900px : nav burger — source-order fix touch targets ------ */
+/* La règle globale "PONT MENU WP" (padding-block:.3rem, sans @media)
+   vient APRÈS le bloc mobile ligne ~475, donc elle gagne en cascade.
+   Cette règle placée en dernier rétablit le bon padding sur le panneau. */
+@media (max-width: 900px) {
+  .nav-principale ul a { padding: 1rem .2rem; }
 }

@@ -44,8 +44,8 @@
                     if (!$page || $page->post_status !== 'publish') return null;
                     return ['url' => get_permalink($page), 'titre' => get_the_title($page)];
                 };
-                $pied_nav_col1 = ['epicerie', 'boutique', 'produits-maison', 'epicerie-africaine', 'pret-a-manger'];
-                $pied_nav_col2 = ['commandez', 'lofts', 'contactez-nous', 'promotions'];
+                $pied_nav_col1 = ['epicerie', 'boutique', 'produits-maison', 'epicerie-africaine', 'pret-a-manger', 'commandez'];
+                $pied_nav_col2 = ['lofts', 'contactez-nous', 'promotions'];
                 ?>
                 <div class="pied-nav-cols">
                     <ul class="pied-nav-col">
