@@ -3277,14 +3277,20 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   .cta-panel-actions { justify-content: flex-start; }
 }
 
-/* ------ ≤640px : cibles tactiles minimum 44px (iOS HIG) ---------- */
-@media (max-width: 640px) {
-  /* Footer : liens nav (était 18px) → tap pleine ligne sans sur-espacer. */
+/* ------ ≤900px : footer liens tap — couvre téléphone ET tablette ---- */
+/* Hamburger nav s'active à 900px, donc tout ≤900px est tactile.       */
+@media (max-width: 900px) {
+  /* Footer nav : pleine ligne tap */
   .pied li { margin-bottom: 0; }
   .pied li a { display: block; padding-block: .6rem; }
 
-  /* Footer marque : liens tel/email inline → tap confortable */
+  /* Footer marque : liens tel/email */
   .pied-marque a { display: flex; align-items: center; min-height: 44px; }
+}
+
+/* ------ ≤900px : cibles tactiles minimum 44px (iOS HIG) ---------- */
+/* Nav burger à 900px = tout ≤900px est tactile (téléphone + tablette) */
+@media (max-width: 900px) {
 
   /* Bandeau cookies : bouton J'accepte (35px → 44px) */
   .cookie-bandeau-btn { min-height: 44px; }
@@ -3300,6 +3306,29 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   /* Épicerie — noms producteurs (liens, 19px) et lien "+ N autre" (38px) */
   .prod-nom { display: flex; align-items: center; min-height: 44px; }
   .prod-groupe-plus { min-height: 44px; display: flex; align-items: center; }
+
+  /* Contact — liens coordonnées (tel/email/Facebook, 18px) et bouton Envoyer (39px) */
+  .ct2-aside a { display: flex; align-items: center; min-height: 44px; }
+  .ct2-form .btn { min-height: 44px; }
+
+  /* Lofts — en-tête méta, titres cartes et ligne contact dans le CTA */
+  .lofts-entete-meta a { min-height: 44px; }
+  .loft-carte-titre a { display: flex; align-items: center; min-height: 44px; }
+  .lofts-contact-ligne a { display: inline-flex; align-items: center; min-height: 44px; }
+
+  /* Fiche loft individuelle — boutons et liens d'action */
+  .loft-d-retour,
+  .loft-d-voir-airbnb,
+  .loft-d-voir-photos,
+  .loft-d-desc-plus,
+  .loft-d-am-plus,
+  .loft-d-loc-lien { min-height: 44px; }
+  .loft-d-voir-airbnb { display: flex; align-items: center; }
+  .loft-d-desc-plus,
+  .loft-d-loc-lien { display: inline-flex; align-items: center; }
+
+  /* Pied-bas — lien Politique de confidentialité */
+  .pied-bas a { display: flex; align-items: center; min-height: 44px; }
 }
 
 /* ------ ≤480px : Politique de confidentialité tap area ------------ */
