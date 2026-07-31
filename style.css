@@ -744,6 +744,8 @@ body.univers-lofts .page-entete .eyebrow { color: #e7c9a0; }
 .lofts-entete { background: var(--lofts-perle); text-align: center; padding-top: clamp(5.5rem, 4rem + 4vw, 7rem); padding-bottom: clamp(1.2rem, .8rem + 1.5vw, 2rem); }
 .lofts-eyebrow { color: #b07d3c; font-size: .78rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; margin-bottom: .8rem; }
 .lofts-entete-titre { font-family: var(--f-script); color: #1d5055; font-size: clamp(2.6rem, 1.8rem + 4vw, 4.8rem); line-height: 1.02; margin-bottom: 1.1rem; text-align: center; }
+br.br-mobile { display: none; }
+@media (max-width: 640px) { br.br-mobile { display: block; } }
 .lofts-entete-lead { max-width: 56ch; margin: 0 auto 1.1rem; color: var(--texte-doux); font-size: 1.08rem; }
 .lofts-entete-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem 1.8rem; font-size: .9rem; color: #41615f; }
 .lofts-entete-meta span, .lofts-entete-meta a { display: inline-flex; align-items: center; gap: .45rem; }
