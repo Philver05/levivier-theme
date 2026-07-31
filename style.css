@@ -506,8 +506,10 @@ body.pm-lightbox-ouvert { overflow: hidden; }
   /* Texte de cartes → gauche sur mobile.
      Le texte centré sur 3+ lignes crée des "dents de scie" (début de ligne
      variable) qui fatiguent l'oeil. Titres courts (1-2 lignes) restent centrés. */
-  .engagement { align-items: flex-start; text-align: left; }
-  .engagement .ico { margin-inline: 0; }
+  .engagement { flex-direction: row; flex-wrap: wrap; align-items: center; text-align: left; gap: .35rem .75rem; }
+  .engagement .ico { margin: 0; }
+  .engagement h3 { flex: 1 1 0; margin-bottom: 0; }
+  .engagement p { flex: 0 0 100%; padding-left: calc(56px + .75rem); }
   .section-titre p { text-align: left; }
 }
 
