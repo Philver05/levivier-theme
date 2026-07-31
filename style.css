@@ -3279,19 +3279,32 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 
 /* ------ ≤640px : cibles tactiles minimum 44px (iOS HIG) ---------- */
 @media (max-width: 640px) {
-  /* Footer : liens nav (était 18px) → tap pleine ligne sans sur-espacer.
-     margin-bottom retiré du li + padding-block .6rem sur le a =
-     9.6+18+9.6 = ~37px tactile, gap visuel entre textes = 19px (correct). */
+  /* Footer : liens nav (était 18px) → tap pleine ligne sans sur-espacer. */
   .pied li { margin-bottom: 0; }
   .pied li a { display: block; padding-block: .6rem; }
+
+  /* Footer marque : liens tel/email inline → tap confortable */
+  .pied-marque a { display: flex; align-items: center; min-height: 44px; }
+
+  /* Bandeau cookies : bouton J'accepte (35px → 44px) */
+  .cookie-bandeau-btn { min-height: 44px; }
 
   /* Contact : champs resserrés → min 44px */
   .ct2-form .champ input { min-height: 44px; }
 
-  /* PAM + PM : boutons +/- (32px → 44px, source order gagne sur le bloc
-     @media ≤640px plus haut qui les réduisait explicitement) */
+  /* PAM + PM : boutons +/- et input numérique (32px/28px → 44px) */
   .pam-qty-moins,
   .pam-qty-plus { width: 44px; height: 44px; }
+  .pam-qty-input { height: 44px; }
+
+  /* Épicerie — noms producteurs (liens, 19px) et lien "+ N autre" (38px) */
+  .prod-nom { display: flex; align-items: center; min-height: 44px; }
+  .prod-groupe-plus { min-height: 44px; display: flex; align-items: center; }
+}
+
+/* ------ ≤480px : Politique de confidentialité tap area ------------ */
+@media (max-width: 480px) {
+  .pied-bas a { display: flex; align-items: center; min-height: 44px; }
 }
 
 /* ------ ≤480px : pied-bas empilé --------------------------------- */
