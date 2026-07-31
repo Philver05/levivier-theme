@@ -477,13 +477,13 @@ body.pm-lightbox-ouvert { overflow: hidden; }
   /* Liste des liens : pleine largeur, séparateurs, touch targets confortables */
   .nav-principale ul { flex-direction: column; align-items: stretch; gap: 0; width: 100%; }
   .nav-principale ul li { width: 100%; border-bottom: 1px solid var(--bordure); }
-  .nav-principale ul a { display: block; width: 100%; font-size: 1.05rem; padding: 1rem .2rem; }
+  .nav-principale ul a { display: block; width: 100%; font-size: 1.05rem; padding: 1rem 1.2rem; text-align: left; }
   .nav-principale ul a::after { display: none; }
 
   /* Lien Contactez-nous (ajouté par header.php hors du menu WP) : même
      traitement que les liens de la liste dans le panneau mobile */
   .nav-principale > a.nav-contact,
-  .nav-principale > a.nav-pam { display: block; width: 100%; font-size: 1.05rem; padding: 1rem .2rem; border-bottom: 1px solid var(--bordure); text-align: center; white-space: normal; }
+  .nav-principale > a.nav-pam { display: block; width: 100%; font-size: 1.05rem; padding: 1rem 1.2rem; border-bottom: 1px solid var(--bordure); text-align: left; white-space: normal; }
   .nav-principale > a.nav-contact::after,
   .nav-principale > a.nav-pam::after { display: none; }
 
@@ -3362,7 +3362,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
    Ces règles placées en dernier rétablissent l'apparence du panneau. */
 @media (max-width: 900px) {
   .nav-principale ul { gap: 0; align-items: stretch; width: 100%; }
-  .nav-principale ul a { padding: 1rem .2rem; font-size: 1.05rem; text-align: center; white-space: normal; }
+  .nav-principale ul a { padding: 1rem 1.2rem; font-size: 1.05rem; text-align: left; white-space: normal; }
 }
 
 /* ----- Filtres : dropdown mobile automatique (> 3 items, ≤720px) ----- */
