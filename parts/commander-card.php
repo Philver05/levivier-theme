@@ -24,12 +24,12 @@ if (!function_exists('lv_lignes')) {
         <?php else: ?>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h16l-1.5 9a2 2 0 0 1-2 1.6H8.5a2 2 0 0 1-2-1.6L4 4H2"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg>
         <?php endif; ?>
+        <h3 class="cmd-carte-titre-photo"><?php the_title(); ?></h3>
         <?php if (!$url): ?>
             <span class="cmd-badge-bientot">Bientôt</span>
         <?php endif; ?>
     </div>
     <div class="cmd-carte-corps">
-        <h3><?php the_title(); ?></h3>
         <?php if ($description): ?>
             <p><?php echo esc_html($description); ?></p>
         <?php endif; ?>

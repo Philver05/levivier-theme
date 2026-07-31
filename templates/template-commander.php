@@ -27,7 +27,7 @@ $cmd_tel_lien = function_exists('lv_opt_tel_lien') ? lv_opt_tel_lien() : 'tel:+1
 <section class="page-entete">
     <div class="conteneur">
         <p class="eyebrow"><?php echo esc_html($surtitre); ?></p>
-        <h1><?php the_title(); ?></h1>
+        <h1 class="page-entete-titre-script"><?php the_title(); ?></h1>
         <?php if (get_the_content()) the_content(); ?>
     </div>
 </section>
@@ -73,8 +73,7 @@ $cmd_tel_lien = function_exists('lv_opt_tel_lien') ? lv_opt_tel_lien() : 'tel:+1
     <div class="conteneur">
 
         <div class="section-titre">
-            <h2><?php echo esc_html($cmd('cmd_bons_titre', 'Choisissez votre bon de commande')); ?></h2>
-            <p><?php echo esc_html($cmd('cmd_bons_texte', 'Choisissez le bon qu\'il vous faut et remplissez-le en ligne')); ?></p>
+            <h2><?php echo esc_html($cmd('cmd_bons_titre', 'Nos bons de commande')); ?></h2>
         </div>
 
         <div class="cmd-grille">
@@ -130,9 +129,9 @@ $cmd_tel_lien = function_exists('lv_opt_tel_lien') ? lv_opt_tel_lien() : 'tel:+1
                     <?php else: ?>
                         <div class="cmd-carte-icone" aria-hidden="true"><?php echo $meta['icone']; ?></div>
                     <?php endif; ?>
+                    <h3 class="cmd-carte-titre-photo"><?php echo esc_html($page->post_title); ?></h3>
                 </div>
                 <div class="cmd-carte-corps">
-                    <h3><?php echo esc_html($page->post_title); ?></h3>
                     <p><?php echo esc_html($meta['description']); ?></p>
                     <a href="<?php echo esc_url(get_permalink($page->ID)); ?>"
                        class="btn btn-primaire"><?php echo esc_html($cmd('cmd_bons_cta_texte', 'Remplir ce bon de commande')); ?></a>

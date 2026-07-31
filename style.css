@@ -1138,6 +1138,16 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
 .cmd-carte .btn { margin-top: auto; align-self: flex-start; }
 .cmd-cta-bientot { pointer-events: none; opacity: .55; }
 .cmd-badge-bientot { position: absolute; top: .8rem; left: .8rem; background: var(--encre); color: #fff; font-size: .72rem; font-weight: 700; letter-spacing: .04em; padding: .3rem .7rem; border-radius: 50px; }
+/* Titre carte en overlay au-dessus de la photo */
+.cmd-carte-titre-photo {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 1;
+  background: linear-gradient(to bottom, rgba(0,0,0,.62) 0%, rgba(0,0,0,.15) 65%, transparent 100%);
+  color: #fff; text-align: center; text-transform: uppercase;
+  letter-spacing: .07em; font-size: 1.05rem; font-weight: 700;
+  padding: .85rem 1rem .7rem; margin: 0;
+}
+/* Reduire l'espace entre "Nos bons de commande" et les cartes */
+#bons-de-commande .section-titre { margin-bottom: clamp(.75rem, .5rem + 1vw, 1.25rem); }
 
 /* Panneau CTA (relance bas de page) */
 .cta-panel { max-width: 780px; margin-inline: auto; text-align: center; background: linear-gradient(160deg, var(--sauge), var(--sauge-fonce)); color: #e7eee0; border-radius: var(--rayon-l); padding: clamp(2.2rem, 1.6rem + 3vw, 3.6rem); box-shadow: var(--ombre); }
@@ -3196,4 +3206,65 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   .carrousel-slide { transition: opacity .3s linear; }
   .carrousel-slide img { transition: none; }
   .carrousel-slide.actif img { transform: none; }
+}
+
+/* ================================================================
+   RESPONSIVE TEXTE — TABLETTE ET MOBILE
+   Règles placées en fin de fichier pour garantir la victoire
+   en cascade (même spécificité que les règles desktop, mais
+   positionnées après elles).
+================================================================ */
+
+/* ------ ≤768px : paragraphes longs dans les en-têtes de page ---------- */
+@media (max-width: 768px) {
+  /* Paragraphes intro (the_content / ACF) dans .page-entete → gauche.
+     Ces textes wrap à 5-12 lignes sur mobile/tablette ; centré = dents de scie. */
+  .page-entete .conteneur > p:not(.eyebrow) { text-align: left; font-size: .9rem; }
+  .page-entete .conteneur > div { text-align: left; }
+  .page-entete .conteneur > div p { text-align: left; }
+
+  /* Lofts : lead paragraph + atouts → gauche jusqu'à tablette */
+  .lofts-entete-lead { text-align: left; }
+  .lofts-atout { text-align: left; }
+  .lofts-atout h3 { min-height: unset; justify-content: flex-start; }
+
+  /* Africaine : masquer le logo pour éviter 150-180px de hauteur inutile.
+     Le logo est une confirmation visuelle moins prioritaire que le texte. */
+  body.univers-africaine .page-entete .hero-logo { display: none; }
+  body.univers-africaine .page-entete .hero-grille { display: block; }
+  body.univers-africaine .page-entete .hero-texte p { text-align: left; }
+}
+
+/* ------ ≤640px : corrections supplémentaires mobile seulement ---------- */
+@media (max-width: 640px) {
+  /* Padding en-tête : nav fixe = 76px ; 90px donne 14px de dégagement */
+  .page-entete { padding-top: 90px; }
+
+  /* Pilules de tags/filtres dans l'en-tête (ex : Épicerie) → alignées à gauche */
+  .intro-liste { justify-content: flex-start; }
+
+  /* Titres de section : sur mobile un h2 de 2+ lignes centré crée
+     des lignes de longueurs très inégales et fatigue la lecture */
+  .section-titre h2,
+  .section-titre h3 { text-align: left; }
+
+  /* Hero accueil : sous-titre court en desktop devient long sur mobile */
+  .hero-texte-sub { text-align: left; }
+
+  /* Infolettre */
+  .infolettre h2,
+  .infolettre p { text-align: left; }
+
+  /* Lofts : en-tête complète + section-titre → gauche sur mobile */
+  .lofts-entete { text-align: left; }
+  .lofts-entete-meta { justify-content: flex-start; }
+  .lofts-section-titre { text-align: left; }
+
+  /* Étapes (page Commander) → gauche */
+  .etape { text-align: left; }
+
+  /* CTA panel sauge (bas de page Commander) : paragraphe gauche */
+  .cta-panel h2 { text-align: left; }
+  .cta-panel p { text-align: left; margin-inline: 0; max-width: 100%; }
+  .cta-panel-actions { justify-content: flex-start; }
 }
