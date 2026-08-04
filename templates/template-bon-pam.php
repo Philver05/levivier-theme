@@ -5,7 +5,11 @@ Template Name: Bon de commande — Prêt à manger
 get_header();
 if (have_posts()) the_post();
 
-$surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
+$surtitre = get_field('pam_surtitre') ?: 'Commandez en ligne - Récupérez en magasin';
+$intro    = get_field('pam_intro');
+if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
+    $intro = 'Faites le plein de saveurs maison! Explorez nos différentes catégories de produits. Certains sont offerts tous les jours, tandis que d\'autres sont préparés à des journées précises ou en quantité limitée. Choisissez votre journée de récupération pour découvrir les produits disponibles. Une fois votre commande transmise, nous la validerons et vous enverrons une confirmation lorsqu\'elle sera prête à être payée et récupérée en magasin.';
+}
 ?>
 
 <!-- ======================================================
@@ -14,8 +18,12 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
 <section class="page-entete">
     <div class="conteneur">
         <p class="eyebrow"><?php echo esc_html($surtitre); ?></p>
-        <h1><?php the_title(); ?></h1>
-        <?php if (get_the_content()) the_content(); ?>
+        <h1 class="page-entete-titre-script"><?php the_title(); ?></h1>
+        <?php if ($intro): ?>
+            <p class="page-entete-intro"><?php echo nl2br(esc_html($intro)); ?></p>
+        <?php elseif (get_the_content()): ?>
+            <?php the_content(); ?>
+        <?php endif; ?>
     </div>
 </section>
 
