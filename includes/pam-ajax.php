@@ -23,6 +23,7 @@ function lv_pam_soumettre()
         $heure_recup = $heure_recup_raw;
     }
     $produits_raw = (isset($_POST['produits']) && is_array($_POST['produits'])) ? $_POST['produits'] : [];
+    $chaud_raw    = (isset($_POST['chaud'])    && is_array($_POST['chaud']))    ? $_POST['chaud']    : [];
 
     if (!$prenom || !$nom || !$email || !is_email($email)) {
         wp_send_json_error(['message' => 'Veuillez remplir les champs obligatoires (prénom, nom, courriel valide).']);
@@ -68,8 +69,9 @@ function lv_pam_soumettre()
         $sous_total = $prix * $qty;
         $total     += $sous_total;
 
+        $chaud_note   = isset($chaud_raw[$id]) ? ' <span style="color:#b85c50;font-size:12px;font-weight:600;">— Réchauffé</span>' : '';
         $lignes_html .= '<tr>'
-            . '<td style="padding:10px 14px;border-bottom:1px solid #e4ddd0;color:#1f2937;">' . esc_html($titre) . '</td>'
+            . '<td style="padding:10px 14px;border-bottom:1px solid #e4ddd0;color:#1f2937;">' . esc_html($titre) . $chaud_note . '</td>'
             . '<td style="padding:10px 14px;border-bottom:1px solid #e4ddd0;text-align:center;color:#1f2937;">' . esc_html($qty) . '</td>'
             . '<td style="padding:10px 14px;border-bottom:1px solid #e4ddd0;text-align:right;color:#1f2937;">' . esc_html(number_format($prix, 2, ',', ' ')) . '&nbsp;$</td>'
             . '<td style="padding:10px 14px;border-bottom:1px solid #e4ddd0;text-align:right;color:#1f2937;font-weight:600;">' . esc_html(number_format($sous_total, 2, ',', ' ')) . '&nbsp;$</td>'

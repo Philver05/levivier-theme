@@ -2315,6 +2315,33 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   gap: .4rem;
   margin-top: .5rem;
 }
+.pam-option-chaud {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin-top: .45rem;
+  font-size: .82rem;
+  color: var(--terracotta-texte);
+  cursor: pointer;
+  user-select: none;
+}
+.pam-option-chaud svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  stroke: var(--terracotta);
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pam-option-chaud input[type="checkbox"] {
+  accent-color: var(--terracotta);
+  width: 15px;
+  height: 15px;
+  flex: none;
+  cursor: pointer;
+}
 .pam-qty-moins,
 .pam-qty-plus {
   width: 32px;

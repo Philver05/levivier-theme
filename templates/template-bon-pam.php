@@ -314,6 +314,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                             $thumb        = get_the_post_thumbnail_url($pid, 'large');
                             $photo2       = get_field('pam_photo2');
                             $suggestions  = get_field('pam_suggestions') ?: [];
+                            $chaud        = get_field('pam_chaud');
 
                             /* Sous-catégorie de ce produit parmi les enfants de la
                                catégorie principale active, pour le filtre à 2 niveaux */
@@ -331,7 +332,8 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                              data-taxable="<?php echo esc_attr($taxable ? '1' : '0'); ?>"
                              data-jours="<?php echo esc_attr(implode(' ', $jours)); ?>"
                              data-souscat="<?php echo esc_attr($souscat); ?>"
-                             data-suggestions="<?php echo esc_attr(implode(' ', $suggestions)); ?>">
+                             data-suggestions="<?php echo esc_attr(implode(' ', $suggestions)); ?>"
+                             data-chaud="<?php echo $chaud ? '1' : '0'; ?>">
 
                             <?php if ($thumb && $photo2): ?>
                             <div class="pam-produit-photos">
@@ -414,6 +416,13 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                                            aria-label="Quantité de <?php echo esc_attr(get_the_title()); ?>">
                                     <button type="button" class="pam-qty-plus" aria-label="Ajouter un">+</button>
                                 </div>
+                                <?php if ($chaud): ?>
+                                <label class="pam-option-chaud" hidden>
+                                    <input type="checkbox" name="chaud[<?php echo esc_attr($pid); ?>]" value="1" class="pam-chaud-input">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2c0 2.5 3 3.5 3 6"/><path d="M12 2c0 2.5 3 3.5 3 6"/><path d="M4 2c0 2.5 3 3.5 3 6"/><path d="M20 12H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2Z"/></svg>
+                                    Réchauffé, s.v.p.
+                                </label>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <?php endwhile; wp_reset_postdata(); ?>

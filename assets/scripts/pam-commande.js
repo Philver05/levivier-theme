@@ -397,6 +397,19 @@
     /* -------------------------------------------------------
        Boutons +/-
     ------------------------------------------------------- */
+    function majOptionChaud(item) {
+        var opt = item ? item.querySelector('.pam-option-chaud') : null;
+        if (!opt) return;
+        var qty = parseInt((item.querySelector('.pam-qty-input') || {}).value, 10) || 0;
+        if (qty === 0) {
+            opt.hidden = true;
+            var cb = opt.querySelector('.pam-chaud-input');
+            if (cb) cb.checked = false;
+        } else {
+            opt.hidden = false;
+        }
+    }
+
     form.addEventListener('click', function (e) {
         var btn = e.target.closest('.pam-qty-moins, .pam-qty-plus');
         if (!btn) return;
@@ -407,8 +420,9 @@
         var val = btn.classList.contains('pam-qty-moins') ? Math.max(0, valAvant - 1) : Math.min(20, valAvant + 1);
         input.value = val;
         calculerTotal();
+        var item = controle.closest('.pam-produit-item');
+        majOptionChaud(item);
         if (valAvant === 0 && val === 1) {
-            var item = controle.closest('.pam-produit-item');
             if (item) suggererApres(item);
         }
     });
@@ -423,8 +437,10 @@
     }
 
     form.addEventListener('input', function (e) {
-        if (e.target.classList.contains('pam-qty-input')) calculerTotal();
-        /* Retire l'état invalide dès que l'utilisateur corrige le champ */
+        if (e.target.classList.contains('pam-qty-input')) {
+            calculerTotal();
+            majOptionChaud(e.target.closest('.pam-produit-item'));
+        }
         nettoyerErreurChamp(e);
     });
 
@@ -534,6 +550,11 @@
                 var item = input.closest('.pam-produit-item');
                 if (item) data.append('produits[' + item.dataset.id + ']', qty);
             }
+        });
+
+        document.querySelectorAll('.pam-chaud-input:checked').forEach(function (cb) {
+            var item = cb.closest('.pam-produit-item');
+            if (item) data.append('chaud[' + item.dataset.id + ']', '1');
         });
 
         fetch(PAM.ajax, { method: 'POST', body: data })

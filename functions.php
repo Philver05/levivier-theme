@@ -1345,6 +1345,14 @@ add_action('acf/init', function () {
                 'instructions'  => 'Cochez si ce produit est taxable (TPS/TVQ). Une note "+ taxes" s\'affiche alors sous le prix sur la carte.',
             ],
             [
+                'key'          => 'field_pam_chaud',
+                'name'         => 'pam_chaud',
+                'label'        => 'Option "repas chaud"',
+                'type'         => 'true_false',
+                'ui'           => 1,
+                'instructions' => 'Cochez si ce produit peut être réchauffé à la demande (ex : pizza, shish taouk). Une case à cocher "Réchauffé, s.v.p." apparaît alors sur la carte.',
+            ],
+            [
                 'key'     => 'field_pam_jours',
                 'name'    => 'pam_jours',
                 'label'   => 'Disponibilité',
