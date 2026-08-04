@@ -1045,3 +1045,218 @@ add_action('admin_init', function () {
     echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#b85c50;">← Retour au tableau de bord</a></p>';
     exit;
 });
+
+/**
+ * PAM : met à jour le catalogue selon le PDF de Marie (août 2026).
+ * - Renomme + corrige les 5 pizzas (vrais noms, descriptions, prix)
+ * - Renomme Patates sarroises → Patates sarladaises + description
+ * - Crée Salade Grecque et Salade Racines (taxables)
+ * - Dépublie "Sauce saumon et crevettes" (Divers)
+ * - Active pam_chaud sur les 5 pizzas + le shish taouk
+ * Relançable sans risque (idempotent).
+ * Déclencher en visitant : /wp-admin/?lv_seed_pam_contenu_pdf=1
+ */
+add_action('admin_init', function () {
+
+    if (!isset($_GET['lv_seed_pam_contenu_pdf']) || $_GET['lv_seed_pam_contenu_pdf'] !== '1') return;
+    if (!current_user_can('manage_options')) wp_die('Accès refusé.');
+
+    $log = [];
+
+    /* ------------------------------------------------------------------ */
+    /* Helpers                                                              */
+    /* ------------------------------------------------------------------ */
+
+    /* Trouve l'ID d'un pam_produit par son titre (exact, insensible à la casse) */
+    $trouver_produit = function (string $titre): int {
+        $q = get_posts([
+            'post_type'   => 'pam_produit',
+            'title'       => $titre,
+            'post_status' => ['publish', 'draft'],
+            'numberposts' => 1,
+        ]);
+        return $q ? (int) $q[0]->ID : 0;
+    };
+
+    /* Trouve l'ID d'un terme pam_categorie par son nom */
+    $trouver_cat = function (string $nom): int {
+        $t = get_term_by('name', $nom, 'pam_categorie');
+        return $t ? (int) $t->term_id : 0;
+    };
+
+    /* Crée ou met à jour un pam_produit */
+    $upsert = function (array $data) use ($trouver_produit, $log): int {
+        $existing = $trouver_produit($data['post_title']);
+        if ($existing) {
+            wp_update_post(array_merge(['ID' => $existing], $data));
+            return $existing;
+        }
+        return (int) wp_insert_post(array_merge(['post_type' => 'pam_produit', 'post_status' => 'publish'], $data));
+    };
+
+    /* ------------------------------------------------------------------ */
+    /* 1. Pizzas : renommer + vrais prix + descriptions                    */
+    /* ------------------------------------------------------------------ */
+    $pizzas_cat_id = $trouver_cat('Pizzas');
+    if (!$pizzas_cat_id) {
+        $log[] = '❌ Sous-catégorie « Pizzas » introuvable — exécutez d\'abord ?lv_seed_pam_pizzas=1';
+    }
+
+    $mises_a_jour_pizzas = [
+        /* [ancien titre du seed] => [nouveau titre, description, prix] */
+        'Pizza sauce pomodoro et fromage italien' => [
+            'titre' => 'Pizza mozzarella (végé)',
+            'desc'  => 'Une pizza des plus classiques, revisitée sur notre généreuse pâte à focaccia maison. Garnie de notre sauce pomodoro maison et de mozzarella fondante, elle mise sur la simplicité\xe2\x80\xa6 et le plaisir.',
+            'prix'  => 9.95,
+        ],
+        'Pizza sauce pomodoro, salami fin et fromage italien' => [
+            'titre' => 'Pizza Italienne à la viande',
+            'desc'  => 'Pâte à focaccia maison garnie de notre sauce pomodoro maison, d\'un savoureux mélange de viandes fines italiennes et de mozzarella fondante. Une pizza généreuse aux saveurs italiennes réconfortantes.',
+            'prix'  => 13.95,
+        ],
+        'Pizza Grecque (végé)' => [
+            'titre' => 'Pizza Grecque (végé)',
+            'desc'  => 'Pâte à focaccia maison, sauce pomodoro maison, fromage féta, olives noires, oignons rouges et poivrons grillés.',
+            'prix'  => 15.95,
+        ],
+        'Pizza Tex-Mex au chili' => [
+            'titre' => 'Pizza Tex-Mex bœuf',
+            'desc'  => 'Notre fameux chili maison au bœuf, mijoté avec soin et recouvert de fromage Tex-Mex fondant, transforme notre pâte à focaccia maison en une pizza Olé!',
+            'prix'  => 15.95,
+        ],
+        'Pizza au saumon et crevettes' => [
+            'titre' => 'Pizza Gaspésienne',
+            'desc'  => 'Un duo de saumon frais et de saumon fumé, accompagné de crevettes nordiques, se retrouve sur cette pizza garnie de mozzarella, le tout sur notre pâte à focaccia maison.',
+            'prix'  => 18.95,
+        ],
+    ];
+
+    $pizza_ids = [];
+    foreach ($mises_a_jour_pizzas as $ancien_titre => $info) {
+        /* Chercher par l'ancien titre d'abord, puis par le nouveau (si déjà renommé) */
+        $id = $trouver_produit($ancien_titre) ?: $trouver_produit($info['titre']);
+        if (!$id) {
+            /* Créer si introuvable */
+            $id = (int) wp_insert_post([
+                'post_type'    => 'pam_produit',
+                'post_status'  => 'publish',
+                'post_title'   => $info['titre'],
+                'post_content' => $info['desc'],
+            ]);
+            $log[] = "✔ Pizza « {$info['titre']} » créée";
+        } else {
+            wp_update_post([
+                'ID'           => $id,
+                'post_title'   => $info['titre'],
+                'post_content' => $info['desc'],
+            ]);
+            $log[] = "✔ Pizza « {$info['titre']} » mise à jour";
+        }
+        update_post_meta($id, 'pam_prix', $info['prix']);
+        update_post_meta($id, 'pam_chaud', '1');
+        if ($pizzas_cat_id) wp_set_object_terms($id, $pizzas_cat_id, 'pam_categorie');
+        $pizza_ids[] = $id;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* 2. Patates sarladaises (renommer + description)                     */
+    /* ------------------------------------------------------------------ */
+    $acc_cat_id = $trouver_cat('Accompagnement');
+    $desc_patates = 'Un accompagnement parfait de notre shish taouk : de petites pommes de terre grelots cuites au gras de canard, enrobées d\'herbes salées du Bas-du-Fleuve, servies avec une sauce crémeuse à l\'ail maison.';
+
+    $id_patates = $trouver_produit('Patates sarroises') ?: $trouver_produit('Patates sarladaises');
+    if ($id_patates) {
+        wp_update_post([
+            'ID'           => $id_patates,
+            'post_title'   => 'Patates sarladaises',
+            'post_content' => $desc_patates,
+        ]);
+        $log[] = '✔ Patates sarladaises : renommées + description mise à jour';
+    } else {
+        $id_patates = (int) wp_insert_post([
+            'post_type'    => 'pam_produit',
+            'post_status'  => 'publish',
+            'post_title'   => 'Patates sarladaises',
+            'post_content' => $desc_patates,
+        ]);
+        update_post_meta($id_patates, 'pam_prix', 5.95);
+        if ($acc_cat_id) wp_set_object_terms($id_patates, $acc_cat_id, 'pam_categorie');
+        $log[] = '✔ Patates sarladaises : créées (introuvables sous l\'ancien titre)';
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* 3. Salade Grecque + Salade Racines (créer si absentes)             */
+    /* ------------------------------------------------------------------ */
+    $salades_cat_id = $trouver_cat('Salades');
+    $nouvelles_salades = [
+        'Salade Grecque' => [
+            'desc' => 'Laitue croquante, feta, olives Kalamata, tomates, concombre, poivrons et oignons rouges, accompagnés d\'une vinaigrette grecque maison.',
+            'prix' => 11.95,
+        ],
+        'Salade Racines' => [
+            'desc' => 'Laitue croquante garnie d\'un mélange de légumes racines, de croûtons au fromage de chèvre, accompagnée d\'une vinaigrette maison à la menthe.',
+            'prix' => 12.95,
+        ],
+    ];
+    foreach ($nouvelles_salades as $titre => $info) {
+        $id_s = $trouver_produit($titre);
+        if ($id_s) {
+            wp_update_post(['ID' => $id_s, 'post_content' => $info['desc']]);
+            update_post_meta($id_s, 'pam_prix', $info['prix']);
+            update_post_meta($id_s, 'pam_taxable', '1');
+            $log[] = "✔ $titre : mise à jour";
+        } else {
+            $id_s = (int) wp_insert_post([
+                'post_type'    => 'pam_produit',
+                'post_status'  => 'publish',
+                'post_title'   => $titre,
+                'post_content' => $info['desc'],
+            ]);
+            update_post_meta($id_s, 'pam_prix', $info['prix']);
+            update_post_meta($id_s, 'pam_taxable', '1');
+            if ($salades_cat_id) wp_set_object_terms($id_s, $salades_cat_id, 'pam_categorie');
+            $log[] = "✔ $titre créée ({$info['prix']}\$ + tx)";
+        }
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* 4. Sauce saumon et crevettes → dépublier                           */
+    /* ------------------------------------------------------------------ */
+    $id_sauce = $trouver_produit('Sauce saumon et crevettes');
+    if ($id_sauce) {
+        wp_update_post(['ID' => $id_sauce, 'post_status' => 'draft']);
+        $log[] = '✔ « Sauce saumon et crevettes » mise en brouillon (masquée du bon de commande)';
+    } else {
+        $log[] = '— « Sauce saumon et crevettes » introuvable (peut-être déjà supprimée)';
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* 5. pam_chaud sur le shish taouk                                    */
+    /* ------------------------------------------------------------------ */
+    $shish = get_posts([
+        'post_type'   => 'pam_produit',
+        'post_status' => 'publish',
+        's'           => 'shish',
+        'numberposts' => 5,
+    ]);
+    foreach ($shish as $s) {
+        update_post_meta($s->ID, 'pam_chaud', '1');
+        $log[] = '✔ pam_chaud activé sur « ' . $s->post_title . ' »';
+    }
+    if (empty($shish)) $log[] = '— Shish taouk introuvable (titre contenant « shish ») — activez pam_chaud manuellement';
+
+    /* ------------------------------------------------------------------ */
+    /* Rapport                                                              */
+    /* ------------------------------------------------------------------ */
+    echo '<style>body{font-family:monospace;padding:2rem;background:#f9f5f0;} h1{color:#b85c50;} li{margin:.3rem 0;} .ok{color:#4d6040;} .warn{color:#b85c50;}</style>';
+    echo '<h1>Le Vivier — Mise à jour catalogue PAM (PDF Marie)</h1>';
+    echo '<ul>';
+    foreach ($log as $ligne) {
+        $class = str_contains($ligne, '❌') ? 'warn' : (str_contains($ligne, '—') ? 'warn' : 'ok');
+        echo '<li class="' . $class . '">' . esc_html($ligne) . '</li>';
+    }
+    echo '</ul>';
+    echo '<p><strong>Reste à faire manuellement :</strong> ajouter une photo à chaque pizza + shish taouk dans <em>Prêt à manger</em>.</p>';
+    echo '<p style="margin-top:2rem;"><a href="' . admin_url('edit.php?post_type=pam_produit') . '" style="color:#b85c50;">→ Voir tous les produits PAM</a></p>';
+    exit;
+});
