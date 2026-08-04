@@ -97,7 +97,7 @@ $cmd_tel_lien = function_exists('lv_opt_tel_lien') ? lv_opt_tel_lien() : 'tel:+1
             $templates_internes = [
                 'templates/template-bon-pam.php'  => [
                     'icone'       => '🥗',
-                    'description' => $cmd('cmd_desc_pam', 'Focaccias, pizzas, sandwichs, salades, sushis et plus — commandez à l\'avance et récupérez en magasin.'),
+                    'description' => $cmd('cmd_desc_pam', 'Ce bon de commande vous permet de réserver nos fameuses focaccias, une sélection de plats prêts à manger (pizzas, sandwichs, salades, pâtés et bien plus), nos pâtisseries maison ainsi que les sushis du P\'tit Béret, livrés chaque jeudi. Choisissez la journée qui vous convient, demandez votre repas chaud au besoin, puis venez payer et récupérer votre commande en magasin.'),
                 ],
                 'templates/template-bon-pm.php'   => [
                     'icone'       => '🏡',
