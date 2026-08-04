@@ -466,7 +466,7 @@
             { name: 'nom',                msg: 'Veuillez entrer votre nom.' },
             { name: 'email',              msg: 'Veuillez entrer votre adresse courriel.' },
             { name: 'date_recuperation',  msg: 'Veuillez choisir une date de récupération.' },
-            { name: 'heure_recuperation', msg: 'Veuillez choisir une plage horaire.' },
+            { name: 'heure_recuperation', msg: "Veuillez choisir une heure de récupération." },
         ];
 
         regles.forEach(function (regle) {

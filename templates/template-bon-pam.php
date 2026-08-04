@@ -454,14 +454,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                     </div>
                     <div class="pam-champ">
                         <label for="pam_heure">Heure de récupération <abbr title="requis">*</abbr></label>
-                        <select id="pam_heure" name="heure_recuperation" required>
-                            <option value="">Choisir une plage</option>
-                            <option value="8h30 – 10h">8h30 – 10h</option>
-                            <option value="10h – 12h">10h – 12h</option>
-                            <option value="12h – 14h">12h – 14h</option>
-                            <option value="14h – 16h">14h – 16h</option>
-                            <option value="16h – 18h">16h – 18h</option>
-                        </select>
+                        <input type="time" id="pam_heure" name="heure_recuperation" step="300" min="08:30" max="18:00" required>
                     </div>
                     <div class="pam-champ pam-champ--pleine">
                         <label for="pam_commentaire">Commentaire (optionnel)</label>

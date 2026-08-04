@@ -15,15 +15,21 @@ function lv_pam_soumettre()
     $commentaire = sanitize_textarea_field(wp_unslash($_POST['commentaire'] ?? ''));
     $jour        = sanitize_text_field(wp_unslash($_POST['jour']        ?? ''));
     $date_recup  = sanitize_text_field(wp_unslash($_POST['date_recuperation']  ?? ''));
-    $heure_recup = sanitize_text_field(wp_unslash($_POST['heure_recuperation'] ?? ''));
+    $heure_recup_raw = sanitize_text_field(wp_unslash($_POST['heure_recuperation'] ?? ''));
+    /* Convertir "HH:MM" (input type=time) en "14 h 30" pour l'affichage */
+    if (preg_match('/^(\d{1,2}):(\d{2})$/', $heure_recup_raw, $hm)) {
+        $heure_recup = (int) $hm[1] . ' h' . ($hm[2] !== '00' ? ' ' . $hm[2] : '');
+    } else {
+        $heure_recup = $heure_recup_raw;
+    }
     $produits_raw = (isset($_POST['produits']) && is_array($_POST['produits'])) ? $_POST['produits'] : [];
 
     if (!$prenom || !$nom || !$email || !is_email($email)) {
         wp_send_json_error(['message' => 'Veuillez remplir les champs obligatoires (prénom, nom, courriel valide).']);
     }
 
-    if (!$date_recup || !$heure_recup) {
-        wp_send_json_error(['message' => 'Veuillez choisir une date et une plage horaire de récupération.']);
+    if (!$date_recup || !$heure_recup_raw) {
+        wp_send_json_error(['message' => 'Veuillez choisir une date et une heure de récupération.']);
     }
 
     $date_recup_ts    = strtotime($date_recup);
