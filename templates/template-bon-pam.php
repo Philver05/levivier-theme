@@ -213,7 +213,7 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                    à cette liste) se retrouve à la fin, par ordre alphabétique. */
                 $ordre_pam_categories = [
                     'Pains', 'Pâtisseries', 'Pâtés et Quiches', 'Mets préparés',
-                    'Divers prêt-à-manger', 'Sushis',
+                    'Divers prêt-à-manger', 'Sushis', 'Accompagnement',
                 ];
                 usort($categories_principales, function ($a, $b) use ($ordre_pam_categories) {
                     $pos_a = array_search($a->name, $ordre_pam_categories, true);
@@ -257,6 +257,21 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
                     ]);
                     if (is_wp_error($enfants)) $enfants = [];
 
+                    /* Ordre personnalisé des sous-catégories par catégorie parente */
+                    $ordre_souscats_par_cat = [
+                        'Mets préparés' => ['Pizzas', 'Mets cuisinés', 'Sandwichs', 'Salades'],
+                    ];
+                    if (!empty($ordre_souscats_par_cat[$cat->name]) && !empty($enfants)) {
+                        $ordre_sc = $ordre_souscats_par_cat[$cat->name];
+                        usort($enfants, function ($a, $b) use ($ordre_sc) {
+                            $pa = array_search($a->name, $ordre_sc, true);
+                            $pb = array_search($b->name, $ordre_sc, true);
+                            if ($pa === false) $pa = 999;
+                            if ($pb === false) $pb = 999;
+                            return $pa === $pb ? strcasecmp($a->name, $b->name) : $pa <=> $pb;
+                        });
+                    }
+
                     $produits = new WP_Query([
                         'post_type'      => 'pam_produit',
                         'post_status'    => 'publish',
@@ -278,11 +293,11 @@ $surtitre = get_field('pam_surtitre') ?: 'Prêt à manger · Le Vivier';
 
                     <?php if ($enfants): ?>
                     <div class="pam-filtre-souscats" role="tablist" aria-label="Sous-catégories de <?php echo esc_attr($cat->name); ?>">
-                        <?php $premier_enfant = true; foreach ($enfants as $enfant): ?>
-                        <button type="button" class="pam-souscat-tab<?php echo $premier_enfant ? ' pam-souscat-tab--actif' : ''; ?>" data-souscat="<?php echo esc_attr($enfant->slug); ?>">
+                        <?php foreach ($enfants as $enfant): ?>
+                        <button type="button" class="pam-souscat-tab" data-souscat="<?php echo esc_attr($enfant->slug); ?>">
                             <?php echo esc_html($enfant->name); ?>
                         </button>
-                        <?php $premier_enfant = false; endforeach; ?>
+                        <?php endforeach; ?>
                     </div>
                     <?php endif; ?>
 

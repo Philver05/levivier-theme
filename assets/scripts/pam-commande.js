@@ -359,7 +359,7 @@
     document.querySelectorAll('.pam-cat-tab').forEach(function (btn) {
         btn.addEventListener('click', function () {
             categorieActive = btn.dataset.cat;
-            sousCategorieActive = premierSouscatDe(categorieActive);
+            sousCategorieActive = ''; /* tout afficher, les sous-onglets filtrent si cliqués */
             appliquerFiltreCategorie();
             majSousCategorieTabs();
             appliquerFiltreSousCategorie();
@@ -372,7 +372,7 @@
     if (catSelect) {
         catSelect.addEventListener('change', function () {
             categorieActive = catSelect.value;
-            sousCategorieActive = premierSouscatDe(categorieActive);
+            sousCategorieActive = '';
             appliquerFiltreCategorie();
             majSousCategorieTabs();
             appliquerFiltreSousCategorie();
