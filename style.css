@@ -2646,13 +2646,18 @@ body:has(.pam-barre-total--active) .section:last-of-type {
     line-height: 1.4;
   }
   /* Prix à gauche et quantité à droite sur la même ligne de pied */
+  .pam-produit-pied {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
   .pam-produit-prix {
     font-size: .95rem;
     margin-top: 0;
-    margin-right: auto;
-    padding-top: .3rem;
+    padding-top: 0;
   }
-  .pam-qty-controle { margin-top: 0; margin-left: auto; }
+  .pam-qty-controle { margin-top: 0; }
   .pam-qty-moins,
   .pam-qty-plus { width: 32px; height: 32px; }
   .pam-qty-input { width: 46px; padding: .25rem .3rem; }

@@ -404,10 +404,6 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                                     <p class="pam-produit-desc"><?php echo nl2br(esc_html($ingredients)); ?></p>
                                 </details>
                                 <?php endif; ?>
-                                <p class="pam-produit-prix">
-                                    <?php echo esc_html(number_format($prix, 2, ',', ' ')); ?>&nbsp;$
-                                    <?php if ($taxable): ?><span class="pam-produit-taxes">+ taxes</span><?php endif; ?>
-                                </p>
                                 <?php if ($instructions): ?>
                                 <p class="pam-produit-instructions">
                                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
@@ -415,6 +411,11 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                                 </p>
                                 <?php endif; ?>
 
+                                <div class="pam-produit-pied">
+                                <p class="pam-produit-prix">
+                                    <?php echo esc_html(number_format($prix, 2, ',', ' ')); ?>&nbsp;$
+                                    <?php if ($taxable): ?><span class="pam-produit-taxes">+ taxes</span><?php endif; ?>
+                                </p>
                                 <div class="pam-qty-controle">
                                     <button type="button" class="pam-qty-moins" aria-label="Retirer un">-</button>
                                     <input type="number"
@@ -424,6 +425,7 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                                            aria-label="Quantité de <?php echo esc_attr(get_the_title()); ?>">
                                     <button type="button" class="pam-qty-plus" aria-label="Ajouter un">+</button>
                                 </div>
+                                </div><!-- .pam-produit-pied -->
                                 <?php if ($chaud): ?>
                                 <label class="pam-option-chaud" hidden>
                                     <input type="checkbox" name="chaud[<?php echo esc_attr($pid); ?>]" value="1" class="pam-chaud-input">
