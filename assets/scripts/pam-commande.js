@@ -335,6 +335,10 @@
                 el.dataset.categorie === sousCategorieActive
             );
             el.hidden = !(matchJour || matchCat);
+            /* Sur desktop : ouvre automatiquement le <details> quand visible */
+            if (el.tagName === 'DETAILS' && !el.hidden && window.matchMedia('(min-width: 641px)').matches) {
+                el.setAttribute('open', '');
+            }
         });
     }
 

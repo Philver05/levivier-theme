@@ -1973,6 +1973,9 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   box-shadow: var(--ombre-douce);
 }
 .pam-msg-jour[hidden] { display: none; }
+/* display:flex sur .pam-msg-corps écrase le masquage natif du <details> fermé */
+.pam-msg-jour:not([open]) > .pam-msg-corps,
+.pam-msg-jour:not([open]) > .pam-msg-image { display: none; }
 .pam-msg-jour--avec-image {
   flex-direction: row;
   align-items: flex-start;
@@ -2011,6 +2014,43 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   color: var(--sauge);
   margin: 0;
   line-height: 1.3;
+  list-style: none;       /* retire le triangle natif <summary> */
+}
+.pam-msg-titre::-webkit-details-marker { display: none; }
+
+/* Desktop : <details> toujours ouvert, titre non-cliquable */
+@media (min-width: 641px) {
+  .pam-msg-jour > summary.pam-msg-titre {
+    pointer-events: none;
+    cursor: default;
+  }
+}
+
+/* Mobile : titre comme bouton accordéon avec chevron */
+@media (max-width: 640px) {
+  .pam-msg-jour > summary.pam-msg-titre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    gap: .5rem;
+  }
+  .pam-msg-jour > summary.pam-msg-titre::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid var(--sauge);
+    border-bottom: 2px solid var(--sauge);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+    transition: transform .2s;
+    margin-top: -4px;
+  }
+  .pam-msg-jour[open] > summary.pam-msg-titre::after {
+    transform: rotate(-135deg);
+    margin-top: 4px;
+  }
+  .pam-msg-jour > .pam-msg-corps { margin-top: .7rem; }
 }
 .pam-msg-desc {
   font-size: .93rem;

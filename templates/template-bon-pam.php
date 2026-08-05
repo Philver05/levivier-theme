@@ -157,14 +157,12 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                 <?php if ($messages): ?>
                 <div class="pam-messages-jours" aria-live="polite">
                     <?php foreach ($messages as $data): ?>
-                    <div class="pam-msg-jour<?php echo $data['image'] ? ' pam-msg-jour--avec-image' : ''; ?>" data-jour="<?php echo esc_attr(implode(' ', $data['jours'])); ?>" data-categorie="<?php echo esc_attr($data['categorie']); ?>" hidden>
+                    <details class="pam-msg-jour<?php echo $data['image'] ? ' pam-msg-jour--avec-image' : ''; ?>" data-jour="<?php echo esc_attr(implode(' ', $data['jours'])); ?>" data-categorie="<?php echo esc_attr($data['categorie']); ?>" hidden>
+                        <summary class="pam-msg-titre"><?php echo esc_html($data['titre'] ?: 'Informations'); ?></summary>
                         <?php if ($data['image']): ?>
                         <img class="pam-msg-image" src="<?php echo esc_url($data['image']['sizes']['medium'] ?? $data['image']['url']); ?>" alt="<?php echo esc_attr($data['image']['alt'] ?: $data['titre']); ?>">
                         <?php endif; ?>
                         <div class="pam-msg-corps">
-                            <?php if ($data['titre']): ?>
-                            <p class="pam-msg-titre"><?php echo esc_html($data['titre']); ?></p>
-                            <?php endif; ?>
                             <?php if ($data['description']): ?>
                             <p class="pam-msg-desc"><?php echo nl2br(esc_html($data['description'])); ?></p>
                             <?php endif; ?>
@@ -185,7 +183,7 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                             </div>
                             <?php endif; ?>
                         </div>
-                    </div>
+                    </details>
                     <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
