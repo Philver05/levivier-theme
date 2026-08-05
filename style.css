@@ -3339,8 +3339,8 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 
 /* ------ ≤640px : corrections supplémentaires mobile seulement ---------- */
 @media (max-width: 640px) {
-  /* Padding en-tête : nav fixe = 76px ; 90px donne 14px de dégagement */
-  .page-entete { padding-top: 90px; }
+  /* Padding en-tête : nav fixe = 76px ; 82px donne 6px de dégagement */
+  .page-entete { padding-top: 82px; }
 
   /* Pilules de tags/filtres dans l'en-tête (ex : Épicerie) → alignées à gauche */
   .intro-liste { justify-content: flex-start; }
