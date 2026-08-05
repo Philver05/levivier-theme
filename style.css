@@ -2624,13 +2624,27 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   .pam-produit-placeholder {
     width: 106px;
     min-height: 106px;
-    height: auto;
+    height: 100%;
     aspect-ratio: auto;
     flex-shrink: 0;
     object-fit: cover;
+    align-self: stretch;
+  }
+  /* Wrapper 2 photos : même contrainte que l'img seule */
+  .pam-produit-item .pam-produit-photos {
+    width: 106px;
+    min-height: 106px;
+    height: 100%;
+    aspect-ratio: auto;
+    flex-shrink: 0;
+    align-self: stretch;
+  }
+  .pam-produit-item .pam-produit-photos img {
+    width: 100%;
+    height: 100%;
   }
   .pam-produit-corps {
-    padding: .7rem .85rem .75rem;
+    padding: .65rem .65rem .65rem .55rem;
     flex-direction: row;
     flex-wrap: wrap;
     align-content: flex-start;
