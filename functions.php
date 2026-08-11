@@ -45,12 +45,14 @@ function lv_enqueue_scripts_styles()
 
     // Versions basées sur la date de modification : cache navigateur long ET
     // rafraîchissement automatique à chaque mise à jour de fichier.
+    $css_min  = get_stylesheet_directory() . '/style.min.css';
     $css_path = get_stylesheet_directory() . '/style.css';
     $js_path  = get_stylesheet_directory() . '/assets/scripts/main.js';
-    $css_ver  = file_exists($css_path) ? filemtime($css_path) : null;
+    $css_ver  = file_exists($css_min) ? filemtime($css_min) : (file_exists($css_path) ? filemtime($css_path) : null);
+    $css_url  = file_exists($css_min) ? get_stylesheet_directory_uri() . '/style.min.css' : get_stylesheet_uri();
     $js_ver   = file_exists($js_path)  ? filemtime($js_path)  : null;
 
-    wp_enqueue_style('main', get_stylesheet_uri(), ['lv-google-fonts'], $css_ver);
+    wp_enqueue_style('main', $css_url, ['lv-google-fonts'], $css_ver);
 
     wp_enqueue_script(
         'main',

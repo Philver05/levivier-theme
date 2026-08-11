@@ -80,13 +80,13 @@ if ($logo_hero_champ && !empty($logo_hero_champ['url'])) {
     <span class="arche arche-olive" aria-hidden="true"></span>
     <div class="conteneur hero-grille">
 
-        <div class="hero-texte reveal">
+        <div class="hero-texte">
             <h1><?php echo $titre; ?></h1>
             <p class="hero-texte-sub"><?php echo esc_html($acc('acc_hero_texte', 'Au cœur de Matane, Le Vivier fait de l\'achat responsable un choix simple et inspirant.')); ?></p>
         </div>
 
         <?php if ($logo_url): ?>
-        <div class="hero-logo reveal reveal-delai-1">
+        <div class="hero-logo">
             <img src="<?php echo esc_url($logo_url); ?>"
                  alt="<?php echo esc_attr(get_bloginfo('name')); ?>"
                  width="1000" height="1000"
