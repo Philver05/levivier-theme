@@ -47,16 +47,19 @@ function lv_enqueue_scripts_styles()
     // rafraîchissement automatique à chaque mise à jour de fichier.
     $css_min  = get_stylesheet_directory() . '/style.min.css';
     $css_path = get_stylesheet_directory() . '/style.css';
+    $js_min   = get_stylesheet_directory() . '/assets/scripts/main.min.js';
     $js_path  = get_stylesheet_directory() . '/assets/scripts/main.js';
     $css_ver  = file_exists($css_min) ? filemtime($css_min) : (file_exists($css_path) ? filemtime($css_path) : null);
     $css_url  = file_exists($css_min) ? get_stylesheet_directory_uri() . '/style.min.css' : get_stylesheet_uri();
-    $js_ver   = file_exists($js_path)  ? filemtime($js_path)  : null;
+    $js_ver   = file_exists($js_min)  ? filemtime($js_min)  : (file_exists($js_path) ? filemtime($js_path) : null);
+    $js_url   = file_exists($js_min)  ? get_stylesheet_directory_uri() . '/assets/scripts/main.min.js'
+                                      : get_stylesheet_directory_uri() . '/assets/scripts/main.js';
 
     wp_enqueue_style('main', $css_url, ['lv-google-fonts'], $css_ver);
 
     wp_enqueue_script(
         'main',
-        get_stylesheet_directory_uri() . '/assets/scripts/main.js',
+        $js_url,
         [],
         $js_ver,
         ['strategy' => 'defer', 'in_footer' => true]
@@ -156,12 +159,15 @@ add_action('wp_enqueue_scripts', function () {
        utilisé sur la page Boutique et sur l'accueil (carrousel "Découvrir
        Le Vivier", 22 juillet). */
     if (is_page_template('templates/template-boutique.php') || is_front_page()) {
-        $path = get_stylesheet_directory() . '/assets/scripts/carrousel.js';
+        $carr_min  = get_stylesheet_directory() . '/assets/scripts/carrousel.min.js';
+        $carr_path = get_stylesheet_directory() . '/assets/scripts/carrousel.js';
         wp_enqueue_script(
             'carrousel',
-            get_stylesheet_directory_uri() . '/assets/scripts/carrousel.js',
+            file_exists($carr_min)
+                ? get_stylesheet_directory_uri() . '/assets/scripts/carrousel.min.js'
+                : get_stylesheet_directory_uri() . '/assets/scripts/carrousel.js',
             [],
-            file_exists($path) ? filemtime($path) : null,
+            file_exists($carr_min) ? filemtime($carr_min) : (file_exists($carr_path) ? filemtime($carr_path) : null),
             ['strategy' => 'defer', 'in_footer' => true]
         );
     }
@@ -200,6 +206,17 @@ add_action('wp_head', function () {
     $url = get_stylesheet_directory_uri() . '/assets/fonts/Professor.woff2';
     echo '<link rel="preload" href="' . esc_url($url) . '" as="font" type="font/woff2" crossorigin>' . "\n";
 }, 1);
+
+/* Logo header : version WebP 280px (économise ~106 KB vs le PNG 500px de la médiathèque) */
+add_filter('get_custom_logo', function ($html) {
+    if (!$html) return $html;
+    $webp = get_stylesheet_directory_uri() . '/assets/images/logo-header.webp';
+    return preg_replace(
+        '/(<img\b[^>]+\/?>)(<\/a>)/i',
+        '<picture><source type="image/webp" srcset="' . esc_url($webp) . '">$1</picture>$2',
+        $html
+    );
+}, 10, 1);
 
 /* ----------------------------------------------------------------------- */
 
