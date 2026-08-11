@@ -165,6 +165,42 @@ add_action('wp_enqueue_scripts', function () {
     }
 });
 
+/* ---- Optimisations de performance ------------------------------------ */
+
+/* Emojis WordPress : supprimés (script inline bloquant + fichier ~15 KB inutiles) */
+add_action('init', function () {
+    remove_action('wp_head',           'print_emoji_detection_script', 7);
+    remove_action('wp_print_styles',   'print_emoji_styles');
+    remove_filter('the_content_feed',  'wp_staticize_emoji');
+    remove_filter('comment_text_rss',  'wp_staticize_emoji');
+    remove_filter('wp_mail',           'wp_staticize_emoji_for_email');
+});
+
+/* CSS de blocs Gutenberg : non utilisé (thème classique sans FSE) */
+add_action('wp_enqueue_scripts', function () {
+    wp_dequeue_style('wp-block-library');
+    wp_dequeue_style('wp-block-library-theme');
+    wp_dequeue_style('classic-themes');
+    wp_dequeue_style('global-styles');
+}, 100);
+
+/* Google Fonts : chargé en async (évite le blocage du rendu ~590 ms) */
+add_filter('style_loader_tag', function ($html, $handle) {
+    if ($handle !== 'lv-google-fonts') return $html;
+    $url = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap';
+    return '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n"
+         . '<link rel="preload" as="style" href="' . esc_url($url) . '" onload="this.onload=null;this.rel=\'stylesheet\'">' . "\n"
+         . '<noscript><link rel="stylesheet" href="' . esc_url($url) . '"></noscript>' . "\n";
+}, 10, 2);
+
+/* Police Professor : préchargée (utilisée dans le H1 hero, chemin critique LCP) */
+add_action('wp_head', function () {
+    $url = get_stylesheet_directory_uri() . '/assets/fonts/Professor.woff2';
+    echo '<link rel="preload" href="' . esc_url($url) . '" as="font" type="font/woff2" crossorigin>' . "\n";
+}, 1);
+
+/* ----------------------------------------------------------------------- */
+
 /* La page Contactez-nous utilise encore le gabarit « À propos » dans WP.
    Tant que Philippe/Marie n'a pas assigné le gabarit « Contact » dans
    l'éditeur, on l'applique ici : la page bascule immédiatement sur le

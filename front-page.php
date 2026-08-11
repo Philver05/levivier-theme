@@ -1,3 +1,21 @@
+<?php
+/* Calcul du logo hero AVANT get_header() pour injecter un <link rel="preload">
+   dans le <head> via wp_head — le logo est l'élément LCP de l'accueil. */
+$logo_hero_champ_pre = function_exists('get_field') ? get_field('acc_hero_logo') : null;
+if ($logo_hero_champ_pre && !empty($logo_hero_champ_pre['url'])) {
+    $logo_url_pre = $logo_hero_champ_pre['url'];
+} else {
+    $logo_fichier_pre = get_stylesheet_directory() . '/assets/images/logo-complet.png';
+    $logo_url_pre = file_exists($logo_fichier_pre)
+        ? get_stylesheet_directory_uri() . '/assets/images/logo-complet.png'
+        : '';
+}
+if ($logo_url_pre) {
+    add_action('wp_head', function () use ($logo_url_pre) {
+        echo '<link rel="preload" href="' . esc_url($logo_url_pre) . '" as="image" fetchpriority="high">' . "\n";
+    }, 2);
+}
+?>
 <?php get_header(); ?>
 
 <?php
@@ -69,7 +87,11 @@ if ($logo_hero_champ && !empty($logo_hero_champ['url'])) {
 
         <?php if ($logo_url): ?>
         <div class="hero-logo reveal reveal-delai-1">
-            <img src="<?php echo esc_url($logo_url); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?>">
+            <img src="<?php echo esc_url($logo_url); ?>"
+                 alt="<?php echo esc_attr(get_bloginfo('name')); ?>"
+                 width="1000" height="1000"
+                 fetchpriority="high"
+                 loading="eager">
         </div>
         <?php endif; ?>
 
