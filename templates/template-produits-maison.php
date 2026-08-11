@@ -128,6 +128,7 @@ foreach ($familles as $f) {
             $data_cats = implode(' ', array_column((array) $post_cats, 'slug'));
         }
 
+        $is_first = ($i === 0);
         $i++;
 ?>
 <section class="section pm-article-section <?php echo esc_attr($fond); ?>"
@@ -139,7 +140,7 @@ foreach ($familles as $f) {
             <div class="pm-article-visuel">
                 <img src="<?php echo esc_url($thumb[0]); ?>"
                      alt="<?php echo esc_attr(get_the_title()); ?>"
-                     loading="lazy">
+                     <?php if ($is_first): ?>fetchpriority="high" loading="eager"<?php else: ?>loading="lazy"<?php endif; ?>>
             </div>
 
             <div class="pm-article-corps">

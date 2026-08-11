@@ -91,8 +91,9 @@ if (!function_exists('lv_lofts_atout_icone')) {
 
             <?php if ($lofts->have_posts()): ?>
                 <div class="lofts-grille">
-                    <?php while ($lofts->have_posts()): $lofts->the_post();
-                        get_template_part('parts/loft', 'card');
+                    <?php $loft_i = 0; while ($lofts->have_posts()): $lofts->the_post();
+                        get_template_part('parts/loft', 'card', ['is_first' => $loft_i === 0]);
+                        $loft_i++;
                     endwhile; wp_reset_postdata(); ?>
                 </div>
             <?php else: ?>

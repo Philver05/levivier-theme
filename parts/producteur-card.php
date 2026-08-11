@@ -9,11 +9,17 @@ $logo   = get_field('producteur_logo');
 
 <a class="carte-prod reveal" href="<?php echo esc_url(get_permalink()); ?>" data-cat="<?php echo esc_attr($type_slugs); ?>">
     <div class="photo<?php echo $logo ? ' photo-logo' : ''; ?>">
-        <?php if ($logo): ?>
+        <?php
+        $img_attrs = !empty($args['is_first'])
+            ? ['fetchpriority' => 'high', 'loading' => 'eager']
+            : ['loading' => 'lazy'];
+        if ($logo): ?>
             <img src="<?php echo esc_url($logo['sizes']['medium_large'] ?? $logo['url']); ?>"
-                 alt="<?php echo esc_attr($logo['alt'] ?: get_the_title()); ?>">
+                 alt="<?php echo esc_attr($logo['alt'] ?: get_the_title()); ?>"
+                 loading="<?php echo $img_attrs['loading']; ?>"
+                 <?php if (!empty($img_attrs['fetchpriority'])): ?>fetchpriority="high"<?php endif; ?>>
         <?php elseif (has_post_thumbnail()): ?>
-            <?php the_post_thumbnail('medium_large', ['alt' => get_the_title()]); ?>
+            <?php the_post_thumbnail('medium_large', array_merge(['alt' => get_the_title()], $img_attrs)); ?>
         <?php else: ?>
             <div class="carte-vide" style="height:100%">
                 <span style="font-family:var(--f-script);font-size:2.6rem;color:var(--sauge)"><?php echo esc_html(mb_substr(get_the_title(), 0, 1)); ?></span>

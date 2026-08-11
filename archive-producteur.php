@@ -50,8 +50,10 @@ $prod_vide     = get_theme_mod('lv_prod_vide', 'Nos producteurs seront prÃ©sentÃ
         ?>
         <div class="grille-prod" id="grille-producteurs">
             <?php if ($producteurs->have_posts()):
+                $prod_i = 0;
                 while ($producteurs->have_posts()): $producteurs->the_post();
-                    get_template_part('parts/producteur', 'card');
+                    get_template_part('parts/producteur', 'card', ['is_first' => $prod_i === 0]);
+                    $prod_i++;
                 endwhile; wp_reset_postdata();
             else: ?>
                 <p class="grille-vide"><?php echo esc_html($prod_vide); ?></p>

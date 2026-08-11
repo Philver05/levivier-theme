@@ -17,10 +17,13 @@ $intro = get_field('afr_intro') ?: "Au sous-sol du Vivier, Okavi vous propose é
    à côté du texte). */
 $logo_afr_champ = get_field('afr_logo');
 if ($logo_afr_champ && !empty($logo_afr_champ['url'])) {
-    $logo_afr_url = $logo_afr_champ['url'];
+    $logo_afr_url     = $logo_afr_champ['url'];
+    $logo_afr_url_webp = '';
 } else {
-    $logo_afr_fichier = get_stylesheet_directory() . '/assets/images/logo-okavi.png';
-    $logo_afr_url = file_exists($logo_afr_fichier) ? get_stylesheet_directory_uri() . '/assets/images/logo-okavi.png' : '';
+    $logo_afr_fichier  = get_stylesheet_directory() . '/assets/images/logo-okavi.png';
+    $logo_afr_url      = file_exists($logo_afr_fichier) ? get_stylesheet_directory_uri() . '/assets/images/logo-okavi.png' : '';
+    $logo_afr_webp_f   = get_stylesheet_directory() . '/assets/images/logo-okavi.webp';
+    $logo_afr_url_webp = file_exists($logo_afr_webp_f) ? get_stylesheet_directory_uri() . '/assets/images/logo-okavi.webp' : '';
 }
 
 /* Portrait de Viviane (bande blanche en bas de page) : le texte principal
@@ -74,7 +77,14 @@ $specialites = array_values(array_filter([
             </div>
             <?php if ($logo_afr_url): ?>
             <div class="hero-logo reveal">
-                <img src="<?php echo esc_url($logo_afr_url); ?>" alt="Les saveurs d'Afrique &amp; d'ailleurs by Okavi">
+                <picture>
+                    <?php if (!empty($logo_afr_url_webp)): ?>
+                    <source type="image/webp" srcset="<?php echo esc_url($logo_afr_url_webp); ?>">
+                    <?php endif; ?>
+                    <img src="<?php echo esc_url($logo_afr_url); ?>"
+                         alt="Les saveurs d'Afrique &amp; d'ailleurs by Okavi"
+                         fetchpriority="high" loading="eager">
+                </picture>
             </div>
             <?php endif; ?>
         </div>
@@ -165,7 +175,8 @@ if ($afr_parent && !is_wp_error($afr_parent)) {
             <article class="carte-prod reveal<?php echo $delai; ?>">
                 <div class="photo">
                     <img src="<?php echo esc_url($spec['image']['sizes']['medium_large'] ?? $spec['image']['url']); ?>"
-                         alt="<?php echo esc_attr($spec['image']['alt'] ?: $spec['titre']); ?>">
+                         alt="<?php echo esc_attr($spec['image']['alt'] ?: $spec['titre']); ?>"
+                         loading="lazy">
                 </div>
                 <div class="corps">
                     <h3><?php echo esc_html($spec['titre']); ?></h3>

@@ -125,7 +125,8 @@ $cmd_tel_lien = function_exists('lv_opt_tel_lien') ? lv_opt_tel_lien() : 'tel:+1
                 <div class="cmd-carte-haut">
                     <?php if ($thumb): ?>
                         <img src="<?php echo esc_url($thumb); ?>"
-                             alt="<?php echo esc_attr($page->post_title); ?>">
+                             alt="<?php echo esc_attr($page->post_title); ?>"
+                             loading="lazy">
                     <?php else: ?>
                         <div class="cmd-carte-icone" aria-hidden="true"><?php echo $meta['icone']; ?></div>
                     <?php endif; ?>
