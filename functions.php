@@ -71,66 +71,47 @@ function lv_enqueue_scripts_styles()
 }
 add_action('wp_enqueue_scripts', 'lv_enqueue_scripts_styles');
 
+/* Helper : retourne l'URL et la version du .min.js s'il existe, sinon .js */
+function lv_script_url(string $name): array {
+    $dir = get_stylesheet_directory() . '/assets/scripts/';
+    $uri = get_stylesheet_directory_uri() . '/assets/scripts/';
+    $min = $dir . $name . '.min.js';
+    $src = $dir . $name . '.js';
+    if (file_exists($min)) return [$uri . $name . '.min.js', filemtime($min)];
+    if (file_exists($src)) return [$uri . $name . '.js',     filemtime($src)];
+    return [$uri . $name . '.js', null];
+}
+
 /* Scripts spécifiques PAM et Vrac — chargés uniquement sur leur template */
 add_action('wp_enqueue_scripts', function () {
 
     if (is_page_template('templates/template-bon-pam.php')) {
-        $path = get_stylesheet_directory() . '/assets/scripts/pam-commande.js';
-        wp_enqueue_script(
-            'pam-commande',
-            get_stylesheet_directory_uri() . '/assets/scripts/pam-commande.js',
-            [],
-            file_exists($path) ? filemtime($path) : null,
-            ['strategy' => 'defer', 'in_footer' => true]
-        );
+        [$url, $ver] = lv_script_url('pam-commande');
+        wp_enqueue_script('pam-commande', $url, [], $ver, ['strategy' => 'defer', 'in_footer' => true]);
         wp_localize_script('pam-commande', 'PAM', [
             'ajax'  => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pam_commande'),
         ]);
 
-        $path_lightbox = get_stylesheet_directory() . '/assets/scripts/pm-lightbox.js';
-        wp_enqueue_script(
-            'pm-lightbox',
-            get_stylesheet_directory_uri() . '/assets/scripts/pm-lightbox.js',
-            [],
-            file_exists($path_lightbox) ? filemtime($path_lightbox) : null,
-            ['strategy' => 'defer', 'in_footer' => true]
-        );
+        [$url, $ver] = lv_script_url('pm-lightbox');
+        wp_enqueue_script('pm-lightbox', $url, [], $ver, ['strategy' => 'defer', 'in_footer' => true]);
     }
 
     if (is_page_template('templates/template-bon-pm.php')) {
-        $path = get_stylesheet_directory() . '/assets/scripts/pm-commande.js';
-        wp_enqueue_script(
-            'pm-commande',
-            get_stylesheet_directory_uri() . '/assets/scripts/pm-commande.js',
-            [],
-            file_exists($path) ? filemtime($path) : null,
-            ['strategy' => 'defer', 'in_footer' => true]
-        );
+        [$url, $ver] = lv_script_url('pm-commande');
+        wp_enqueue_script('pm-commande', $url, [], $ver, ['strategy' => 'defer', 'in_footer' => true]);
         wp_localize_script('pm-commande', 'PM', [
             'ajax'  => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pm_commande'),
         ]);
 
-        $path_lightbox = get_stylesheet_directory() . '/assets/scripts/pm-lightbox.js';
-        wp_enqueue_script(
-            'pm-lightbox',
-            get_stylesheet_directory_uri() . '/assets/scripts/pm-lightbox.js',
-            [],
-            file_exists($path_lightbox) ? filemtime($path_lightbox) : null,
-            ['strategy' => 'defer', 'in_footer' => true]
-        );
+        [$url, $ver] = lv_script_url('pm-lightbox');
+        wp_enqueue_script('pm-lightbox', $url, [], $ver, ['strategy' => 'defer', 'in_footer' => true]);
     }
 
     if (is_page_template('templates/template-bon-vrac.php')) {
-        $path = get_stylesheet_directory() . '/assets/scripts/vrac-commande.js';
-        wp_enqueue_script(
-            'vrac-commande',
-            get_stylesheet_directory_uri() . '/assets/scripts/vrac-commande.js',
-            [],
-            file_exists($path) ? filemtime($path) : null,
-            ['strategy' => 'defer', 'in_footer' => true]
-        );
+        [$url, $ver] = lv_script_url('vrac-commande');
+        wp_enqueue_script('vrac-commande', $url, [], $ver, ['strategy' => 'defer', 'in_footer' => true]);
         wp_localize_script('vrac-commande', 'VRAC', [
             'ajax'      => admin_url('admin-ajax.php'),
             'nonce'     => wp_create_nonce('vrac_commande'),
@@ -141,14 +122,8 @@ add_action('wp_enqueue_scripts', function () {
     /* Formulaire de contact : sur le gabarit Contact OU sur la page
        contactez-nous (couverte par l'aiguillage lv_gabarit_contact). */
     if (is_page_template('templates/template-contact.php') || is_page('contactez-nous')) {
-        $path = get_stylesheet_directory() . '/assets/scripts/contact-form.js';
-        wp_enqueue_script(
-            'contact-form',
-            get_stylesheet_directory_uri() . '/assets/scripts/contact-form.js',
-            [],
-            file_exists($path) ? filemtime($path) : null,
-            ['strategy' => 'defer', 'in_footer' => true]
-        );
+        [$url, $ver] = lv_script_url('contact-form');
+        wp_enqueue_script('contact-form', $url, [], $ver, ['strategy' => 'defer', 'in_footer' => true]);
         wp_localize_script('contact-form', 'CT', [
             'ajax'  => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('ct_contact'),
