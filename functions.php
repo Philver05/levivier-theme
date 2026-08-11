@@ -38,7 +38,7 @@ function lv_enqueue_scripts_styles()
     // au lieu d'un @import en cascade qui bloquait le rendu.
     wp_enqueue_style(
         'lv-google-fonts',
-        'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap',
+        'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=optional',
         [],
         null
     );
@@ -189,7 +189,7 @@ add_action('wp_enqueue_scripts', function () {
 /* Google Fonts : chargé en async (évite le blocage du rendu ~590 ms) */
 add_filter('style_loader_tag', function ($html, $handle) {
     if ($handle !== 'lv-google-fonts') return $html;
-    $url = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap';
+    $url = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=optional';
     return '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n"
          . '<link rel="preload" as="style" href="' . esc_url($url) . '" onload="this.onload=null;this.rel=\'stylesheet\'">' . "\n"
          . '<noscript><link rel="stylesheet" href="' . esc_url($url) . '"></noscript>' . "\n";
