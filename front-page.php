@@ -1,18 +1,30 @@
 <?php
 /* Calcul du logo hero AVANT get_header() pour injecter un <link rel="preload">
-   dans le <head> via wp_head — le logo est l'élément LCP de l'accueil. */
+   dans le <head> via wp_head — le logo est l'élément LCP de l'accueil.
+   Sert le WebP si disponible (theme asset), PNG sinon (ACF ou repli). */
 $logo_hero_champ_pre = function_exists('get_field') ? get_field('acc_hero_logo') : null;
+$logo_use_webp = false;
 if ($logo_hero_champ_pre && !empty($logo_hero_champ_pre['url'])) {
-    $logo_url_pre = $logo_hero_champ_pre['url'];
+    $logo_url_pre  = $logo_hero_champ_pre['url'];
+    $logo_url_png  = $logo_url_pre;
 } else {
-    $logo_fichier_pre = get_stylesheet_directory() . '/assets/images/logo-complet.png';
-    $logo_url_pre = file_exists($logo_fichier_pre)
-        ? get_stylesheet_directory_uri() . '/assets/images/logo-complet.png'
-        : '';
+    $webp_fichier = get_stylesheet_directory() . '/assets/images/logo-complet.webp';
+    $png_fichier  = get_stylesheet_directory() . '/assets/images/logo-complet.png';
+    if (file_exists($webp_fichier)) {
+        $logo_url_pre = get_stylesheet_directory_uri() . '/assets/images/logo-complet.webp';
+        $logo_url_png = file_exists($png_fichier) ? get_stylesheet_directory_uri() . '/assets/images/logo-complet.png' : $logo_url_pre;
+        $logo_use_webp = true;
+    } elseif (file_exists($png_fichier)) {
+        $logo_url_pre = get_stylesheet_directory_uri() . '/assets/images/logo-complet.png';
+        $logo_url_png = $logo_url_pre;
+    } else {
+        $logo_url_pre = $logo_url_png = '';
+    }
 }
 if ($logo_url_pre) {
-    add_action('wp_head', function () use ($logo_url_pre) {
-        echo '<link rel="preload" href="' . esc_url($logo_url_pre) . '" as="image" fetchpriority="high">' . "\n";
+    add_action('wp_head', function () use ($logo_url_pre, $logo_use_webp) {
+        $type = $logo_use_webp ? ' type="image/webp"' : '';
+        echo '<link rel="preload" href="' . esc_url($logo_url_pre) . '" as="image"' . $type . ' fetchpriority="high">' . "\n";
     }, 2);
 }
 ?>
@@ -61,10 +73,15 @@ $carrousel_slides = array_values(array_filter([
    téléverse un nouveau) > fichier fourni par Philippe le 21 juillet > logo
    du header en dernier repli, pour ne jamais afficher un hero vide. */
 $logo_hero_champ = function_exists('get_field') ? get_field('acc_hero_logo') : null;
+$logo_url_webp   = '';
 if ($logo_hero_champ && !empty($logo_hero_champ['url'])) {
     $logo_url = $logo_hero_champ['url'];
 } else {
-    $logo_fichier = get_stylesheet_directory() . '/assets/images/logo-complet.png';
+    $logo_fichier      = get_stylesheet_directory() . '/assets/images/logo-complet.png';
+    $logo_fichier_webp = get_stylesheet_directory() . '/assets/images/logo-complet.webp';
+    if (file_exists($logo_fichier_webp)) {
+        $logo_url_webp = get_stylesheet_directory_uri() . '/assets/images/logo-complet.webp';
+    }
     if (file_exists($logo_fichier)) {
         $logo_url = get_stylesheet_directory_uri() . '/assets/images/logo-complet.png';
     } else {
@@ -87,11 +104,22 @@ if ($logo_hero_champ && !empty($logo_hero_champ['url'])) {
 
         <?php if ($logo_url): ?>
         <div class="hero-logo">
+            <?php if ($logo_use_webp): ?>
+            <picture>
+                <source srcset="<?php echo esc_url($logo_url_webp); ?>" type="image/webp">
+                <img src="<?php echo esc_url($logo_url); ?>"
+                     alt="<?php echo esc_attr(get_bloginfo('name')); ?>"
+                     width="1000" height="1000"
+                     fetchpriority="high"
+                     loading="eager">
+            </picture>
+            <?php else: ?>
             <img src="<?php echo esc_url($logo_url); ?>"
                  alt="<?php echo esc_attr(get_bloginfo('name')); ?>"
                  width="1000" height="1000"
                  fetchpriority="high"
                  loading="eager">
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 
