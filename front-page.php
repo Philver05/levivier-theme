@@ -80,7 +80,11 @@ if ($logo_hero_champ && !empty($logo_hero_champ['url'])) {
     $logo_fichier      = get_stylesheet_directory() . '/assets/images/logo-complet.png';
     $logo_fichier_webp = get_stylesheet_directory() . '/assets/images/logo-complet.webp';
     if (file_exists($logo_fichier_webp)) {
-        $logo_url_webp = get_stylesheet_directory_uri() . '/assets/images/logo-complet.webp';
+        $logo_url_webp     = get_stylesheet_directory_uri() . '/assets/images/logo-complet.webp';
+        $logo_fichier_500  = get_stylesheet_directory() . '/assets/images/logo-complet-500.webp';
+        $logo_url_webp_500 = file_exists($logo_fichier_500)
+            ? get_stylesheet_directory_uri() . '/assets/images/logo-complet-500.webp'
+            : '';
     }
     if (file_exists($logo_fichier)) {
         $logo_url = get_stylesheet_directory_uri() . '/assets/images/logo-complet.png';
@@ -106,7 +110,13 @@ if ($logo_hero_champ && !empty($logo_hero_champ['url'])) {
         <div class="hero-logo">
             <?php if ($logo_use_webp): ?>
             <picture>
+                <?php if (!empty($logo_url_webp_500)): ?>
+                <source srcset="<?php echo esc_url($logo_url_webp_500); ?> 500w, <?php echo esc_url($logo_url_webp); ?> 1000w"
+                        sizes="(max-width: 640px) 300px, 600px"
+                        type="image/webp">
+                <?php else: ?>
                 <source srcset="<?php echo esc_url($logo_url_webp); ?>" type="image/webp">
+                <?php endif; ?>
                 <img src="<?php echo esc_url($logo_url); ?>"
                      alt="<?php echo esc_attr(get_bloginfo('name')); ?>"
                      width="1000" height="1000"
