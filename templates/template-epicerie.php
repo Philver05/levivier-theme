@@ -46,7 +46,7 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
         <?php if (have_posts()): the_post(); ?>
             <h1 class="page-entete-titre-script"><?php the_title(); ?></h1>
             <?php the_content(); ?>
-            <!-- Pastilles de valeurs (déplacées de l'accueil, demande de Philippe) -->
+            <!-- Pastilles de valeurs, déplacées de l'accueil -->
             <ul class="intro-liste intro-liste--centree">
                 <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21c0-7 4-12 9-14-1 8-4 13-9 14Z"/><path d="M12 21c0-6-3-10-7-12 1 7 3 11 7 12Z"/></svg> <?php echo esc_html($ep('ep_valeur1_texte', 'Producteurs locaux')); ?></li>
                 <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21V10"/><path d="M12 13c0-4-3-6-7-6 0 4 3 6 7 6Z"/><path d="M12 11c0-4 3-7 7-7 0 4-3 7-7 7Z"/></svg> <?php echo esc_html($ep('ep_valeur2_texte', 'Bio & naturel')); ?></li>
@@ -80,8 +80,7 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
 <section class="section" id="produits">
     <div class="conteneur">
 
-        <?php /* Pas de titre de section : l'en-tête de page et la bande de
-                 filtres disent déjà où on est (demande de Philippe) */ ?>
+        <?php /* Pas de titre de section : l'en-tête de page et la bande de filtres disent déjà où on est. */ ?>
 
         <!-- Grille produits (les produits maison sont présentés sur leur page dédiée) -->
         <?php
@@ -121,8 +120,7 @@ if ($categories_produit && !is_wp_error($categories_produit)) {
 </section>
 
 <!-- ======================================================
-     LES DÉPARTEMENTS — trio à icônes, après le contenu et
-     avant la bande de clôture (demande de Philippe)
+     LES DÉPARTEMENTS — trio à icônes, après le contenu
 ====================================================== -->
 <section class="section section-compacte">
     <div class="conteneur">

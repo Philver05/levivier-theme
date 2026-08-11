@@ -56,8 +56,7 @@ $acc = function ($cle, $defaut) {
 
 /* Carrousel "Découvrir Le Vivier" : une diapo par section du site.
    Chaque diapo est un [titre ACF, url, image ACF]. Une diapo sans image
-   n'est pas affichée (demande de Philippe, 29 juillet : éviter un
-   rectangle vide à la place d'une vraie photo). */
+   n'est pas affichée pour éviter un rectangle vide. */
 $carrousel_slides = array_values(array_filter([
     ['titre' => $acc('acc_carr1_titre', 'Épicerie'),                'url' => $url_ep,       'image' => function_exists('get_field') ? get_field('acc_carr1_image') : null],
     ['titre' => $acc('acc_carr2_titre', 'Boutique'),                'url' => $url_boutique, 'image' => function_exists('get_field') ? get_field('acc_carr2_image') : null],
@@ -69,9 +68,8 @@ $carrousel_slides = array_values(array_filter([
 
 /* Logo complet du hero (roseau + « Le Vivier » + « Épicerie · Boutique »),
    distinct du logo compact du header (Réglages > Identité du site) : celui-ci
-   est prévu pour un affichage large. Priorité : champ ACF (si Marie en
-   téléverse un nouveau) > fichier fourni par Philippe le 21 juillet > logo
-   du header en dernier repli, pour ne jamais afficher un hero vide. */
+   est prévu pour un affichage large. Priorité : champ ACF > fichier
+   logo-complet.png du thème > logo du header en dernier repli. */
 $logo_hero_champ = function_exists('get_field') ? get_field('acc_hero_logo') : null;
 $logo_url_webp   = '';
 if ($logo_hero_champ && !empty($logo_hero_champ['url'])) {

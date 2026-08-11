@@ -41,9 +41,7 @@ $rayons_query = new WP_Query([
     'orderby'        => 'menu_order title',
     'order'          => 'ASC',
 ]);
-/* Un rayon sans image n'est pas affiché (demande de Philippe, 29 juillet :
-   éviter un bloc avec un placeholder vide tant que Marie n'a pas ajouté
-   de photo). */
+/* Un rayon sans image n'est pas affiché pour éviter un bloc vide. */
 $rayons = [];
 if ($rayons_query->have_posts()) {
     while ($rayons_query->have_posts()): $rayons_query->the_post();
@@ -190,9 +188,8 @@ $articles = new WP_Query([
 </section>
 
 <!-- ======================================================
-     LA BOUTIQUE EN PHOTOS — carrousel animé, avant le trio
-     Valeurs (demande de Philippe) ; n'apparaît que si des
-     photos sont présentes
+     LA BOUTIQUE EN PHOTOS — carrousel animé, n'apparaît que
+     si des photos sont présentes
 ====================================================== -->
 <?php
 $carr_photos = $bout('bout_photos', []);
@@ -241,8 +238,7 @@ if ($carr_photos):
 <?php endif; ?>
 
 <!-- ======================================================
-     VALEURS — trio à icônes, après le contenu et avant la
-     bande de clôture (demande de Philippe)
+     VALEURS — trio à icônes, après le contenu
 ====================================================== -->
 <section class="section section-compacte engagements">
     <div class="conteneur">

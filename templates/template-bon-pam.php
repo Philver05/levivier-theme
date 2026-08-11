@@ -80,10 +80,9 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                         if ($terme && !is_wp_error($terme)) $cat_slug = $terme->slug;
                     }
                     /* Un ou plusieurs jours (ex : produit offert mercredi, jeudi ET
-                       vendredi). Cast défensif : le champ était un simple select
-                       (une valeur texte) avant le 23 juillet, maintenant une case à
-                       cocher (tableau) — les deux formats doivent continuer à marcher
-                       pour ne pas casser les messages déjà saisis (Sushis, etc.). */
+                       vendredi). Cast défensif : le champ peut être un select (valeur
+                       texte) ou une case à cocher (tableau) — les deux formats sont
+                       acceptés pour la compatibilité ascendante. */
                     $jours_bruts = $m['msg_jour'] ?? [];
                     if (!is_array($jours_bruts)) {
                         $jours_bruts = $jours_bruts !== '' ? [$jours_bruts] : [];
@@ -92,9 +91,8 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
 
                     /* Produit spécifique (optionnel) : si rempli, le message se
                        concentre sur SA carte au lieu d'un bandeau au-dessus de
-                       toute la grille — utile pour un produit particulier au sein
-                       d'une catégorie (ex : "Un shish taouk au poulet" dans
-                       Sandwichs), demande de Philippe le 23 juillet. */
+                       toute la grille — utile pour cibler un produit particulier
+                       au sein d'une catégorie. */
                     $produit_cible = !empty($m['msg_produit']) ? (int) $m['msg_produit'] : 0;
 
                     /* Un message doit avoir au moins un jour, une catégorie, OU un
@@ -214,9 +212,8 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                     return $q->have_posts();
                 }));
 
-                /* Ordre personnalisé demandé par Philippe (17 juillet), pas alphabétique.
-                   Toute catégorie non listée ici (ex: nouvelle catégorie pas encore ajoutée
-                   à cette liste) se retrouve à la fin, par ordre alphabétique. */
+                /* Ordre des catégories — non alphabétique, défini ici.
+                   Toute catégorie absente de cette liste se retrouve à la fin. */
                 $ordre_pam_categories = [
                     'Pains', 'Pâtisseries', 'Pâtés et Quiches', 'Mets préparés',
                     'Divers prêt-à-manger', 'Sushis', 'Accompagnement',
@@ -516,8 +513,8 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
 </div>
 
 <!-- ======================================================
-     LIGHTBOX (zoom photo produit, demande de Marie) — même
-     composant que le bon Produits Maison, voir pm-lightbox.js
+     LIGHTBOX — même composant que le bon Produits Maison,
+     voir pm-lightbox.js
 ====================================================== -->
 <div class="pm-lightbox" id="pm-lightbox" hidden>
     <button type="button" class="pm-lightbox-fermer" id="pm-lightbox-fermer" aria-label="Fermer l'aperçu">

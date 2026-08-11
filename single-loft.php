@@ -123,9 +123,8 @@ foreach ($galerie_cats as $imgs) {
     foreach ($imgs as $p) $photos[] = $p;
 }
 
-/* Filet de sécurité : lv_loft_icone() vit dans functions.php, mais si ce
-   fichier-là n'est pas encore à jour sur le serveur (envoi partiel), la
-   fiche planterait en fatale. Repli minimal : icône crochet générique. */
+/* Filet de sécurité : si lv_loft_icone() n'est pas encore disponible,
+   la fiche ne plante pas en fatale. */
 if (!function_exists('lv_loft_icone')) {
     function lv_loft_icone($label) {
         return '<svg class="lv-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>';

@@ -12,9 +12,8 @@ if (have_posts()) the_post();
 $intro = get_field('afr_intro') ?: "Au sous-sol du Vivier, Okavi vous propose épices, sauces et trésors culinaires venus d'Afrique.\nUne épicerie de quartier pensée et animée par Viviane, pour faire voyager Matane.";
 
 /* Logo Okavi du héros : même chaîne de priorité que le logo hero de
-   l'accueil (front-page.php) — champ ACF > fichier fourni par Philippe
-   le 22 juillet > rien (pas de repli logo du header, trop petit/inadapté
-   à côté du texte). */
+   l'accueil (front-page.php) — champ ACF > logo-okavi.png du thème >
+   rien (pas de repli logo du header, trop petit à côté du texte). */
 $logo_afr_champ = get_field('afr_logo');
 if ($logo_afr_champ && !empty($logo_afr_champ['url'])) {
     $logo_afr_url     = $logo_afr_champ['url'];
@@ -27,10 +26,10 @@ if ($logo_afr_champ && !empty($logo_afr_champ['url'])) {
 }
 
 /* Portrait de Viviane (bande blanche en bas de page) : le texte principal
-   vit dans l'éditeur WP de la page (comme le reste du site). Tant que
-   Marie n'y a rien écrit, on affiche un portrait par défaut documenté
-   (recherché en ligne le 22 juillet : Radio-Canada, Le Soir Matanie,
-   bienvenuedansmamatanie.com, SANAM) plutôt que de cacher la section. */
+   vit dans l'éditeur WP de la page (comme le reste du site). Un portrait
+   par défaut s'affiche tant que Marie n'a rien écrit, plutôt que de
+   cacher la section. Sources : Radio-Canada, Le Soir Matanie,
+   bienvenuedansmamatanie.com, SANAM. */
 $pres_image = get_field('afr_presentation_image');
 $pres_texte = trim(wp_strip_all_tags(get_the_content()));
 $pres_defaut = "Derrière l'épicerie africaine du Vivier se trouve Viviane Oueko Kamga, arrivée à Matane en 2010. Passionnée de mode et de cuisine, elle fonde en 2015 le groupe Okavi pour faire découvrir le meilleur de l'Afrique à sa région d'adoption : épices, saveurs, coiffure et créations textiles. Une partie des profits de l'épicerie soutient des orphelinats au Cameroun. Viviane est aussi de celles qui font vivre la communauté à Matane, fidèle à un proverbe qui lui tient à cœur : il faut tout un village pour élever un enfant.";
@@ -38,8 +37,7 @@ $portrait_fb = get_field('afr_portrait_facebook');
 $portrait_fb_label = get_field('afr_portrait_facebook_label') ?: 'Suivre Okavi sur Facebook';
 
 /* Spécialités (4 cartes, classées par catégorie de produits). Une
-   spécialité sans photo n'est pas affichée (demande de Philippe,
-   29 juillet : éviter une carte avec un placeholder vide). */
+   spécialité sans photo n'est pas affichée pour éviter une carte vide. */
 $specialites = array_values(array_filter([
     [
         'titre' => get_field('afr_spec1_titre') ?: 'Épices & condiments',
@@ -167,8 +165,7 @@ if ($afr_parent && !is_wp_error($afr_parent)) {
 ====================================================== -->
 <section class="section produits">
     <div class="conteneur">
-        <?php /* Pas de titre de section : l'en-tête de page joue déjà ce rôle
-                 (demande de Philippe) */ ?>
+        <?php /* Pas de titre de section : l'en-tête de page joue déjà ce rôle. */ ?>
 
         <div class="grille-prod">
             <?php $i = 0; foreach ($specialites as $spec): $delai = $i ? ' reveal-delai-' . $i : ''; $i++; ?>
@@ -189,8 +186,7 @@ if ($afr_parent && !is_wp_error($afr_parent)) {
 </section>
 
 <!-- ======================================================
-     TROIS ATOUTS — trio compact à icônes, après le contenu et
-     avant la bande de clôture (demande de Philippe)
+     TROIS ATOUTS — trio compact à icônes, après le contenu
 ====================================================== -->
 <section class="section section-compacte">
     <div class="conteneur">

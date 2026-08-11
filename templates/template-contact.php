@@ -40,7 +40,6 @@ $h_dim     = $ct_opt('opt_horaire_dimanche', '10 h - 17 h');
 
 <!-- ======================================================
      BANDE HORAIRES — visible en premier, avant le formulaire
-     (demande de Philippe : « plus visuel en premier »)
 ====================================================== -->
 <section class="ct-bande-horaires reveal">
     <div class="conteneur ct-bande-horaires-inner">
@@ -134,8 +133,7 @@ $h_dim     = $ct_opt('opt_horaire_dimanche', '10 h - 17 h');
                         <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 8h-2a2 2 0 0 0-2 2v10M8 12h6"/></svg></span>
                         <div><h4>Suivez-nous</h4><p><a href="<?php echo esc_url($facebook); ?>" target="_blank" rel="noopener">Facebook</a></p></div>
                     </li>
-                    <?php /* Horaires retirées d'ici : affichées en premier dans la
-                             bande sous l'en-tête (demande de Philippe), redondant ici. */ ?>
+                    <?php /* Horaires : affichées dans la bande en haut de page, redondant ici. */ ?>
                 </ul>
             </aside>
 

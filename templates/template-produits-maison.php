@@ -16,9 +16,8 @@ $pages_commander = get_pages([
 $url_commander = !empty($pages_commander) ? get_permalink($pages_commander[0]->ID) : '#';
 $pm_eyebrow_defaut = get_field('pm_eyebrow_defaut') ?: 'Produits maison';
 
-/* Familles de produits maison. Une famille sans image mise en avant
-   n'est pas affichée (demande de Philippe, 29 juillet : éviter un
-   placeholder vide tant que Marie n'a pas ajouté de photo). */
+/* Familles de produits maison. Une famille sans image n'est pas
+   affichée pour éviter un placeholder vide. */
 $familles_query = new WP_Query([
     'post_type'      => 'famille_maison',
     'post_status'    => 'publish',
@@ -66,9 +65,8 @@ foreach ($familles as $f) {
 <div class="pm-filtres-wrap">
     <div class="conteneur">
         <div class="pm-filtres" role="group" aria-label="Filtrer par catégorie">
-            <?php /* Pas de pilule « Tout voir » (demande de Philippe) : la
-                     première catégorie est active par défaut, et filtre
-                     déjà la page au chargement (voir le script plus bas). */
+            <?php /* Pas de pilule « Tout voir » : la première catégorie est
+                     active par défaut et filtre la page au chargement. */
             $premiere_cat = true;
             foreach ($cats_utilisees as $cat): ?>
                 <button class="pm-filtre<?php echo $premiere_cat ? ' actif' : ''; ?>" data-filtre="<?php echo esc_attr($cat->slug); ?>">
@@ -94,13 +92,10 @@ foreach ($familles as $f) {
 
         /* Cible du bouton, par ordre de priorité :
            1. Lien personnalisé saisi par Marie (famille_cta_url) — total contrôle.
-           2. Repli par défaut : le bon Prêt à manger (où les focaccias/amarettis
-              et futures familles sont en pratique déjà commandables, demande de
-              Philippe, 22 juillet), ouvert directement sur la catégorie choisie
-              (famille_cta_categorie, taxonomie pam_categorie) si elle a été
-              renseignée. Une sous-catégorie (ex: Focaccias sous Pains) ajoute
-              aussi le paramètre de sa catégorie principale pour que le bon
-              s'ouvre directement sur le bon onglet. */
+           2. Repli par défaut : le bon Prêt à manger, ouvert directement sur la
+              catégorie choisie (famille_cta_categorie, taxonomie pam_categorie).
+              Une sous-catégorie (ex: Focaccias sous Pains) ajoute aussi le
+              paramètre de sa catégorie principale pour ouvrir le bon onglet. */
         $cta_url_perso = function_exists('get_field') ? get_field('famille_cta_url') : '';
         $cta_cat       = function_exists('get_field') ? get_field('famille_cta_categorie') : null;
         if ($cta_url_perso) {

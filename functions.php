@@ -131,8 +131,7 @@ add_action('wp_enqueue_scripts', function () {
     }
 
     /* Carrousel photos (générique, voir assets/scripts/carrousel.js) :
-       utilisé sur la page Boutique et sur l'accueil (carrousel "Découvrir
-       Le Vivier", 22 juillet). */
+       utilisé sur la page Boutique et sur l'accueil. */
     if (is_page_template('templates/template-boutique.php') || is_front_page()) {
         $carr_min  = get_stylesheet_directory() . '/assets/scripts/carrousel.min.js';
         $carr_path = get_stylesheet_directory() . '/assets/scripts/carrousel.js';
@@ -760,7 +759,7 @@ add_action('acf/init', function () {
                 'label'         => 'Titre',
                 'type'          => 'text',
                 'default_value' => 'Nos Engagements',
-                'instructions'  => 'Affiché seul, en gros (demande de Philippe : pas de surtitre séparé).',
+                'instructions'  => 'Affiché seul, en gros, sans surtitre séparé.',
             ],
             [
                 'key'           => 'field_acc_eng1_titre',
@@ -1068,7 +1067,7 @@ add_action('acf/init', function () {
         'title'  => 'Contenu — Épicerie Africaine',
         'fields' => [
             ['key' => 'field_afr_tab_hero', 'type' => 'tab', 'label' => '① Héros'],
-            /* Héros (pas de surtitre : retiré, demande de Philippe) */
+            /* Héros — pas de surtitre */
             [
                 'key'   => 'field_afr_intro',
                 'name'  => 'afr_intro',
@@ -1982,7 +1981,7 @@ add_action('acf/init', function () {
         ],
         'location' => [
             [['param' => 'page_template', 'operator' => '==', 'value' => 'templates/template-contact.php']],
-            [['param' => 'page', 'operator' => '==', 'value' => 432]], /* page Contactez-nous actuelle (gabarit pas encore réassigné dans WP) */
+            [['param' => 'page', 'operator' => '==', 'value' => 432]], /* fallback sur l'ID au cas où le gabarit n'est pas assigné */
         ],
         'menu_order' => 0,
     ]);

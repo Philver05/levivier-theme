@@ -414,8 +414,7 @@ add_action('admin_init', function () {
 });
 
 /**
- * Migration des catégories Prêt à manger vers une structure à deux niveaux
- * (demande de Marie, juillet 2026).
+ * Migration des catégories Prêt à manger vers une structure à deux niveaux.
  * Déclencher UNE SEULE FOIS en visitant : /wp-admin/?lv_migrer_pam_categories=1
  *
  * Cible :
@@ -517,7 +516,7 @@ add_action('admin_init', function () {
 });
 
 /**
- * Ajustements catégories PAM (demande de Philippe, 17 juillet) :
+ * Ajustements catégories PAM :
  *  - Nouvelle catégorie principale « Mets préparé »
  *  - Fusion de l'ancienne catégorie « Amarettis » (à plat) vers la
  *    sous-catégorie « Amaretti » (sous Pâtisseries) : déplace les produits,
@@ -594,12 +593,11 @@ add_action('admin_init', function () {
 });
 
 /**
- * Ajustements catégories Épicerie (demande de Philippe/Marie, priorités
- * du 17 juillet) : renomme « Produits frais » en « Produits locaux »
- * (garde les produits déjà tagués) et crée les nouvelles catégories
- * pour l'ordre d'affichage demandé. Ces catégories sont visibles sur la
- * page Épicerie même vides (hide_empty=false) : elles resteront des
- * onglets sans produit tant que Marie n'y aura pas tagué d'articles.
+ * Ajustements catégories Épicerie : renomme « Produits frais » en
+ * « Produits locaux » (garde les produits déjà tagués) et crée les
+ * nouvelles catégories pour l'ordre d'affichage. Ces catégories sont
+ * visibles même vides (hide_empty=false) : elles restent des onglets
+ * sans produit tant que Marie n'y aura pas tagué d'articles.
  * Déclencher UNE SEULE FOIS : /wp-admin/?lv_ajuster_epicerie_categories=1
  */
 add_action('admin_init', function () {
@@ -860,8 +858,7 @@ add_action('admin_init', function () {
 
 /**
  * PAM : ajoute un message spécial (brouillon) pour chaque sous-catégorie
- * qui n'en a pas encore, sur le modèle de celui des Focaccias (demande de
- * Marie : un message par catégorie). N'AJOUTE QUE des lignes manquantes
+ * qui n'en a pas encore. N'AJOUTE QUE des lignes manquantes
  * au repeater `pam_messages_jours` existant — ne touche jamais aux
  * messages déjà saisis (Sushis, Focaccias, Amaretti), et peut être relancé
  * sans risque (ex : après avoir créé la sous-catégorie Pizzas) puisque
@@ -975,9 +972,8 @@ add_action('admin_init', function () {
 
 /**
  * Boutique : 7 rayons (blocs photo+texte en alternance, sur le modèle des
- * familles Produits Maison, demande de Philippe 28 juillet). Purement
- * descriptif, aucun bouton. Textes = brouillons provisoires, à relire par
- * Marie. Idempotent (ignore les titres déjà présents, relançable sans risque).
+ * familles Produits Maison). Purement descriptif, aucun bouton.
+ * Idempotent (ignore les titres déjà présents, relançable sans risque).
  * Déclencher UNE SEULE FOIS en visitant : /wp-admin/?lv_seed_rayons_boutique=1
  */
 add_action('admin_init', function () {
