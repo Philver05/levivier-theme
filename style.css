@@ -3469,7 +3469,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 /* ----- Filtres : dropdown mobile automatique (> 3 items, ≤720px) ----- */
 @media (max-width: 720px) {
   /* Restaurer le padding du conteneur en mode dropdown */
-  .pm-filtres-wrap.pm-filtres--dropdown .conteneur { padding-inline: var(--gouttiere); }
+  .pm-filtres-wrap.pm-filtres--dropdown .conteneur { padding-inline: var(--gouttiere); padding-block: .6rem; }
 
   /* Bouton déclencheur */
   .pm-filtres-toggle {
