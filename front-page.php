@@ -27,6 +27,15 @@ if ($logo_url_pre) {
         echo '<link rel="preload" href="' . esc_url($logo_url_pre) . '" as="image"' . $type . ' fetchpriority="high">' . "\n";
     }, 2);
 }
+
+$hero_bg_mob_pre     = function_exists('get_field') ? get_field('acc_hero_bg_mobile') : null;
+$hero_bg_mob_url_pre = !empty($hero_bg_mob_pre['sizes']['large']) ? $hero_bg_mob_pre['sizes']['large']
+                     : (!empty($hero_bg_mob_pre['url']) ? $hero_bg_mob_pre['url'] : '');
+if ($hero_bg_mob_url_pre) {
+    add_action('wp_head', function () use ($hero_bg_mob_url_pre) {
+        echo '<style id="lv-hero-bg-m">@media(max-width:960px){.hero-avec-bg{background-image:linear-gradient(rgba(15,30,10,.68),rgba(15,30,10,.68)),url("' . esc_url($hero_bg_mob_url_pre) . '")}.intro-actions{display:none}}</style>' . "\n";
+    }, 99);
+}
 ?>
 <?php get_header(); ?>
 
@@ -99,7 +108,7 @@ $hero_bg_mob_url = !empty($hero_bg_mob['sizes']['large']) ? $hero_bg_mob['sizes'
 
 <!-- ============================ HERO ============================ -->
 <section class="hero<?php echo $hero_bg_mob_url ? ' hero-avec-bg' : ''; ?>"
-         id="accueil"<?php if ($hero_bg_mob_url): ?> style="--hero-bg-m:url('<?php echo esc_url($hero_bg_mob_url); ?>')"<?php endif; ?>>
+         id="accueil">
     <span class="arche arche-terra" aria-hidden="true"></span>
     <span class="arche arche-olive" aria-hidden="true"></span>
     <div class="conteneur hero-grille">
@@ -133,6 +142,14 @@ $hero_bg_mob_url = !empty($hero_bg_mob['sizes']['large']) ? $hero_bg_mob['sizes'
                  fetchpriority="high"
                  loading="eager">
             <?php endif; ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($hero_bg_mob_url): ?>
+        <div class="hero-cta-mobile">
+            <a href="<?php echo esc_url($url_ep); ?>" class="hero-cta-m-btn"><?php echo esc_html($acc('acc_hero_btn1', 'Découvrir l\'épicerie')); ?></a>
+            <a href="<?php echo esc_url($url_boutique); ?>" class="hero-cta-m-ligne"><?php echo esc_html($acc('acc_hero_btn2', 'Découvrir la Boutique')); ?></a>
+            <a href="<?php echo esc_url($url_pm); ?>" class="hero-cta-m-ligne"><?php echo esc_html($acc('acc_hero_btn3', 'Découvrir nos produits maison')); ?></a>
         </div>
         <?php endif; ?>
 

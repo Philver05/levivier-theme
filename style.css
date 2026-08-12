@@ -243,6 +243,10 @@ body.univers-africaine .recherche-toggle { color: var(--afr-rouille); }
    l'écran » une fois les fleurs animées retirées. */
 .hero-logo { position: relative; z-index: 2; justify-self: center; display: flex; align-items: center; justify-content: center; }
 .hero-logo img { width: 100%; max-width: clamp(340px, 40vw, 600px); height: auto; filter: drop-shadow(0 18px 34px rgba(56,73,45,.18)); }
+.hero-cta-mobile { display: none; }
+.hero-cta-m-btn, .hero-cta-m-ligne { display: block; text-align: center; padding: .75rem 1.25rem; border-radius: 6px; font-size: 1rem; font-weight: 500; text-decoration: none; }
+.hero-cta-m-btn { background: var(--terra); color: var(--blanc); }
+.hero-cta-m-ligne { border: 1.5px solid rgba(249,245,240,.5); color: var(--creme); }
 
 .hero-scroll { position: absolute; left: 50%; bottom: 1.6rem; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: .5rem; color: var(--texte-doux); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; }
 .hero-scroll .souris { width: 22px; height: 34px; border: 2px solid var(--texte-doux); border-radius: 12px; position: relative; }
@@ -442,14 +446,14 @@ body.pm-lightbox-ouvert { overflow: hidden; }
   .hero-avec-bg {
     min-height: 65dvh;
     background-color: var(--sauge) !important;
-    background-image: linear-gradient(rgba(28,46,20,.56), rgba(28,46,20,.56)), var(--hero-bg-m) !important;
     background-size: cover !important;
     background-position: center !important;
   }
   .hero-avec-bg .hero-logo { display: none; }
-  .hero-avec-bg .hero h1 { color: var(--creme); }
-  .hero-avec-bg .hero h1 .script { color: #f5ddd5; }
+  .hero-avec-bg h1 { color: var(--creme); }
+  .hero-avec-bg h1 .script { color: #f5ddd5; }
   .hero-avec-bg .hero-texte-sub { color: rgba(249,245,240,.82); }
+  .hero-avec-bg .hero-cta-mobile { display: flex; flex-direction: column; gap: .7rem; margin-top: 1.5rem; }
   .engagements-grille { grid-template-columns: repeat(2, 1fr); gap: 2rem 1rem; }
   .grille-cartes { grid-template-columns: repeat(2, 1fr); }
   .grille-prod { grid-template-columns: 1fr 1fr; }
