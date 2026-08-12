@@ -177,7 +177,7 @@ add_filter('style_loader_tag', function ($html, $handle) {
 
 /* Correctifs CSS inline — contournent le cache serveur sur style.css */
 add_action('wp_head', function () {
-    echo '<style id="lv-fixes">@media(max-width:720px){.pm-filtres-wrap.pm-filtres--dropdown .pm-filtres-toggle{margin-bottom:0}.pm-filtres-wrap.pm-filtres--dropdown.ouvert .pm-filtres-toggle{margin-bottom:.4rem}}</style>' . "\n";
+    echo '<style id="lv-fixes">@media(max-width:720px){.pm-filtres-wrap.pm-filtres--dropdown .conteneur{padding-block:1.1rem}.pm-filtres-wrap.pm-filtres--dropdown .pm-filtres-toggle{margin-bottom:0}.pm-filtres-wrap.pm-filtres--dropdown.ouvert .pm-filtres-toggle{margin-bottom:.4rem}}</style>' . "\n";
 }, 99);
 
 /* Police Professor : préchargée (utilisée dans le H1 hero, chemin critique LCP) */
