@@ -439,6 +439,17 @@ body.pm-lightbox-ouvert { overflow: hidden; }
   .hero { min-height: auto; padding-bottom: clamp(4rem, 9vh, 5.5rem); }
   .hero h1 { text-wrap: balance; }
   .hero-scroll { display: none; }
+  .hero-avec-bg {
+    min-height: 65dvh;
+    background-color: var(--sauge) !important;
+    background-image: linear-gradient(rgba(28,46,20,.56), rgba(28,46,20,.56)), var(--hero-bg-m) !important;
+    background-size: cover !important;
+    background-position: center !important;
+  }
+  .hero-avec-bg .hero-logo { display: none; }
+  .hero-avec-bg .hero h1 { color: var(--creme); }
+  .hero-avec-bg .hero h1 .script { color: #f5ddd5; }
+  .hero-avec-bg .hero-texte-sub { color: rgba(249,245,240,.82); }
   .engagements-grille { grid-template-columns: repeat(2, 1fr); gap: 2rem 1rem; }
   .grille-cartes { grid-template-columns: repeat(2, 1fr); }
   .grille-prod { grid-template-columns: 1fr 1fr; }

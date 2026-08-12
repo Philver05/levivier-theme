@@ -697,6 +697,15 @@ add_action('acf/init', function () {
                 'instructions'  => 'Optionnel. Logo complet (avec le nom) affiché en grand dans le hero. Laissez vide pour garder le logo fourni par défaut.',
             ],
             [
+                'key'           => 'field_acc_hero_bg_mobile',
+                'name'          => 'acc_hero_bg_mobile',
+                'label'         => 'Image de fond (mobile)',
+                'type'          => 'image',
+                'return_format' => 'array',
+                'preview_size'  => 'medium',
+                'instructions'  => 'Optionnel. Photo affichée en arrière-plan du hero sur mobile uniquement. Un voile sauge semi-transparent est appliqué automatiquement pour garantir la lisibilité du texte.',
+            ],
+            [
                 'key'           => 'field_acc_hero_texte',
                 'name'          => 'acc_hero_texte',
                 'label'         => 'Texte sous le titre',

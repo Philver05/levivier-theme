@@ -91,10 +91,15 @@ if ($logo_hero_champ && !empty($logo_hero_champ['url'])) {
         $logo_url = $logo_id ? wp_get_attachment_image_url($logo_id, 'full') : '';
     }
 }
+
+$hero_bg_mob     = function_exists('get_field') ? get_field('acc_hero_bg_mobile') : null;
+$hero_bg_mob_url = !empty($hero_bg_mob['sizes']['large']) ? $hero_bg_mob['sizes']['large']
+                 : (!empty($hero_bg_mob['url']) ? $hero_bg_mob['url'] : '');
 ?>
 
 <!-- ============================ HERO ============================ -->
-<section class="hero" id="accueil">
+<section class="hero<?php echo $hero_bg_mob_url ? ' hero-avec-bg' : ''; ?>"
+         id="accueil"<?php if ($hero_bg_mob_url): ?> style="--hero-bg-m:url('<?php echo esc_url($hero_bg_mob_url); ?>')"<?php endif; ?>>
     <span class="arche arche-terra" aria-hidden="true"></span>
     <span class="arche arche-olive" aria-hidden="true"></span>
     <div class="conteneur hero-grille">
