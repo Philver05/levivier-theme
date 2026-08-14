@@ -41,11 +41,10 @@
     var categorieActive = '';
     var sousCategorieActive = '';
 
-    /* Plus de sous-onglet "Tout voir" (Marie n'aime pas) : quand on arrive
-       sur une catégorie qui a des sous-catégories, la 1re sous-catégorie
-       devient active par défaut plutôt que "tout afficher". Une catégorie
-       sans enfants (ex: Sushis) n'a pas de barre de sous-onglets : '' dans
-       ce cas, rien à filtrer. */
+    /* 1er sous-onglet par défaut quand on entre dans une catégorie.
+       Pour les catégories > 5 sous-catégories, le 1er onglet est
+       "Tout voir" (data-souscat "__tout__") ; pour les autres, c'est
+       la 1re vraie sous-catégorie. '' = pas de barre (ex: Sushis). */
     function premierSouscatDe(catSlug) {
         var premier = document.querySelector('.pam-categorie[data-cat="' + catSlug + '"] .pam-souscat-tab');
         return premier ? premier.dataset.souscat : '';
@@ -133,7 +132,7 @@
         document.querySelectorAll('.pam-categorie').forEach(function (cat) {
             var filtre = (cat.dataset.cat === categorieActive) ? sousCategorieActive : '';
             cat.querySelectorAll('.pam-produit-item').forEach(function (item) {
-                var correspond = !filtre || item.dataset.souscat === filtre;
+                var correspond = !filtre || filtre === '__tout__' || item.dataset.souscat === filtre;
                 item.classList.toggle('pam-produit-item--filtre-masque', !correspond);
             });
         });
@@ -270,8 +269,7 @@
             var tab = document.querySelector('.pam-cat-tab[data-cat="' + cat.dataset.cat + '"]');
             if (tab) tab.click();
         }
-        /* Si un filtre de sous-catégorie le masque encore, activer SA sous-catégorie
-           (plus de pilule "Tout voir" à cliquer, retirée le 22 juillet) */
+        /* Si un filtre de sous-catégorie le masque encore, activer SA sous-catégorie */
         if (item.classList.contains('pam-produit-item--filtre-masque')) {
             var barreSous = cat ? cat.querySelector('.pam-filtre-souscats') : null;
             var tabSous = barreSous ? barreSous.querySelector('.pam-souscat-tab[data-souscat="' + item.dataset.souscat + '"]') : null;
