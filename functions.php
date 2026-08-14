@@ -21,6 +21,7 @@ require_once 'includes/vrac-ajax.php';
 require_once 'includes/pm-ajax.php';
 require_once 'includes/contact-ajax.php';
 require_once 'includes/cookie-banner.php';
+require_once 'includes/boites-ajax.php';
 
 /* Avertit dans l'admin si ACF n'est pas actif (sinon aucun champ éditable n'apparaît) */
 add_action('admin_notices', function () {
@@ -127,6 +128,20 @@ add_action('wp_enqueue_scripts', function () {
         wp_localize_script('contact-form', 'CT', [
             'ajax'  => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('ct_contact'),
+        ]);
+    }
+
+    /* Boîtes à lunch */
+    if (is_page_template('templates/template-boites-lunch.php')) {
+        $delai   = (int) get_field('bx_delai_min', get_the_ID()) ?: 24;
+        $min_qte = (int) get_field('bx_min_qte',   get_the_ID()) ?: 1;
+        [$url, $ver] = lv_script_url('boites-lunch');
+        wp_enqueue_script('boites-lunch', $url, [], $ver, ['strategy' => 'defer', 'in_footer' => true]);
+        wp_localize_script('boites-lunch', 'BX', [
+            'ajax'     => admin_url('admin-ajax.php'),
+            'nonce'    => wp_create_nonce('bx_commande'),
+            'date_min' => date('Y-m-d', strtotime('+' . $delai . ' hours')),
+            'min_qte'  => $min_qte,
         ]);
     }
 
@@ -2065,6 +2080,137 @@ add_action('acf/init', function () {
             ['key' => 'field_apr_form_texte', 'name' => 'apr_form_texte', 'label' => 'Texte sous le titre du formulaire', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Une question, une commande spéciale ou l\'envie de nous dire bonjour ? On vous répond rapidement.'],
         ],
         'location' => [[['param' => 'page_template', 'operator' => '==', 'value' => 'templates/template-apropos.php']]],
+        'menu_order' => 0,
+    ]);
+
+    /* Page Boîtes à lunch */
+    acf_add_local_field_group([
+        'key'    => 'group_page_boites_lunch',
+        'title'  => 'Boîtes à lunch',
+        'fields' => [
+            ['key' => 'field_bx_tab_reglages', 'type' => 'tab', 'label' => '① Réglages'],
+            [
+                'key'           => 'field_bx_service_actif',
+                'name'          => 'bx_service_actif',
+                'label'         => 'Service actif',
+                'type'          => 'true_false',
+                'default_value' => 0,
+                'ui'            => 1,
+                'ui_on_text'    => 'Activé',
+                'ui_off_text'   => 'Suspendu',
+                'instructions'  => 'Désactivez pour masquer le formulaire et afficher un message de suspension sans supprimer les formules.',
+            ],
+            [
+                'key'           => 'field_bx_eyebrow',
+                'name'          => 'bx_eyebrow',
+                'label'         => 'Surtitre (au-dessus du titre)',
+                'type'          => 'text',
+                'default_value' => 'Service aux entreprises',
+            ],
+            [
+                'key'           => 'field_bx_intro',
+                'name'          => 'bx_intro',
+                'label'         => 'Texte d\'introduction',
+                'type'          => 'textarea',
+                'rows'          => 2,
+                'default_value' => 'Commandez pour votre équipe en quelques clics. Nous préparons tout, vous n\'avez qu\'à venir chercher.',
+            ],
+            [
+                'key'           => 'field_bx_note_service',
+                'name'          => 'bx_note_service',
+                'label'         => 'Note de service',
+                'type'          => 'textarea',
+                'rows'          => 2,
+                'instructions'  => 'Texte optionnel affiché en bandeau sous l\'en-tête (ex. : horaires de récupération, délai minimum). Laissez vide pour ne rien afficher.',
+            ],
+            [
+                'key'           => 'field_bx_delai_min',
+                'name'          => 'bx_delai_min',
+                'label'         => 'Délai minimum de commande (en heures)',
+                'type'          => 'number',
+                'default_value' => 24,
+                'min'           => 1,
+                'step'          => 1,
+                'instructions'  => 'Le calendrier de récupération bloquera toute date inférieure à ce délai. Exemple : 24 = commande pour le lendemain au plus tôt.',
+            ],
+            [
+                'key'           => 'field_bx_min_qte',
+                'name'          => 'bx_min_qte',
+                'label'         => 'Nombre minimum de boîtes par commande',
+                'type'          => 'number',
+                'default_value' => 1,
+                'min'           => 1,
+                'step'          => 1,
+                'instructions'  => 'La commande sera refusée si le total de boîtes est inférieur à cette valeur.',
+            ],
+            ['key' => 'field_bx_tab_formules', 'type' => 'tab', 'label' => '② Formules'],
+            [
+                'key'        => 'field_bx_formules',
+                'name'       => 'bx_formules',
+                'label'      => 'Formules',
+                'type'       => 'repeater',
+                'layout'     => 'block',
+                'collapsed'  => 'field_bx_f_nom',
+                'button_label' => 'Ajouter une formule',
+                'instructions' => 'Chaque formule est une boîte à lunch que les clients peuvent commander. Elles apparaissent dans l\'ordre où vous les ajoutez ici.',
+                'sub_fields' => [
+                    [
+                        'key'           => 'field_bx_f_visible',
+                        'name'          => 'bx_f_visible',
+                        'label'         => 'Afficher cette formule',
+                        'type'          => 'true_false',
+                        'default_value' => 1,
+                        'ui'            => 1,
+                        'ui_on_text'    => 'Visible',
+                        'ui_off_text'   => 'Cachée',
+                        'instructions'  => 'Masquez temporairement une formule sans la supprimer.',
+                    ],
+                    [
+                        'key'           => 'field_bx_f_nom',
+                        'name'          => 'bx_f_nom',
+                        'label'         => 'Nom de la formule',
+                        'type'          => 'text',
+                        'required'      => 1,
+                    ],
+                    [
+                        'key'          => 'field_bx_f_prix',
+                        'name'         => 'bx_f_prix',
+                        'label'        => 'Prix par personne ($)',
+                        'type'         => 'number',
+                        'required'     => 1,
+                        'min'          => 0,
+                        'step'         => 0.01,
+                        'instructions' => 'Prix par boîte, taxes en sus.',
+                    ],
+                    [
+                        'key'          => 'field_bx_f_inclus',
+                        'name'         => 'bx_f_inclus',
+                        'label'        => 'Contenu de la boîte (un élément par ligne)',
+                        'type'         => 'textarea',
+                        'rows'         => 4,
+                        'instructions' => 'Ex. : Sandwich au poulet grillé / Soupe du jour / Dessert maison / Eau de source. Affiché sous forme de liste à puces.',
+                    ],
+                    [
+                        'key'          => 'field_bx_f_description',
+                        'name'         => 'bx_f_description',
+                        'label'        => 'Description courte (optionnelle)',
+                        'type'         => 'textarea',
+                        'rows'         => 2,
+                        'instructions' => 'Quelques mots sur la formule (ex. : « Idéal pour une réunion d\'équipe »).',
+                    ],
+                    [
+                        'key'           => 'field_bx_f_image',
+                        'name'          => 'bx_f_image',
+                        'label'         => 'Photo de la formule (optionnelle)',
+                        'type'          => 'image',
+                        'return_format' => 'array',
+                        'preview_size'  => 'medium',
+                        'instructions'  => 'Photo format paysage (16:9 ou 4:3 idéal). Si absente, seul le texte est affiché.',
+                    ],
+                ],
+            ],
+        ],
+        'location' => [[['param' => 'page_template', 'operator' => '==', 'value' => 'templates/template-boites-lunch.php']]],
         'menu_order' => 0,
     ]);
 });
