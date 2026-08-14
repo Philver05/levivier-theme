@@ -432,11 +432,11 @@
         if (!opt) return;
         var qty = parseInt((item.querySelector('.pam-qty-input') || {}).value, 10) || 0;
         if (qty === 0) {
-            opt.style.display = 'none';
+            opt.hidden = true;
             var cb = opt.querySelector('.pam-chaud-input');
             if (cb) cb.checked = false;
         } else {
-            opt.style.display = '';
+            opt.hidden = false;
         }
         majRechauffageInfo();
     }

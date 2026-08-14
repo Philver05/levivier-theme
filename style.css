@@ -2407,6 +2407,7 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   height: 17px;
   border-radius: 4px;
   border: 1.5px solid var(--bordure);
+  margin-left: auto;
   flex-shrink: 0;
   background: var(--blanc);
   background-size: 11px;
