@@ -115,6 +115,12 @@
             var cat = barre.closest('.pam-categorie');
             var estActive = !!cat && cat.dataset.cat === categorieActive;
             barre.hidden = !estActive;
+            /* Si la catégorie devient active sans sous-catégorie choisie,
+               auto-sélectionner la première (plus de "Tout voir") */
+            if (estActive && !sousCategorieActive) {
+                var premier = barre.querySelector('.pam-souscat-tab');
+                if (premier) sousCategorieActive = premier.dataset.souscat;
+            }
             barre.querySelectorAll('.pam-souscat-tab').forEach(function (b) {
                 b.classList.toggle('pam-souscat-tab--actif', estActive && b.dataset.souscat === sousCategorieActive);
             });
@@ -389,7 +395,7 @@
     document.querySelectorAll('.pam-cat-tab').forEach(function (btn) {
         btn.addEventListener('click', function () {
             categorieActive = btn.dataset.cat;
-            sousCategorieActive = premierSouscatDe(categorieActive);
+            sousCategorieActive = '';
             appliquerFiltreCategorie();
             majSousCategorieTabs();
             appliquerFiltreSousCategorie();
