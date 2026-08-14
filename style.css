@@ -2478,6 +2478,10 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   animation: pam-suggestion-in .3s ease;
 }
 .pam-suggestion[hidden] { display: none; }
+.pam-sug-prefix { white-space: nowrap; flex-shrink: 0; }
+.pam-sug-item { display: inline-flex; align-items: center; gap: .45rem; flex-wrap: wrap; }
+.pam-sug-divider { color: var(--bordure); font-size: 1.2rem; line-height: 1; flex-shrink: 0; }
+.pam-sug-item[hidden], .pam-sug-divider[hidden] { display: none; }
 .pam-suggestion-nom {
   background: none;
   border: none;

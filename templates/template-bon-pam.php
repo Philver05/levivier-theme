@@ -489,10 +489,18 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
      BARRE DE TOTAL (sticky bottom)
 ====================================================== -->
 <div class="pam-barre-total" id="pam-barre-total" aria-live="polite">
-    <!-- Suggestion automatique (accompagnement suggéré à l'ajout d'un produit) -->
+    <!-- Suggestion automatique (accompagnement / breuvage suggéré à l'ajout d'un produit) -->
     <div class="pam-suggestion conteneur" id="pam-suggestion" hidden>
-        <span class="pam-suggestion-texte">Avec ceci, essayez : <button type="button" class="pam-suggestion-nom" id="pam-suggestion-nom"></button> — <span id="pam-suggestion-prix"></span></span>
-        <button type="button" class="pam-suggestion-ajouter" id="pam-suggestion-ajouter">+ Ajouter</button>
+        <span class="pam-sug-prefix">Avec ceci :</span>
+        <span class="pam-sug-item" id="pam-sug-item-1">
+            <button type="button" class="pam-suggestion-nom" id="pam-suggestion-nom"></button> — <span id="pam-suggestion-prix"></span>
+            <button type="button" class="pam-suggestion-ajouter" id="pam-suggestion-ajouter">+ Ajouter</button>
+        </span>
+        <span class="pam-sug-divider" id="pam-sug-divider" hidden aria-hidden="true">·</span>
+        <span class="pam-sug-item" id="pam-sug-item-2" hidden>
+            <button type="button" class="pam-suggestion-nom" id="pam-suggestion-nom-2"></button> — <span id="pam-suggestion-prix-2"></span>
+            <button type="button" class="pam-suggestion-ajouter" id="pam-suggestion-ajouter-2">+ Ajouter</button>
+        </span>
         <button type="button" class="pam-suggestion-fermer" id="pam-suggestion-fermer" aria-label="Fermer la suggestion">×</button>
     </div>
     <!-- Récapitulatif de la sélection (déplié au-dessus de la barre) -->

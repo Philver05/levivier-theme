@@ -20,6 +20,11 @@
     var suggestionPrixEl  = document.getElementById('pam-suggestion-prix');
     var suggestionAjouter = document.getElementById('pam-suggestion-ajouter');
     var suggestionFermer  = document.getElementById('pam-suggestion-fermer');
+    var suggestionNomEl2   = document.getElementById('pam-suggestion-nom-2');
+    var suggestionPrixEl2  = document.getElementById('pam-suggestion-prix-2');
+    var suggestionAjouter2 = document.getElementById('pam-suggestion-ajouter-2');
+    var suggestionItem2    = document.getElementById('pam-sug-item-2');
+    var suggestionDivider  = document.getElementById('pam-sug-divider');
     var suggestionTimer   = null;
 
     /* -------------------------------------------------------
@@ -168,41 +173,62 @@
         suggestionEl.hidden = true;
         suggestionAjouter.onclick = null;
         suggestionNomEl.onclick = null;
+        if (suggestionAjouter2) suggestionAjouter2.onclick = null;
+        if (suggestionNomEl2)   suggestionNomEl2.onclick = null;
+        if (suggestionItem2)    suggestionItem2.hidden = true;
+        if (suggestionDivider)  suggestionDivider.hidden = true;
     }
 
     function suggererApres(item) {
         if (!suggestionEl || !item.dataset.suggestions) return;
         var ids = item.dataset.suggestions.split(' ').filter(Boolean);
-        var cible = null;
-        for (var i = 0; i < ids.length; i++) {
+        var cibles = [];
+        for (var i = 0; i < ids.length && cibles.length < 2; i++) {
             var candidat = form.querySelector('.pam-produit-item[data-id="' + ids[i] + '"]');
             if (!candidat || candidat.hidden) continue;
-            var input = candidat.querySelector('.pam-qty-input');
-            if (input && (parseInt(input.value, 10) || 0) > 0) continue;
-            cible = candidat;
-            break;
+            var inp = candidat.querySelector('.pam-qty-input');
+            if (inp && (parseInt(inp.value, 10) || 0) > 0) continue;
+            cibles.push(candidat);
         }
-        if (!cible) return;
+        if (!cibles.length) return;
 
-        var nom  = cible.querySelector('.pam-produit-nom');
+        /* Suggestion 1 */
+        var cible = cibles[0];
+        var nom = cible.querySelector('.pam-produit-nom');
         suggestionNomEl.textContent  = nom ? nom.textContent.trim() : '';
         suggestionPrixEl.textContent = formatMontant(parseFloat(cible.dataset.prix) || 0);
-        suggestionAjouter.onclick = function () {
-            var input = cible.querySelector('.pam-qty-input');
-            if (input) {
-                input.value = (parseInt(input.value, 10) || 0) + 1;
-                calculerTotal();
-            }
+        suggestionAjouter.onclick = (function (c) { return function () {
+            var input = c.querySelector('.pam-qty-input');
+            if (input) { input.value = (parseInt(input.value, 10) || 0) + 1; calculerTotal(); }
             masquerSuggestion();
-        };
+        }; })(cible);
         /* Cliquer le nom fait défiler jusqu'à la fiche produit (photo,
            description) sans l'ajouter, pour que le client voie ce qu'il
            s'apprête à commander. */
-        suggestionNomEl.onclick = function () { allerAuProduit(cible.dataset.id); };
+        suggestionNomEl.onclick = (function (c) { return function () { allerAuProduit(c.dataset.id); }; })(cible);
+
+        /* Suggestion 2 (breuvage ou 2e accompagnement, si disponible) */
+        if (cibles[1] && suggestionItem2 && suggestionNomEl2 && suggestionPrixEl2 && suggestionAjouter2) {
+            var cible2 = cibles[1];
+            var nom2 = cible2.querySelector('.pam-produit-nom');
+            suggestionNomEl2.textContent  = nom2 ? nom2.textContent.trim() : '';
+            suggestionPrixEl2.textContent = formatMontant(parseFloat(cible2.dataset.prix) || 0);
+            suggestionAjouter2.onclick = (function (c) { return function () {
+                var input = c.querySelector('.pam-qty-input');
+                if (input) { input.value = (parseInt(input.value, 10) || 0) + 1; calculerTotal(); }
+                masquerSuggestion();
+            }; })(cible2);
+            suggestionNomEl2.onclick = (function (c) { return function () { allerAuProduit(c.dataset.id); }; })(cible2);
+            suggestionItem2.hidden = false;
+            suggestionDivider.hidden = false;
+        } else {
+            if (suggestionItem2)   suggestionItem2.hidden = true;
+            if (suggestionDivider) suggestionDivider.hidden = true;
+        }
 
         suggestionEl.hidden = false;
         clearTimeout(suggestionTimer);
-        suggestionTimer = setTimeout(masquerSuggestion, 6000);
+        suggestionTimer = setTimeout(masquerSuggestion, 7000);
     }
 
     if (suggestionFermer) suggestionFermer.addEventListener('click', masquerSuggestion);
