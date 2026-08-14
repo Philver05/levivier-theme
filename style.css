@@ -2372,9 +2372,6 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
 }
 /* Option réchauffage : pied de carte intégré */
 .pam-option-chaud {
-  display: none;
-}
-.pam-option-chaud:not([hidden]) {
   display: flex;
   align-items: center;
   gap: .55rem;
