@@ -438,7 +438,37 @@
         } else {
             opt.hidden = false;
         }
+        majRechauffageInfo();
     }
+
+    function majRechauffageInfo() {
+        var infoEl  = document.getElementById('pam-rechauffage-info');
+        var listeEl = document.getElementById('pam-rechauffage-liste');
+        if (!infoEl || !listeEl) return;
+
+        var noms = [];
+        document.querySelectorAll('.pam-chaud-input:checked').forEach(function (cb) {
+            var item = cb.closest('.pam-produit-item');
+            if (!item) return;
+            var qty = parseInt((item.querySelector('.pam-qty-input') || {}).value, 10) || 0;
+            if (qty === 0) return;
+            var nomEl = item.querySelector('.pam-produit-nom');
+            if (nomEl) noms.push(nomEl.textContent.trim());
+        });
+
+        if (noms.length) {
+            listeEl.textContent = noms.join(', ');
+            infoEl.hidden = false;
+        } else {
+            infoEl.hidden = true;
+        }
+    }
+
+    form.addEventListener('change', function (e) {
+        if (e.target.classList.contains('pam-chaud-input')) {
+            majRechauffageInfo();
+        }
+    });
 
     form.addEventListener('click', function (e) {
         var btn = e.target.closest('.pam-qty-moins, .pam-qty-plus');

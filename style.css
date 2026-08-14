@@ -2370,32 +2370,84 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   gap: .4rem;
   margin-top: .5rem;
 }
+/* Option réchauffage : pied de carte intégré */
 .pam-option-chaud {
   display: flex;
   align-items: center;
-  gap: .4rem;
-  margin-top: .45rem;
-  font-size: .82rem;
-  color: var(--terracotta-texte);
+  gap: .55rem;
+  padding: .6rem .9rem;
+  margin: .45rem -.9rem -1rem;
+  border-top: 1px solid var(--bordure);
+  border-radius: 0 0 var(--rayon) var(--rayon);
+  font-size: .84rem;
+  color: var(--texte-moyen);
   cursor: pointer;
   user-select: none;
+  transition: background .18s, color .18s, border-top-color .18s;
 }
-.pam-option-chaud svg {
-  width: 15px;
-  height: 15px;
+.pam-option-chaud:hover { background: var(--creme); }
+.pam-option-chaud:has(input:checked) {
+  background: var(--sauge-pale);
+  color: var(--sauge);
+  border-top-color: var(--sauge-pale);
+}
+.pam-chaud-icone {
+  width: 14px;
+  height: 14px;
   flex: none;
-  stroke: var(--terracotta);
-  fill: none;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  fill: currentColor;
+  opacity: .65;
+  transition: opacity .18s;
 }
+.pam-option-chaud:has(input:checked) .pam-chaud-icone { opacity: 1; }
+/* Coche personnalisée à droite */
+.pam-option-chaud::after {
+  content: '';
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
+  border: 1.5px solid var(--bordure);
+  margin-left: auto;
+  flex-shrink: 0;
+  background: var(--blanc);
+  background-size: 11px;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: border-color .18s, background-color .18s;
+}
+.pam-option-chaud:has(input:checked)::after {
+  border-color: var(--sauge);
+  background-color: var(--sauge);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+}
+/* Checkbox natif masqué */
 .pam-option-chaud input[type="checkbox"] {
-  accent-color: var(--terracotta);
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+/* Rappel réchauffage dans les coordonnées */
+.pam-rechauffage-info {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  margin-top: .75rem;
+  padding: .7rem .9rem;
+  background: var(--sauge-pale);
+  border-radius: 7px;
+  font-size: .88rem;
+  color: var(--sauge);
+  grid-column: 1 / -1;
+}
+.pam-rechauffage-info[hidden] { display: none; }
+.pam-rechauffage-info svg {
   width: 15px;
   height: 15px;
   flex: none;
-  cursor: pointer;
+  fill: currentColor;
+  opacity: .8;
 }
 .pam-qty-moins,
 .pam-qty-plus {
