@@ -389,7 +389,7 @@
     document.querySelectorAll('.pam-cat-tab').forEach(function (btn) {
         btn.addEventListener('click', function () {
             categorieActive = btn.dataset.cat;
-            sousCategorieActive = ''; /* tout afficher, les sous-onglets filtrent si cliqués */
+            sousCategorieActive = premierSouscatDe(categorieActive);
             appliquerFiltreCategorie();
             majSousCategorieTabs();
             appliquerFiltreSousCategorie();
