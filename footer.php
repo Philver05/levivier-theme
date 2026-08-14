@@ -15,7 +15,7 @@
     $pied_tel      = $pied_opt('opt_telephone', '(418) 562-5230');
     $pied_tel_lien = function_exists('lv_opt_tel_lien') ? lv_opt_tel_lien() : 'tel:+14185625230';
     $pied_courriel = $pied_opt('opt_courriel', 'epicerie@levivier.net');
-    $pied_facebook = $pied_opt('opt_facebook', 'https://facebook.com/epicerielevivier/');
+    $pied_facebook = $pied_opt('opt_facebook', 'https://www.facebook.com/Le.Vivier.Epicerie');
     $pied_h_sem    = $pied_opt('opt_horaire_semaine', '8 h 30 - 18 h');
     $pied_h_sam    = $pied_opt('opt_horaire_samedi', '9 h - 17 h');
     $pied_h_dim    = $pied_opt('opt_horaire_dimanche', '10 h - 17 h');

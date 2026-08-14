@@ -1137,6 +1137,12 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
 .page-prose { max-width: 70ch; margin-inline: auto; }
 .page-prose p { margin-bottom: 1rem; }
 .page-prose h2, .page-prose h3 { color: var(--sauge); margin: 1.6rem 0 .6rem; }
+.page-prose h2 { border-left: 3px solid var(--terracotta); padding-left: .65rem; margin-top: 2.25rem; }
+.page-prose h3 { font-size: 1rem; padding-left: .65rem; }
+.page-prose ul, .page-prose ol { margin: .25rem 0 1rem 1.5rem; }
+.page-prose li { margin-bottom: .35rem; line-height: 1.65; }
+.page-prose a { color: var(--terracotta-texte); text-decoration: underline; text-underline-offset: 2px; }
+.page-prose a:hover { color: var(--sauge); }
 .carte-map iframe { width: 100%; height: 100%; border: 0; display: block; }
 .champ-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
 @media (max-width: 560px) { .champ-duo { grid-template-columns: 1fr; } }

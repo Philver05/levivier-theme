@@ -1491,3 +1491,168 @@ add_action('admin_init', function () {
     echo '<p style="margin-top:1.5rem;"><a href="' . admin_url('edit.php?post_type=pam_produit') . '">→ Voir tous les produits PAM</a></p>';
     exit;
 });
+
+/* ================================================================
+   MISE À JOUR PAGE POLITIQUES
+   Visiter : /wp-admin/?lv_maj_politiques=1
+   Idempotent — peut être relancé si besoin.
+================================================================ */
+add_action('admin_init', function () {
+    if (!isset($_GET['lv_maj_politiques']) || !current_user_can('manage_options')) return;
+
+    $page = get_page_by_path('politiques');
+    if (!$page) { wp_die('Page "politiques" introuvable. Vérifier le slug.'); }
+
+    $contenu = '
+<p>Date de dernière mise à jour : 14 août 2025</p>
+
+<p>Cette politique s\'applique au site <strong>levivier.net</strong>, propriété de <strong>Le Vivier Épicerie Boutique</strong> (Matane, QC).</p>
+
+<p>Le respect de votre vie privée est de la plus haute importance pour nous. La présente politique a pour but de vous exposer :</p>
+
+<ul>
+<li>La manière dont sont collectés et traités vos renseignements personnels ;</li>
+<li>Quels sont vos droits concernant ces renseignements ;</li>
+<li>Qui est responsable du traitement ;</li>
+<li>À qui ces renseignements sont transmis ;</li>
+<li>La politique du site en matière de fichiers témoins.</li>
+</ul>
+
+<h2>1. Renseignements personnels collectés</h2>
+
+<ul>
+<li>Nom et prénom</li>
+<li>Numéro de téléphone</li>
+<li>Adresse électronique</li>
+<li>Date et heure de récupération d\'une commande</li>
+</ul>
+
+<h2>2. Modes de collecte</h2>
+
+<p>Vos renseignements personnels sont recueillis par l\'entremise des moyens suivants :</p>
+
+<ul>
+<li>Formulaire de contact du site web</li>
+<li>Formulaire d\'inscription à notre infolettre</li>
+<li>Bons de commande en ligne (Prêt à manger, Produits Maison, Vrac)</li>
+</ul>
+
+<p>Ces renseignements sont utilisés aux fins suivantes : traitement de vos commandes, réponse à vos questions et, avec votre accord, envoi d\'informations promotionnelles.</p>
+
+<h2>3. Interactivité</h2>
+
+<p>Des renseignements peuvent également être collectés par les formulaires interactifs de notre site Web, aux fins de gestion des commandes et de service à la clientèle.</p>
+
+<h2>4. Fichiers témoins (cookies)</h2>
+
+<p>Nous utilisons des fichiers témoins pour améliorer la navigation et mesurer le trafic sur notre site.</p>
+
+<h3>a) Fichiers témoins utilisés</h3>
+
+<p>Il s\'agit principalement des informations suivantes :</p>
+
+<ul>
+<li>Adresse IP et système d\'exploitation</li>
+<li>Pages visitées et heure de connexion</li>
+<li>Préférence d\'affichage mémorisée (ex. : bandeau de consentement)</li>
+</ul>
+
+<p>Des fichiers témoins de tiers peuvent être enregistrés lors de votre visite, notamment via des outils d\'analyse d\'audience (Google Analytics). Ces services disposent de leurs propres politiques de confidentialité.</p>
+
+<h3>b) Opposition aux fichiers témoins</h3>
+
+<p>Vous pouvez désactiver les fichiers témoins en configurant votre navigateur. Certaines fonctionnalités du site pourraient être affectées par cette modification.</p>
+
+<h2>5. Partage des renseignements personnels</h2>
+
+<p>Nous nous engageons à ne pas vendre ni commercialiser vos renseignements personnels à des tiers.</p>
+
+<h2>6. Durée de conservation</h2>
+
+<p>Vos renseignements sont conservés aussi longtemps que nécessaire aux finalités pour lesquelles ils ont été collectés, ou selon les exigences légales applicables.</p>
+
+<h2>7. Hébergement</h2>
+
+<p>Notre site est hébergé par <strong>N0C Hosting</strong> (Canada). Pour contacter l\'hébergeur : <a href="https://n0c.com">n0c.com</a>.</p>
+
+<h2>8. Responsable du traitement</h2>
+
+<h3>a) Identité</h3>
+
+<p>La personne responsable du traitement des renseignements personnels est <strong>Marie Fortin</strong>.</p>
+
+<p>Elle peut être contactée au <a href="tel:+14185625230">(418) 562-5230</a> ou à <a href="mailto:epicerie@levivier.net">epicerie@levivier.net</a>.</p>
+
+<h3>b) Engagements</h3>
+
+<p>La responsable du traitement s\'engage à protéger vos renseignements personnels, à ne pas les transmettre à des tiers sans vous en avoir informé, et à vous aviser en cas de violation de la confidentialité ou de la sécurité de vos données.</p>
+
+<h2>9. Droit d\'opposition et de retrait</h2>
+
+<p>Vous avez le droit de vous opposer au traitement de vos renseignements personnels ou de demander leur retrait d\'une liste de diffusion. Pour ce faire, contactez-nous à :</p>
+
+<p><a href="mailto:epicerie@levivier.net">epicerie@levivier.net</a></p>
+
+<h2>10. Droit d\'accès, de rectification et de suppression</h2>
+
+<p>Vous pouvez consulter, corriger ou demander la suppression de vos renseignements personnels en nous écrivant à :</p>
+
+<p><a href="mailto:epicerie@levivier.net">epicerie@levivier.net</a></p>
+
+<h2>11. Sécurité</h2>
+
+<p>Vos informations sont conservées dans un environnement sécurisé. Les mesures en place incluent :</p>
+
+<ul>
+<li>Protocole SSL/HTTPS</li>
+<li>Gestion des accès restreints aux personnes autorisées</li>
+<li>Sauvegarde automatique des données</li>
+<li>Pare-feu</li>
+</ul>
+
+<p>Nous nous engageons à maintenir un haut degré de confidentialité. Toutefois, aucun mécanisme n\'offrant une sécurité absolue, une part de risque demeure lors de toute transmission d\'informations sur Internet.</p>
+
+<h2>12. Modifications de la politique</h2>
+
+<p>Cette politique peut être consultée en tout temps à l\'adresse :</p>
+
+<p><a href="https://levivier.net/politiques/">https://levivier.net/politiques/</a></p>
+
+<p>Nous nous réservons le droit de la modifier afin d\'en assurer la conformité avec la législation en vigueur. Nous vous invitons à la consulter régulièrement.</p>
+
+<h2>13. Acceptation</h2>
+
+<p>En naviguant sur le site, vous attestez avoir lu et compris la présente politique de confidentialité et en acceptez les conditions, notamment en ce qui concerne la collecte et le traitement de vos renseignements personnels ainsi que l\'utilisation de fichiers témoins.</p>
+
+<h2>14. Législation applicable</h2>
+
+<ul>
+<li><em>Loi sur la protection des renseignements personnels dans le secteur privé</em>, RLRQ c P-39.1</li>
+<li><em>Loi 25 sur la protection des renseignements personnels</em> (Québec, en vigueur depuis 2023)</li>
+<li><em>Loi sur la protection des renseignements personnels et les documents électroniques</em>, LC 2000, c 5</li>
+</ul>
+
+<h2>15. Gérer les fichiers témoins dans votre navigateur</h2>
+
+<ul>
+<li><a href="https://support.microsoft.com/fr-fr/microsoft-edge/supprimer-les-cookies-dans-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09">Microsoft Edge</a></li>
+<li><a href="https://support.apple.com/fr-ca/guide/safari/sfri11471/mac">Safari (Mac)</a></li>
+<li><a href="https://support.google.com/chrome/answer/95647">Chrome</a></li>
+<li><a href="https://support.mozilla.org/fr/kb/effacer-les-cookies-et-autres-donnees-de-site">Firefox</a></li>
+<li><a href="https://help.opera.com/en/latest/web-preferences/#cookies">Opera</a></li>
+</ul>
+
+<p>Dernière mise à jour : 14 août 2025</p>
+';
+
+    wp_update_post([
+        'ID'           => $page->ID,
+        'post_content' => wp_slash($contenu),
+    ]);
+
+    echo '<style>body{font-family:monospace;padding:2rem 3rem;background:#f9f5f0;} h2{color:#b85c50;} a{color:#b85c50;}</style>';
+    echo '<h2>Politique de confidentialité mise à jour</h2>';
+    echo '<p>Corrections apportées : téléphone, courriel, hébergeur, URL section 12, données collectées, services tiers.</p>';
+    echo '<p><a href="' . esc_url(get_permalink($page->ID)) . '">→ Voir la page mise à jour</a></p>';
+    exit;
+});

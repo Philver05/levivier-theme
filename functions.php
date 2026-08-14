@@ -1969,7 +1969,7 @@ add_action('acf/init', function () {
                 'name'          => 'opt_facebook',
                 'label'         => 'Lien Facebook',
                 'type'          => 'url',
-                'default_value' => 'https://facebook.com/epicerielevivier/',
+                'default_value' => 'https://www.facebook.com/Le.Vivier.Epicerie',
             ],
             [
                 'key'           => 'field_opt_pied_slogan',
