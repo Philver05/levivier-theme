@@ -35,7 +35,7 @@
                 <h4>Navigation</h4>
                 <?php
                 /* Ordre logique (celui du menu header) plutôt qu'alphabétique,
-                   réparti sur 2 colonnes (demande de Philippe, 22 juillet) :
+                   réparti sur 2 colonnes  :
                    colonne 1 = univers boutique/épicerie, colonne 2 = pages
                    utilitaires. Politique de confidentialité reste dans la
                    barre du bas à côté du copyright, pas mélangée ici. */
