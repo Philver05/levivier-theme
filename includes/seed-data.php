@@ -971,6 +971,89 @@ add_action('admin_init', function () {
 });
 
 /**
+ * PAM : catégorie Boissons + 5 breuvages d'exemple (prix TEMPORAIRES).
+ * Idempotent (ignore les titres déjà présents, relançable sans risque).
+ * Déclencher UNE SEULE FOIS en visitant : /wp-admin/?lv_seed_pam_boissons=1
+ */
+add_action('admin_init', function () {
+
+    if (!isset($_GET['lv_seed_pam_boissons']) || $_GET['lv_seed_pam_boissons'] !== '1') return;
+    if (!current_user_can('manage_options')) wp_die('Accès refusé.');
+    if (get_option('lv_seed_pam_boissons_done')) {
+        wp_die('✅ Les boissons ont déjà été créées. Modifiez-les dans le menu « Prêt à manger ».');
+    }
+
+    $log = [];
+
+    /* 1. Catégorie principale Boissons */
+    $terme = term_exists('Boissons', 'pam_categorie');
+    if (!$terme) {
+        $terme = wp_insert_term('Boissons', 'pam_categorie');
+        if (is_wp_error($terme)) {
+            wp_die('❌ Impossible de créer « Boissons » : ' . $terme->get_error_message());
+        }
+        $log[] = "✔ pam_categorie « Boissons » créée";
+    } else {
+        $log[] = "pam_categorie « Boissons » déjà existante";
+    }
+    $cat_id = is_array($terme) ? (int) $terme['term_id'] : (int) $terme;
+
+    /* 2. Breuvages (prix TEMPORAIRES — Marie ajuste dans WP) */
+    $boissons = [
+        ['Eau pétillante',      2.25],
+        ['Jus de pomme local',  3.75],
+        ['Kombucha maison',     4.25],
+        ['Café filtre',         2.50],
+        ['Limonade artisanale', 3.50],
+    ];
+
+    foreach ($boissons as [$titre, $prix]) {
+        $existant = get_posts([
+            'post_type'      => 'pam_produit',
+            'post_status'    => 'any',
+            'title'          => $titre,
+            'posts_per_page' => 1,
+            'fields'         => 'ids',
+        ]);
+        if ($existant) {
+            $log[] = "« $titre » déjà présente, ignorée";
+            continue;
+        }
+        $post_id = wp_insert_post([
+            'post_type'   => 'pam_produit',
+            'post_title'  => $titre,
+            'post_status' => 'publish',
+        ]);
+        if (is_wp_error($post_id)) {
+            $log[] = "❌ Erreur « $titre » : " . $post_id->get_error_message();
+            continue;
+        }
+        wp_set_object_terms($post_id, $cat_id, 'pam_categorie');
+        if (function_exists('update_field')) {
+            update_field('field_pam_prix',  $prix,               $post_id);
+            update_field('field_pam_jours', ['tous_les_jours'],  $post_id);
+        }
+        $log[] = "✔ « $titre » créée (" . number_format($prix, 2, ',', ' ') . " $, prix temporaire à ajuster)";
+    }
+
+    update_option('lv_seed_pam_boissons_done', true);
+
+    echo '<style>body{font-family:monospace;padding:2rem;background:#f9f5f0;}
+          h1{color:#4d6040;} li{margin:.3rem 0;} .ok{color:#4d6040;} .err{color:#c00;}</style>';
+    echo '<h1>🥤 Le Vivier — Boissons Prêt à manger</h1>';
+    echo '<ul>';
+    foreach ($log as $ligne) {
+        $class = (str_contains($ligne, '❌')) ? 'err' : 'ok';
+        echo '<li class="' . $class . '">' . esc_html($ligne) . '</li>';
+    }
+    echo '</ul>';
+    echo '<p>Prix temporaires plausibles : ajustez-les dans <strong>Prêt à manger</strong>, ainsi que description/photo pour chaque boisson.</p>';
+    echo '<p>Ensuite, pour activer les suggestions : ouvrez chaque plat principal → champ <strong>« Suggestions automatiques »</strong> → ajoutez l\'accompagnement <strong>puis</strong> la boisson souhaitée.</p>';
+    echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#4d6040;">← Retour au tableau de bord</a></p>';
+    exit;
+});
+
+/**
  * Boutique : 7 rayons (blocs photo+texte en alternance, sur le modèle des
  * familles Produits Maison). Purement descriptif, aucun bouton.
  * Idempotent (ignore les titres déjà présents, relançable sans risque).
