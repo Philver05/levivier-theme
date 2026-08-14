@@ -1419,19 +1419,30 @@ add_action('admin_init', function () {
 
 
 /* =========================================================================
- * lv_unset_pam_chaud_pains  —  Désactive l'option réchauffage sur tous les
- * produits de la catégorie Pains (Focaccias comprises), activée par erreur
- * par lv_seed_pam_chaud. À exécuter UNE SEULE FOIS.
- * Déclencher : /wp-admin/?lv_unset_pam_chaud_pains=1
+ * lv_unset_pam_chaud_seed  —  Annule tout ce que lv_seed_pam_chaud a activé.
+ * Protège Shish taouk au poulet et Patates sarladaises (réglés manuellement).
+ * Idempotent. Déclencher : /wp-admin/?lv_unset_pam_chaud_seed=1
  * ========================================================================= */
 add_action('admin_init', function () {
 
-    if (!isset($_GET['lv_unset_pam_chaud_pains']) || $_GET['lv_unset_pam_chaud_pains'] !== '1') return;
+    if (!isset($_GET['lv_unset_pam_chaud_seed']) || $_GET['lv_unset_pam_chaud_seed'] !== '1') return;
     if (!current_user_can('manage_options')) wp_die('Accès refusé.');
 
-    $noms_pains = ['Pains', 'Focaccias', 'Focaccia Maison'];
-    $term_ids   = [];
-    foreach ($noms_pains as $nom) {
+    /* Tous les titres à NE PAS toucher (réglés manuellement) */
+    $proteger = ['Shish taouk au poulet', 'Patates sarladaises'];
+
+    /* Toutes les catégories que la seed avait activées */
+    $noms_seed = [
+        'Pains', 'Focaccias', 'Focaccia Maison',
+        'Pâtés et Quiches', 'Pâtés', 'Pâté',
+        'Mets préparés', 'Mets préparé',
+        'Pizzas', 'Mets cuisinés',
+        'Accompagnement', 'Accompagnements',
+        'Sandwichs', 'Sandwich',
+    ];
+
+    $term_ids = [];
+    foreach ($noms_seed as $nom) {
         $t = get_term_by('name', $nom, 'pam_categorie');
         if (!$t) $t = get_term_by('slug', sanitize_title($nom), 'pam_categorie');
         if ($t) {
@@ -1440,31 +1451,39 @@ add_action('admin_init', function () {
             if (!is_wp_error($enfants)) $term_ids = array_merge($term_ids, $enfants);
         }
     }
+    $term_ids = array_unique($term_ids);
 
-    if (empty($term_ids)) {
-        wp_die('<p style="font-family:monospace;padding:2rem;">Catégorie Pains introuvable.</p>');
-    }
+    $posts = get_posts(['post_type' => 'pam_produit', 'posts_per_page' => -1,
+                        'post_status' => ['publish', 'draft'],
+                        'tax_query' => [['taxonomy' => 'pam_categorie', 'field' => 'term_id', 'terms' => $term_ids]],
+                        'fields' => 'ids']);
 
-    $posts    = get_posts(['post_type' => 'pam_produit', 'posts_per_page' => -1,
-                           'post_status' => ['publish', 'draft'],
-                           'tax_query' => [['taxonomy' => 'pam_categorie', 'field' => 'term_id', 'terms' => $term_ids]],
-                           'fields' => 'ids']);
-    $retires  = [];
+    $retires   = [];
+    $proteges  = [];
     $inchanges = [];
+
     foreach ($posts as $pid) {
+        $titre = get_the_title($pid);
+        if (in_array($titre, $proteger, true)) {
+            $proteges[] = $titre;
+            continue;
+        }
         if (get_field('pam_chaud', $pid)) {
             update_field('field_pam_chaud', false, $pid);
-            $retires[] = get_the_title($pid);
+            $retires[] = $titre;
         } else {
-            $inchanges[] = get_the_title($pid);
+            $inchanges[] = $titre;
         }
     }
 
     echo '<style>body{font-family:monospace;padding:2rem 3rem;background:#f9f5f0;line-height:1.7;}
-        h2{color:#b85c50;} .ok{color:#4d6040;} .gris{color:#888;} a{color:#b85c50;}</style>';
-    echo '<h2>Réchauffage retiré — Pains / Focaccias</h2>';
+        h2{color:#b85c50;} .retire{color:#b85c50;} .protege{color:#4d6040;} .gris{color:#888;} a{color:#b85c50;}</style>';
+    echo '<h2>Annulation seed pam_chaud</h2>';
     if ($retires) {
-        echo '<p class="ok"><strong>' . count($retires) . ' produit(s) désactivé(s) :</strong> ' . implode(', ', array_map('esc_html', $retires)) . '</p>';
+        echo '<p class="retire"><strong>Désactivés (' . count($retires) . ') :</strong> ' . implode(', ', array_map('esc_html', $retires)) . '</p>';
+    }
+    if ($proteges) {
+        echo '<p class="protege"><strong>Protégés (réglage manuel conservé) :</strong> ' . implode(', ', array_map('esc_html', $proteges)) . '</p>';
     }
     if ($inchanges) {
         echo '<p class="gris">Déjà inactifs : ' . implode(', ', array_map('esc_html', $inchanges)) . '</p>';
