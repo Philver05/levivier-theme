@@ -285,7 +285,7 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                             'terms'    => $cat->term_id,
                         ]],
                         'meta_key'       => 'pam_prix',
-                        'orderby'        => ['meta_value_num' => 'ASC', 'title' => 'ASC'],
+                        'orderby'        => ['menu_order' => 'DESC', 'meta_value_num' => 'ASC', 'title' => 'ASC'],
                     ]);
 
                     if (!$produits->have_posts()) continue;

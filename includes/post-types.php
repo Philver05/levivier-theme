@@ -201,7 +201,7 @@ function lv_register_article_boutique()
         'show_in_rest'  => false,
         'menu_position' => 6,
         'menu_icon'     => 'dashicons-tag',
-        'supports'      => ['title', 'editor', 'thumbnail', 'excerpt'],
+        'supports'      => ['title', 'editor', 'thumbnail', 'excerpt', 'page-attributes'],
         // Slug 'article-boutique' (et NON 'boutique') : sinon le CPT capture l'URL
         // /boutique/ et empeche la Page "Boutique" de s'afficher (collision de slug).
         'rewrite'       => ['slug' => 'article-boutique'],

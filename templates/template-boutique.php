@@ -165,8 +165,7 @@ $articles = new WP_Query([
     'post_type'      => 'article_boutique',
     'post_status'    => 'publish',
     'posts_per_page' => -1,
-    'orderby'        => 'title',
-    'order'          => 'ASC',
+    'orderby'        => ['menu_order' => 'DESC', 'title' => 'ASC'],
 ]);
 ?>
 <section class="section produits<?php echo !$articles->have_posts() ? ' section-compacte' : ''; ?>" id="articles">
