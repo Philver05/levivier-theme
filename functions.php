@@ -223,6 +223,10 @@ add_filter('template_include', function ($template) {
         $contact = locate_template('templates/template-contact.php');
         if ($contact) return $contact;
     }
+    if (is_page('politiques') && !is_page_template('templates/template-politiques.php')) {
+        $pol = locate_template('templates/template-politiques.php');
+        if ($pol) return $pol;
+    }
     return $template;
 });
 

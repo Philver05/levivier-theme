@@ -1137,12 +1137,59 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
 .page-prose { max-width: 70ch; margin-inline: auto; }
 .page-prose p { margin-bottom: 1rem; }
 .page-prose h2, .page-prose h3 { color: var(--sauge); margin: 1.6rem 0 .6rem; }
-.page-prose h2 { border-left: 3px solid var(--terracotta); padding-left: .65rem; margin-top: 2.25rem; }
-.page-prose h3 { font-size: 1rem; padding-left: .65rem; }
 .page-prose ul, .page-prose ol { margin: .25rem 0 1rem 1.5rem; }
 .page-prose li { margin-bottom: .35rem; line-height: 1.65; }
 .page-prose a { color: var(--terracotta-texte); text-decoration: underline; text-underline-offset: 2px; }
 .page-prose a:hover { color: var(--sauge); }
+
+/* Page Politique de confidentialité */
+.pol-prose {
+    max-width: 860px;
+    margin-inline: auto;
+    font-size: 1.05rem;
+    line-height: 1.82;
+    color: var(--texte);
+}
+.pol-prose > p:first-of-type {
+    font-size: .9rem;
+    color: var(--texte-moyen);
+    border-bottom: 1px solid var(--bordure);
+    padding-bottom: 1.25rem;
+    margin-bottom: 2rem;
+}
+.pol-prose p { margin-bottom: 1.1rem; }
+.pol-prose h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--sauge);
+    margin: 3rem 0 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--sauge-pale);
+}
+.pol-prose h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--texte-moyen);
+    margin: 1.75rem 0 .6rem;
+    font-style: italic;
+}
+.pol-prose ul,
+.pol-prose ol  { margin: .5rem 0 1.4rem; padding: 0; list-style: none; }
+.pol-prose li  { position: relative; padding-left: 1.2rem; margin-bottom: .6rem; line-height: 1.7; }
+.pol-prose ul > li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: .66em;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    opacity: .7;
+}
+.pol-prose a  { color: var(--terracotta-texte); text-decoration: underline; text-underline-offset: 3px; }
+.pol-prose a:hover { color: var(--sauge); }
+.pol-prose em { font-style: italic; color: var(--texte-moyen); }
+.pol-prose strong { font-weight: 700; color: var(--texte); }
+@media (max-width: 720px) { .pol-prose { font-size: 1rem; } }
 .carte-map iframe { width: 100%; height: 100%; border: 0; display: block; }
 .champ-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
 @media (max-width: 560px) { .champ-duo { grid-template-columns: 1fr; } }
