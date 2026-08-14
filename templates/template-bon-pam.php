@@ -423,7 +423,7 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                                 </div><!-- .pam-produit-pied -->
                                 <?php if ($chaud): ?>
                                 <label class="pam-option-chaud" hidden>
-                                    <input type="checkbox" name="chaud[<?php echo esc_attr($pid); ?>]" value="1" class="pam-chaud-input">
+                                    <input type="checkbox" name="chaud[<?php echo esc_attr($pid); ?>]" value="1" class="pam-chaud-input" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
                                     <svg viewBox="0 0 24 24" aria-hidden="true" class="pam-chaud-icone"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
                                     Je le veux réchauffé
                                 </label>

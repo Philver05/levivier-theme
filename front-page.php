@@ -34,7 +34,7 @@ $hero_bg_mob_url_pre = !empty($hero_bg_mob_pre['sizes']['large']) ? $hero_bg_mob
 if ($hero_bg_mob_url_pre) {
     add_action('wp_head', function () use ($hero_bg_mob_url_pre) {
         $u = esc_url($hero_bg_mob_url_pre);
-        echo '<style id="lv-hero-bg-m">@media(max-width:960px){' .
+        echo '<style id="lv-hero-bg-m">.hero-cta-mobile{display:none!important}@media(max-width:960px){' .
             '.hero-avec-bg{background-image:linear-gradient(rgba(15,30,10,.72),rgba(15,30,10,.72)),url("' . $u . '");background-size:cover;background-position:center;min-height:65dvh}' .
             '.hero-avec-bg .hero-logo{display:none!important}' .
             '.hero-avec-bg .hero-grille{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding-block:3rem 2.5rem}' .
