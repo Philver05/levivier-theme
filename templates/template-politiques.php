@@ -1,5 +1,10 @@
 <?php /* Template Name: Politique de confidentialité */
-get_header(); ?>
+get_header();
+
+/* Récupérer les données de la page avant la boucle */
+if (have_posts()) the_post();
+$date_modif = '14 août 2025'; /* date du contenu légal, à mettre à jour si la politique change */
+?>
 
 <style>
 /* Politique — CSS inline (bypass cache serveur) */
@@ -9,8 +14,12 @@ get_header(); ?>
     display: grid;
     grid-template-columns: 220px 1fr;
     gap: clamp(2.5rem,4vw,5rem);
-    align-items: start;
+    /* pas d'align-items:start — stretch par défaut pour que le sidebar
+       occupe toute la hauteur de la grille et que sticky fonctionne */
 }
+
+/* Sidebar : doit occuper tout l'espace vertical de sa cellule de grille */
+.pol-sidebar { align-self: stretch; }
 
 .pol-sidebar-inner {
     position: sticky;
@@ -21,7 +30,7 @@ get_header(); ?>
 }
 
 .pol-sidebar-titre {
-    font-size: .63rem;
+    font-size: .72rem;
     font-weight: 700;
     letter-spacing: .12em;
     text-transform: uppercase;
@@ -32,12 +41,12 @@ get_header(); ?>
 }
 
 .pol-toc { list-style: none; margin: 0; padding: 0; }
-.pol-toc li + li { margin-top: .1rem; }
+.pol-toc li + li { margin-top: .2rem; }
 
 .pol-toc-lien {
     display: block;
-    font-size: .77rem;
-    line-height: 1.35;
+    font-size: .86rem;
+    line-height: 1.4;
     color: var(--texte-moyen);
     text-decoration: none;
     padding: .3rem .5rem .3rem .7rem;
@@ -77,8 +86,16 @@ get_header(); ?>
 .pol-meta-item a:hover { text-decoration: underline; }
 
 /* Corps */
-.pol-prose { font-size: 1.0rem; line-height: 1.82; color: var(--texte); }
+.pol-prose { font-size: 1.05rem; line-height: 1.82; color: var(--texte); }
 .pol-prose p { margin: 0 0 1.1rem; }
+
+/* Premier <p> = ligne "Date de dernière mise à jour" du contenu WP :
+   on la rend discrète puisque la carte méta reprend déjà cette info */
+.pol-prose > p:first-child {
+    font-size: .8rem;
+    color: var(--texte-moyen);
+    margin-bottom: 2rem;
+}
 
 .pol-prose h2 {
     font-size: 1rem;
@@ -133,7 +150,7 @@ get_header(); ?>
 <section class="page-entete">
     <div class="conteneur">
         <p class="eyebrow">Informations légales</p>
-        <h1><?php the_title(); ?></h1>
+        <h1 class="page-entete-titre-script"><?php the_title(); ?></h1>
     </div>
 </section>
 
@@ -152,7 +169,7 @@ get_header(); ?>
             <div class="pol-meta">
                 <div class="pol-meta-item">
                     <strong>Responsable</strong>
-                    Le Vivier, épicerie boutique — Matane (QC)
+                    Le Vivier, épicerie boutique, Matane (QC)
                 </div>
                 <div class="pol-meta-item">
                     <strong>Courriel</strong>
@@ -160,13 +177,11 @@ get_header(); ?>
                 </div>
                 <div class="pol-meta-item">
                     <strong>Mis à jour</strong>
-                    Janvier 2025
+                    <?php echo esc_html($date_modif); ?>
                 </div>
             </div>
 
-            <?php if (have_posts()): while (have_posts()): the_post(); ?>
             <div class="pol-prose"><?php the_content(); ?></div>
-            <?php endwhile; endif; ?>
 
         </main>
 
