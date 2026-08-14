@@ -1345,9 +1345,9 @@ add_action('admin_init', function () {
     if (!isset($_GET['lv_seed_pam_chaud']) || $_GET['lv_seed_pam_chaud'] !== '1') return;
     if (!current_user_can('manage_options')) wp_die('Accès refusé.');
 
-    /* Catégories (nom exact dans WP) qui bénéficient du réchauffage */
+    /* Catégories (nom exact dans WP) qui bénéficient du réchauffage.
+       Pains/Focaccias exclus : servis tels quels, pas réchauffés. */
     $noms_chauds = [
-        'Pains', 'Focaccias', 'Focaccia Maison',
         'Pâtés et Quiches', 'Pâtés', 'Pâté',
         'Mets préparés', 'Mets préparé',
         'Pizzas', 'Mets cuisinés',
@@ -1412,7 +1412,63 @@ add_action('admin_init', function () {
         echo '<p class="deja"><strong>' . count($deja) . ' produit(s) déjà actif(s) :</strong> ' . implode(', ', array_map('esc_html', $deja)) . '</p>';
     }
 
-    echo '<p>Les catégories <strong>Pâtisseries, Sushis, Salades, Sauces, Boissons</strong> sont inchangées.</p>';
+    echo '<p>Les catégories <strong>Pâtisseries, Sushis, Salades, Sauces, Boissons, Pains</strong> sont inchangées.</p>';
+    echo '<p style="margin-top:1.5rem;"><a href="' . admin_url('edit.php?post_type=pam_produit') . '">→ Voir tous les produits PAM</a></p>';
+    exit;
+});
+
+
+/* =========================================================================
+ * lv_unset_pam_chaud_pains  —  Désactive l'option réchauffage sur tous les
+ * produits de la catégorie Pains (Focaccias comprises), activée par erreur
+ * par lv_seed_pam_chaud. À exécuter UNE SEULE FOIS.
+ * Déclencher : /wp-admin/?lv_unset_pam_chaud_pains=1
+ * ========================================================================= */
+add_action('admin_init', function () {
+
+    if (!isset($_GET['lv_unset_pam_chaud_pains']) || $_GET['lv_unset_pam_chaud_pains'] !== '1') return;
+    if (!current_user_can('manage_options')) wp_die('Accès refusé.');
+
+    $noms_pains = ['Pains', 'Focaccias', 'Focaccia Maison'];
+    $term_ids   = [];
+    foreach ($noms_pains as $nom) {
+        $t = get_term_by('name', $nom, 'pam_categorie');
+        if (!$t) $t = get_term_by('slug', sanitize_title($nom), 'pam_categorie');
+        if ($t) {
+            $term_ids[] = $t->term_id;
+            $enfants = get_term_children($t->term_id, 'pam_categorie');
+            if (!is_wp_error($enfants)) $term_ids = array_merge($term_ids, $enfants);
+        }
+    }
+
+    if (empty($term_ids)) {
+        wp_die('<p style="font-family:monospace;padding:2rem;">Catégorie Pains introuvable.</p>');
+    }
+
+    $posts    = get_posts(['post_type' => 'pam_produit', 'posts_per_page' => -1,
+                           'post_status' => ['publish', 'draft'],
+                           'tax_query' => [['taxonomy' => 'pam_categorie', 'field' => 'term_id', 'terms' => $term_ids]],
+                           'fields' => 'ids']);
+    $retires  = [];
+    $inchanges = [];
+    foreach ($posts as $pid) {
+        if (get_field('pam_chaud', $pid)) {
+            update_field('field_pam_chaud', false, $pid);
+            $retires[] = get_the_title($pid);
+        } else {
+            $inchanges[] = get_the_title($pid);
+        }
+    }
+
+    echo '<style>body{font-family:monospace;padding:2rem 3rem;background:#f9f5f0;line-height:1.7;}
+        h2{color:#b85c50;} .ok{color:#4d6040;} .gris{color:#888;} a{color:#b85c50;}</style>';
+    echo '<h2>Réchauffage retiré — Pains / Focaccias</h2>';
+    if ($retires) {
+        echo '<p class="ok"><strong>' . count($retires) . ' produit(s) désactivé(s) :</strong> ' . implode(', ', array_map('esc_html', $retires)) . '</p>';
+    }
+    if ($inchanges) {
+        echo '<p class="gris">Déjà inactifs : ' . implode(', ', array_map('esc_html', $inchanges)) . '</p>';
+    }
     echo '<p style="margin-top:1.5rem;"><a href="' . admin_url('edit.php?post_type=pam_produit') . '">→ Voir tous les produits PAM</a></p>';
     exit;
 });
