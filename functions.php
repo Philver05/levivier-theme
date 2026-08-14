@@ -2019,6 +2019,17 @@ add_action('acf/init', function () {
         'menu_order' => 0,
     ]);
 
+    /* Page Politique de confidentialité : date de mise à jour éditable */
+    acf_add_local_field_group([
+        'key'    => 'group_page_politiques',
+        'title'  => 'Contenu de la page Politique de confidentialité',
+        'fields' => [
+            ['key' => 'field_pol_date_maj', 'name' => 'pol_date_maj', 'label' => 'Date de mise à jour', 'type' => 'text', 'default_value' => '14 août 2026', 'instructions' => 'Affiché dans la carte d\'information en haut de la page. Format libre : ex. 14 août 2026. Le texte principal de la politique se modifie dans l\'éditeur ci-dessous.'],
+        ],
+        'location' => [[['param' => 'page_template', 'operator' => '==', 'value' => 'templates/template-politiques.php']]],
+        'menu_order' => 0,
+    ]);
+
     /* Page Boutique : valeurs + section présentation/photos éditables */
     acf_add_local_field_group([
         'key'    => 'group_page_boutique',

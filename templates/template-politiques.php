@@ -3,7 +3,7 @@ get_header();
 
 /* Récupérer les données de la page avant la boucle */
 if (have_posts()) the_post();
-$date_modif = '14 août 2025'; /* date du contenu légal, à mettre à jour si la politique change */
+$date_modif = (function_exists('get_field') ? get_field('pol_date_maj') : '') ?: '14 août 2026';
 ?>
 
 <style>
