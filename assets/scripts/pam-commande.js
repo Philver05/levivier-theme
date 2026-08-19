@@ -78,7 +78,7 @@
         /* 4. Mettre à jour les onglets et afficher la bonne catégorie */
         majTabsCategorie(catsDispos);
         appliquerFiltreCategorie();
-        majSousCategorieTabs();
+        majSousCategorieTabs(true);
         appliquerFiltreSousCategorie();
         calculerTotal();
     }
@@ -109,14 +109,15 @@
        Sans ça, changer de catégorie principale gardait le surlignage sur le
        dernier sous-onglet cliqué manuellement (ex: Tarte) même si les produits
        affichés étaient ceux d'une autre sous-catégorie (ex: Amaretti). */
-    function majSousCategorieTabs() {
+    function majSousCategorieTabs(autoSelect) {
         document.querySelectorAll('.pam-filtre-souscats').forEach(function (barre) {
             var cat = barre.closest('.pam-categorie');
             var estActive = !!cat && cat.dataset.cat === categorieActive;
             barre.hidden = !estActive;
-            /* Si la catégorie devient active sans sous-catégorie choisie,
-               auto-sélectionner la première (plus de "Tout voir") */
-            if (estActive && !sousCategorieActive) {
+            /* Auto-sélectionner la 1re sous-catégorie seulement à l'init ou
+               au changement de jour — PAS au clic sur un onglet principal,
+               afin que le client voie tous les produits de la catégorie. */
+            if (estActive && !sousCategorieActive && autoSelect) {
                 var premier = barre.querySelector('.pam-souscat-tab');
                 if (premier) sousCategorieActive = premier.dataset.souscat;
             }
@@ -356,15 +357,20 @@
                slugs séparés par des espaces, même patron que data-jours
                sur les produits. */
             var joursMsg  = el.dataset.jour ? el.dataset.jour.split(' ') : [];
-            var matchJour = joursMsg.indexOf(jour) !== -1;
+            var hasJour  = joursMsg.length > 0;
+            var hasCat   = !!el.dataset.categorie;
+            var matchJour = hasJour && joursMsg.indexOf(jour) !== -1;
             /* La catégorie d'un message peut être une catégorie principale
                (ex: "sushis") OU une sous-catégorie (ex: "focaccias" sous
                Pâtisseries) : on vérifie les deux niveaux de sélection. */
-            var matchCat = !!el.dataset.categorie && (
+            var matchCat = hasCat && (
                 el.dataset.categorie === categorieActive ||
                 el.dataset.categorie === sousCategorieActive
             );
-            el.hidden = !(matchJour || matchCat);
+            /* Si le message a DEUX déclencheurs (jour + catégorie), les deux
+               doivent correspondre, sinon un "Spécial jeudi" reste affiché
+               en naviguant vers une catégorie sans rapport. */
+            el.hidden = !(hasJour && hasCat ? matchJour && matchCat : matchJour || matchCat);
             /* Sur desktop : ouvre automatiquement le <details> quand visible */
             if (el.tagName === 'DETAILS' && !el.hidden && window.matchMedia('(min-width: 641px)').matches) {
                 el.setAttribute('open', '');

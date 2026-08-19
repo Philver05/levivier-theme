@@ -296,9 +296,6 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
 
                     <?php if ($enfants): ?>
                     <div class="pam-filtre-souscats" role="tablist" aria-label="Sous-catégories de <?php echo esc_attr($cat->name); ?>">
-                        <?php if (count($enfants) >= 5): ?>
-                        <button type="button" class="pam-souscat-tab" data-souscat="__tout__">Tout voir</button>
-                        <?php endif; ?>
                         <?php foreach ($enfants as $enfant): ?>
                         <button type="button" class="pam-souscat-tab" data-souscat="<?php echo esc_attr($enfant->slug); ?>">
                             <?php echo esc_html($enfant->name); ?>

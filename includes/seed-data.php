@@ -1315,6 +1315,65 @@ add_action('admin_init', function () {
     if (empty($shish)) $log[] = '— Shish taouk introuvable (titre contenant « shish ») — activez pam_chaud manuellement';
 
     /* ------------------------------------------------------------------ */
+    /* 6. Produits absents du lot initial (PDF août 2026, v2)             */
+    /*    Pizza Américaine + Bánh mì au porc + Salade ramen asiatique      */
+    /* ------------------------------------------------------------------ */
+
+    /* Pizza Américaine (6e pizza, jamais créée dans la section 1) */
+    $id_amer = $trouver_produit('Pizza Américaine');
+    if ($id_amer) {
+        wp_update_post(['ID' => $id_amer, 'post_content' => "Pâte à focaccia maison garnie de notre sauce pomodoro maison, de pepperoni, de poivrons colorés et de mozzarella fondante. Un grand classique généreux et savoureux."]);
+        $acf($id_amer, ['field_pam_prix' => 13.95, 'field_pam_chaud' => true, 'field_pam_jours' => ['tous_les_jours']]);
+        if ($pizzas_cat_id) wp_set_object_terms($id_amer, $pizzas_cat_id, 'pam_categorie');
+        $log[] = '✔ Pizza Américaine : description + champs mis à jour';
+    } else {
+        $id_amer = (int) wp_insert_post([
+            'post_type'    => 'pam_produit',
+            'post_status'  => 'publish',
+            'post_title'   => 'Pizza Américaine',
+            'post_content' => "Pâte à focaccia maison garnie de notre sauce pomodoro maison, de pepperoni, de poivrons colorés et de mozzarella fondante. Un grand classique généreux et savoureux.",
+        ]);
+        $acf($id_amer, ['field_pam_prix' => 13.95, 'field_pam_chaud' => true, 'field_pam_jours' => ['tous_les_jours']]);
+        if ($pizzas_cat_id) wp_set_object_terms($id_amer, $pizzas_cat_id, 'pam_categorie');
+        $log[] = $id_amer ? '✔ Pizza Américaine créée (13,95 $)' : '❌ Pizza Américaine : échec wp_insert_post';
+    }
+
+    /* Bánh mì au porc (Sandwichs, taxable) */
+    $sandwichs_cat_id = $trouver_cat('Sandwichs');
+    $id_banh = $trouver_produit('Bánh mì au porc');
+    if ($id_banh) {
+        $acf($id_banh, ['field_pam_prix' => 9.95, 'field_pam_taxable' => true, 'field_pam_jours' => ['tous_les_jours']]);
+        $log[] = '✔ Bánh mì au porc : prix + taxes mis à jour';
+    } else {
+        $id_banh = (int) wp_insert_post([
+            'post_type'    => 'pam_produit',
+            'post_status'  => 'publish',
+            'post_title'   => 'Bánh mì au porc',
+            'post_content' => "Baguette croustillante garnie de porc mariné, carottes et daikon lacto-fermentés, concombre, coriandre et jalapeños, avec une sauce maison.",
+        ]);
+        $acf($id_banh, ['field_pam_prix' => 9.95, 'field_pam_taxable' => true, 'field_pam_jours' => ['tous_les_jours']]);
+        if ($sandwichs_cat_id) wp_set_object_terms($id_banh, $sandwichs_cat_id, 'pam_categorie');
+        $log[] = $id_banh ? '✔ Bánh mì au porc créé (9,95 $ + tx)' : '❌ Bánh mì au porc : échec wp_insert_post';
+    }
+
+    /* Salade ramen asiatique (Salades) */
+    $id_ramen = $trouver_produit('Salade ramen asiatique');
+    if ($id_ramen) {
+        $acf($id_ramen, ['field_pam_prix' => 11.95, 'field_pam_jours' => ['tous_les_jours']]);
+        $log[] = '✔ Salade ramen asiatique : prix mis à jour';
+    } else {
+        $id_ramen = (int) wp_insert_post([
+            'post_type'    => 'pam_produit',
+            'post_status'  => 'publish',
+            'post_title'   => 'Salade ramen asiatique',
+            'post_content' => "Nouilles ramen froides mêlées à des légumes croquants, edamames, carottes, concombre et oignons verts, le tout nappé d'une vinaigrette sésame-gingembre maison.",
+        ]);
+        $acf($id_ramen, ['field_pam_prix' => 11.95, 'field_pam_jours' => ['tous_les_jours']]);
+        if ($salades_cat_id) wp_set_object_terms($id_ramen, $salades_cat_id, 'pam_categorie');
+        $log[] = $id_ramen ? '✔ Salade ramen asiatique créée (11,95 $)' : '❌ Salade ramen asiatique : échec wp_insert_post';
+    }
+
+    /* ------------------------------------------------------------------ */
     /* Rapport                                                              */
     /* ------------------------------------------------------------------ */
     echo '<style>body{font-family:monospace;padding:2rem;background:#f9f5f0;} h1{color:#b85c50;} li{margin:.3rem 0;} .ok{color:#4d6040;} .warn{color:#b85c50;}</style>';
