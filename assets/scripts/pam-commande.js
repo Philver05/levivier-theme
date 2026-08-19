@@ -15,17 +15,6 @@
     var recapToggle = document.getElementById('pam-recap-toggle');
     var recapCount  = document.getElementById('pam-recap-count');
 
-    var suggestionEl      = document.getElementById('pam-suggestion');
-    var suggestionNomEl   = document.getElementById('pam-suggestion-nom');
-    var suggestionPrixEl  = document.getElementById('pam-suggestion-prix');
-    var suggestionAjouter = document.getElementById('pam-suggestion-ajouter');
-    var suggestionFermer  = document.getElementById('pam-suggestion-fermer');
-    var suggestionNomEl2   = document.getElementById('pam-suggestion-nom-2');
-    var suggestionPrixEl2  = document.getElementById('pam-suggestion-prix-2');
-    var suggestionAjouter2 = document.getElementById('pam-suggestion-ajouter-2');
-    var suggestionItem2    = document.getElementById('pam-sug-item-2');
-    var suggestionDivider  = document.getElementById('pam-sug-divider');
-    var suggestionTimer   = null;
 
     /* -------------------------------------------------------
        Filtrage par jour + catégorie (2 niveaux : catégorie
@@ -168,76 +157,115 @@
     }
 
     /* -------------------------------------------------------
-       Suggestion automatique (accompagnement) : quand un produit
-       est ajouté pour la première fois (quantité 0 -> 1), propose
-       le premier produit de sa liste "pam_suggestions" qui n'est
-       ni déjà ajouté ni masqué (filtre du jour).
+       Suggestions inline : panneau qui s'ouvre directement
+       sous la carte du produit ajouté (qty 0→1), avec photo +
+       nom + prix + bouton Ajouter pour chaque produit suggéré.
+       Fermeture manuelle uniquement (pas d'auto-dismiss).
     ------------------------------------------------------- */
-    function masquerSuggestion() {
-        if (!suggestionEl) return;
-        clearTimeout(suggestionTimer);
-        suggestionEl.hidden = true;
-        suggestionAjouter.onclick = null;
-        suggestionNomEl.onclick = null;
-        if (suggestionAjouter2) suggestionAjouter2.onclick = null;
-        if (suggestionNomEl2)   suggestionNomEl2.onclick = null;
-        if (suggestionItem2)    suggestionItem2.hidden = true;
-        if (suggestionDivider)  suggestionDivider.hidden = true;
+    function fermerPanneaux() {
+        document.querySelectorAll('.pam-sugg-panneau').forEach(function (p) { p.remove(); });
     }
 
-    function suggererApres(item) {
-        if (!suggestionEl || !item.dataset.suggestions) return;
-        var ids = item.dataset.suggestions.split(' ').filter(Boolean);
-        var cibles = [];
-        for (var i = 0; i < ids.length && cibles.length < 2; i++) {
-            var candidat = form.querySelector('.pam-produit-item[data-id="' + ids[i] + '"]');
-            if (!candidat || candidat.hidden) continue;
-            var inp = candidat.querySelector('.pam-qty-input');
-            if (inp && (parseInt(inp.value, 10) || 0) > 0) continue;
-            cibles.push(candidat);
-        }
+    function ouvrirSuggestions(item) {
+        fermerPanneaux();
+        if (!item.dataset.suggestions) return;
+        var donnees;
+        try { donnees = JSON.parse(item.dataset.suggestions); } catch (e) { return; }
+        if (!Array.isArray(donnees) || !donnees.length) return;
+
+        var cibles = donnees.filter(function (sugg) {
+            var cibleItem = document.querySelector('.pam-produit-item[data-id="' + sugg.id + '"]');
+            if (!cibleItem || cibleItem.hidden) return false;
+            var input = cibleItem.querySelector('.pam-qty-input');
+            return !(input && parseInt(input.value, 10) > 0);
+        });
         if (!cibles.length) return;
 
-        /* Suggestion 1 */
-        var cible = cibles[0];
-        var nom = cible.querySelector('.pam-produit-nom');
-        suggestionNomEl.textContent  = nom ? nom.textContent.trim() : '';
-        suggestionPrixEl.textContent = formatMontant(parseFloat(cible.dataset.prix) || 0);
-        suggestionAjouter.onclick = (function (c) { return function () {
-            var input = c.querySelector('.pam-qty-input');
-            if (input) { input.value = (parseInt(input.value, 10) || 0) + 1; calculerTotal(); }
-            masquerSuggestion();
-        }; })(cible);
-        /* Cliquer le nom fait défiler jusqu'à la fiche produit (photo,
-           description) sans l'ajouter, pour que le client voie ce qu'il
-           s'apprête à commander. */
-        suggestionNomEl.onclick = (function (c) { return function () { allerAuProduit(c.dataset.id); }; })(cible);
+        var panneau = document.createElement('div');
+        panneau.className = 'pam-sugg-panneau';
+        panneau.setAttribute('role', 'complementary');
+        panneau.setAttribute('aria-label', 'Avec ceci');
 
-        /* Suggestion 2 (breuvage ou 2e accompagnement, si disponible) */
-        if (cibles[1] && suggestionItem2 && suggestionNomEl2 && suggestionPrixEl2 && suggestionAjouter2) {
-            var cible2 = cibles[1];
-            var nom2 = cible2.querySelector('.pam-produit-nom');
-            suggestionNomEl2.textContent  = nom2 ? nom2.textContent.trim() : '';
-            suggestionPrixEl2.textContent = formatMontant(parseFloat(cible2.dataset.prix) || 0);
-            suggestionAjouter2.onclick = (function (c) { return function () {
-                var input = c.querySelector('.pam-qty-input');
-                if (input) { input.value = (parseInt(input.value, 10) || 0) + 1; calculerTotal(); }
-                masquerSuggestion();
-            }; })(cible2);
-            suggestionNomEl2.onclick = (function (c) { return function () { allerAuProduit(c.dataset.id); }; })(cible2);
-            suggestionItem2.hidden = false;
-            suggestionDivider.hidden = false;
-        } else {
-            if (suggestionItem2)   suggestionItem2.hidden = true;
-            if (suggestionDivider) suggestionDivider.hidden = true;
-        }
+        var titre = document.createElement('p');
+        titre.className = 'pam-sugg-titre';
+        titre.textContent = 'Avec ceci :';
+        panneau.appendChild(titre);
 
-        suggestionEl.hidden = false;
-        clearTimeout(suggestionTimer);
-        suggestionTimer = setTimeout(masquerSuggestion, 7000);
+        var cartes = document.createElement('div');
+        cartes.className = 'pam-sugg-cartes';
+
+        cibles.forEach(function (sugg) {
+            var carte = document.createElement('div');
+            carte.className = 'pam-sugg-carte';
+
+            var photoEl = document.createElement(sugg.photo ? 'img' : 'div');
+            photoEl.className = 'pam-sugg-photo' + (sugg.photo ? '' : ' pam-sugg-photo--vide');
+            if (sugg.photo) {
+                photoEl.src = sugg.photo;
+                photoEl.alt = sugg.titre;
+                photoEl.loading = 'lazy';
+            } else {
+                photoEl.setAttribute('aria-hidden', 'true');
+            }
+            carte.appendChild(photoEl);
+
+            var infos = document.createElement('div');
+            infos.className = 'pam-sugg-infos';
+
+            var nom = document.createElement('button');
+            nom.type = 'button';
+            nom.className = 'pam-sugg-nom';
+            nom.textContent = sugg.titre;
+            nom.setAttribute('aria-label', 'Voir ' + sugg.titre);
+            nom.addEventListener('click', (function (id) {
+                return function () { allerAuProduit(String(id)); };
+            })(sugg.id));
+            infos.appendChild(nom);
+
+            var prixEl = document.createElement('span');
+            prixEl.className = 'pam-sugg-prix';
+            prixEl.textContent = formatMontant(sugg.prix) + (sugg.taxable ? ' + tx' : '');
+            infos.appendChild(prixEl);
+            carte.appendChild(infos);
+
+            var btnAjouter = document.createElement('button');
+            btnAjouter.type = 'button';
+            btnAjouter.className = 'pam-sugg-btn';
+            btnAjouter.textContent = '+ Ajouter';
+            btnAjouter.setAttribute('aria-label', 'Ajouter ' + sugg.titre);
+            btnAjouter.addEventListener('click', (function (id) {
+                return function () {
+                    var cibleItem = document.querySelector('.pam-produit-item[data-id="' + id + '"]');
+                    if (cibleItem) {
+                        var input = cibleItem.querySelector('.pam-qty-input');
+                        if (input) {
+                            input.value = (parseInt(input.value, 10) || 0) + 1;
+                            calculerTotal();
+                            majRecap();
+                            majOptionChaud(cibleItem);
+                        }
+                    }
+                    fermerPanneaux();
+                };
+            })(sugg.id));
+            carte.appendChild(btnAjouter);
+            cartes.appendChild(carte);
+        });
+
+        panneau.appendChild(cartes);
+
+        var fermer = document.createElement('button');
+        fermer.type = 'button';
+        fermer.className = 'pam-sugg-fermer';
+        fermer.setAttribute('aria-label', 'Fermer les suggestions');
+        fermer.textContent = '×';
+        fermer.addEventListener('click', fermerPanneaux);
+        panneau.appendChild(fermer);
+
+        item.appendChild(panneau);
+        panneau.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    if (suggestionFermer) suggestionFermer.addEventListener('click', masquerSuggestion);
 
     /* -------------------------------------------------------
        Récapitulatif de la sélection (dans la barre de total)
@@ -277,7 +305,7 @@
             if (tabSous) tabSous.click();
         }
         fermerRecap();
-        masquerSuggestion();
+        fermerPanneaux();
         item.scrollIntoView({ behavior: 'smooth', block: 'center' });
         item.classList.add('pam-produit-item--focus');
         clearTimeout(item._focusTimer);
@@ -493,7 +521,7 @@
         var item = controle.closest('.pam-produit-item');
         majOptionChaud(item);
         if (valAvant === 0 && val === 1) {
-            if (item) suggererApres(item);
+            if (item) ouvrirSuggestions(item);
         }
     });
 

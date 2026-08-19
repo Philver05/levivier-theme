@@ -316,7 +316,19 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                             $ingredients  = get_field('pam_ingredients');
                             $thumb        = get_the_post_thumbnail_url($pid, 'large');
                             $photo2       = get_field('pam_photo2');
-                            $suggestions  = get_field('pam_suggestions') ?: [];
+                            $suggestions_raw = get_field('pam_suggestions') ?: [];
+                            $sugg_data = [];
+                            foreach ($suggestions_raw as $_s) {
+                                $_sid = is_object($_s) ? $_s->ID : (int)$_s;
+                                if (!$_sid) continue;
+                                $sugg_data[] = [
+                                    'id'      => $_sid,
+                                    'titre'   => get_the_title($_sid),
+                                    'prix'    => (float)(get_field('pam_prix', $_sid) ?: 0),
+                                    'taxable' => (bool)get_field('pam_taxable', $_sid),
+                                    'photo'   => get_the_post_thumbnail_url($_sid, 'thumbnail') ?: '',
+                                ];
+                            }
                             $chaud        = get_field('pam_chaud');
 
                             /* Sous-catégorie de ce produit parmi les enfants de la
@@ -335,7 +347,7 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                              data-taxable="<?php echo esc_attr($taxable ? '1' : '0'); ?>"
                              data-jours="<?php echo esc_attr(implode(' ', $jours)); ?>"
                              data-souscat="<?php echo esc_attr($souscat); ?>"
-                             data-suggestions="<?php echo esc_attr(implode(' ', $suggestions)); ?>"
+                             data-suggestions="<?php echo esc_attr(json_encode($sugg_data)); ?>"
                              data-chaud="<?php echo $chaud ? '1' : '0'; ?>">
 
                             <?php if ($thumb && $photo2): ?>
@@ -502,20 +514,6 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
      BARRE DE TOTAL (sticky bottom)
 ====================================================== -->
 <div class="pam-barre-total" id="pam-barre-total" aria-live="polite">
-    <!-- Suggestion automatique (accompagnement / breuvage suggéré à l'ajout d'un produit) -->
-    <div class="pam-suggestion conteneur" id="pam-suggestion" hidden>
-        <span class="pam-sug-prefix">Avec ceci :</span>
-        <span class="pam-sug-item" id="pam-sug-item-1">
-            <button type="button" class="pam-suggestion-nom" id="pam-suggestion-nom"></button> — <span id="pam-suggestion-prix"></span>
-            <button type="button" class="pam-suggestion-ajouter" id="pam-suggestion-ajouter">+ Ajouter</button>
-        </span>
-        <span class="pam-sug-divider" id="pam-sug-divider" hidden aria-hidden="true">·</span>
-        <span class="pam-sug-item" id="pam-sug-item-2" hidden>
-            <button type="button" class="pam-suggestion-nom" id="pam-suggestion-nom-2"></button> — <span id="pam-suggestion-prix-2"></span>
-            <button type="button" class="pam-suggestion-ajouter" id="pam-suggestion-ajouter-2">+ Ajouter</button>
-        </span>
-        <button type="button" class="pam-suggestion-fermer" id="pam-suggestion-fermer" aria-label="Fermer la suggestion">×</button>
-    </div>
     <!-- Récapitulatif de la sélection (déplié au-dessus de la barre) -->
     <div class="pam-recap conteneur" id="pam-recap" hidden>
         <ul class="pam-recap-liste" id="pam-recap-liste"></ul>
