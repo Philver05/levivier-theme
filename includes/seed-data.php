@@ -916,6 +916,7 @@ add_action('admin_init', function () {
         ['Sandwichs',         'Mets préparés',         'Nos sandwichs maison',             'Préparés avec des ingrédients frais, nos sandwichs sont généreux et parfaits pour un dîner rapide ou une envie du midi.', 'Commandez avant 10h la veille et récupérez votre sandwich frais le lendemain.'],
         ['Pizzas',            'Mets préparés',         'Nos pizzas maison',                'Pâte maison et garnitures généreuses, nos pizzas sont prêtes à réchauffer pour un repas simple et savoureux.', 'Commandez avant 10h la veille et récupérez-la fraîche le lendemain dès midi.'],
         ['Sauces',            'Divers prêt-à-manger',  'Nos sauces maison',                'Prêtes à réchauffer, nos sauces sont cuisinées en petites quantités pour garder toute leur saveur.', 'Commandez avant 10h la veille et récupérez le lendemain dès midi.'],
+        ['Boissons',          null,                    'Consigne incluse dans le prix',    'Nos boissons en canette sont vendues avec la consigne de 0,10 $ incluse dans le prix affiché. Vous pouvez rapporter vos canettes vides en magasin pour en récupérer le montant.', ''],
     ];
 
     $existants = get_field('pam_messages_jours', $page_id);
@@ -1049,6 +1050,99 @@ add_action('admin_init', function () {
     echo '</ul>';
     echo '<p>Prix temporaires plausibles : ajustez-les dans <strong>Prêt à manger</strong>, ainsi que description/photo pour chaque boisson.</p>';
     echo '<p>Ensuite, pour activer les suggestions : ouvrez chaque plat principal → champ <strong>« Suggestions automatiques »</strong> → ajoutez l\'accompagnement <strong>puis</strong> la boisson souhaitée.</p>';
+    echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#4d6040;">← Retour au tableau de bord</a></p>';
+    exit;
+});
+
+/**
+ * PAM : vrais produits boissons revendus (Yesterday + Cafélimo).
+ * Idempotent par titre — relançable sans risque.
+ * Déclencher en visitant : /wp-admin/?lv_seed_pam_boissons_reels=1
+ */
+add_action('admin_init', function () {
+
+    if (!isset($_GET['lv_seed_pam_boissons_reels']) || $_GET['lv_seed_pam_boissons_reels'] !== '1') return;
+    if (!current_user_can('manage_options')) wp_die('Accès refusé.');
+
+    $log = [];
+
+    /* Catégorie Boissons */
+    $terme = term_exists('Boissons', 'pam_categorie');
+    if (!$terme) {
+        $terme = wp_insert_term('Boissons', 'pam_categorie');
+        $log[] = is_wp_error($terme)
+            ? '❌ Impossible de créer « Boissons » : ' . $terme->get_error_message()
+            : '✔ pam_categorie « Boissons » créée';
+    } else {
+        $log[] = 'pam_categorie « Boissons » déjà existante';
+    }
+    $cat_id = is_array($terme) ? (int) $terme['term_id'] : (int) $terme;
+
+    /* Produits — [ titre, poids, prix, description ]
+       Prix = taxes et consigne INCLUSES — pam_taxable laissé à false. */
+    $boissons = [
+        [
+            'Yesterday Citron éclatant',
+            '355 mL · taxes et consigne incluses',
+            3.49,
+            'Boisson pétillante sans sucre ajouté, faite de vrais fruits. 56 calories. Fraîche et légère.',
+        ],
+        [
+            'Yesterday Pêche juteuse',
+            '355 mL · taxes et consigne incluses',
+            3.49,
+            'Boisson pétillante sans sucre ajouté, faite de vrais fruits. 56 calories. Douce et fruitée.',
+        ],
+        [
+            'Cafélimo',
+            '355 mL · taxes et consigne incluses',
+            5.95,
+            'Café infusé à froid mélangé à une limonade artisanale pétillante. Légèrement caféiné, rafraîchissant. Par Café Paquebot.',
+        ],
+    ];
+
+    foreach ($boissons as [$titre, $poids, $prix, $desc]) {
+        $existant = get_posts([
+            'post_type'      => 'pam_produit',
+            'post_status'    => 'any',
+            'title'          => $titre,
+            'posts_per_page' => 1,
+            'fields'         => 'ids',
+        ]);
+        if ($existant) {
+            $log[] = "« $titre » déjà présent, ignoré";
+            continue;
+        }
+        $post_id = wp_insert_post([
+            'post_type'    => 'pam_produit',
+            'post_title'   => $titre,
+            'post_content' => $desc,
+            'post_status'  => 'publish',
+        ]);
+        if (is_wp_error($post_id)) {
+            $log[] = "❌ Erreur « $titre » : " . $post_id->get_error_message();
+            continue;
+        }
+        wp_set_object_terms($post_id, $cat_id, 'pam_categorie');
+        if (function_exists('update_field')) {
+            update_field('field_pam_prix',  $prix,              $post_id);
+            update_field('field_pam_poids', $poids,             $post_id);
+            update_field('field_pam_jours', ['tous_les_jours'], $post_id);
+            /* pam_taxable laissé à false : prix affiché = taxes + consigne déjà incluses */
+        }
+        $log[] = "✔ « $titre » créé (" . number_format($prix, 2, ',', ' ') . " \$, prix temporaire à ajuster)";
+    }
+
+    echo '<style>body{font-family:monospace;padding:2rem;background:#f9f5f0;}
+          h1{color:#4d6040;} li{margin:.3rem 0;} .ok{color:#4d6040;} .err{color:#c00;}</style>';
+    echo '<h1>🥤 Le Vivier — Boissons revendues (vrais produits)</h1>';
+    echo '<ul>';
+    foreach ($log as $ligne) {
+        $class = str_contains($ligne, '❌') ? 'err' : 'ok';
+        echo '<li class="' . $class . '">' . esc_html($ligne) . '</li>';
+    }
+    echo '</ul>';
+    echo '<p>Prix temporaires — ajustez-les dans <strong>Prêt à manger</strong> (champ « Prix »). Ajoutez la photo de chaque canette comme image mise en avant.</p>';
     echo '<p style="margin-top:2rem;"><a href="' . admin_url() . '" style="color:#4d6040;">← Retour au tableau de bord</a></p>';
     exit;
 });

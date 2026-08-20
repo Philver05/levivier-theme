@@ -2629,41 +2629,75 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
 }
 .pam-total-label strong { color: var(--sauge); font-size: 1.15rem; }
 
-/* Panneau de suggestions inline (sous la carte du produit ajouté) */
-.pam-sugg-panneau {
-  position: relative;
-  background: var(--sauge-pale);
-  border-top: 1px solid rgba(77, 96, 64, .18);
-  padding: .85rem 2.2rem .85rem 1rem;
+/* ─── Toast de suggestion ─────────────────────────────────────────────────── */
+.pam-sugg-toast {
+  position: fixed;
+  bottom: calc(var(--pam-barre-h, 68px) + 1rem);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(420px, calc(100vw - 1.5rem));
+  background: #fdfaf6;
+  border: 1px solid rgba(184,92,80,.12);
+  border-radius: 18px;
+  box-shadow:
+    0 2px 4px rgba(0,0,0,.04),
+    0 8px 24px rgba(0,0,0,.09),
+    0 24px 52px rgba(0,0,0,.05);
+  overflow: hidden;
+  z-index: 200;
+  padding: .9rem 1rem .8rem;
+  animation: pam-sugg-entrer .5s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+.pam-sugg-toast--sortir {
+  animation: pam-sugg-sortir .22s cubic-bezier(.4,0,1,1) forwards !important;
+}
+@keyframes pam-sugg-entrer {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(22px) scale(.96); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);   }
+}
+@keyframes pam-sugg-sortir {
+  to { opacity: 0; transform: translateX(-50%) translateY(14px) scale(.97); }
+}
+/* En-tête: eyebrow Professor + bouton fermer */
+.pam-sugg-entete {
   display: flex;
-  flex-direction: column;
-  gap: .6rem;
-  animation: pam-sugg-in .22s ease;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: .65rem;
 }
-.pam-sugg-titre {
+.pam-sugg-eyebrow {
   margin: 0;
-  font-size: .72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .07em;
-  color: var(--sauge-moyen);
+  font-family: var(--police-accent);
+  font-size: 1.05rem;
+  color: var(--terracotta-texte);
+  line-height: 1;
 }
-.pam-sugg-cartes { display: flex; flex-direction: column; gap: .45rem; }
+.pam-sugg-fermer {
+  background: none;
+  border: none;
+  font-size: .9rem;
+  color: var(--texte-moyen);
+  cursor: pointer;
+  padding: .1rem .3rem;
+  border-radius: 4px;
+  opacity: .4;
+  line-height: 1;
+  transition: opacity var(--transi);
+}
+.pam-sugg-fermer:hover { opacity: 1; }
+/* Corps: photo + infos (nom, prix, bouton) */
 .pam-sugg-carte {
   display: flex;
   align-items: center;
-  gap: .65rem;
-  background: var(--blanc);
-  border: 1px solid var(--bordure);
-  border-radius: 6px;
-  padding: .45rem .65rem .45rem .45rem;
+  gap: .85rem;
 }
 .pam-sugg-photo {
-  width: 54px;
-  height: 54px;
-  border-radius: 4px;
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
   object-fit: cover;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,.1);
 }
 .pam-sugg-photo--vide {
   background: var(--sauge-pale);
@@ -2674,64 +2708,64 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: .12rem;
+  gap: .2rem;
 }
 .pam-sugg-nom {
   background: none;
   border: none;
   padding: 0;
-  font-size: .88rem;
+  font-size: .92rem;
   font-weight: 600;
   color: var(--texte);
   cursor: pointer;
   text-align: left;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 2px;
-  transition: text-decoration-color var(--transi);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
   display: block;
+  transition: color var(--transi);
 }
-.pam-sugg-nom:hover { text-decoration-color: currentColor; }
-.pam-sugg-prix { font-size: .78rem; color: var(--texte-moyen); }
+.pam-sugg-nom:hover { color: var(--terracotta-texte); }
+.pam-sugg-prix {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--terracotta-texte);
+}
 .pam-sugg-btn {
+  align-self: flex-start;
+  margin-top: .35rem;
   border: none;
-  background: var(--sauge);
+  background: var(--terracotta);
   color: var(--blanc);
-  font-size: .8rem;
+  font-size: .73rem;
   font-weight: 700;
-  padding: .42rem .8rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: .42rem 1rem;
   border-radius: 999px;
   cursor: pointer;
   white-space: nowrap;
-  flex-shrink: 0;
-  transition: background var(--transi);
+  transition: background var(--transi), transform .1s ease;
 }
-.pam-sugg-btn:hover { background: var(--sauge-moyen); }
-.pam-sugg-fermer {
+.pam-sugg-btn:hover  { background: var(--terracotta-texte); }
+.pam-sugg-btn:active { transform: scale(.95); }
+/* Barre de progression au bas de la carte */
+.pam-sugg-barre {
   position: absolute;
-  top: .5rem;
-  right: .55rem;
-  background: none;
-  border: none;
-  font-size: 1.15rem;
-  color: var(--sauge-moyen);
-  cursor: pointer;
-  padding: .1rem .3rem;
-  line-height: 1;
-  opacity: .6;
-  transition: opacity var(--transi);
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--terracotta);
+  transform-origin: left;
+  opacity: .35;
+  animation: pam-sugg-prog 6s linear forwards;
 }
-.pam-sugg-fermer:hover { opacity: 1; }
-@keyframes pam-sugg-in {
-  from { opacity: 0; transform: translateY(-5px); }
-  to   { opacity: 1; transform: translateY(0); }
+@keyframes pam-sugg-prog {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .pam-sugg-panneau { animation: none; }
+  .pam-sugg-toast, .pam-sugg-barre { animation: none; }
 }
 
 /* Bouton compteur d'articles (ouvre le récapitulatif) */

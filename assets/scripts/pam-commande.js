@@ -162,8 +162,14 @@
        nom + prix + bouton Ajouter pour chaque produit suggéré.
        Fermeture manuelle uniquement (pas d'auto-dismiss).
     ------------------------------------------------------- */
+    var _suggTimer = null;
+
     function fermerPanneaux() {
-        document.querySelectorAll('.pam-sugg-panneau').forEach(function (p) { p.remove(); });
+        if (_suggTimer) { clearTimeout(_suggTimer); _suggTimer = null; }
+        document.querySelectorAll('.pam-sugg-toast:not(.pam-sugg-toast--sortir)').forEach(function (t) {
+            t.classList.add('pam-sugg-toast--sortir');
+            setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 240);
+        });
     }
 
     function ouvrirSuggestions(item) {
@@ -173,97 +179,108 @@
         try { donnees = JSON.parse(item.dataset.suggestions); } catch (e) { return; }
         if (!Array.isArray(donnees) || !donnees.length) return;
 
-        var cibles = donnees.filter(function (sugg) {
-            var cibleItem = document.querySelector('.pam-produit-item[data-id="' + sugg.id + '"]');
-            if (!cibleItem || cibleItem.hidden) return false;
+        /* Premier produit valide (pas deja au panier, pas masque par le filtre jour) */
+        var sugg = null;
+        for (var i = 0; i < donnees.length; i++) {
+            var cibleItem = document.querySelector('.pam-produit-item[data-id="' + donnees[i].id + '"]');
+            if (!cibleItem || cibleItem.hidden) continue;
             var input = cibleItem.querySelector('.pam-qty-input');
-            return !(input && parseInt(input.value, 10) > 0);
-        });
-        if (!cibles.length) return;
+            var qty = input ? parseInt(input.value, 10) || 0 : 0;
+            if (qty > 0) continue;
+            sugg = donnees[i];
+            break;
+        }
+        if (!sugg) return;
 
-        var panneau = document.createElement('div');
-        panneau.className = 'pam-sugg-panneau';
-        panneau.setAttribute('role', 'complementary');
-        panneau.setAttribute('aria-label', 'Avec ceci');
+        var toast = document.createElement('div');
+        toast.className = 'pam-sugg-toast';
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'polite');
 
-        var titre = document.createElement('p');
-        titre.className = 'pam-sugg-titre';
-        titre.textContent = 'Avec ceci :';
-        panneau.appendChild(titre);
+        /* En-tete : eyebrow Professor + bouton fermer */
+        var entete = document.createElement('div');
+        entete.className = 'pam-sugg-entete';
 
-        var cartes = document.createElement('div');
-        cartes.className = 'pam-sugg-cartes';
-
-        cibles.forEach(function (sugg) {
-            var carte = document.createElement('div');
-            carte.className = 'pam-sugg-carte';
-
-            var photoEl = document.createElement(sugg.photo ? 'img' : 'div');
-            photoEl.className = 'pam-sugg-photo' + (sugg.photo ? '' : ' pam-sugg-photo--vide');
-            if (sugg.photo) {
-                photoEl.src = sugg.photo;
-                photoEl.alt = sugg.titre;
-                photoEl.loading = 'lazy';
-            } else {
-                photoEl.setAttribute('aria-hidden', 'true');
-            }
-            carte.appendChild(photoEl);
-
-            var infos = document.createElement('div');
-            infos.className = 'pam-sugg-infos';
-
-            var nom = document.createElement('button');
-            nom.type = 'button';
-            nom.className = 'pam-sugg-nom';
-            nom.textContent = sugg.titre;
-            nom.setAttribute('aria-label', 'Voir ' + sugg.titre);
-            nom.addEventListener('click', (function (id) {
-                return function () { allerAuProduit(String(id)); };
-            })(sugg.id));
-            infos.appendChild(nom);
-
-            var prixEl = document.createElement('span');
-            prixEl.className = 'pam-sugg-prix';
-            prixEl.textContent = formatMontant(sugg.prix) + (sugg.taxable ? ' + tx' : '');
-            infos.appendChild(prixEl);
-            carte.appendChild(infos);
-
-            var btnAjouter = document.createElement('button');
-            btnAjouter.type = 'button';
-            btnAjouter.className = 'pam-sugg-btn';
-            btnAjouter.textContent = '+ Ajouter';
-            btnAjouter.setAttribute('aria-label', 'Ajouter ' + sugg.titre);
-            btnAjouter.addEventListener('click', (function (id) {
-                return function () {
-                    var cibleItem = document.querySelector('.pam-produit-item[data-id="' + id + '"]');
-                    if (cibleItem) {
-                        var input = cibleItem.querySelector('.pam-qty-input');
-                        if (input) {
-                            input.value = (parseInt(input.value, 10) || 0) + 1;
-                            calculerTotal();
-                            majRecap();
-                            majOptionChaud(cibleItem);
-                        }
-                    }
-                    fermerPanneaux();
-                };
-            })(sugg.id));
-            carte.appendChild(btnAjouter);
-            cartes.appendChild(carte);
-        });
-
-        panneau.appendChild(cartes);
+        var eyebrow = document.createElement('p');
+        eyebrow.className = 'pam-sugg-eyebrow';
+        eyebrow.textContent = 'Parfait avec ça';
+        entete.appendChild(eyebrow);
 
         var fermer = document.createElement('button');
         fermer.type = 'button';
         fermer.className = 'pam-sugg-fermer';
-        fermer.setAttribute('aria-label', 'Fermer les suggestions');
+        fermer.setAttribute('aria-label', 'Fermer la suggestion');
         fermer.textContent = '×';
         fermer.addEventListener('click', fermerPanneaux);
-        panneau.appendChild(fermer);
+        entete.appendChild(fermer);
 
-        item.appendChild(panneau);
-        panneau.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        toast.appendChild(entete);
+
+        /* Corps : photo + infos (nom, prix, bouton Ajouter) */
+        var carte = document.createElement('div');
+        carte.className = 'pam-sugg-carte';
+
+        var photoEl = document.createElement(sugg.photo ? 'img' : 'div');
+        photoEl.className = 'pam-sugg-photo' + (sugg.photo ? '' : ' pam-sugg-photo--vide');
+        if (sugg.photo) {
+            photoEl.src = sugg.photo;
+            photoEl.alt = sugg.titre;
+            photoEl.loading = 'lazy';
+        } else {
+            photoEl.setAttribute('aria-hidden', 'true');
+        }
+        carte.appendChild(photoEl);
+
+        var infos = document.createElement('div');
+        infos.className = 'pam-sugg-infos';
+
+        var nom = document.createElement('button');
+        nom.type = 'button';
+        nom.className = 'pam-sugg-nom';
+        nom.textContent = sugg.titre;
+        nom.setAttribute('aria-label', 'Voir ' + sugg.titre);
+        nom.addEventListener('click', (function (id) {
+            return function () { allerAuProduit(String(id)); fermerPanneaux(); };
+        })(sugg.id));
+        infos.appendChild(nom);
+
+        var prixEl = document.createElement('span');
+        prixEl.className = 'pam-sugg-prix';
+        prixEl.textContent = formatMontant(sugg.prix) + (sugg.taxable ? ' + tx' : '');
+        infos.appendChild(prixEl);
+
+        var btnAjouter = document.createElement('button');
+        btnAjouter.type = 'button';
+        btnAjouter.className = 'pam-sugg-btn';
+        btnAjouter.textContent = 'Ajouter';
+        btnAjouter.setAttribute('aria-label', 'Ajouter ' + sugg.titre + ' au panier');
+        btnAjouter.addEventListener('click', (function (id) {
+            return function () {
+                var ci = document.querySelector('.pam-produit-item[data-id="' + id + '"]');
+                if (ci) {
+                    var inp = ci.querySelector('.pam-qty-input');
+                    if (inp) {
+                        inp.value = (parseInt(inp.value, 10) || 0) + 1;
+                        calculerTotal();
+                        majRecap();
+                        majOptionChaud(ci);
+                    }
+                }
+                fermerPanneaux();
+            };
+        })(sugg.id));
+        infos.appendChild(btnAjouter);
+
+        carte.appendChild(infos);
+        toast.appendChild(carte);
+
+        /* Barre de progression au bas du toast (se vide en 6 s) */
+        var barre = document.createElement('div');
+        barre.className = 'pam-sugg-barre';
+        toast.appendChild(barre);
+
+        document.body.appendChild(toast);
+        _suggTimer = setTimeout(fermerPanneaux, 6000);
     }
 
 
