@@ -2938,27 +2938,30 @@ body:has(.pam-barre-total--active) .section:last-of-type {
     to { opacity: 0; transform: translateX(-50%) translateY(14px) scale(.97); }
   }
 
-  /* Grille : 2 cartes côte à côte sur mobile */
+  /* Grille : 1 colonne pleine largeur */
   .pam-produits-grille {
-    grid-template-columns: repeat(2, 1fr);
-    gap: .65rem;
+    grid-template-columns: 1fr;
+    gap: .75rem;
   }
   /* Carte verticale : image en haut, contenu en bas */
   .pam-produit-item {
     flex-direction: column;
     align-items: stretch;
   }
-  /* Image pleine largeur, ratio 4:3 */
+  /* Image pleine largeur, ratio 16:9 (compact mais lisible) */
   .pam-produit-item > img,
   .pam-produit-item > .pam-produit-placeholder,
   .pam-produit-item > .pam-produit-photos {
     width: 100%;
     height: auto;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 9;
     flex-shrink: 0;
     align-self: auto;
     object-fit: cover;
     border-radius: var(--rayon) var(--rayon) 0 0;
+  }
+  .pam-produit-item > .pam-produit-photos {
+    position: relative;
   }
   .pam-produit-item > .pam-produit-photos img {
     width: 100%;
@@ -2966,21 +2969,18 @@ body:has(.pam-barre-total--active) .section:last-of-type {
     position: absolute;
     top: 0; left: 0;
   }
-  .pam-produit-item > .pam-produit-photos {
-    position: relative;
-  }
-  /* Corps : toute la largeur, contenu en colonne */
+  /* Corps */
   .pam-produit-corps {
-    padding: .6rem .7rem .75rem;
+    padding: .7rem .85rem .8rem;
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: stretch;
     justify-content: flex-start;
-    gap: .3rem;
+    gap: .35rem;
     flex: 1;
   }
   .pam-produit-nom {
-    font-size: .84rem;
+    font-size: .95rem;
     font-weight: 700;
     line-height: 1.3;
     display: -webkit-box;
@@ -2988,35 +2988,34 @@ body:has(.pam-barre-total--active) .section:last-of-type {
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  .pam-produit-poids { font-size: .72rem; margin-top: 0; }
-  .pam-produit-details { font-size: .75rem; }
-  .pam-produit-desc { font-size: .73rem; line-height: 1.3; }
-  /* Pied collé en bas : prix à gauche, quantité à droite */
+  .pam-produit-poids { font-size: .78rem; margin-top: 0; }
+  .pam-produit-details { font-size: .8rem; }
+  .pam-produit-desc { font-size: .78rem; line-height: 1.35; }
+  /* Pied : prix à gauche, quantité à droite */
   .pam-produit-pied {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
     margin-top: auto;
-    padding-top: .4rem;
+    padding-top: .5rem;
   }
   .pam-produit-prix {
-    font-size: .88rem;
+    font-size: .95rem;
     margin-top: 0;
     padding-top: 0;
     white-space: nowrap;
-    line-height: 1.2;
   }
-  .pam-produit-taxes { font-size: .68rem; display: block; }
-  .pam-qty-controle { margin-top: 0; gap: .2rem; }
+  .pam-produit-taxes { font-size: .72rem; }
+  .pam-qty-controle { margin-top: 0; gap: .3rem; }
   .pam-qty-moins,
-  .pam-qty-plus { width: 28px; height: 28px; font-size: 1rem; }
-  .pam-qty-input { width: 30px; padding: .15rem .1rem; font-size: .85rem; }
+  .pam-qty-plus { width: 34px; height: 34px; font-size: 1.1rem; }
+  .pam-qty-input { width: 40px; padding: .2rem .2rem; }
   .pam-produit-item:hover { transform: none; }
-  .pam-produit-instructions { font-size: .72rem; padding: .3rem .5rem; }
-  /* Carte sans image : placeholder carré pleine largeur */
+  .pam-produit-instructions { font-size: .78rem; padding: .4rem .6rem; }
+  /* Carte sans image : placeholder pleine largeur */
   .pam-produit-placeholder {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 9;
     border-radius: var(--rayon) var(--rayon) 0 0;
   }
 }
