@@ -557,10 +557,26 @@
         if (hint) hint.remove();
     }
 
+    /* Mémorise la quantité au moment du focus, pour détecter un passage
+       0 → 1+ même quand le client tape directement dans le champ (au lieu
+       de cliquer sur +), qui sinon ne déclenchait jamais la suggestion. */
+    form.addEventListener('focusin', function (e) {
+        if (e.target.classList.contains('pam-qty-input')) {
+            e.target.dataset.qtyAvant = e.target.value || '0';
+        }
+    });
+
     form.addEventListener('input', function (e) {
         if (e.target.classList.contains('pam-qty-input')) {
             calculerTotal();
-            majOptionChaud(e.target.closest('.pam-produit-item'));
+            var item = e.target.closest('.pam-produit-item');
+            majOptionChaud(item);
+            var avant = parseInt(e.target.dataset.qtyAvant, 10) || 0;
+            var apres = parseInt(e.target.value, 10) || 0;
+            if (avant === 0 && apres >= 1) {
+                if (item) ouvrirSuggestions(item);
+                e.target.dataset.qtyAvant = String(apres);
+            }
         }
         nettoyerErreurChamp(e);
     });

@@ -1139,7 +1139,7 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
 .page-prose h2, .page-prose h3 { color: var(--sauge); margin: 1.6rem 0 .6rem; }
 .page-prose ul, .page-prose ol { margin: .25rem 0 1rem 1.5rem; }
 .page-prose li { margin-bottom: .35rem; line-height: 1.65; }
-.page-prose a { color: var(--terracotta-texte); text-decoration: underline; text-underline-offset: 2px; }
+.page-prose a { color: var(--terra-fonce); text-decoration: underline; text-underline-offset: 2px; }
 .page-prose a:hover { color: var(--sauge); }
 
 /* ================================================
@@ -1186,7 +1186,7 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
     transition: color .15s, border-color .15s, background .15s;
 }
 .pol-toc-lien:hover { color: var(--sauge); background: var(--sauge-pale); border-left-color: var(--sauge); }
-.pol-toc-lien--actif { color: var(--sauge); font-weight: 700; border-left-color: var(--terracotta); background: var(--sauge-pale); }
+.pol-toc-lien--actif { color: var(--sauge); font-weight: 700; border-left-color: var(--terra); background: var(--sauge-pale); }
 
 /* — Prose content — */
 .pol-prose {
@@ -1236,12 +1236,12 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
     left: .1rem; top: .68em;
     width: 5px; height: 5px;
     border-radius: 50%;
-    background: var(--terracotta);
+    background: var(--terra);
     opacity: .75;
 }
 
 /* Liens, emphase */
-.pol-prose a { color: var(--terracotta-texte); text-decoration: underline; text-underline-offset: 3px; }
+.pol-prose a { color: var(--terra-fonce); text-decoration: underline; text-underline-offset: 3px; }
 .pol-prose a:hover { color: var(--sauge); }
 .pol-prose em  { font-style: italic; color: var(--texte-moyen); }
 .pol-prose strong { font-weight: 700; }
@@ -2680,7 +2680,7 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   margin: 0;
   font-family: var(--police-accent);
   font-size: 1.05rem;
-  color: var(--terracotta-texte);
+  color: var(--terra-fonce);
   line-height: 1;
 }
 .pam-sugg-fermer {
@@ -2737,17 +2737,17 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   display: block;
   transition: color var(--transi);
 }
-.pam-sugg-nom:hover { color: var(--terracotta-texte); }
+.pam-sugg-nom:hover { color: var(--terra-fonce); }
 .pam-sugg-prix {
   font-size: .82rem;
   font-weight: 600;
-  color: var(--terracotta-texte);
+  color: var(--terra-fonce);
 }
 .pam-sugg-btn {
   align-self: flex-start;
   margin-top: .35rem;
   border: none;
-  background: var(--terracotta);
+  background: var(--terra);
   color: var(--blanc);
   font-size: .73rem;
   font-weight: 700;
@@ -2759,14 +2759,14 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   white-space: nowrap;
   transition: background var(--transi), transform .1s ease;
 }
-.pam-sugg-btn:hover  { background: var(--terracotta-texte); }
+.pam-sugg-btn:hover  { background: var(--terra-fonce); }
 .pam-sugg-btn:active { transform: scale(.95); }
 /* Barre de progression au bas de la carte */
 .pam-sugg-barre {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 2px;
-  background: var(--terracotta);
+  background: var(--terra);
   transform-origin: left;
   opacity: .35;
   animation-name: pam-sugg-prog;
@@ -3350,7 +3350,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   font-weight: 700;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: var(--terra-fonce); /* --terracotta-texte n'existe pas dans ce fichier */
+  color: var(--terra-fonce);
 }
 .pm-article-titre {
   font-size: clamp(1.6rem, 1.2rem + 2vw, 2.6rem);
@@ -3951,7 +3951,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 }
 .bx-card-prix {
   font-weight: 700;
-  color: var(--terracotta-texte);
+  color: var(--terra-fonce);
   white-space: nowrap;
   font-size: 1rem;
 }
@@ -4043,7 +4043,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   font-weight: 600;
   color: var(--texte);
 }
-.bx-champ label span { color: var(--terracotta-texte); }
+.bx-champ label span { color: var(--terra-fonce); }
 .bx-champ input,
 .bx-champ select,
 .bx-champ textarea {
@@ -4077,11 +4077,11 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   margin-bottom: 1rem;
 }
 .bx-msg-erreur {
-  background: var(--terracotta-pale);
-  border: 1px solid var(--terracotta);
+  background: var(--terra-pale);
+  border: 1px solid var(--terra);
   border-radius: 6px;
   padding: .85rem 1rem;
-  color: var(--terracotta-texte);
+  color: var(--terra-fonce);
   margin-bottom: 1rem;
 }
 
