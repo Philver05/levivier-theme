@@ -2638,12 +2638,15 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
 .pam-total-label strong { color: var(--sauge); font-size: 1.15rem; }
 
 /* ─── Toast de suggestion ─────────────────────────────────────────────────── */
+/* Desktop : coin bas-droit, comme une notification (ne masque pas le centre
+   de l'écran ni la barre de total). Repositionné en bas-centre sur mobile
+   (≤640px, voir plus bas) où un coin dédié laisserait trop peu de place. */
 .pam-sugg-toast {
   position: fixed;
-  bottom: calc(var(--pam-barre-h, 68px) + 1rem);
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(420px, calc(100vw - 1.5rem));
+  bottom: calc(var(--pam-barre-h, 68px) + 1.25rem);
+  right: 1.5rem;
+  left: auto;
+  width: min(400px, calc(100vw - 3rem));
   background: #fdfaf6;
   border: 1px solid rgba(184,92,80,.12);
   border-radius: 18px;
@@ -2654,17 +2657,17 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   overflow: hidden;
   z-index: 200;
   padding: .9rem 1rem .8rem;
-  animation: pam-sugg-entrer .5s cubic-bezier(.34,1.56,.64,1) forwards;
+  animation: pam-sugg-entrer .45s cubic-bezier(.32,1.2,.5,1) forwards;
 }
 .pam-sugg-toast--sortir {
   animation: pam-sugg-sortir .22s cubic-bezier(.4,0,1,1) forwards !important;
 }
 @keyframes pam-sugg-entrer {
-  0%   { opacity: 0; transform: translateX(-50%) translateY(22px) scale(.96); }
-  100% { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);   }
+  0%   { opacity: 0; transform: translateY(26px) scale(.96); }
+  100% { opacity: 1; transform: translateY(0)    scale(1);   }
 }
 @keyframes pam-sugg-sortir {
-  to { opacity: 0; transform: translateX(-50%) translateY(14px) scale(.97); }
+  to { opacity: 0; transform: translateY(14px) scale(.97); }
 }
 /* En-tête: eyebrow Professor + bouton fermer */
 .pam-sugg-entete {
@@ -2766,7 +2769,10 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   background: var(--terracotta);
   transform-origin: left;
   opacity: .35;
-  animation: pam-sugg-prog 6s linear forwards;
+  animation-name: pam-sugg-prog;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  animation-duration: 6s; /* repli, écrasé en ligne par SUGG_DUREE via JS */
 }
 @keyframes pam-sugg-prog {
   from { transform: scaleX(1); }
@@ -2914,6 +2920,23 @@ body:has(.pam-barre-total--active) .section:last-of-type {
    Hauteur fixe pour que toutes les cartes soient identiques.
 ------------------------------------------------------ */
 @media (max-width: 640px) {
+  /* Toast de suggestion : un coin bas-droit serait trop à l'étroit sur un
+     petit écran, on garde le centrage plein-largeur d'origine. */
+  .pam-sugg-toast {
+    left: 50%;
+    right: auto;
+    width: min(420px, calc(100vw - 1.5rem));
+    animation-name: pam-sugg-entrer-centre;
+  }
+  .pam-sugg-toast--sortir { animation-name: pam-sugg-sortir-centre; }
+  @keyframes pam-sugg-entrer-centre {
+    0%   { opacity: 0; transform: translateX(-50%) translateY(22px) scale(.96); }
+    100% { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);   }
+  }
+  @keyframes pam-sugg-sortir-centre {
+    to { opacity: 0; transform: translateX(-50%) translateY(14px) scale(.97); }
+  }
+
   .pam-produits-grille {
     grid-template-columns: 1fr;
     gap: .6rem;
@@ -2921,14 +2944,14 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   .pam-produit-item {
     flex-direction: row;
     align-items: stretch;
-    height: 128px;
+    min-height: 100px;   /* auto-height : la carte grandit selon son contenu */
   }
-  /* Photo (simple ou wrapper double) : remplit toute la hauteur */
+  /* Photo : largeur fixe, étire en hauteur via align-self:stretch du parent */
   .pam-produit-item > img,
   .pam-produit-item > .pam-produit-placeholder,
   .pam-produit-item > .pam-produit-photos {
-    width: 106px;
-    height: 100%;
+    width: 90px;
+    min-height: 100px;
     aspect-ratio: auto;
     flex-shrink: 0;
     align-self: stretch;
@@ -2940,43 +2963,49 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   }
   /* Corps : colonne, nom en haut, pied collé en bas */
   .pam-produit-corps {
-    padding: .55rem .6rem .55rem .5rem;
+    padding: .6rem .7rem .6rem .6rem;
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: stretch;
     justify-content: flex-start;
-    gap: .18rem;
-    overflow: hidden;
+    gap: .3rem;
   }
   .pam-produit-nom {
-    font-size: .88rem;
+    font-size: .9rem;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-  }
-  .pam-produit-details { font-size: .8rem; }
-  .pam-produit-desc {
-    font-size: .78rem;
     line-height: 1.35;
   }
-  /* Pied toujours en bas de la colonne */
+  .pam-produit-details { font-size: .78rem; }
+  .pam-produit-desc {
+    font-size: .76rem;
+    line-height: 1.3;
+  }
+  /* Pied : prix et quantité côte à côte */
   .pam-produit-pied {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    margin-top: auto;
+    margin-top: .4rem;
   }
-  .pam-produit-prix { font-size: .92rem; margin-top: 0; padding-top: 0; }
-  .pam-qty-controle { margin-top: 0; }
+  .pam-produit-prix {
+    font-size: .9rem;
+    margin-top: 0;
+    padding-top: 0;
+    white-space: nowrap;
+  }
+  .pam-produit-taxes { font-size: .7rem; }
+  .pam-qty-controle { margin-top: 0; gap: .25rem; }
   .pam-qty-moins,
-  .pam-qty-plus { width: 30px; height: 30px; }
-  .pam-qty-input { width: 40px; padding: .2rem .25rem; }
+  .pam-qty-plus { width: 30px; height: 30px; font-size: 1.1rem; }
+  .pam-qty-input { width: 36px; padding: .2rem .15rem; }
   .pam-produit-item:hover { transform: none; }
-  /* Poids et instructions cachés : pas de place dans la vue liste 128px */
-  .pam-produit-poids { display: none; }
-  .pam-produit-instructions { display: none; }
+  /* Instructions : compactes en mobile (toujours visibles, pas cachées) */
+  .pam-produit-instructions { font-size: .75rem; padding: .35rem .55rem; }
+  .pam-produit-poids { font-size: .74rem; margin-top: 0; }
 }
 
 /* Espacements réduits sur très petits écrans */
