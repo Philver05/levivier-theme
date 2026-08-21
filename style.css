@@ -2925,6 +2925,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   .pam-sugg-toast {
     left: 50%;
     right: auto;
+    transform: translateX(-50%); /* repli si l'animation est coupée (mouvement réduit) */
     width: min(420px, calc(100vw - 1.5rem));
     animation-name: pam-sugg-entrer-centre;
   }

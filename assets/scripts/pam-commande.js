@@ -157,11 +157,13 @@
     }
 
     /* -------------------------------------------------------
-       Suggestions inline : panneau qui s'ouvre directement
-       sous la carte du produit ajouté (qty 0→1), avec photo +
-       nom + prix + bouton Ajouter pour chaque produit suggéré.
-       Fermeture manuelle uniquement (pas d'auto-dismiss).
+       Toast de suggestion : s'ouvre en bas à droite (bas-centre
+       sur mobile) quand un produit passe de qté 0→1, avec photo +
+       nom + prix + bouton Ajouter pour le produit suggéré.
+       Se ferme seul après SUGG_DUREE ms, ou avant sur clic (X,
+       Ajouter, nom) ou nouvelle suggestion.
     ------------------------------------------------------- */
+    var SUGG_DUREE = 10000;
     var _suggTimer = null;
 
     function fermerPanneaux() {
@@ -274,13 +276,15 @@
         carte.appendChild(infos);
         toast.appendChild(carte);
 
-        /* Barre de progression au bas du toast (se vide en 6 s) */
+        /* Barre de progression au bas du toast, durée pilotée par SUGG_DUREE
+           (pas de valeur dupliquée en dur dans le CSS) */
         var barre = document.createElement('div');
         barre.className = 'pam-sugg-barre';
+        barre.style.animationDuration = SUGG_DUREE + 'ms';
         toast.appendChild(barre);
 
         document.body.appendChild(toast);
-        _suggTimer = setTimeout(fermerPanneaux, 6000);
+        _suggTimer = setTimeout(fermerPanneaux, SUGG_DUREE);
     }
 
 
