@@ -2919,6 +2919,14 @@ body:has(.pam-barre-total--active) .section:last-of-type {
    Mobile : rangées uniformes (vignette gauche, texte droite)
    Hauteur fixe pour que toutes les cartes soient identiques.
 ------------------------------------------------------ */
+@keyframes pam-sugg-entrer-centre {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(22px) scale(.96); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);   }
+}
+@keyframes pam-sugg-sortir-centre {
+  to { opacity: 0; transform: translateX(-50%) translateY(14px) scale(.97); }
+}
+
 @media (max-width: 640px) {
   /* Toast de suggestion : un coin bas-droit serait trop à l'étroit sur un
      petit écran, on garde le centrage plein-largeur d'origine. */
@@ -2930,13 +2938,6 @@ body:has(.pam-barre-total--active) .section:last-of-type {
     animation-name: pam-sugg-entrer-centre;
   }
   .pam-sugg-toast--sortir { animation-name: pam-sugg-sortir-centre; }
-  @keyframes pam-sugg-entrer-centre {
-    0%   { opacity: 0; transform: translateX(-50%) translateY(22px) scale(.96); }
-    100% { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);   }
-  }
-  @keyframes pam-sugg-sortir-centre {
-    to { opacity: 0; transform: translateX(-50%) translateY(14px) scale(.97); }
-  }
 
   .pam-produits-grille {
     grid-template-columns: 1fr;
@@ -4127,5 +4128,4 @@ body:has(.bx-barre:not([hidden])) .bx-main {
     gap: .6rem;
   }
   .bx-btn-soumettre { text-align: center; }
-}
 }
