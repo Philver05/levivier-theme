@@ -2272,8 +2272,8 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
 }
 .pam-cat-tab--active,
 .pam-cat-tab--active:hover {
-  background: var(--terra);
-  border-color: var(--terra);
+  background: var(--sauge);
+  border-color: var(--sauge);
   color: var(--blanc);
 }
 .pam-cat-tab[hidden] { display: none; }
@@ -2610,6 +2610,7 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   background: var(--blanc);
   border-top: 2px solid var(--sauge-pale);
   padding: .9rem 0;
+  padding-bottom: calc(.9rem + env(safe-area-inset-bottom, 0px));
   box-shadow: 0 -8px 24px -10px rgba(56, 73, 45, .2);
   transform: translateY(100%);
   transition: transform .4s cubic-bezier(.22, .61, .36, 1);

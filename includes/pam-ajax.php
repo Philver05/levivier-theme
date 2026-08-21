@@ -61,21 +61,52 @@ function lv_pam_soumettre()
     ];
     $jour_label = $jours_labels[$jour] ?? $jour;
 
-    $lignes_html = '';
-    $total       = 0.0;
-    foreach ($produits as $id => $qty) {
-        $titre      = get_the_title($id);
-        $prix       = (float) get_field('pam_prix', $id);
-        $sous_total = $prix * $qty;
-        $total     += $sous_total;
+    /* Grouper les produits par catégorie principale et calculer le total
+       avec taxes (même logique que le JS : TPS 5% + TVQ 9,975%, non composées). */
+    $TAUX_TAXES      = 0.14975;
+    $total           = 0.0;
+    $a_taxes         = false;
+    $produits_par_cat = [];
 
-        $chaud_note   = isset($chaud_raw[$id]) ? ' <span style="color:#b85c50;font-size:12px;font-weight:600;">— Réchauffé</span>' : '';
-        $lignes_html .= '<tr>'
-            . '<td style="padding:10px 14px;border-bottom:1px solid #e4ddd0;color:#1f2937;">' . esc_html($titre) . $chaud_note . '</td>'
-            . '<td style="padding:10px 14px;border-bottom:1px solid #e4ddd0;text-align:center;color:#1f2937;">' . esc_html($qty) . '</td>'
-            . '<td style="padding:10px 14px;border-bottom:1px solid #e4ddd0;text-align:right;color:#1f2937;">' . esc_html(number_format($prix, 2, ',', ' ')) . '&nbsp;$</td>'
-            . '<td style="padding:10px 14px;border-bottom:1px solid #e4ddd0;text-align:right;color:#1f2937;font-weight:600;">' . esc_html(number_format($sous_total, 2, ',', ' ')) . '&nbsp;$</td>'
-            . '</tr>';
+    foreach ($produits as $id => $qty) {
+        $titre   = get_the_title($id);
+        $prix    = (float) get_field('pam_prix', $id);
+        $taxable = (bool) get_field('pam_taxable', $id);
+        $prix_ttc   = $taxable ? $prix * (1 + $TAUX_TAXES) : $prix;
+        $sous_total = $prix_ttc * $qty;
+        $total     += $sous_total;
+        if ($taxable) $a_taxes = true;
+
+        $termes  = wp_get_post_terms($id, 'pam_categorie', ['fields' => 'all']);
+        $cat_nom = 'Divers';
+        foreach ($termes as $terme) {
+            if ((int) $terme->parent === 0) { $cat_nom = $terme->name; break; }
+        }
+        $produits_par_cat[$cat_nom][] = [
+            'titre'      => $titre,
+            'qty'        => $qty,
+            'prix'       => $prix,
+            'prix_ttc'   => $prix_ttc,
+            'sous_total' => $sous_total,
+            'taxable'    => $taxable,
+            'chaud'      => isset($chaud_raw[$id]),
+        ];
+    }
+
+    $lignes_html = '';
+    foreach ($produits_par_cat as $cat_nom => $items) {
+        $lignes_html .= '<tr><td colspan="4" style="padding:6px 14px 3px;background:#f0f4ee;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4d6040;">'
+            . esc_html($cat_nom) . '</td></tr>';
+        foreach ($items as $item) {
+            $chaud_note = $item['chaud'] ? ' <span style="color:#b85c50;font-size:11px;font-weight:600;">— Réchauffé</span>' : '';
+            $taxes_note = $item['taxable'] ? ' <span style="color:#6b7280;font-size:11px;">+ tx</span>' : '';
+            $lignes_html .= '<tr>'
+                . '<td style="padding:8px 14px;border-bottom:1px solid #e4ddd0;color:#1f2937;">' . esc_html($item['titre']) . $chaud_note . '</td>'
+                . '<td style="padding:8px 14px;border-bottom:1px solid #e4ddd0;text-align:center;color:#1f2937;">' . esc_html($item['qty']) . '</td>'
+                . '<td style="padding:8px 14px;border-bottom:1px solid #e4ddd0;text-align:right;color:#1f2937;">' . esc_html(number_format($item['prix'], 2, ',', ' ')) . '&nbsp;$' . $taxes_note . '</td>'
+                . '<td style="padding:8px 14px;border-bottom:1px solid #e4ddd0;text-align:right;color:#1f2937;font-weight:600;">' . esc_html(number_format($item['sous_total'], 2, ',', ' ')) . '&nbsp;$</td>'
+                . '</tr>';
+        }
     }
 
     $lignes_client = [
@@ -127,7 +158,9 @@ function lv_pam_soumettre()
         . '<tbody>' . $lignes_html . '</tbody>'
         . '</table>'
         . '<table role="presentation" width="100%" style="border-collapse:collapse;margin-top:8px;">'
-        . '<tr><td style="padding:12px 14px;text-align:right;color:#1f2937;font-size:15px;font-weight:700;">Total&nbsp;: <span style="color:#b85c50;font-size:18px;">' . esc_html(number_format($total, 2, ',', ' ')) . '&nbsp;$</span></td></tr>'
+        . '<tr><td style="padding:12px 14px;text-align:right;color:#1f2937;font-size:15px;font-weight:700;">Total&nbsp;: <span style="color:#b85c50;font-size:18px;">' . esc_html(number_format($total, 2, ',', ' ')) . '&nbsp;$</span>'
+        . ($a_taxes ? '&nbsp;<span style="font-size:11px;font-weight:400;color:#6b7280;">(taxes incluses)</span>' : '')
+        . '</td></tr>'
         . '</table>'
         . '</td></tr>';
 
@@ -147,7 +180,7 @@ function lv_pam_soumettre()
         . '</table>'
         . '</body></html>';
 
-    $sujet = 'Nouvelle commande Prêt à manger - ' . $prenom . ' ' . $nom;
+    $sujet = 'Commande PAM - ' . $prenom . ' ' . $nom . ' - ' . $date_recup_label;
 
     $destinataire_principal = function_exists('lv_opt') ? lv_opt('opt_courriel', 'epicerie@levivier.net') : 'epicerie@levivier.net';
     if (!$destinataire_principal || !is_email($destinataire_principal)) {
@@ -205,7 +238,9 @@ function lv_pam_soumettre()
         . '<tbody>' . $lignes_html . '</tbody>'
         . '</table>'
         . '<table role="presentation" width="100%" style="border-collapse:collapse;margin-top:8px;">'
-        . '<tr><td style="padding:12px 14px;text-align:right;color:#1f2937;font-size:15px;font-weight:700;">Total&nbsp;: <span style="color:#b85c50;font-size:18px;">' . esc_html(number_format($total, 2, ',', ' ')) . '&nbsp;$</span></td></tr>'
+        . '<tr><td style="padding:12px 14px;text-align:right;color:#1f2937;font-size:15px;font-weight:700;">Total&nbsp;: <span style="color:#b85c50;font-size:18px;">' . esc_html(number_format($total, 2, ',', ' ')) . '&nbsp;$</span>'
+        . ($a_taxes ? '&nbsp;<span style="font-size:11px;font-weight:400;color:#6b7280;">(taxes incluses)</span>' : '')
+        . '</td></tr>'
         . '</table>'
         . '</td></tr>'
 
@@ -229,6 +264,6 @@ function lv_pam_soumettre()
     if ($envoye) {
         wp_send_json_success(['message' => 'Votre commande a bien été envoyée ! Nous vous contacterons pour confirmer la date de récupération.']);
     } else {
-        wp_send_json_error(['message' => 'Une erreur est survenue lors de l\'envoi. Veuillez nous appeler au (418) 562-5230.']);
+        wp_send_json_error(['message' => 'Une erreur est survenue lors de l\'envoi. Veuillez nous appeler au ' . $tel_site . '.']);
     }
 }
