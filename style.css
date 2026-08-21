@@ -2919,14 +2919,6 @@ body:has(.pam-barre-total--active) .section:last-of-type {
    Mobile : rangées uniformes (vignette gauche, texte droite)
    Hauteur fixe pour que toutes les cartes soient identiques.
 ------------------------------------------------------ */
-@keyframes pam-sugg-entrer-centre {
-  0%   { opacity: 0; transform: translateX(-50%) translateY(22px) scale(.96); }
-  100% { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);   }
-}
-@keyframes pam-sugg-sortir-centre {
-  to { opacity: 0; transform: translateX(-50%) translateY(14px) scale(.97); }
-}
-
 @media (max-width: 640px) {
   /* Toast de suggestion : un coin bas-droit serait trop à l'étroit sur un
      petit écran, on garde le centrage plein-largeur d'origine. */
@@ -2938,24 +2930,32 @@ body:has(.pam-barre-total--active) .section:last-of-type {
     animation-name: pam-sugg-entrer-centre;
   }
   .pam-sugg-toast--sortir { animation-name: pam-sugg-sortir-centre; }
+  @keyframes pam-sugg-entrer-centre {
+    0%   { opacity: 0; transform: translateX(-50%) translateY(22px) scale(.96); }
+    100% { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);   }
+  }
+  @keyframes pam-sugg-sortir-centre {
+    to { opacity: 0; transform: translateX(-50%) translateY(14px) scale(.97); }
+  }
 
   .pam-produits-grille {
     grid-template-columns: 1fr;
     gap: .6rem;
   }
   .pam-produit-item {
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
-    min-height: 0;
+    min-height: 100px;   /* auto-height : la carte grandit selon son contenu */
   }
-  /* Photo : pleine largeur en haut de la carte */
+  /* Photo : largeur fixe, étire en hauteur via align-self:stretch du parent */
   .pam-produit-item > img,
   .pam-produit-item > .pam-produit-placeholder,
   .pam-produit-item > .pam-produit-photos {
-    width: 100%;
-    height: 160px;
+    width: 90px;
+    min-height: 100px;
     aspect-ratio: auto;
     flex-shrink: 0;
+    align-self: stretch;
     object-fit: cover;
   }
   .pam-produit-item > .pam-produit-photos img {
@@ -4127,4 +4127,5 @@ body:has(.bx-barre:not([hidden])) .bx-main {
     gap: .6rem;
   }
   .bx-btn-soumettre { text-align: center; }
+}
 }
