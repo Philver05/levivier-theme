@@ -462,6 +462,8 @@
             majSousCategorieTabs();
             appliquerFiltreSousCategorie();
             majMessagesJour();
+            var colProduits = document.querySelector('.pam-produits-col');
+            if (colProduits) setTimeout(function () { colProduits.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80);
         });
     }
 
@@ -591,6 +593,28 @@
     function validerFormulaire() {
         var erreurs = false;
         var premier = null;
+
+        /* Vérifier qu'au moins un produit visible a une quantité > 0 */
+        var totalQty = 0;
+        document.querySelectorAll('.pam-produit-item:not([hidden]) .pam-qty-input').forEach(function (inp) {
+            totalQty += parseInt(inp.value, 10) || 0;
+        });
+        var msgAucun = document.getElementById('pam-msg-aucun-produit');
+        if (totalQty === 0) {
+            if (!msgAucun) {
+                msgAucun = document.createElement('p');
+                msgAucun.id = 'pam-msg-aucun-produit';
+                msgAucun.className = 'pam-hint-erreur pam-msg-aucun-produit--global';
+                msgAucun.textContent = 'Veuillez choisir au moins un produit avant d\'envoyer.';
+                var colProduits = document.querySelector('.pam-produits-col');
+                if (colProduits) colProduits.appendChild(msgAucun);
+            }
+            msgAucun.hidden = false;
+            var col = document.querySelector('.pam-produits-col');
+            if (col) col.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return false;
+        }
+        if (msgAucun) msgAucun.hidden = true;
 
         var regles = [
             { name: 'prenom',             msg: 'Veuillez entrer votre prénom.' },

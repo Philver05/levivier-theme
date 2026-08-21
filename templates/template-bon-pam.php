@@ -485,7 +485,7 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                     <div class="pam-champ">
                         <label for="pam_date">Date de récupération <abbr title="requis">*</abbr></label>
                         <input type="date" id="pam_date" name="date_recuperation" required
-                               min="<?php echo esc_attr(wp_date('Y-m-d')); ?>">
+                               min="<?php echo esc_attr(wp_date('Y-m-d', strtotime('+1 day'))); ?>">
                     </div>
                     <div class="pam-champ">
                         <label for="pam_heure">Heure de récupération <abbr title="requis">*</abbr></label>

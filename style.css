@@ -2046,6 +2046,14 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   color: var(--terra-fonce);
   font-weight: 600;
 }
+.pam-msg-aucun-produit--global {
+  margin-top: .75rem;
+  padding: .6rem .85rem;
+  background: var(--terra-pale);
+  border-left: 3px solid var(--terra);
+  border-radius: 0 8px 8px 0;
+  font-size: .9rem;
+}
 /* Légère animation d'attention sur le label du champ en erreur */
 .pam-champ--erreur label { color: var(--terra-fonce); }
 
@@ -2966,6 +2974,9 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   .pam-qty-plus { width: 30px; height: 30px; }
   .pam-qty-input { width: 40px; padding: .2rem .25rem; }
   .pam-produit-item:hover { transform: none; }
+  /* Poids et instructions cachés : pas de place dans la vue liste 128px */
+  .pam-produit-poids { display: none; }
+  .pam-produit-instructions { display: none; }
 }
 
 /* Espacements réduits sur très petits écrans */
