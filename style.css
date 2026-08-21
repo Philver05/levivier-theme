@@ -2554,7 +2554,6 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   border-radius: 7px;
   font-size: .88rem;
   color: var(--sauge);
-  grid-column: 1 / -1;
 }
 .pam-rechauffage-info[hidden] { display: none; }
 .pam-rechauffage-info svg {

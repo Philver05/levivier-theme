@@ -659,7 +659,7 @@
         var jourChecked = form.querySelector('input[name="jour"]:checked');
         data.append('jour', jourChecked ? jourChecked.value : 'tous_les_jours');
 
-        document.querySelectorAll('.pam-produit-item .pam-qty-input').forEach(function (input) {
+        document.querySelectorAll('.pam-produit-item:not([hidden]) .pam-qty-input').forEach(function (input) {
             var qty = parseInt(input.value, 10) || 0;
             if (qty > 0) {
                 var item = input.closest('.pam-produit-item');

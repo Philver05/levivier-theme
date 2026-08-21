@@ -199,17 +199,27 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                 ]);
                 if (is_wp_error($categories_principales)) $categories_principales = [];
 
-                /* Ne garder que celles qui ont au moins un produit, direct ou via une sous-catégorie */
-                $categories_principales = array_values(array_filter($categories_principales, function ($cat) {
-                    $q = new WP_Query([
-                        'post_type'      => 'pam_produit',
-                        'post_status'    => 'publish',
-                        'posts_per_page' => 1,
-                        'no_found_rows'  => true,
-                        'fields'         => 'ids',
-                        'tax_query'      => [['taxonomy' => 'pam_categorie', 'field' => 'term_id', 'terms' => $cat->term_id]],
-                    ]);
-                    return $q->have_posts();
+                /* Ne garder que celles qui ont au moins un produit, direct ou via une sous-catégorie.
+                   Une seule requête batch au lieu d'une WP_Query par catégorie. */
+                $ids_pam = get_posts([
+                    'post_type'      => 'pam_produit',
+                    'post_status'    => 'publish',
+                    'posts_per_page' => -1,
+                    'fields'         => 'ids',
+                    'no_found_rows'  => true,
+                ]);
+                $terms_avec_produits = [];
+                if ($ids_pam) {
+                    foreach (wp_get_object_terms($ids_pam, 'pam_categorie', ['fields' => 'ids']) as $tid) {
+                        $terms_avec_produits[$tid] = true;
+                    }
+                }
+                $categories_principales = array_values(array_filter($categories_principales, function ($cat) use ($terms_avec_produits) {
+                    if (isset($terms_avec_produits[$cat->term_id])) return true;
+                    foreach (get_term_children($cat->term_id, 'pam_categorie') as $eid) {
+                        if (isset($terms_avec_produits[$eid])) return true;
+                    }
+                    return false;
                 }));
 
                 /* Ordre des catégories — non alphabétique, défini ici.
