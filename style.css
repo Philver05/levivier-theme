@@ -1139,7 +1139,7 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
 .page-prose h2, .page-prose h3 { color: var(--sauge); margin: 1.6rem 0 .6rem; }
 .page-prose ul, .page-prose ol { margin: .25rem 0 1rem 1.5rem; }
 .page-prose li { margin-bottom: .35rem; line-height: 1.65; }
-.page-prose a { color: var(--terra-fonce); text-decoration: underline; text-underline-offset: 2px; }
+.page-prose a { color: var(--terracotta-texte); text-decoration: underline; text-underline-offset: 2px; }
 .page-prose a:hover { color: var(--sauge); }
 
 /* ================================================
@@ -1186,7 +1186,7 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
     transition: color .15s, border-color .15s, background .15s;
 }
 .pol-toc-lien:hover { color: var(--sauge); background: var(--sauge-pale); border-left-color: var(--sauge); }
-.pol-toc-lien--actif { color: var(--sauge); font-weight: 700; border-left-color: var(--terra); background: var(--sauge-pale); }
+.pol-toc-lien--actif { color: var(--sauge); font-weight: 700; border-left-color: var(--terracotta); background: var(--sauge-pale); }
 
 /* — Prose content — */
 .pol-prose {
@@ -1236,12 +1236,12 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
     left: .1rem; top: .68em;
     width: 5px; height: 5px;
     border-radius: 50%;
-    background: var(--terra);
+    background: var(--terracotta);
     opacity: .75;
 }
 
 /* Liens, emphase */
-.pol-prose a { color: var(--terra-fonce); text-decoration: underline; text-underline-offset: 3px; }
+.pol-prose a { color: var(--terracotta-texte); text-decoration: underline; text-underline-offset: 3px; }
 .pol-prose a:hover { color: var(--sauge); }
 .pol-prose em  { font-style: italic; color: var(--texte-moyen); }
 .pol-prose strong { font-weight: 700; }
@@ -2680,7 +2680,7 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   margin: 0;
   font-family: var(--police-accent);
   font-size: 1.05rem;
-  color: var(--terra-fonce);
+  color: var(--terracotta-texte);
   line-height: 1;
 }
 .pam-sugg-fermer {
@@ -2737,17 +2737,17 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   display: block;
   transition: color var(--transi);
 }
-.pam-sugg-nom:hover { color: var(--terra-fonce); }
+.pam-sugg-nom:hover { color: var(--terracotta-texte); }
 .pam-sugg-prix {
   font-size: .82rem;
   font-weight: 600;
-  color: var(--terra-fonce);
+  color: var(--terracotta-texte);
 }
 .pam-sugg-btn {
   align-self: flex-start;
   margin-top: .35rem;
   border: none;
-  background: var(--terra);
+  background: var(--terracotta);
   color: var(--blanc);
   font-size: .73rem;
   font-weight: 700;
@@ -2759,14 +2759,14 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   white-space: nowrap;
   transition: background var(--transi), transform .1s ease;
 }
-.pam-sugg-btn:hover  { background: var(--terra-fonce); }
+.pam-sugg-btn:hover  { background: var(--terracotta-texte); }
 .pam-sugg-btn:active { transform: scale(.95); }
 /* Barre de progression au bas de la carte */
 .pam-sugg-barre {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 2px;
-  background: var(--terra);
+  background: var(--terracotta);
   transform-origin: left;
   opacity: .35;
   animation-name: pam-sugg-prog;
@@ -2938,86 +2938,75 @@ body:has(.pam-barre-total--active) .section:last-of-type {
     to { opacity: 0; transform: translateX(-50%) translateY(14px) scale(.97); }
   }
 
-  /* Grille : 1 colonne pleine largeur */
   .pam-produits-grille {
     grid-template-columns: 1fr;
-    gap: .75rem;
+    gap: .6rem;
   }
-  /* Carte verticale : image en haut, contenu en bas */
   .pam-produit-item {
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
+    min-height: 100px;   /* auto-height : la carte grandit selon son contenu */
   }
-  /* Image pleine largeur, ratio 16:9 (compact mais lisible) */
+  /* Photo : largeur fixe, étire en hauteur via align-self:stretch du parent */
   .pam-produit-item > img,
   .pam-produit-item > .pam-produit-placeholder,
   .pam-produit-item > .pam-produit-photos {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
+    width: 90px;
+    min-height: 100px;
+    aspect-ratio: auto;
     flex-shrink: 0;
-    align-self: auto;
+    align-self: stretch;
     object-fit: cover;
-    border-radius: var(--rayon) var(--rayon) 0 0;
-  }
-  .pam-produit-item > .pam-produit-photos {
-    position: relative;
   }
   .pam-produit-item > .pam-produit-photos img {
     width: 100%;
     height: 100%;
-    position: absolute;
-    top: 0; left: 0;
   }
-  /* Corps */
+  /* Corps : colonne, nom en haut, pied collé en bas */
   .pam-produit-corps {
-    padding: .7rem .85rem .8rem;
+    padding: .6rem .7rem .6rem .6rem;
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: stretch;
     justify-content: flex-start;
-    gap: .35rem;
-    flex: 1;
+    gap: .3rem;
   }
   .pam-produit-nom {
-    font-size: .95rem;
-    font-weight: 700;
-    line-height: 1.3;
+    font-size: .9rem;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    line-height: 1.35;
   }
-  .pam-produit-poids { font-size: .78rem; margin-top: 0; }
-  .pam-produit-details { font-size: .8rem; }
-  .pam-produit-desc { font-size: .78rem; line-height: 1.35; }
-  /* Pied : prix à gauche, quantité à droite */
+  .pam-produit-details { font-size: .78rem; }
+  .pam-produit-desc {
+    font-size: .76rem;
+    line-height: 1.3;
+  }
+  /* Pied : prix et quantité côte à côte */
   .pam-produit-pied {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    margin-top: auto;
-    padding-top: .5rem;
+    margin-top: .4rem;
   }
   .pam-produit-prix {
-    font-size: .95rem;
+    font-size: .9rem;
     margin-top: 0;
     padding-top: 0;
     white-space: nowrap;
   }
-  .pam-produit-taxes { font-size: .72rem; }
-  .pam-qty-controle { margin-top: 0; gap: .3rem; }
+  .pam-produit-taxes { font-size: .7rem; }
+  .pam-qty-controle { margin-top: 0; gap: .25rem; }
   .pam-qty-moins,
-  .pam-qty-plus { width: 34px; height: 34px; font-size: 1.1rem; }
-  .pam-qty-input { width: 40px; padding: .2rem .2rem; }
+  .pam-qty-plus { width: 30px; height: 30px; font-size: 1.1rem; }
+  .pam-qty-input { width: 36px; padding: .2rem .15rem; }
   .pam-produit-item:hover { transform: none; }
-  .pam-produit-instructions { font-size: .78rem; padding: .4rem .6rem; }
-  /* Carte sans image : placeholder pleine largeur */
-  .pam-produit-placeholder {
-    aspect-ratio: 16 / 9;
-    border-radius: var(--rayon) var(--rayon) 0 0;
-  }
+  /* Instructions : compactes en mobile (toujours visibles, pas cachées) */
+  .pam-produit-instructions { font-size: .75rem; padding: .35rem .55rem; }
+  .pam-produit-poids { font-size: .74rem; margin-top: 0; }
 }
 
 /* Espacements réduits sur très petits écrans */
@@ -3349,7 +3338,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   font-weight: 700;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: var(--terra-fonce);
+  color: var(--terra-fonce); /* --terracotta-texte n'existe pas dans ce fichier */
 }
 .pm-article-titre {
   font-size: clamp(1.6rem, 1.2rem + 2vw, 2.6rem);
@@ -3950,7 +3939,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
 }
 .bx-card-prix {
   font-weight: 700;
-  color: var(--terra-fonce);
+  color: var(--terracotta-texte);
   white-space: nowrap;
   font-size: 1rem;
 }
@@ -4042,7 +4031,7 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   font-weight: 600;
   color: var(--texte);
 }
-.bx-champ label span { color: var(--terra-fonce); }
+.bx-champ label span { color: var(--terracotta-texte); }
 .bx-champ input,
 .bx-champ select,
 .bx-champ textarea {
@@ -4076,11 +4065,11 @@ body:has(.pam-barre-total--active) .section:last-of-type {
   margin-bottom: 1rem;
 }
 .bx-msg-erreur {
-  background: var(--terra-pale);
-  border: 1px solid var(--terra);
+  background: var(--terracotta-pale);
+  border: 1px solid var(--terracotta);
   border-radius: 6px;
   padding: .85rem 1rem;
-  color: var(--terra-fonce);
+  color: var(--terracotta-texte);
   margin-bottom: 1rem;
 }
 
