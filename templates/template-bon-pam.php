@@ -269,6 +269,7 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                     'pains'                => ['boissons'],
                     'patisseries'          => ['boissons', 'pains'],
                     'pates-et-quiches'     => ['boissons', 'salades'],
+                    'pates'                => ['boissons', 'salades'],
                     'mets-prepares'        => ['boissons', 'salades'],
                     'divers-pret-a-manger' => ['pains', 'patisseries'],
                     'sushis'               => ['boissons'],
