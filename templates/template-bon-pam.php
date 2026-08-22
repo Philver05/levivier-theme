@@ -264,26 +264,34 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
 
                 /* Index produits par catégorie pour les suggestions automatiques Level 1 */
                 $pam_index_par_cat = [];
-                /* Paires de catégories : quand on ajoute X, suggérer depuis Y */
+                /* Paires de catégories : quand on ajoute X, suggérer depuis Y.
+                   Logique réelle du catalogue :
+                   - accompagnement = Patates sarladaises, complément assiette idéal
+                   - boissons = Yesterday + Cafélimo, complément repas
+                   - salades/sandwichs sont dans mets-prepares, ne pas les suggérer
+                     entre eux (ce serait suggérer 2 plats principaux) */
                 $pam_regles_cat = [
-                    'pains'                => ['boissons'],
-                    'patisseries'          => ['boissons', 'pains'],
-                    'pates-et-quiches'     => ['boissons', 'salades'],
-                    'pates'                => ['boissons', 'salades'],
-                    'mets-prepares'        => ['boissons', 'salades'],
-                    'divers-pret-a-manger' => ['pains', 'patisseries'],
+                    /* Catégories principales */
+                    'pains'                => ['boissons', 'accompagnement'],
+                    'patisseries'          => ['boissons'],
+                    'pates'                => ['accompagnement', 'boissons'],
+                    'mets-prepares'        => ['boissons', 'accompagnement'],
+                    'divers-pret-a-manger' => ['pains', 'accompagnement'],
                     'sushis'               => ['boissons'],
-                    'accompagnement'       => ['boissons'],
-                    /* sous-catégories */
-                    'sandwichs'            => ['boissons', 'salades'],
-                    'pizzas'               => ['boissons', 'salades'],
-                    'mets-cuisines'        => ['boissons', 'salades'],
-                    'focaccias'            => ['boissons'],
-                    'focaccia-maison'      => ['boissons'],
-                    'amaretti'             => ['boissons'],
-                    'salades'              => ['pains', 'boissons'],
-                    'sauces'               => ['pains', 'mets-prepares'],
+                    'accompagnement'       => ['boissons', 'mets-prepares'],
                     'boissons'             => ['patisseries', 'pains'],
+                    /* Sous-catégories — priorité sur la catégorie principale */
+                    'focaccias'            => ['boissons', 'accompagnement'],
+                    'focaccia-maison'      => ['boissons', 'accompagnement'],
+                    'amaretti'             => ['boissons'],
+                    'biscuit'              => ['boissons'],
+                    'cake'                 => ['boissons'],
+                    'tarte'                => ['boissons'],
+                    'sandwichs'            => ['accompagnement', 'boissons'],
+                    'salades'              => ['boissons', 'pains'],
+                    'pizzas'               => ['accompagnement', 'boissons'],
+                    'mets-cuisines'        => ['accompagnement', 'boissons'],
+                    'sauces'               => ['pains', 'accompagnement'],
                 ];
 
                 foreach ($categories_principales as $cat):
