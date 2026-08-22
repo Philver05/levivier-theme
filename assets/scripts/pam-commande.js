@@ -163,7 +163,7 @@
        Se ferme seul après SUGG_DUREE ms, ou avant sur clic (X,
        Ajouter, nom) ou nouvelle suggestion.
     ------------------------------------------------------- */
-    var SUGG_DUREE = 15000;
+    var SUGG_DUREE = 30000;
     var _suggTimer = null;
 
     function fermerPanneaux() {
