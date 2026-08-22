@@ -1809,3 +1809,77 @@ add_action('admin_init', function () {
     echo '<p><a href="' . esc_url(get_permalink($page->ID)) . '">→ Voir la page mise à jour</a></p>';
     exit;
 });
+
+/* ======================================================================
+ * Catégorie Boissons + produits de démonstration pour PAM
+ * Déclencher UNE SEULE FOIS en visitant : /wp-admin/?lv_seed_pam_boissons=1
+ * ==================================================================== */
+add_action('admin_init', function () {
+    if (!isset($_GET['lv_seed_pam_boissons']) || $_GET['lv_seed_pam_boissons'] !== '1') return;
+    if (!current_user_can('manage_options')) wp_die('Accès refusé');
+
+    if (get_option('lv_seed_pam_boissons_done')) {
+        echo '<p>Déjà exécuté. Supprimez l\'option <code>lv_seed_pam_boissons_done</code> pour relancer.</p>';
+        exit;
+    }
+
+    $log = [];
+
+    /* 1. Créer la catégorie principale "Boissons" */
+    $cat = get_term_by('slug', 'boissons', 'pam_categorie');
+    if (!$cat) {
+        $res = wp_insert_term('Boissons', 'pam_categorie', ['slug' => 'boissons', 'parent' => 0]);
+        if (is_wp_error($res)) {
+            $log[] = '❌ Impossible de créer la catégorie Boissons : ' . $res->get_error_message();
+        } else {
+            $cat = get_term($res['term_id'], 'pam_categorie');
+            $log[] = '✅ Catégorie « Boissons » créée (ID ' . $cat->term_id . ')';
+        }
+    } else {
+        $log[] = '— Catégorie « Boissons » existait déjà (ID ' . $cat->term_id . ')';
+    }
+
+    if (!$cat || is_wp_error($cat)) {
+        echo '<pre>' . implode("\n", $log) . '</pre>';
+        exit;
+    }
+
+    /* 2. Produits de démonstration — prix temporaires, Marie corrige */
+    $boissons = [
+        ['Eau pétillante (500ml)',    1.75, 'Eau minérale pétillante locale. Prix temporaire — à mettre à jour.'],
+        ['Jus de fruits maison',      3.50, 'Jus pressé du jour selon les arrivages. Prix temporaire.'],
+        ['Limonade artisanale',       3.75, 'Limonade fraîche préparée maison. Prix temporaire.'],
+        ['Thé glacé maison',          3.50, 'Thé glacé infusé et sucré en maison. Prix temporaire.'],
+        ['Kombucha local',            4.50, 'Kombucha brassé par un producteur local. Prix temporaire.'],
+    ];
+
+    foreach ($boissons as [$titre, $prix, $desc]) {
+        if (get_page_by_title($titre, OBJECT, 'pam_produit')) {
+            $log[] = '— « ' . $titre . ' » existait déjà, sauté';
+            continue;
+        }
+        $pid = wp_insert_post([
+            'post_title'   => $titre,
+            'post_status'  => 'publish',
+            'post_type'    => 'pam_produit',
+        ]);
+        if (is_wp_error($pid)) {
+            $log[] = '❌ Erreur pour « ' . $titre . '» : ' . $pid->get_error_message();
+            continue;
+        }
+        update_field('pam_prix',        $prix,                    $pid);
+        update_field('pam_description', $desc,                    $pid);
+        update_field('pam_jours',       ['tous_les_jours'],       $pid);
+        wp_set_post_terms($pid, [$cat->term_id], 'pam_categorie');
+        $log[] = '✅ « ' . $titre . ' » créé (' . $prix . ' $)';
+    }
+
+    update_option('lv_seed_pam_boissons_done', true);
+
+    echo '<style>body{font-family:monospace;padding:2rem 3rem;background:#f9f5f0;} h2{color:#4d6040;} li{margin:.4rem 0;}</style>';
+    echo '<h2>✅ Boissons PAM — terminé</h2><ul>';
+    foreach ($log as $l) echo '<li>' . esc_html($l) . '</li>';
+    echo '</ul>';
+    echo '<p>Étape suivante : vérifier les boissons dans wp-admin, mettre les vrais prix et photos.</p>';
+    exit;
+});

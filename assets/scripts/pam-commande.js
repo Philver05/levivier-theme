@@ -176,22 +176,63 @@
 
     function ouvrirSuggestions(item) {
         fermerPanneaux();
-        if (!item.dataset.suggestions) return;
-        var donnees;
-        try { donnees = JSON.parse(item.dataset.suggestions); } catch (e) { return; }
-        if (!Array.isArray(donnees) || !donnees.length) return;
-
-        /* Premier produit valide (pas deja au panier, pas masque par le filtre jour) */
         var sugg = null;
-        for (var i = 0; i < donnees.length; i++) {
-            var cibleItem = document.querySelector('.pam-produit-item[data-id="' + donnees[i].id + '"]');
-            if (!cibleItem || cibleItem.hidden) continue;
-            var input = cibleItem.querySelector('.pam-qty-input');
-            var qty = input ? parseInt(input.value, 10) || 0 : 0;
-            if (qty > 0) continue;
-            sugg = donnees[i];
-            break;
+
+        /* 1. Suggestions spécifiques configurées par Marie sur ce produit */
+        if (item.dataset.suggestions) {
+            var donnees;
+            try { donnees = JSON.parse(item.dataset.suggestions); } catch (e) { donnees = []; }
+            if (Array.isArray(donnees)) {
+                for (var i = 0; i < donnees.length; i++) {
+                    var cibleItem = document.querySelector('.pam-produit-item[data-id="' + donnees[i].id + '"]');
+                    if (!cibleItem || cibleItem.hidden) continue;
+                    var inp0 = cibleItem.querySelector('.pam-qty-input');
+                    if (inp0 && (parseInt(inp0.value, 10) || 0) > 0) continue;
+                    sugg = donnees[i];
+                    break;
+                }
+            }
         }
+
+        /* 2. Repli automatique : paires de catégories (Level 1) */
+        if (!sugg && window.pamReglesCategories && window.pamProduitsParCategorie) {
+            var catGrp = item.closest('.pam-categorie');
+            var catPrincipale = catGrp ? catGrp.dataset.cat : '';
+            var sousCat = item.dataset.souscat || '';
+            var idProduit = parseInt(item.dataset.id, 10) || 0;
+
+            /* Fusionner les règles de la sous-catégorie et de la catégorie principale */
+            var catsCibles = [];
+            if (sousCat && window.pamReglesCategories[sousCat]) {
+                catsCibles = catsCibles.concat(window.pamReglesCategories[sousCat]);
+            }
+            if (catPrincipale && window.pamReglesCategories[catPrincipale]) {
+                window.pamReglesCategories[catPrincipale].forEach(function (c) {
+                    if (catsCibles.indexOf(c) === -1) catsCibles.push(c);
+                });
+            }
+
+            for (var ci = 0; ci < catsCibles.length && !sugg; ci++) {
+                var pool = (window.pamProduitsParCategorie[catsCibles[ci]] || []).slice();
+                if (!pool.length) continue;
+                /* Mélange aléatoire (Fisher-Yates) pour varier les suggestions */
+                for (var k = pool.length - 1; k > 0; k--) {
+                    var j = Math.floor(Math.random() * (k + 1));
+                    var tmp = pool[k]; pool[k] = pool[j]; pool[j] = tmp;
+                }
+                for (var pi = 0; pi < pool.length; pi++) {
+                    var cand = pool[pi];
+                    if (cand.id === idProduit) continue;
+                    var candEl = document.querySelector('.pam-produit-item[data-id="' + cand.id + '"]');
+                    if (!candEl || candEl.hidden) continue;
+                    var candInp = candEl.querySelector('.pam-qty-input');
+                    if (candInp && (parseInt(candInp.value, 10) || 0) > 0) continue;
+                    sugg = cand;
+                    break;
+                }
+            }
+        }
+
         if (!sugg) return;
 
         var toast = document.createElement('div');

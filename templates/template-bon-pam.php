@@ -226,7 +226,7 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                    Toute catégorie absente de cette liste se retrouve à la fin. */
                 $ordre_pam_categories = [
                     'Pains', 'Pâtisseries', 'Pâtés et Quiches', 'Mets préparés',
-                    'Divers prêt-à-manger', 'Sushis', 'Accompagnement',
+                    'Divers prêt-à-manger', 'Sushis', 'Accompagnement', 'Boissons',
                 ];
                 usort($categories_principales, function ($a, $b) use ($ordre_pam_categories) {
                     $pos_a = array_search($a->name, $ordre_pam_categories, true);
@@ -261,6 +261,29 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                 <!-- Produits groupés par catégorie principale, avec sous-onglets si elle a des enfants -->
                 <?php
                 $a_des_produits = false;
+
+                /* Index produits par catégorie pour les suggestions automatiques Level 1 */
+                $pam_index_par_cat = [];
+                /* Paires de catégories : quand on ajoute X, suggérer depuis Y */
+                $pam_regles_cat = [
+                    'pains'                => ['boissons'],
+                    'patisseries'          => ['boissons', 'pains'],
+                    'pates-et-quiches'     => ['boissons', 'salades'],
+                    'mets-prepares'        => ['boissons', 'salades'],
+                    'divers-pret-a-manger' => ['pains', 'patisseries'],
+                    'sushis'               => ['boissons'],
+                    'accompagnement'       => ['boissons'],
+                    /* sous-catégories */
+                    'sandwichs'            => ['boissons', 'salades'],
+                    'pizzas'               => ['boissons', 'salades'],
+                    'mets-cuisines'        => ['boissons', 'salades'],
+                    'focaccias'            => ['boissons'],
+                    'focaccia-maison'      => ['boissons'],
+                    'amaretti'             => ['boissons'],
+                    'salades'              => ['pains', 'boissons'],
+                    'sauces'               => ['pains', 'mets-prepares'],
+                    'boissons'             => ['patisseries', 'pains'],
+                ];
 
                 foreach ($categories_principales as $cat):
                     $enfants = get_terms([
@@ -350,6 +373,12 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                                     if (in_array($enfant->term_id, $termes_produit, true)) { $souscat = $enfant->slug; break; }
                                 }
                             }
+                        ?>
+                        <?php
+                        /* Alimenter l'index pour les suggestions automatiques */
+                        $thumb_sugg = get_the_post_thumbnail_url($pid, 'thumbnail') ?: $thumb ?: '';
+                        $pam_index_par_cat[$cat->slug][] = ['id' => $pid, 'titre' => get_the_title(), 'photo' => $thumb_sugg, 'prix' => $prix, 'taxable' => (bool)$taxable];
+                        if ($souscat) $pam_index_par_cat[$souscat][] = ['id' => $pid, 'titre' => get_the_title(), 'photo' => $thumb_sugg, 'prix' => $prix, 'taxable' => (bool)$taxable];
                         ?>
                         <div class="pam-produit-item"
                              data-id="<?php echo esc_attr($pid); ?>"
@@ -549,4 +578,8 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
     <img id="pm-lightbox-img" src="" alt="">
 </div>
 
+<script>
+window.pamReglesCategories = <?php echo wp_json_encode($pam_regles_cat); ?>;
+window.pamProduitsParCategorie = <?php echo wp_json_encode($pam_index_par_cat); ?>;
+</script>
 <?php get_footer(); ?>
