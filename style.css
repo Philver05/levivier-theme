@@ -2102,9 +2102,9 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
 /* Messages informatifs par jour */
 .pam-messages-jours { margin-bottom: 1.6rem; }
 .pam-msg-jour {
-  background: var(--sauge-pale);
-  border-left: 3px solid var(--sauge);
-  border-radius: 0 14px 14px 0;
+  background: var(--blanc);
+  border-top: 3px solid var(--sauge);
+  border-radius: 14px;
   padding: 1.4rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -2125,6 +2125,8 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
    qu'en bandeau pleine largeur, donc plus compact. Toujours en colonne
    même avec une image (la carte est trop étroite pour une rangée). */
 .pam-msg-jour--carte {
+  background: var(--sauge-pale);
+  border-top: 2px solid var(--sauge);
   padding: .9rem 1rem;
   gap: .5rem;
   margin: .3rem 0 .7rem;
@@ -2201,32 +2203,24 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  gap: .5rem .7rem;
+  gap: .4rem .6rem;
   background: var(--terra-pale);
   color: var(--terra-fonce);
-  border: 1.5px dashed var(--terra);
-  border-radius: 10px;
-  padding: .8rem 1.2rem;
-  font-size: .9rem;
-  font-weight: 700;
-  line-height: 1.4;
-  text-align: center;
-  animation: pam-cta-lueur 2.6s ease-in-out infinite;
+  border-radius: 8px;
+  padding: .7rem 1rem;
+  font-size: .88rem;
+  font-weight: 600;
+  line-height: 1.5;
 }
 .pam-msg-cta svg {
   flex: none;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   stroke: var(--terra-fonce);
   fill: none;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-@keyframes pam-cta-lueur {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(184, 92, 80, .3); }
-  50%      { box-shadow: 0 0 0 7px rgba(184, 92, 80, 0); }
 }
 .pam-msg-note {
   background: var(--blanc);
