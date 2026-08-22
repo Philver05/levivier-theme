@@ -85,7 +85,7 @@ $voyageurs = get_field('loft_voyageurs') ?: '2';
 $chambres  = get_field('loft_chambres')  ?: '1';
 $lits      = get_field('loft_lits')      ?: '1';
 $sdb       = get_field('loft_sdb')       ?: '1';
-$highlights = get_field('loft_highlights') ?: "Arrivée autonome | Entrez à votre rythme grâce à la serrure intelligente.\nStationnement gratuit | Un des rares logements de la région avec stationnement gratuit.\nCafé maison | Commencez la journée du bon pied avec la cafetière filtre.";
+$highlights = get_field('loft_highlights') ?: "Arrivée autonome | Entrez à votre rythme grâce à la serrure intelligente.\nStationnement gratuit | Un des rares logements de la région avec stationnement gratuit.";
 
 /* Options de réservation : Reservit en principal, Airbnb en second, téléphone en repli */
 $resa_options = [];
