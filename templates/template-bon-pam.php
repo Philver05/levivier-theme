@@ -530,14 +530,8 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                     </div>
                     <div class="pam-champ">
                         <label for="pam_heure">Heure de récupération <abbr title="requis">*</abbr></label>
-                        <select id="pam_heure" name="heure_recuperation" required>
-                            <option value="">-- Choisir une plage --</option>
-                            <option value="8h30 - 10h00">8h30 - 10h00</option>
-                            <option value="10h00 - 12h00">10h00 - 12h00</option>
-                            <option value="12h00 - 14h00">12h00 - 14h00</option>
-                            <option value="14h00 - 16h00">14h00 - 16h00</option>
-                            <option value="16h00 - 18h00">16h00 - 18h00</option>
-                        </select>
+                        <input type="time" id="pam_heure" name="heure_recuperation" required
+                               min="08:30" max="18:00" step="300">
                     </div>
                     <div class="pam-champ pam-champ--pleine">
                         <label for="pam_commentaire">Commentaire (optionnel)</label>
