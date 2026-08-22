@@ -1883,3 +1883,137 @@ add_action('admin_init', function () {
     echo '<p>Étape suivante : vérifier les boissons dans wp-admin, mettre les vrais prix et photos.</p>';
     exit;
 });
+
+/* ======================================================================
+ * Suggestions PAM pré-configurées d'après les paires intelligentes
+ * Déclencher via /wp-admin/?lv_seed_pam_suggestions=1
+ * Relançable sans danger : ne touche que les produits dont pam_suggestions
+ * est vide (sauf ?lv_seed_pam_suggestions=force qui écrase tout).
+ * ==================================================================== */
+add_action('admin_init', function () {
+    if (!isset($_GET['lv_seed_pam_suggestions'])) return;
+    if (!current_user_can('manage_options')) wp_die('Accès refusé');
+
+    $force = ($_GET['lv_seed_pam_suggestions'] === 'force');
+    $log   = [];
+
+    /* -- Produits-clés qu'on va suggérer -------------------------------- */
+    function lv_pam_find(string $titre): ?int {
+        $posts = get_posts([
+            'post_type'              => 'pam_produit',
+            'title'                  => $titre,
+            'post_status'            => 'publish',
+            'posts_per_page'         => 1,
+            'update_post_meta_cache' => false,
+            'update_post_term_cache' => false,
+        ]);
+        return $posts ? $posts[0]->ID : null;
+    }
+
+    $patates        = lv_pam_find('Patates sarladaises');
+    $yesterday_p    = lv_pam_find('Yesterday Pêche juteuse');
+    $yesterday_c    = lv_pam_find('Yesterday Citron éclatant');
+    $cafelimo       = lv_pam_find('Cafélimo');
+    $focaccia_n     = lv_pam_find('Nature');
+
+    $log[] = '— Patates sarladaises : ' . ($patates ?? 'INTROUVABLE');
+    $log[] = '— Yesterday Pêche : '     . ($yesterday_p ?? 'INTROUVABLE');
+    $log[] = '— Yesterday Citron : '    . ($yesterday_c ?? 'INTROUVABLE');
+    $log[] = '— Cafélimo : '            . ($cafelimo ?? 'INTROUVABLE');
+    $log[] = '— Focaccia Nature : '     . ($focaccia_n ?? 'INTROUVABLE');
+    $log[] = '';
+
+    /* -- Tous les produits PAM publiés --------------------------------- */
+    $tous = get_posts([
+        'post_type'      => 'pam_produit',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+    ]);
+
+    $nb_modifies = 0;
+    $nb_sautes   = 0;
+
+    foreach ($tous as $pid) {
+        /* Sauter si déjà configuré et pas en mode force */
+        $existant = get_field('pam_suggestions', $pid);
+        if (!$force && !empty($existant)) {
+            $nb_sautes++;
+            continue;
+        }
+
+        $slugs = wp_get_post_terms($pid, 'pam_categorie', ['fields' => 'slugs']);
+        $titre = get_the_title($pid);
+        $sugg  = [];
+
+        /* Mets cuisinés (Général Tao) → patates + boisson */
+        if (in_array('mets-cuisines', $slugs, true)) {
+            $sugg = array_filter([$patates, $yesterday_p]);
+
+        /* Sandwichs → patates + boisson */
+        } elseif (in_array('sandwichs', $slugs, true)) {
+            $sugg = array_filter([$patates, $yesterday_p]);
+
+        /* Pizzas → patates + boisson */
+        } elseif (in_array('pizzas', $slugs, true)) {
+            $sugg = array_filter([$patates, $yesterday_p]);
+
+        /* Salades → boisson + focaccia */
+        } elseif (in_array('salades', $slugs, true)) {
+            $sugg = array_filter([$yesterday_c, $focaccia_n]);
+
+        /* Sauces (chili) → focaccia + patates */
+        } elseif (in_array('sauces', $slugs, true)) {
+            $sugg = array_filter([$focaccia_n, $patates]);
+
+        /* Focaccias → boisson + patates */
+        } elseif (in_array('focaccias', $slugs, true) || in_array('focaccia-maison', $slugs, true)) {
+            $sugg = array_filter([$yesterday_c, $patates]);
+
+        /* Amaretti → Cafélimo en priorité (café + amaretti = classique) */
+        } elseif (in_array('amaretti', $slugs, true)) {
+            $sugg = array_filter([$cafelimo, $yesterday_c]);
+
+        /* Autres pâtisseries (cake, biscuit, tarte) → Cafélimo ou Yesterday */
+        } elseif (array_intersect(['cake', 'biscuit', 'tarte'], $slugs)) {
+            $sugg = array_filter([$cafelimo, $yesterday_p]);
+
+        /* Pâtés et Quiches → patates + boisson */
+        } elseif (in_array('pates', $slugs, true)) {
+            $sugg = array_filter([$patates, $yesterday_p]);
+
+        /* Sushis → deux boissons */
+        } elseif (in_array('sushis', $slugs, true)) {
+            $sugg = array_filter([$yesterday_p, $yesterday_c]);
+
+        /* Accompagnement (patates sarladaises) → boisson + mets préparé */
+        } elseif (in_array('accompagnement', $slugs, true)) {
+            $sugg = array_filter([$yesterday_p]);
+
+        /* Boissons → pas de suggestion (déjà le produit suggéré) */
+        } elseif (in_array('boissons', $slugs, true)) {
+            continue;
+        }
+
+        if (empty($sugg)) {
+            $log[] = '⬜ ' . $titre . ' — aucune règle applicable, sauté';
+            continue;
+        }
+
+        update_field('pam_suggestions', array_values($sugg), $pid);
+        $log[] = '✅ ' . $titre . ' → ' . implode(', ', array_map('get_the_title', $sugg));
+        $nb_modifies++;
+    }
+
+    $log[] = '';
+    $log[] = $nb_modifies . ' produits mis à jour, ' . $nb_sautes . ' sautés (déjà configurés).';
+    if ($nb_sautes > 0 && !$force) {
+        $log[] = 'Ajoutez &lv_seed_pam_suggestions=force pour écraser les suggestions existantes.';
+    }
+
+    echo '<style>body{font-family:monospace;padding:2rem 3rem;background:#f9f5f0;max-width:900px;} h2{color:#4d6040;} li{margin:.3rem 0;}</style>';
+    echo '<h2>Suggestions PAM — terminé</h2><ul>';
+    foreach ($log as $l) echo '<li>' . $l . '</li>';
+    echo '</ul>';
+    exit;
+});
