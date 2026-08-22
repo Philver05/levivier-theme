@@ -384,6 +384,9 @@ if (!$intro && !trim(wp_strip_all_tags(get_the_content()))) {
                             }
                         ?>
                         <?php
+                        /* Masquer les produits sans photo */
+                        if (!$thumb) continue;
+
                         /* Alimenter l'index pour les suggestions automatiques */
                         $thumb_sugg = get_the_post_thumbnail_url($pid, 'thumbnail') ?: $thumb ?: '';
                         $pam_index_par_cat[$cat->slug][] = ['id' => $pid, 'titre' => get_the_title(), 'photo' => $thumb_sugg, 'prix' => $prix, 'taxable' => (bool)$taxable];
