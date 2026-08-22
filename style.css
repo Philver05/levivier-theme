@@ -2743,7 +2743,7 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   align-self: flex-start;
   margin-top: .35rem;
   border: none;
-  background: var(--terracotta);
+  background: var(--terra);
   color: var(--blanc);
   font-size: .73rem;
   font-weight: 700;
@@ -2755,7 +2755,7 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   white-space: nowrap;
   transition: background var(--transi), transform .1s ease;
 }
-.pam-sugg-btn:hover  { background: var(--terracotta-texte); }
+.pam-sugg-btn:hover  { background: var(--terra-fonce); }
 .pam-sugg-btn:active { transform: scale(.95); }
 /* Barre de progression au bas de la carte */
 .pam-sugg-barre {
