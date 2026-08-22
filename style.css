@@ -2203,6 +2203,7 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: .4rem .6rem;
   background: var(--terra-pale);
   color: var(--terra-fonce);
@@ -2211,6 +2212,7 @@ a.pm-filtre { display: inline-flex; align-items: center; background: var(--blanc
   font-size: .88rem;
   font-weight: 600;
   line-height: 1.5;
+  text-align: center;
 }
 .pam-msg-cta svg {
   flex: none;
