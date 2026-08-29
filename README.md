@@ -1,18 +1,22 @@
-# Le Vivier — Thème WordPress sur mesure
+# Le Vivier
 
-Thème WordPress développé from scratch pour **Le Vivier**, plateforme de mise en valeur de producteurs, produits et lofts artisanaux locaux.
+Thème WordPress développé from scratch pour Le Vivier,
+une plateforme qui met en valeur des producteurs, des produits
+et des lofts artisanaux locaux.
 
 ---
 
-## Ce que j'ai construit
+## Ce que j'ai fait
 
-Thème WordPress complet sans page builder, sans thème parent. Chaque template est écrit à la main en PHP, avec une hiérarchie de fichiers respectant les standards WordPress.
+J'ai tout construit sans page builder, sans thème parent.
+Chaque fichier PHP est écrit à la main en respectant
+la hiérarchie de templates WordPress.
 
-**Décisions clés :**
-- Trois custom post types sur mesure : `producteur`, `produit`, `loft` — avec leurs archives et singles dédiés
-- Architecture modulaire : `includes/` pour les fonctions, `parts/` pour les fragments réutilisables, `templates/` pour les mises en page spécifiques
-- `functions.php` structuré par responsabilité (enqueue, CPT, menus, supports)
-- CSS et JS maintenus séparément, chargés via `wp_enqueue_scripts`
+Le projet avait besoin de trois types de contenu sur mesure :
+producteur, produit et loft. J'ai créé les custom post types correspondants
+avec leurs archives et leurs pages individuelles dédiées.
+La logique est divisée par responsabilité dans `functions.php`
+et les fragments réutilisables vivent dans `parts/`.
 
 ---
 
@@ -21,9 +25,9 @@ Thème WordPress complet sans page builder, sans thème parent. Chaque template 
 | Outil | Rôle |
 |---|---|
 | PHP 8 | Logique du thème, hooks WordPress |
-| WordPress | CMS et gestion du contenu |
+| WordPress | Gestion du contenu |
 | CSS | Styles sur mesure |
-| JavaScript | Interactions côté client |
+| JavaScript | Interactions |
 
 ---
 
@@ -31,28 +35,24 @@ Thème WordPress complet sans page builder, sans thème parent. Chaque template 
 
 ```
 levivier-theme/
-  header.php / footer.php   En-tête et pied de page
-  front-page.php            Page d'accueil
-  archive-producteur.php    Liste des producteurs
-  single-producteur.php     Fiche producteur
-  archive-produit.php       Liste des produits
-  single-produit.php        Fiche produit
-  single-loft.php           Fiche loft
-  functions.php             Enregistrement CPT, menus, scripts
-  includes/                 Fonctions modulaires
+  header.php / footer.php
+  front-page.php
+  archive-producteur.php    single-producteur.php
+  archive-produit.php       single-produit.php
+  single-loft.php
+  functions.php
+  includes/                 Fonctions par responsabilité
   parts/                    Fragments réutilisables
   templates/                Mises en page spécifiques
-  assets/                   CSS, JS, images
+  assets/
 ```
 
 ---
 
 ## Installer en local
 
-1. Copier le dossier dans `wp-content/themes/levivier-theme`
-2. Activer le thème dans WordPress Admin → Apparence → Thèmes
-3. Créer les types de contenu (CPT enregistrés automatiquement au chargement)
+Copier le dossier dans `wp-content/themes/levivier-theme` et activer
+le thème depuis WordPress Admin. Les custom post types s'enregistrent
+automatiquement au chargement.
 
----
-
-Développé par Philippe Verlain — Matane, Québec
+Développé par Philippe Verlain
